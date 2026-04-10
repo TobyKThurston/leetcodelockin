@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useTransition } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, TrendingUp, Flame, Sparkles, ArrowRight } from 'lucide-react';
+import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowUpRight, Route, Hash, CircleDot, ArrowRight } from 'lucide-react';
 import { CURRICULUM, type PathDef, type BlockDef } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import AppNav from '@/components/AppNav';
@@ -2381,14 +2381,14 @@ export function ProgressView({
           <StatCard accent="emerald" value={`${totalComplete}`}                     label="blocks"   icon={<CheckCircle2 size={13} strokeWidth={2.25} />} />
           <StatCard accent="blue"    value={`${totalLessons}`}                      label="lessons"  icon={<BookOpen     size={13} strokeWidth={2.25} />} />
           <StatCard accent="violet"  value={`${totalProblems}`}                     label="problems" icon={<Target       size={13} strokeWidth={2.25} />} />
-          <StatCard accent="amber"   value={`${pathsStarted}/${CURRICULUM.length}`} label="paths"    icon={<Flame        size={13} strokeWidth={2.25} />} />
+          <StatCard accent="amber"   value={`${pathsStarted}/${CURRICULUM.length}`} label="paths"    icon={<Route        size={13} strokeWidth={2.25} />} />
         </div>
       </section>
 
       {/* ─── Strengths ─── */}
       <section className="mb-10">
         <ProgressSectionHeader
-          icon={<TrendingUp size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
+          icon={<ArrowUpRight size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
           title="Strengths"
         />
         {strengths.length > 0 ? (
@@ -2412,7 +2412,7 @@ export function ProgressView({
       {/* ─── Focus Areas ─── */}
       <section className="mb-10">
         <ProgressSectionHeader
-          icon={<Target size={13} strokeWidth={2.25} className="text-blue-300" />}
+          icon={<CircleDot size={13} strokeWidth={2.25} className="text-blue-300" />}
           title="Focus Areas"
         />
         {focusAreas.length > 0 ? (
@@ -2501,7 +2501,7 @@ export function ProgressView({
       {/* ─── Skills Mastered ─── */}
       <section className="mb-6">
         <ProgressSectionHeader
-          icon={<Sparkles size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
+          icon={<Hash size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
           title="Skills Mastered"
           count={skillsMastered.length}
         />
