@@ -1,0 +1,611 @@
+// ─── Heap / Priority Queue problems ─────────────────────────────────────────
+
+import type { ProblemContent } from '../../lib/problem-types';
+
+export const HEAP_PRIORITY_QUEUE_PROBLEMS: ProblemContent[] = [
+  // ─── Kth Largest Element in a Stream (LC #703) ────────────────────────────
+  {
+    slug: 'kth-largest-element-in-a-stream',
+    lcNumber: 703,
+    title: 'Kth Largest Element in a Stream',
+    difficulty: 'Easy',
+    pattern: 'Min Heap',
+    tags: ['heap', 'design'],
+    descriptionMd: `Design a class \`KthLargest\` that tracks the \`k\`-th largest element in a stream
+of integers. The constructor is given \`k\` and an initial list \`nums\`; each call to
+\`add(val)\` inserts \`val\` and then returns the current \`k\`-th largest value across
+everything seen so far.
+
+The idiomatic solution keeps a **min-heap of size exactly \`k\`**. On every \`add\`, push
+the value; if the heap has more than \`k\` items, pop the smallest; the top is then the
+answer.
+
+Expose the class behaviour through a driver \`runKthLargestOps(k, nums, ops, vals)\` that
+constructs the class and runs every operation in order.`,
+    examples: [
+      {
+        input: 'k = 3, nums = [4, 5, 8, 2], ops = ["add","add","add","add"], vals = [[3],[5],[10],[9]]',
+        output: '[4, 5, 5, 8]',
+      },
+    ],
+    constraints: [
+      '`1 <= k <= 10^4`',
+      '`0 <= len(nums) <= 10^4`',
+      '`-10^4 <= nums[i], val <= 10^4`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class KthLargest:
+    def __init__(self, k: int, nums: list[int]):
+        pass
+
+    def add(self, val: int) -> int:
+        pass
+
+
+class Solution:
+    def runKthLargestOps(self, k: int, nums: list[int], ops: list[str], vals: list[list[int]]) -> list[int]:
+        kl = KthLargest(k, nums)
+        out = []
+        for op, args in zip(ops, vals):
+            out.append(getattr(kl, op)(*args))
+        return out
+`,
+    },
+    methodName: 'runKthLargestOps',
+    argKeys: ['k', 'nums', 'ops', 'vals'],
+    defaultTests: [
+      {
+        label: 'Four adds',
+        inputJson: '{"k":3,"nums":[4,5,8,2],"ops":["add","add","add","add"],"vals":[[3],[5],[10],[9]]}',
+        expectedJson: '[4,5,5,8]',
+      },
+      {
+        label: 'Start empty',
+        inputJson: '{"k":1,"nums":[],"ops":["add","add"],"vals":[[5],[10]]}',
+        expectedJson: '[5,10]',
+      },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Last Stone Weight (LC #1046) ─────────────────────────────────────────
+  {
+    slug: 'last-stone-weight',
+    lcNumber: 1046,
+    title: 'Last Stone Weight',
+    difficulty: 'Easy',
+    pattern: 'Max Heap',
+    tags: ['heap', 'array'],
+    descriptionMd: `You are given an array \`stones\` of positive integer weights. Repeatedly do
+the following: take the **two heaviest** stones, smash them, and put back a single stone of
+weight \`|a - b|\` (or nothing if they were equal). Return the weight of the single stone
+left at the end, or \`0\` if no stones remain.
+
+A max-heap lets you always peek at the two largest in \`O(log n)\` per round.`,
+    examples: [
+      {
+        input: 'stones = [10, 4, 6]',
+        output: '0',
+        explanation: 'Smash 10 and 6 → 4. Stones now [4, 4]. Smash → 0.',
+      },
+      {
+        input: 'stones = [5]',
+        output: '5',
+      },
+    ],
+    constraints: [
+      '`0 <= len(stones) <= 30`',
+      '`1 <= stones[i] <= 1000`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def lastStoneWeight(self, stones: list[int]) -> int:
+        # Repeatedly smash the two heaviest stones; return the final weight (0 if none).
+        pass
+`,
+    },
+    methodName: 'lastStoneWeight',
+    argKeys: ['stones'],
+    defaultTests: [
+      { label: 'Two rounds',  inputJson: '{"stones":[10,4,6]}', expectedJson: '0' },
+      { label: 'Single',      inputJson: '{"stones":[5]}',      expectedJson: '5' },
+      { label: 'Empty',       inputJson: '{"stones":[]}',       expectedJson: '0' },
+      { label: 'Equal pair',  inputJson: '{"stones":[2,2]}',    expectedJson: '0' },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Kth Largest Element in an Array (LC #215) ────────────────────────────
+  {
+    slug: 'kth-largest-element-in-an-array',
+    lcNumber: 215,
+    title: 'Kth Largest Element in an Array',
+    difficulty: 'Medium',
+    pattern: 'Heap',
+    tags: ['heap', 'array', 'quickselect'],
+    descriptionMd: `Given an unsorted integer array \`nums\` and an integer \`k\`, return the
+\`k\`-th **largest** element in the array. Note that this is the \`k\`-th largest value in
+**sorted order**, not the \`k\`-th distinct value.
+
+A size-\`k\` min-heap gives an \`O(n log k)\` solution; quickselect runs in expected
+\`O(n)\`. Either is acceptable.`,
+    examples: [
+      {
+        input: 'nums = [1, 5, 3, 2, 4], k = 3',
+        output: '3',
+      },
+      {
+        input: 'nums = [7], k = 1',
+        output: '7',
+      },
+    ],
+    constraints: [
+      '`1 <= k <= len(nums) <= 10^5`',
+      '`-10^4 <= nums[i] <= 10^4`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def findKthLargest(self, nums: list[int], k: int) -> int:
+        # Return the k-th largest value in nums.
+        pass
+`,
+    },
+    methodName: 'findKthLargest',
+    argKeys: ['nums', 'k'],
+    defaultTests: [
+      { label: 'Mid',       inputJson: '{"nums":[1,5,3,2,4],"k":3}',  expectedJson: '3'  },
+      { label: 'Single',    inputJson: '{"nums":[7],"k":1}',          expectedJson: '7'  },
+      { label: 'All equal', inputJson: '{"nums":[10,10,10],"k":2}',    expectedJson: '10' },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── K Closest Points to Origin (LC #973) ─────────────────────────────────
+  {
+    slug: 'k-closest-points-to-origin',
+    lcNumber: 973,
+    title: 'K Closest Points to Origin',
+    difficulty: 'Medium',
+    pattern: 'Heap',
+    tags: ['heap', 'array', 'geometry'],
+    descriptionMd: `Given an array \`points\` where \`points[i] = [x, y]\` and an integer \`k\`, return
+the \`k\` points with the **smallest Euclidean distance** from the origin \`(0, 0)\`. You
+may return them in any order.
+
+A size-\`k\` max-heap keyed on squared distance works in \`O(n log k)\`. You don't need to
+take a square root — \`x^2 + y^2\` is monotone in the real distance.`,
+    examples: [
+      {
+        input: 'points = [[1, 1], [2, 2], [3, 3]], k = 2',
+        output: '[[1, 1], [2, 2]]',
+      },
+      {
+        input: 'points = [[5, -1]], k = 1',
+        output: '[[5, -1]]',
+      },
+    ],
+    constraints: [
+      '`1 <= k <= len(points) <= 10^4`',
+      '`-10^4 <= points[i][0], points[i][1] <= 10^4`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def kClosest(self, points: list[list[int]], k: int) -> list[list[int]]:
+        # Return the k points closest to (0, 0) in any order.
+        pass
+`,
+    },
+    methodName: 'kClosest',
+    argKeys: ['points', 'k'],
+    defaultTests: [
+      { label: 'Two closest', inputJson: '{"points":[[1,1],[2,2],[3,3]],"k":2}', expectedJson: '[[1,1],[2,2]]' },
+      { label: 'Single',      inputJson: '{"points":[[5,-1]],"k":1}',             expectedJson: '[[5,-1]]'      },
+      { label: 'Origin',      inputJson: '{"points":[[0,0],[4,4]],"k":1}',        expectedJson: '[[0,0]]'       },
+    ],
+    // set: order is unspecified; this comparator normalises nested arrays too.
+    resultCompare: 'set',
+  },
+
+  // ─── Top K Frequent Words (LC #692) ───────────────────────────────────────
+  {
+    slug: 'top-k-frequent-words',
+    lcNumber: 692,
+    title: 'Top K Frequent Words',
+    difficulty: 'Medium',
+    pattern: 'Heap',
+    tags: ['heap', 'hash-map', 'sorting'],
+    descriptionMd: `Given an array of strings \`words\` and an integer \`k\`, return the \`k\` most
+frequent words. The result must be sorted **first by frequency descending**, then by
+**alphabetical order ascending** to break ties.
+
+A hash map of counts plus sorting runs in \`O(n log n)\`; a size-\`k\` heap keyed on
+\`(-count, word)\` runs in \`O(n log k)\` but needs a careful comparator.`,
+    examples: [
+      {
+        input: 'words = ["apple","banana","apple","cherry","banana","apple"], k = 2',
+        output: '["apple", "banana"]',
+      },
+      {
+        input: 'words = ["a", "b", "c"], k = 3',
+        output: '["a", "b", "c"]',
+      },
+    ],
+    constraints: [
+      '`1 <= len(words) <= 500`',
+      '`1 <= len(words[i]) <= 10`',
+      '`words[i]` consists of lowercase English letters.',
+      '`1 <= k <= number of distinct words in words`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def topKFrequent(self, words: list[str], k: int) -> list[str]:
+        # Return the k most frequent words, tie-broken alphabetically.
+        pass
+`,
+    },
+    methodName: 'topKFrequent',
+    argKeys: ['words', 'k'],
+    defaultTests: [
+      {
+        label: 'Two winners',
+        inputJson: '{"words":["apple","banana","apple","cherry","banana","apple"],"k":2}',
+        expectedJson: '["apple","banana"]',
+      },
+      {
+        label: 'Alphabetical tie',
+        inputJson: '{"words":["a","b","c"],"k":3}',
+        expectedJson: '["a","b","c"]',
+      },
+      {
+        label: 'Single',
+        inputJson: '{"words":["x"],"k":1}',
+        expectedJson: '["x"]',
+      },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Kth Smallest Element in a Sorted Matrix (LC #378) ────────────────────
+  {
+    slug: 'kth-smallest-element-in-a-sorted-matrix',
+    lcNumber: 378,
+    title: 'Kth Smallest Element in a Sorted Matrix',
+    difficulty: 'Medium',
+    pattern: 'Heap',
+    tags: ['heap', 'matrix', 'binary-search'],
+    descriptionMd: `You are given an \`n x n\` integer matrix \`matrix\` where **each row and each
+column is sorted in ascending order**, and an integer \`k\`. Return the \`k\`-th smallest
+value in the matrix (using the global sort order, not the \`k\`-th smallest distinct value).
+
+A heap-based solution pops \`(val, r, c)\` entries starting from \`(0, 0)\` and pushes the
+right/down neighbours as it goes, \`k\` times. A binary search on the value range is even
+faster but trickier.`,
+    examples: [
+      {
+        input: 'matrix = [[1, 2], [3, 4]], k = 3',
+        output: '3',
+      },
+      {
+        input: 'matrix = [[1]], k = 1',
+        output: '1',
+      },
+    ],
+    constraints: [
+      '`1 <= n <= 300`',
+      '`1 <= k <= n * n`',
+      '`matrix[i][j] <= 10^9`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def kthSmallest(self, matrix: list[list[int]], k: int) -> int:
+        # Return the k-th smallest value in the row/column-sorted matrix.
+        pass
+`,
+    },
+    methodName: 'kthSmallest',
+    argKeys: ['matrix', 'k'],
+    defaultTests: [
+      { label: 'Two by two',   inputJson: '{"matrix":[[1,2],[3,4]],"k":3}',       expectedJson: '3'  },
+      { label: 'Single cell',  inputJson: '{"matrix":[[1]],"k":1}',                expectedJson: '1'  },
+      { label: 'Three by three',inputJson: '{"matrix":[[1,2,3],[4,5,6],[7,8,9]],"k":5}', expectedJson: '5' },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Task Scheduler (LC #621) ─────────────────────────────────────────────
+  {
+    slug: 'task-scheduler',
+    lcNumber: 621,
+    title: 'Task Scheduler',
+    difficulty: 'Medium',
+    pattern: 'Greedy + Heap',
+    tags: ['heap', 'greedy', 'hash-map'],
+    descriptionMd: `You are given a list of task labels \`tasks\` and an integer \`n\`. Each task takes
+one time unit; between two executions of the **same** task there must be at least \`n\`
+idle units (or any other tasks). Return the minimum number of time units needed to finish
+all tasks.
+
+The closed-form greedy answer is:
+\`max(len(tasks), (max_count - 1) * (n + 1) + number_of_tasks_with_max_count)\`.
+A heap-based simulation also works and is often what the pattern tag refers to.`,
+    examples: [
+      {
+        input: 'tasks = ["A","A","A","B","B"], n = 2',
+        output: '7',
+        explanation: 'Schedule A B _ A B _ A → 7 units.',
+      },
+      {
+        input: 'tasks = ["A","A"], n = 0',
+        output: '2',
+      },
+    ],
+    constraints: [
+      '`1 <= len(tasks) <= 10^4`',
+      'Each task is an uppercase English letter.',
+      '`0 <= n <= 100`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def leastInterval(self, tasks: list[str], n: int) -> int:
+        # Return the minimum number of time units required to run every task.
+        pass
+`,
+    },
+    methodName: 'leastInterval',
+    argKeys: ['tasks', 'n'],
+    defaultTests: [
+      { label: 'With idle',    inputJson: '{"tasks":["A","A","A","B","B"],"n":2}', expectedJson: '7' },
+      { label: 'No cooldown',  inputJson: '{"tasks":["A","A"],"n":0}',              expectedJson: '2' },
+      { label: 'Single task',  inputJson: '{"tasks":["A"],"n":5}',                  expectedJson: '1' },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Reorganize String (LC #767) ──────────────────────────────────────────
+  {
+    slug: 'reorganize-string',
+    lcNumber: 767,
+    title: 'Reorganize String',
+    difficulty: 'Medium',
+    pattern: 'Greedy + Heap',
+    tags: ['heap', 'greedy', 'string'],
+    descriptionMd: `Given a string \`s\`, rearrange its characters so that **no two adjacent
+characters are the same**. Return any valid reordering, or the empty string \`""\` if no
+valid reordering exists.
+
+> Note: there may be more than one valid answer. Our tests pick inputs whose canonical
+> max-heap output is uniquely determined (or trivially \`""\` / unchanged), so any correct
+> heap-based implementation matches.
+
+The greedy algorithm: repeatedly pop the two most-common remaining letters, append both,
+decrement their counts, push them back. If the top letter's count is ever more than
+\`(n + 1) // 2\` at the start, the answer is impossible.`,
+    examples: [
+      {
+        input: 's = "aab"',
+        output: '"aba"',
+      },
+      {
+        input: 's = "aaab"',
+        output: '""',
+        explanation: 'Three a\'s in four slots forces two a\'s to touch.',
+      },
+    ],
+    constraints: [
+      '`1 <= len(s) <= 500`',
+      '`s` consists of lowercase English letters.',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def reorganizeString(self, s: str) -> str:
+        # Rearrange s so no two adjacent chars are equal, or return "" if impossible.
+        pass
+`,
+    },
+    methodName: 'reorganizeString',
+    argKeys: ['s'],
+    defaultTests: [
+      { label: 'Classic',     inputJson: '{"s":"aab"}',  expectedJson: '"aba"' },
+      { label: 'Impossible',  inputJson: '{"s":"aaab"}', expectedJson: '""'    },
+      { label: 'Single char', inputJson: '{"s":"a"}',    expectedJson: '"a"'   },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Find Median from Data Stream (LC #295) ───────────────────────────────
+  {
+    slug: 'find-median-from-data-stream',
+    lcNumber: 295,
+    title: 'Find Median from Data Stream',
+    difficulty: 'Hard',
+    pattern: 'Two Heaps',
+    tags: ['heap', 'design'],
+    descriptionMd: `Design a class \`MedianFinder\` supporting:
+
+- \`addNum(num)\` — add \`num\` to the stream.
+- \`findMedian()\` — return the median of all numbers seen so far, as a float.
+
+The canonical \`O(log n)\` solution keeps two heaps: a **max-heap** \`lower\` of the smaller
+half and a **min-heap** \`upper\` of the larger half, balanced so their sizes differ by at
+most one. The median is either the top of \`lower\` (odd total) or the average of the two
+tops (even total).
+
+Expose the class through a driver \`runMedianOps(ops, vals)\`.`,
+    examples: [
+      {
+        input: 'ops = ["addNum","addNum","findMedian","addNum","findMedian"], vals = [[1],[2],[],[3],[]]',
+        output: '[None, None, 1.5, None, 2.0]',
+      },
+    ],
+    constraints: [
+      '`1 <= len(ops) <= 5 * 10^4`',
+      '`-10^5 <= num <= 10^5`',
+      '`findMedian` is not called before at least one `addNum`.',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class MedianFinder:
+    def __init__(self):
+        pass
+
+    def addNum(self, num: int) -> None:
+        pass
+
+    def findMedian(self) -> float:
+        pass
+
+
+class Solution:
+    def runMedianOps(self, ops: list[str], vals: list[list[int]]) -> list:
+        mf = MedianFinder()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(mf, op)(*args)
+            out.append(result)
+        return out
+`,
+    },
+    methodName: 'runMedianOps',
+    argKeys: ['ops', 'vals'],
+    defaultTests: [
+      {
+        label: 'Classic',
+        inputJson: '{"ops":["addNum","addNum","findMedian","addNum","findMedian"],"vals":[[1],[2],[],[3],[]]}',
+        expectedJson: '[null,null,1.5,null,2.0]',
+      },
+      {
+        label: 'Single value',
+        inputJson: '{"ops":["addNum","findMedian"],"vals":[[7],[]]}',
+        expectedJson: '[null,7.0]',
+      },
+    ],
+    resultCompare: 'exact',
+  },
+
+  // ─── Find K Pairs with Smallest Sums (LC #373) ────────────────────────────
+  {
+    slug: 'find-k-pairs-with-smallest-sums',
+    lcNumber: 373,
+    title: 'Find K Pairs with Smallest Sums',
+    difficulty: 'Medium',
+    pattern: 'Heap',
+    tags: ['heap', 'array'],
+    descriptionMd: `You are given two sorted integer arrays \`nums1\` and \`nums2\` and an integer
+\`k\`. Return \`k\` pairs \`[a, b]\` (\`a\` from \`nums1\`, \`b\` from \`nums2\`) with the
+**smallest sums**. Return the pairs in any order.
+
+A min-heap seeded with the \`k\` pairs \`(nums1[0] + nums2[j], 0, j)\` works; every pop
+inserts the neighbour \`(i + 1, j)\` once.`,
+    examples: [
+      {
+        input: 'nums1 = [1, 2], nums2 = [3], k = 2',
+        output: '[[1, 3], [2, 3]]',
+      },
+      {
+        input: 'nums1 = [1], nums2 = [1], k = 1',
+        output: '[[1, 1]]',
+      },
+    ],
+    constraints: [
+      '`1 <= len(nums1), len(nums2) <= 10^5`',
+      '`-10^9 <= nums1[i], nums2[i] <= 10^9`',
+      '`1 <= k <= 10^4`',
+      '`nums1` and `nums2` are sorted in non-decreasing order.',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def kSmallestPairs(self, nums1: list[int], nums2: list[int], k: int) -> list[list[int]]:
+        # Return k pairs (a, b) with the smallest a + b values.
+        pass
+`,
+    },
+    methodName: 'kSmallestPairs',
+    argKeys: ['nums1', 'nums2', 'k'],
+    defaultTests: [
+      { label: 'Small set', inputJson: '{"nums1":[1,2],"nums2":[3],"k":2}',   expectedJson: '[[1,3],[2,3]]' },
+      { label: 'Singletons',inputJson: '{"nums1":[1],"nums2":[1],"k":1}',     expectedJson: '[[1,1]]'       },
+      { label: 'More wanted',inputJson: '{"nums1":[1,7],"nums2":[2,4],"k":3}', expectedJson: '[[1,2],[1,4],[7,2]]' },
+    ],
+    resultCompare: 'set',
+  },
+
+  // ─── IPO (LC #502) ─────────────────────────────────────────────────────────
+  {
+    slug: 'ipo',
+    lcNumber: 502,
+    title: 'IPO',
+    difficulty: 'Hard',
+    pattern: 'Greedy + Heap',
+    tags: ['heap', 'greedy'],
+    descriptionMd: `You are a startup running projects. You have current capital \`w\`, and you can
+undertake at most \`k\` projects. Each project \`i\` requires at least \`capital[i]\` capital
+to start and rewards you with \`profits[i]\` (added to your capital) when finished. Return
+the maximum capital you can accumulate after completing at most \`k\` projects.
+
+The greedy-with-two-heaps solution keeps: (1) a min-heap of "projects sorted by required
+capital" for fast lookup of newly-affordable projects, and (2) a max-heap of profits for the
+most lucrative affordable project. Each round transfers newly-affordable projects from (1)
+to (2), then pops the best profit.`,
+    examples: [
+      {
+        input: 'k = 2, w = 0, profits = [1, 2, 3], capital = [0, 1, 1]',
+        output: '4',
+        explanation: 'Start with 0. Only project 0 is affordable (capital 0), profit 1 → w = 1. Now projects 1 and 2 affordable (capital 1). Take the bigger: 3 → w = 4.',
+      },
+      {
+        input: 'k = 1, w = 10, profits = [100], capital = [5]',
+        output: '110',
+      },
+    ],
+    constraints: [
+      '`1 <= k <= 10^5`',
+      '`0 <= w <= 10^9`',
+      '`1 <= len(profits) == len(capital) <= 10^5`',
+      '`0 <= profits[i], capital[i] <= 10^9`',
+    ],
+    starterCode: {
+      python: `import heapq
+
+
+class Solution:
+    def findMaximizedCapital(self, k: int, w: int, profits: list[int], capital: list[int]) -> int:
+        # Return the max final capital after up to k projects.
+        pass
+`,
+    },
+    methodName: 'findMaximizedCapital',
+    argKeys: ['k', 'w', 'profits', 'capital'],
+    defaultTests: [
+      { label: 'Gated projects', inputJson: '{"k":2,"w":0,"profits":[1,2,3],"capital":[0,1,1]}', expectedJson: '4' },
+      { label: 'Rich start',     inputJson: '{"k":1,"w":10,"profits":[100],"capital":[5]}',      expectedJson: '110' },
+      { label: 'Too poor',       inputJson: '{"k":1,"w":0,"profits":[100],"capital":[5]}',       expectedJson: '0' },
+    ],
+    resultCompare: 'exact',
+  },
+];

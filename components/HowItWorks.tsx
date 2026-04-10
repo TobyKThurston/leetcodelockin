@@ -29,7 +29,8 @@ function SlidingWindowViz() {
           </div>
         ))}
       </div>
-      {/* Sliding window overlay: slides from cell 0 to cell 5 as progress goes 0 → 1 */}
+      {/* Sliding window overlay: slides from cell 0 to cell 5 as progress goes 0 → 1.
+          Cell step = cell width (2.75rem) + gap (0.375rem) = 3.125rem. Max offset = 5 steps. */}
       <div
         className="absolute top-0 left-0 h-11 pointer-events-none"
         style={{
@@ -38,7 +39,7 @@ function SlidingWindowViz() {
           borderRadius: '0.5rem',
           background: 'rgba(59,130,246,0.14)',
           boxShadow: '0 0 24px rgba(96,165,250,0.35)',
-          transform: 'translateX(calc(var(--progress, 0) * 250px))',
+          transform: 'translateX(calc(var(--progress, 0) * 15.625rem))',
           willChange: 'transform',
         }}
       />
@@ -67,12 +68,13 @@ function TwoPointersViz() {
           </div>
         ))}
       </div>
-      {/* L pointer: moves from cell 0 → cell 3 as progress goes 0 → 1 */}
+      {/* L pointer: moves from cell 0 → cell 3 as progress goes 0 → 1.
+          Each step = 3.125rem (cell width + gap). 3 steps = 9.375rem. */}
       <div
-        className="absolute top-full mt-2 left-0 pointer-events-none"
+        className="absolute top-11 mt-1 left-0 pointer-events-none"
         style={{
           width: '2.75rem',
-          transform: 'translateX(calc(var(--progress, 0) * 150px))',
+          transform: 'translateX(calc(var(--progress, 0) * 9.375rem))',
           opacity: 'clamp(0, calc(var(--progress, 0) * 8), 1)',
           willChange: 'transform, opacity',
         }}
@@ -90,12 +92,13 @@ function TwoPointersViz() {
           <span className="text-[12px] font-mono font-bold text-blue-400 mt-1">L</span>
         </div>
       </div>
-      {/* R pointer: moves from cell 7 → cell 4 as progress goes 0 → 1 */}
+      {/* R pointer: moves from cell 7 → cell 4 as progress goes 0 → 1.
+          Starts at 7 * 3.125rem = 21.875rem, moves back 9.375rem. */}
       <div
-        className="absolute top-full mt-2 left-0 pointer-events-none"
+        className="absolute top-11 mt-1 left-0 pointer-events-none"
         style={{
           width: '2.75rem',
-          transform: 'translateX(calc(350px - var(--progress, 0) * 150px))',
+          transform: 'translateX(calc(21.875rem - var(--progress, 0) * 9.375rem))',
           opacity: 'clamp(0, calc(var(--progress, 0) * 8), 1)',
           willChange: 'transform, opacity',
         }}
@@ -232,11 +235,11 @@ export default function HowItWorks() {
         op = Math.max(0, Math.min(1, op));
 
         // Scroll-driven animation progress (0 → 1) as the step rises from
-        // the bottom of the viewport toward the middle. Stays at 1 once
-        // the step is past the midpoint.
+        // the bottom of the viewport (norm ≈ 0.9) to the middle (norm ≈ 0.5).
+        // Reaches 1 by the time the step is at reading position and stays there.
         let progress: number;
-        if (norm > 0.85) progress = 0;
-        else if (norm > 0.35) progress = (0.85 - norm) / 0.5;
+        if (norm > 0.9) progress = 0;
+        else if (norm > 0.5) progress = (0.9 - norm) / 0.4;
         else progress = 1;
         progress = Math.max(0, Math.min(1, progress));
 

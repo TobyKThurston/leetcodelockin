@@ -1,13 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, ExternalLink, Circle } from 'lucide-react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { LIBRARY, type CategoryDef, type Difficulty } from '@/lib/library';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import AppNav from '@/components/AppNav';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
@@ -46,83 +44,6 @@ const DIFF_STYLE: Record<Difficulty, React.CSSProperties> = {
 };
 
 const SOLVED_STORAGE_KEY = 'zl-lib-solved';
-
-// ─── LibraryNav ───────────────────────────────────────────────────────────────
-// Inline copy of DashboardNav with Library highlighted.
-
-function LibraryNav() {
-  const [user, setUser] = useState<{ name?: string; image?: string } | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const supabase = createSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUser({
-        name: user.user_metadata?.full_name ?? user.email,
-        image: user.user_metadata?.avatar_url,
-      });
-    });
-  }, []);
-
-  const handleSignOut = async () => {
-    const supabase = createSupabaseBrowser();
-    await supabase.auth.signOut();
-    router.push('/sign-in');
-  };
-
-  const initial = user?.name?.[0]?.toUpperCase() ?? '?';
-
-  const tabs = [
-    { label: 'Path',     href: '/dashboard' },
-    { label: 'Library',  href: '/library'   },
-    { label: 'Progress', href: null },
-    { label: 'Settings', href: '/settings'  },
-  ] as const;
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50" style={{ background: C.panelBg, borderBottom: `1px solid ${C.border}` }}>
-      <div className="w-full flex items-center gap-3 px-5 h-12">
-        <Link
-          href="/"
-          className="font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
-          style={SG}
-        >
-          LeetLockin
-        </Link>
-        <nav className="flex items-center gap-0.5">
-          {tabs.map((tab) => {
-            const active = tab.label === 'Library';
-            const classes = cn(
-              'text-[12px] px-3',
-              active ? 'text-white font-medium' : 'text-slate-400 hover:text-slate-200',
-            );
-            if (tab.href) {
-              return (
-                <Button key={tab.label} variant="ghost" size="sm" className={classes} nativeButton={false} render={<Link href={tab.href} />}>
-                  {tab.label}
-                </Button>
-              );
-            }
-            return (
-              <Button key={tab.label} variant="ghost" size="sm" className={classes}>
-                {tab.label}
-              </Button>
-            );
-          })}
-        </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <Avatar size="sm" className="size-7">
-            <AvatarImage src={user?.image} referrerPolicy="no-referrer" />
-            <AvatarFallback className="text-[11px] font-semibold bg-slate-700 text-slate-200">{initial}</AvatarFallback>
-          </Avatar>
-          <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-[11.5px] text-slate-500 hover:text-slate-300">
-            Sign out
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 // ─── SidebarCategoryCard ──────────────────────────────────────────────────────
 // Mirrors SidebarPathCard — 2-digit order, title, description, optional bar.
@@ -285,7 +206,7 @@ function LibrarySidebar({
 // ─── ProblemRow ───────────────────────────────────────────────────────────────
 
 function ProblemRow({
-  number, title, difficulty, pattern, leetcodeUrl, solved, onToggleSolved, onOpen,
+  number, title, difficulty, pattern, leetcodeUrl, solved, published, onToggleSolved, onOpen,
 }: {
   number: number;
   title: string;
@@ -293,17 +214,22 @@ function ProblemRow({
   pattern: string;
   leetcodeUrl: string;
   solved: boolean;
+  published: boolean;
   onToggleSolved: () => void;
   onOpen: () => void;
 }) {
   return (
     <div
-      onClick={onOpen}
+      onClick={published ? onOpen : undefined}
       className={cn(
-        'group flex items-center gap-3 px-3 py-2.5 rounded-md border cursor-pointer transition-colors',
-        solved
+        'group flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors',
+        published && 'cursor-pointer',
+        !published && 'cursor-not-allowed opacity-50',
+        published && solved
           ? 'bg-emerald-500/[0.04] border-emerald-500/25 hover:border-emerald-500/40'
-          : 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50 hover:border-slate-600/70',
+          : published
+          ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50 hover:border-slate-600/70'
+          : 'bg-slate-800/20 border-slate-800/60',
       )}
     >
       {/* Solved checkbox */}
@@ -355,6 +281,16 @@ function ProblemRow({
         {pattern}
       </span>
 
+      {/* Coming soon chip — only when not yet published */}
+      {!published && (
+        <span
+          className="shrink-0 hidden md:inline-block px-2 py-0.5 rounded-md text-[10.5px] text-slate-500"
+          style={{ border: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.015)' }}
+        >
+          Coming soon
+        </span>
+      )}
+
       {/* External link */}
       <a
         href={leetcodeUrl}
@@ -373,10 +309,11 @@ function ProblemRow({
 // ─── CategorySection ──────────────────────────────────────────────────────────
 
 function CategorySection({
-  category, solvedIds, onToggleSolved, onOpenProblem,
+  category, solvedIds, publishedSlugs, onToggleSolved, onOpenProblem,
 }: {
   category: CategoryDef;
   solvedIds: Set<string>;
+  publishedSlugs: Set<string>;
   onToggleSolved: (slug: string) => void;
   onOpenProblem: (slug: string) => void;
 }) {
@@ -446,6 +383,7 @@ function CategorySection({
                 pattern={problem.pattern}
                 leetcodeUrl={problem.leetcodeUrl}
                 solved={solvedIds.has(problem.slug)}
+                published={publishedSlugs.has(problem.slug)}
                 onToggleSolved={() => onToggleSolved(problem.slug)}
                 onOpen={() => onOpenProblem(problem.slug)}
               />
@@ -608,6 +546,7 @@ export default function LibraryPage() {
 
   const [viewingCategoryId, setViewingCategoryId] = useState<string>(LIBRARY[0].id);
   const [solvedIds, setSolvedIds] = useState<Set<string>>(new Set());
+  const [publishedSlugs, setPublishedSlugs] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
   const suppressObserverUntil = useRef(0);
 
@@ -623,6 +562,44 @@ export default function LibraryPage() {
       // Ignore malformed storage payloads.
     }
     setHydrated(true);
+  }, []);
+
+  // Fetch the published-problem allow-list and the user's accepted submissions
+  // from Supabase. Both queries respect RLS — published rows are public, and
+  // submissions are user-scoped.
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = createSupabaseBrowser();
+
+    (async () => {
+      const { data: publishedRows } = await supabase
+        .from('problems')
+        .select('slug')
+        .eq('is_published', true);
+      if (!cancelled && publishedRows) {
+        setPublishedSlugs(new Set(publishedRows.map(r => (r as { slug: string }).slug)));
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: solvedRows } = await supabase
+        .from('problem_submissions')
+        .select('problem_slug')
+        .eq('user_id', user.id)
+        .eq('status', 'accepted');
+      if (!cancelled && solvedRows) {
+        setSolvedIds(prev => {
+          const merged = new Set(prev);
+          for (const row of solvedRows) {
+            merged.add((row as { problem_slug: string }).problem_slug);
+          }
+          return merged;
+        });
+      }
+    })();
+
+    return () => { cancelled = true; };
   }, []);
 
   // Persist solved set to localStorage.
@@ -702,7 +679,7 @@ export default function LibraryPage() {
   }, []);
 
   const openProblem = useCallback((slug: string) => {
-    router.push(`/solve?problem=${encodeURIComponent(slug)}`);
+    router.push(`/solve/${encodeURIComponent(slug)}`);
   }, [router]);
 
   const handleSelectCategory = useCallback((id: string) => {
@@ -717,7 +694,7 @@ export default function LibraryPage() {
 
   return (
     <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
-      <LibraryNav />
+      <AppNav activeTab="Library" />
       <LibrarySidebar
         viewingCategoryId={viewingCategoryId}
         solvedByCategory={solvedByCategory}
@@ -746,6 +723,7 @@ export default function LibraryPage() {
                 key={category.id}
                 category={category}
                 solvedIds={solvedIds}
+                publishedSlugs={publishedSlugs}
                 onToggleSolved={toggleSolved}
                 onOpenProblem={openProblem}
               />

@@ -1,14 +1,19 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   ChevronLeft, ChevronRight, RotateCcw, ChevronUp,
-  Lightbulb, Plus, X, Play, Send,
+  Lightbulb, Plus, X, Play, Send, Sparkles,
+  FileText, Maximize2, Minimize2,
 } from 'lucide-react';
 import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
 import type { SolveResponse } from '@/lib/types';
+import type { ProblemContent } from '@/lib/problem-types';
+import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 
 // ─── Monaco (browser-only) ────────────────────────────────────────────────────
 
@@ -44,56 +49,11 @@ const BORDER_MED = 'rgba(255,255,255,0.1)';
 
 const SG: React.CSSProperties   = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
-const LS_KEY = 'lc-code-twosum';
 
 const LANGUAGES = [
   { id: 'python', label: 'Python', monacoId: 'python' },
 ] as const;
 type LangId = (typeof LANGUAGES)[number]['id'];
-
-const STARTER_CODE: Record<LangId, string> = {
-  python: `from typing import List
-
-class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        `,
-};
-
-const PROBLEM = {
-  id: '003',
-  title: 'Two Sum',
-  difficulty: 'Easy' as const,
-  pattern: 'Hash Map',
-  tags: ['Array', 'Hash Map'],
-  description: [
-    'Given an array of integers ',
-    { code: 'nums' },
-    ' and an integer ',
-    { code: 'target' },
-    ', return ',
-    { em: 'indices of the two numbers such that they add up to' },
-    ' ',
-    { code: 'target' },
-    '.',
-    '\n\n',
-    'You may assume that each input would have ',
-    { strong: 'exactly one solution' },
-    ', and you may not use the same element twice.',
-    '\n\nYou can return the answer in any order.',
-  ],
-  examples: [
-    { id: 1, input: 'nums = [2,7,11,15], target = 9', output: '[0,1]',  explanation: 'nums[0] + nums[1] == 9, return [0, 1].' },
-    { id: 2, input: 'nums = [3,2,4], target = 6',      output: '[1,2]' },
-    { id: 3, input: 'nums = [3,3], target = 6',        output: '[0,1]' },
-  ],
-  constraints: [
-    '2 ≤ nums.length ≤ 10⁴',
-    '-10⁹ ≤ nums[i] ≤ 10⁹',
-    '-10⁹ ≤ target ≤ 10⁹',
-    'Only one valid answer exists.',
-  ],
-  apiDescription: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. Example: nums = [2,7,11,15], target = 9 → [0,1]',
-};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -112,27 +72,7 @@ interface TestResult {
   error?: string;
 }
 
-const DEFAULT_TESTS: TestCase[] = [
-  { id: '1', label: 'Case 1', inputJson: '{"nums":[2,7,11,15],"target":9}', expectedJson: '[0,1]', custom: false },
-  { id: '2', label: 'Case 2', inputJson: '{"nums":[3,2,4],"target":6}',      expectedJson: '[1,2]', custom: false },
-  { id: '3', label: 'Case 3', inputJson: '{"nums":[3,3],"target":6}',        expectedJson: '[0,1]', custom: false },
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-type DescPart = string | { code: string } | { em: string } | { strong: string };
-
-function renderDesc(parts: DescPart[]) {
-  return parts.map((p, i) => {
-    if (typeof p === 'string') {
-      if (p === '\n\n') return <br key={i} className="block mb-3" />;
-      return <span key={i}>{p}</span>;
-    }
-    if ('code' in p)   return <code key={i} className="px-1.5 py-0.5 rounded text-[12.5px]" style={{ background: 'rgba(255,255,255,0.07)', color: '#c9d1d9', ...MONO }}>{p.code}</code>;
-    if ('em' in p)     return <em key={i} className="not-italic text-slate-200">{p.em}</em>;
-    if ('strong' in p) return <strong key={i} className="font-semibold text-slate-100">{p.strong}</strong>;
-  });
-}
 
 // Matched to dashboard's emerald completion / amber medium / red hard palette
 const DIFF_STYLE: Record<string, React.CSSProperties> = {
@@ -141,12 +81,28 @@ const DIFF_STYLE: Record<string, React.CSSProperties> = {
   Hard:   { color: 'rgba(248,113,113,0.9)', border: '1px solid rgba(248,113,113,0.2)',  background: 'rgba(239,68,68,0.07)'   },
 };
 
+const DIFF_LABEL_COLOR: Record<string, string> = {
+  Easy:   'rgba(52,211,153,0.7)',
+  Medium: 'rgba(251,191,36,0.7)',
+  Hard:   'rgba(248,113,113,0.7)',
+};
+
 let _customCounter = 0;
 function newCustomId() { return `custom-${++_customCounter}`; }
 
+function testsFromProblem(problem: ProblemContent): TestCase[] {
+  return problem.defaultTests.map((t, i) => ({
+    id: `default-${i + 1}`,
+    label: t.label || `Case ${i + 1}`,
+    inputJson: t.inputJson,
+    expectedJson: t.expectedJson,
+    custom: false,
+  }));
+}
+
 // ─── Top Nav (glass — matches DashboardNav) ───────────────────────────────────
 
-function TopNav() {
+function TopNav({ problem }: { problem: ProblemContent }) {
   return (
     <header
       className="flex items-center gap-3 px-5 shrink-0"
@@ -165,12 +121,12 @@ function TopNav() {
 
       {/* Back */}
       <Link
-        href="/dashboard"
+        href="/library"
         className="flex items-center gap-1.5 text-[12px] text-zinc-500 hover:text-zinc-300 transition-colors"
         style={SG}
       >
         <ChevronLeft size={13} />
-        Dashboard
+        Library
       </Link>
 
       <div className="w-px h-4 mx-1" style={{ background: BORDER }} />
@@ -178,14 +134,17 @@ function TopNav() {
       {/* Problem breadcrumb */}
       <div className="flex items-center gap-2">
         <span className="text-[11px] font-semibold tracking-[0.1em] uppercase text-zinc-600" style={SG}>
-          Hash Maps
+          {problem.pattern}
         </span>
         <ChevronRight size={11} className="text-zinc-700" />
         <span className="text-[13px] font-medium text-zinc-200" style={SG}>
-          {PROBLEM.title}
+          {problem.title}
         </span>
-        <span className="ml-0.5 text-[11px] font-medium" style={{ color: 'rgba(52,211,153,0.7)' }}>
-          Easy
+        <span
+          className="ml-0.5 text-[11px] font-medium"
+          style={{ color: DIFF_LABEL_COLOR[problem.difficulty] ?? '#9ca3af' }}
+        >
+          {problem.difficulty}
         </span>
       </div>
 
@@ -215,9 +174,39 @@ function TopNav() {
   );
 }
 
+// ─── Markdown renderer (tuned to dark palette) ────────────────────────────────
+
+const MARKDOWN_COMPONENTS = {
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p {...props} className="text-[13.5px] leading-[1.75] text-zinc-400 mb-3 last:mb-0" />
+  ),
+  strong: (props: React.HTMLAttributes<HTMLElement>) => (
+    <strong {...props} className="font-semibold text-slate-100" />
+  ),
+  em: (props: React.HTMLAttributes<HTMLElement>) => (
+    <em {...props} className="not-italic text-slate-200" />
+  ),
+  code: (props: React.HTMLAttributes<HTMLElement>) => (
+    <code
+      {...props}
+      className="px-1.5 py-0.5 rounded text-[12.5px]"
+      style={{ background: 'rgba(255,255,255,0.07)', color: '#c9d1d9', ...MONO }}
+    />
+  ),
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-zinc-400" />
+  ),
+  ol: (props: React.OlHTMLAttributes<HTMLOListElement>) => (
+    <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-zinc-400" />
+  ),
+  li: (props: React.LiHTMLAttributes<HTMLLIElement>) => (
+    <li {...props} className="text-[13.5px] leading-[1.6] text-zinc-400" />
+  ),
+};
+
 // ─── Problem Panel ────────────────────────────────────────────────────────────
 
-function QuestionTab() {
+function QuestionTab({ problem }: { problem: ProblemContent }) {
   return (
     <div
       className="px-6 py-5 space-y-5 overflow-y-auto flex-1"
@@ -226,13 +215,14 @@ function QuestionTab() {
       {/* Title + badges */}
       <div>
         <h1 className="text-[19px] font-semibold text-white mb-3" style={{ ...SG, letterSpacing: '-0.02em' }}>
-          {PROBLEM.title}
+          {problem.title}{' '}
+          <span className="text-zinc-600 font-normal text-[14px]">(LC #{problem.lcNumber})</span>
         </h1>
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="px-2 py-0.5 rounded-md text-[11.5px] font-medium" style={DIFF_STYLE[PROBLEM.difficulty]}>
-            {PROBLEM.difficulty}
+          <span className="px-2 py-0.5 rounded-md text-[11.5px] font-medium" style={DIFF_STYLE[problem.difficulty]}>
+            {problem.difficulty}
           </span>
-          {PROBLEM.tags.map(tag => (
+          {problem.tags.map(tag => (
             <span
               key={tag}
               className="px-2 py-0.5 rounded-md text-[11.5px] font-medium"
@@ -244,17 +234,19 @@ function QuestionTab() {
         </div>
       </div>
 
-      {/* Description */}
-      <p className="text-[13.5px] leading-[1.75] text-zinc-400">
-        {renderDesc(PROBLEM.description as DescPart[])}
-      </p>
+      {/* Description (markdown) */}
+      <div>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={MARKDOWN_COMPONENTS}>
+          {problem.descriptionMd}
+        </ReactMarkdown>
+      </div>
 
       {/* Examples */}
       <div className="space-y-4">
-        {PROBLEM.examples.map(ex => (
-          <div key={ex.id}>
+        {problem.examples.map((ex, i) => (
+          <div key={i}>
             <p className="text-[12px] font-semibold text-zinc-400 mb-2 uppercase tracking-[0.08em]" style={SG}>
-              Example {ex.id}
+              Example {i + 1}
             </p>
             <div
               className="rounded-lg px-4 py-3 space-y-1.5"
@@ -286,7 +278,7 @@ function QuestionTab() {
           Constraints
         </p>
         <ul className="space-y-1.5">
-          {PROBLEM.constraints.map(c => (
+          {problem.constraints.map(c => (
             <li key={c} className="flex items-start gap-2.5 text-[12.5px] text-zinc-500" style={MONO}>
               <span className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
               {c}
@@ -298,7 +290,128 @@ function QuestionTab() {
   );
 }
 
-function HintsTab({ code }: { code: string }) {
+// Layered gradient orb for the hints empty state — avoids the "cheap flat icon" look
+function HintsOrb() {
+  return (
+    <div
+      className="relative flex items-center justify-center"
+      style={{
+        width: 64,
+        height: 64,
+        borderRadius: 18,
+        background:
+          'linear-gradient(155deg, rgba(96,165,250,0.28) 0%, rgba(59,130,246,0.1) 55%, rgba(11,18,32,0.85) 100%)',
+        border: '1px solid rgba(96,165,250,0.38)',
+        boxShadow:
+          '0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 20px 50px -18px rgba(59,130,246,0.55), 0 0 0 1px rgba(96,165,250,0.1)',
+      }}
+    >
+      {/* inner highlight glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: 18,
+          background:
+            'radial-gradient(circle at 50% 18%, rgba(186,230,253,0.32), transparent 60%)',
+        }}
+      />
+      {/* rim ring */}
+      <div
+        className="absolute inset-[3px] pointer-events-none"
+        style={{
+          borderRadius: 15,
+          border: '1px solid rgba(191,219,254,0.12)',
+        }}
+      />
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        className="relative"
+        style={{ filter: 'drop-shadow(0 1px 2px rgba(12,20,40,0.6))' }}
+      >
+        <defs>
+          <linearGradient id="hints-orb-bulb" x1="12" y1="2" x2="12" y2="18" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#f0f9ff" />
+            <stop offset="55%" stopColor="#bfdbfe" />
+            <stop offset="100%" stopColor="#60a5fa" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.6 1.2 1.3 1.4 2.1.1.4.4.4.6.4h4c.2 0 .5 0 .6-.4.2-.8.7-1.5 1.4-2.1A6 6 0 0 0 12 3Z"
+          stroke="url(#hints-orb-bulb)"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12 3a6 6 0 0 0-4 10.5c.7.6 1.2 1.3 1.4 2.1.1.4.4.4.6.4h4c.2 0 .5 0 .6-.4.2-.8.7-1.5 1.4-2.1A6 6 0 0 0 12 3Z"
+          fill="url(#hints-orb-bulb)"
+          fillOpacity="0.18"
+        />
+      </svg>
+    </div>
+  );
+}
+
+// Premium tinted chip for toolbar actions — gradient fill, inset highlight, soft outer glow
+interface PremiumChipProps {
+  onClick: () => void;
+  title: string;
+  label: string;
+  tone: 'blue' | 'violet';
+  icon: React.ReactNode;
+}
+function PremiumChip({ onClick, title, label, tone, icon }: PremiumChipProps) {
+  const palette =
+    tone === 'blue'
+      ? {
+          text: '#dbeafe',
+          bg: 'linear-gradient(180deg, rgba(96,165,250,0.22) 0%, rgba(59,130,246,0.08) 100%)',
+          border: '1px solid rgba(96,165,250,0.38)',
+          shadow:
+            '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(59,130,246,0.55)',
+          iconGlow: 'radial-gradient(circle, rgba(147,197,253,0.45) 0%, transparent 70%)',
+        }
+      : {
+          text: '#e9d5ff',
+          bg: 'linear-gradient(180deg, rgba(167,139,250,0.22) 0%, rgba(139,92,246,0.08) 100%)',
+          border: '1px solid rgba(167,139,250,0.38)',
+          shadow:
+            '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(139,92,246,0.55)',
+          iconGlow: 'radial-gradient(circle, rgba(196,181,253,0.45) 0%, transparent 70%)',
+        };
+
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      className="group relative flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11.5px] font-semibold transition-all hover:brightness-110 active:brightness-95"
+      style={{
+        color: palette.text,
+        background: palette.bg,
+        border: palette.border,
+        boxShadow: palette.shadow,
+        ...SG,
+      }}
+    >
+      <span
+        className="relative flex items-center justify-center"
+        style={{ width: 14, height: 14 }}
+      >
+        <span
+          className="absolute inset-[-2px] rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
+          style={{ background: palette.iconGlow }}
+        />
+        <span className="relative flex">{icon}</span>
+      </span>
+      {label}
+    </button>
+  );
+}
+
+function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) {
   const [response, setResponse]     = useState<SolveResponse | null>(null);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState<string | null>(null);
@@ -314,10 +427,14 @@ function HintsTab({ code }: { code: string }) {
     setShowSteps(false);
     setShowCode(false);
     try {
+      const exampleText = problem.examples
+        .map((ex, i) => `Example ${i + 1}: Input: ${ex.input} → Output: ${ex.output}`)
+        .join('\n');
+      const problemDescription = `${problem.title}\n\n${problem.descriptionMd}\n\n${exampleText}`;
       const res = await fetch('/api/solve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ problem: PROBLEM.apiDescription, attempt: code.trim() }),
+        body: JSON.stringify({ problem: problemDescription, attempt: code.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Request failed');
@@ -332,23 +449,21 @@ function HintsTab({ code }: { code: string }) {
   return (
     <div className="px-5 py-5 overflow-y-auto flex-1 space-y-4" style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}>
       {!response && !loading && (
-        <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.18)' }}
-          >
-            <Lightbulb size={18} style={{ color: 'rgba(147,197,253,0.7)' }} />
-          </div>
+        <div className="flex flex-col items-center justify-center py-14 text-center space-y-5">
+          <HintsOrb />
           <div>
-            <p className="text-[14px] font-semibold text-zinc-300 mb-1" style={SG}>Need a nudge?</p>
-            <p className="text-[12px] text-zinc-600 max-w-[220px]">AI hints will analyze your current code and guide you to the solution.</p>
+            <p className="text-[14px] font-semibold text-zinc-200 mb-1 tracking-tight" style={SG}>Need a nudge?</p>
+            <p className="text-[12px] text-zinc-500 max-w-[240px] leading-relaxed">AI hints will analyze your current code and guide you to the solution.</p>
           </div>
           <button
             onClick={getHints}
-            className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-colors bg-blue-500 hover:bg-blue-400"
+            className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
             style={{
-              border: '1px solid rgba(96,165,250,0.6)',
-              boxShadow: '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+              background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+              border: '1px solid rgba(147,197,253,0.55)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
+              ...SG,
             }}
           >
             Get hints
@@ -456,50 +571,189 @@ function HintsTab({ code }: { code: string }) {
   );
 }
 
-type LeftTab = 'question' | 'hints';
+type LeftTab = 'question' | 'hints' | 'tutor';
 
-interface ProblemPanelProps { code: string }
+interface ProblemPanelProps {
+  problem: ProblemContent;
+  code: string;
+  width: number;
+  fullscreen: boolean;
+  activeTab: LeftTab;
+  onTabChange: (t: LeftTab) => void;
+  onToggleFullscreen: () => void;
+}
 
-function ProblemPanel({ code }: ProblemPanelProps) {
-  const [tab, setTab] = useState<LeftTab>('question');
-  const TABS: { id: LeftTab; label: string }[] = [
-    { id: 'question', label: 'Question' },
-    { id: 'hints',    label: 'Hints' },
+function ProblemPanel({
+  problem, code, width, fullscreen, activeTab, onTabChange, onToggleFullscreen,
+}: ProblemPanelProps) {
+  const TABS: { id: LeftTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'question', label: 'Question', icon: <FileText size={12} /> },
+    { id: 'hints',    label: 'Hints',    icon: <Lightbulb size={12} style={{ color: 'rgba(147,197,253,0.9)' }} /> },
+    { id: 'tutor',    label: 'Tutor',    icon: <Sparkles size={12} style={{ color: 'rgba(196,181,253,0.95)' }} /> },
   ];
 
   return (
     <div
-      className="flex flex-col"
-      style={{ width: '44%', minWidth: 360, borderRight: `1px solid ${BORDER}`, background: BG_PANEL }}
+      className={fullscreen ? 'flex flex-col flex-1 min-w-0' : 'flex flex-col shrink-0'}
+      style={fullscreen
+        ? { background: BG_PANEL }
+        : { width, minWidth: 280, background: BG_PANEL }}
     >
       {/* Tab bar */}
       <div
         className="flex items-center shrink-0"
-        style={{ height: 42, paddingLeft: 16, borderBottom: `1px solid ${BORDER}` }}
+        style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
       >
-        {TABS.map(t => (
+        <div className="flex items-center h-full">
+          {TABS.map(t => {
+            const isActive = t.id === activeTab;
+            return (
+              <button
+                key={t.id}
+                onClick={() => onTabChange(t.id)}
+                className="flex items-center gap-1.5 h-full px-4 text-[12.5px] font-medium transition-colors relative"
+                style={{
+                  color: isActive ? '#c9d1d9' : '#3f4f63',
+                  background: isActive ? 'rgba(255,255,255,0.02)' : 'transparent',
+                  ...SG,
+                }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = '#8b95a7'; }}
+                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = '#3f4f63'; }}
+              >
+                {t.icon}
+                {t.label}
+                {isActive && (
+                  <span
+                    className="absolute bottom-0 left-3 right-3 h-[2px] rounded-t"
+                    style={{ background: 'rgba(96,165,250,0.7)' }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="ml-auto pr-2">
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className="px-4 h-full text-[13px] font-medium transition-colors relative"
-            style={{ color: tab === t.id ? '#f1f5f9' : '#3f4f63', ...SG }}
+            onClick={onToggleFullscreen}
+            className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-600 hover:text-zinc-300 transition-colors"
+            title={fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            aria-label={fullscreen ? 'Exit fullscreen' : 'Fullscreen'}
           >
-            {t.label}
-            {tab === t.id && (
-              <span
-                className="absolute bottom-0 left-3 right-3 h-[2px] rounded-t"
-                style={{ background: 'rgba(59,130,246,0.6)' }}
-              />
-            )}
+            {fullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
           </button>
-        ))}
+        </div>
       </div>
 
+      {/* Tab content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {tab === 'question' && <QuestionTab />}
-        {tab === 'hints'    && <HintsTab code={code} />}
+        {activeTab === 'question' && <QuestionTab problem={problem} />}
+        {activeTab === 'hints'    && <HintsTab code={code} problem={problem} />}
+        {activeTab === 'tutor'    && <TutorChat code={code} problem={problem} />}
       </div>
     </div>
+  );
+}
+
+// ─── Horizontal Resizer ───────────────────────────────────────────────────────
+
+interface HorizontalResizerProps {
+  onDrag: (deltaX: number) => void;
+}
+
+function HorizontalResizer({ onDrag }: HorizontalResizerProps) {
+  const [hover, setHover]       = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    if (!dragging) return;
+    let prev = 0;
+    const onMove = (e: MouseEvent) => {
+      if (prev === 0) { prev = e.clientX; return; }
+      onDrag(e.clientX - prev);
+      prev = e.clientX;
+    };
+    const onUp = () => {
+      setDragging(false);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [dragging, onDrag]);
+
+  return (
+    <div
+      onMouseDown={() => {
+        setDragging(true);
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'col-resize';
+      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="shrink-0 relative"
+      style={{
+        width: 5,
+        cursor: 'col-resize',
+        background: hover || dragging ? 'rgba(59,130,246,0.35)' : BORDER,
+        transition: 'background 0.15s',
+      }}
+    />
+  );
+}
+
+// ─── Vertical Resizer ─────────────────────────────────────────────────────────
+
+interface VerticalResizerProps {
+  onDrag: (deltaY: number) => void;
+}
+
+function VerticalResizer({ onDrag }: VerticalResizerProps) {
+  const [hover, setHover]       = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    if (!dragging) return;
+    let prev = 0;
+    const onMove = (e: MouseEvent) => {
+      if (prev === 0) { prev = e.clientY; return; }
+      onDrag(e.clientY - prev);
+      prev = e.clientY;
+    };
+    const onUp = () => {
+      setDragging(false);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [dragging, onDrag]);
+
+  return (
+    <div
+      onMouseDown={() => {
+        setDragging(true);
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = 'row-resize';
+      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className="shrink-0"
+      style={{
+        height: 5,
+        cursor: 'row-resize',
+        background: hover || dragging ? 'rgba(59,130,246,0.35)' : BORDER,
+        transition: 'background 0.15s',
+      }}
+    />
   );
 }
 
@@ -572,11 +826,15 @@ interface EditorPanelProps {
   lang: LangId;
   running: boolean;
   results: TestResult[];
+  fullscreen: boolean;
   onCodeChange:  (v: string) => void;
   onLangChange:  (l: LangId) => void;
   onReset:       () => void;
   onRun:         () => void;
   onSubmit:      () => void;
+  onOpenHints:   () => void;
+  onOpenTutor:   () => void;
+  onToggleFullscreen: () => void;
   verdict:       'accepted' | 'wrong' | null;
   children:      React.ReactNode;
 }
@@ -587,9 +845,9 @@ function parseErrorLine(msg: string): number {
 }
 
 function EditorPanel({
-  code, lang, running, results,
+  code, lang, running, results, fullscreen,
   onCodeChange, onLangChange, onReset,
-  onRun, onSubmit, verdict, children,
+  onRun, onSubmit, onOpenHints, onOpenTutor, onToggleFullscreen, verdict, children,
 }: EditorPanelProps) {
   const onRunRef  = useRef(onRun);
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -673,19 +931,46 @@ function EditorPanel({
           </svg>
         </div>
 
-        <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-700 select-none">
-          <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
-          <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
-          <span className="ml-0.5" style={SG}>Run</span>
-        </span>
+        <div className="flex items-center gap-1.5">
+          <PremiumChip
+            onClick={onOpenHints}
+            title="Open hints"
+            label="Hints"
+            tone="blue"
+            icon={<Lightbulb size={11} strokeWidth={2.2} style={{ color: '#dbeafe' }} />}
+          />
+          <PremiumChip
+            onClick={onOpenTutor}
+            title="Open AI tutor"
+            label="Tutor"
+            tone="violet"
+            icon={<Sparkles size={11} strokeWidth={2.2} style={{ color: '#e9d5ff' }} />}
+          />
 
-        <button
-          onClick={onReset}
-          className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-700 hover:text-zinc-400 transition-colors"
-          title="Reset to starter code"
-        >
-          <RotateCcw size={13} />
-        </button>
+          <div className="w-px h-4 mx-1" style={{ background: BORDER }} />
+
+          <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-700 select-none">
+            <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
+            <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
+            <span className="ml-0.5" style={SG}>Run</span>
+          </span>
+
+          <button
+            onClick={onReset}
+            className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-700 hover:text-zinc-400 transition-colors"
+            title="Reset to starter code"
+          >
+            <RotateCcw size={13} />
+          </button>
+          <button
+            onClick={onToggleFullscreen}
+            className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-700 hover:text-zinc-400 transition-colors"
+            title={fullscreen ? 'Exit fullscreen' : 'Fullscreen editor'}
+            aria-label={fullscreen ? 'Exit fullscreen' : 'Fullscreen editor'}
+          >
+            {fullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+          </button>
+        </div>
       </div>
 
       {/* Monaco */}
@@ -764,6 +1049,8 @@ function EditorPanel({
 
 interface TestCasePanelProps {
   open: boolean;
+  height:          number;
+  onResize:        (deltaY: number) => void;
   onToggle:        () => void;
   tests:           TestCase[];
   results:         TestResult[];
@@ -783,7 +1070,7 @@ function caseStatusColor(caseId: string, results: TestResult[]) {
 }
 
 function TestCasePanel({
-  open, onToggle, tests, results, activeId, running,
+  open, height, onResize, onToggle, tests, results, activeId, running,
   onSelectCase, onAddCase, onDeleteCase, onUpdateInput, onUpdateExpected,
 }: TestCasePanelProps) {
   const activeTest   = tests.find(t => t.id === activeId) ?? tests[0];
@@ -794,8 +1081,15 @@ function TestCasePanel({
   return (
     <div
       className="shrink-0 flex flex-col"
-      style={{ borderTop: `1px solid ${BORDER}`, background: BG_PANEL }}
+      style={{ background: BG_PANEL }}
     >
+      {/* Resizer (only when open) */}
+      {open ? (
+        <VerticalResizer onDrag={(dy) => onResize(-dy)} />
+      ) : (
+        <div style={{ height: 1, background: BORDER }} />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between px-4" style={{ height: 38 }}>
         <button
@@ -825,7 +1119,7 @@ function TestCasePanel({
       </div>
 
       {open && (
-        <div style={{ height: 220, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ height, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column' }}>
           {/* Case tab row */}
           <div
             className="flex items-center shrink-0 overflow-x-auto"
@@ -965,69 +1259,304 @@ function TestCasePanel({
   );
 }
 
+// ─── Tutor Chat (tab content) ────────────────────────────────────────────────
+
+interface ChatMsg {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+function TutorChat({ code, problem }: { code: string; problem: ProblemContent }) {
+  const [messages, setMessages] = useState<ChatMsg[]>([
+    {
+      role: 'assistant',
+      content:
+        "Hey — I'm your AI tutor. Ask me anything about this problem: what pattern to use, why your code isn't working, or how to reason through the edge cases. I won't hand you the solution.",
+    },
+  ]);
+  const [input, setInput]     = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError]     = useState<string | null>(null);
+  const scrollRef             = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, sending]);
+
+  async function send() {
+    const text = input.trim();
+    if (!text || sending) return;
+    setInput('');
+    setError(null);
+    const next: ChatMsg[] = [...messages, { role: 'user', content: text }];
+    setMessages(next);
+    setSending(true);
+    try {
+      const exampleText = problem.examples
+        .map((ex, i) => `Example ${i + 1}: Input: ${ex.input} → Output: ${ex.output}`)
+        .join('\n');
+      const problemDescription = `${problem.title}\n\n${problem.descriptionMd}\n\n${exampleText}`;
+      const res = await fetch('/api/tutor-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: next,
+          problem: problemDescription,
+          code,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      setMessages(m => [...m, { role: 'assistant', content: data.reply }]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  return (
+    <div className="flex flex-col flex-1 overflow-hidden">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-3"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
+      >
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}
+          >
+            <div
+              className="rounded-lg px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap"
+              style={{
+                maxWidth: '85%',
+                background:
+                  m.role === 'user'
+                    ? 'rgba(59,130,246,0.12)'
+                    : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${
+                  m.role === 'user'
+                    ? 'rgba(59,130,246,0.25)'
+                    : BORDER
+                }`,
+                color: m.role === 'user' ? '#dbeafe' : '#c9d1d9',
+              }}
+            >
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {sending && (
+          <div className="flex justify-start">
+            <div
+              className="rounded-lg px-3 py-2"
+              style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${BORDER}` }}
+            >
+              <div className="flex gap-1">
+                {[0, 1, 2].map(i => (
+                  <div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                    style={{
+                      background: 'rgba(196,181,253,0.6)',
+                      animationDelay: `${i * 150}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {error && (
+          <div
+            className="rounded-lg px-3 py-2 text-[12px] text-red-400"
+            style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.12)' }}
+          >
+            {error}
+          </div>
+        )}
+      </div>
+
+      <div
+        className="shrink-0 p-3"
+        style={{ borderTop: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.015)' }}
+      >
+        <div
+          className="flex items-end gap-2 rounded-lg px-3 py-2"
+          style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${BORDER_MED}` }}
+        >
+          <textarea
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            rows={1}
+            placeholder="Ask the tutor anything…"
+            className="flex-1 bg-transparent resize-none outline-none text-[13px] text-zinc-200 placeholder:text-zinc-600 leading-relaxed"
+            style={{ maxHeight: 120 }}
+          />
+          <button
+            onClick={send}
+            disabled={sending || !input.trim()}
+            className="shrink-0 p-1.5 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              background: 'rgba(139,92,246,0.15)',
+              border: '1px solid rgba(139,92,246,0.3)',
+              color: 'rgba(196,181,253,0.95)',
+            }}
+            aria-label="Send"
+          >
+            <Send size={12} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function ProblemPage() {
+interface ProblemPageProps {
+  problem: ProblemContent;
+}
+
+export default function ProblemPage({ problem }: ProblemPageProps) {
+  const lsKey = `lc-code-${problem.slug}`;
+  const starterPython = problem.starterCode.python;
+
+  const initialTests = useMemo(() => testsFromProblem(problem), [problem]);
+  const initialActiveId = initialTests[0]?.id ?? 'default-1';
+
   const [lang, setLang]           = useState<LangId>('python');
-  const [code, setCode]           = useState(STARTER_CODE.python);
+  const [code, setCode]           = useState(starterPython);
   const [panelOpen, setPanelOpen] = useState(false);
-  const [tests, setTests]         = useState<TestCase[]>(DEFAULT_TESTS);
+  const [tests, setTests]         = useState<TestCase[]>(initialTests);
   const [results, setResults]     = useState<TestResult[]>([]);
-  const [activeId, setActiveId]   = useState('1');
+  const [activeId, setActiveId]   = useState(initialActiveId);
   const [running, setRunning]     = useState(false);
   const [verdict, setVerdict]     = useState<'accepted' | 'wrong' | null>(null);
 
+  // Resizable layout
+  const [leftWidth, setLeftWidth]   = useState(560);
+  const [testHeight, setTestHeight] = useState(220);
+
+  // Left panel tabs + per-panel fullscreen
+  const [leftTab, setLeftTab]       = useState<LeftTab>('question');
+  const [fullscreen, setFullscreen] = useState<'left' | 'editor' | null>(null);
+
+  const openLeftTab = useCallback((t: LeftTab) => {
+    setLeftTab(t);
+    setFullscreen(fs => (fs === 'editor' ? null : fs));
+  }, []);
+
+  const onLeftResize = useCallback((dx: number) => {
+    setLeftWidth(w => {
+      const next = w + dx;
+      const max  = typeof window !== 'undefined' ? Math.max(280, window.innerWidth - 360) : 1200;
+      return Math.max(280, Math.min(max, next));
+    });
+  }, []);
+
+  // Keep leftWidth within bounds when the browser window is resized — otherwise a
+  // wide session's leftWidth can push the editor off-screen when the window shrinks.
   useEffect(() => {
-    const saved = localStorage.getItem(LS_KEY);
+    if (typeof window === 'undefined') return;
+    const clamp = () => {
+      setLeftWidth(w => {
+        const max = Math.max(280, window.innerWidth - 360);
+        return Math.min(Math.max(280, w), max);
+      });
+    };
+    clamp();
+    window.addEventListener('resize', clamp);
+    return () => window.removeEventListener('resize', clamp);
+  }, []);
+
+  const onTestResize = useCallback((dy: number) => {
+    setTestHeight(h => {
+      const next = h + dy;
+      const max  = typeof window !== 'undefined' ? window.innerHeight - 250 : 700;
+      return Math.max(120, Math.min(max, next));
+    });
+  }, []);
+
+  // Hydrate draft code from localStorage.
+  useEffect(() => {
+    const saved = localStorage.getItem(lsKey);
     if (saved) setCode(saved);
+  }, [lsKey]);
+
+  // Pre-warm the Pyodide worker while the user is reading the problem, so the
+  // first "Run" click is instant instead of paying the ~2s runtime cold start.
+  useEffect(() => {
+    ensureWorker().catch(() => { /* best-effort; real errors surface on run */ });
   }, []);
 
   function handleCodeChange(val: string) {
     setCode(val);
-    localStorage.setItem(LS_KEY, val);
+    localStorage.setItem(lsKey, val);
   }
 
   function handleLangChange(l: LangId) {
     setLang(l);
-    const saved = localStorage.getItem(`${LS_KEY}-${l}`);
-    setCode(saved ?? STARTER_CODE[l]);
+    // Single-language for now; kept for future expansion.
+    setCode(starterPython);
   }
 
   function handleReset() {
-    const fresh = STARTER_CODE[lang];
-    setCode(fresh);
-    localStorage.setItem(LS_KEY, fresh);
+    setCode(starterPython);
+    localStorage.setItem(lsKey, starterPython);
   }
 
   async function execTests(showVerdict: boolean) {
     setRunning(true);
     setVerdict(null);
     try {
-      const res = await fetch('/api/run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, tests }),
+      const { results: newResults } = await runTests({
+        code,
+        tests,
+        methodName:    problem.methodName,
+        argKeys:       problem.argKeys,
+        resultCompare: problem.resultCompare,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        const errResults: TestResult[] = tests.map(t => ({
-          caseId: t.id, passed: false, actual: '', error: data.error ?? 'Unknown error',
-        }));
-        setResults(errResults);
-        setPanelOpen(true);
-        setActiveId(tests[0]?.id ?? '1');
-        if (showVerdict) setVerdict('wrong');
-        return;
-      }
-      const newResults: TestResult[] = data.results;
       setResults(newResults);
       setPanelOpen(true);
       const firstFail = newResults.find(r => !r.passed);
       if (firstFail) setActiveId(firstFail.caseId);
-      else setActiveId(tests[0]?.id ?? '1');
-      if (showVerdict) setVerdict(newResults.every(r => r.passed) ? 'accepted' : 'wrong');
-    } catch {
-      setResults(tests.map(t => ({ caseId: t.id, passed: false, actual: '', error: 'Network error' })));
+      else setActiveId(tests[0]?.id ?? initialActiveId);
+
+      const accepted = newResults.length > 0 && newResults.every(r => r.passed);
+      if (showVerdict) setVerdict(accepted ? 'accepted' : 'wrong');
+
+      // Fire-and-forget submission recording on submit.
+      if (showVerdict) {
+        const passedCount = newResults.filter(r => r.passed).length;
+        const status: 'accepted' | 'wrong' = accepted ? 'accepted' : 'wrong';
+        fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            slug:        problem.slug,
+            code,
+            language:    lang,
+            status,
+            passedCount,
+            totalCount:  newResults.length,
+          }),
+        }).catch(() => { /* best-effort */ });
+      }
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Runner error';
+      setResults(tests.map(t => ({ caseId: t.id, passed: false, actual: '', error: message })));
       setPanelOpen(true);
       if (showVerdict) setVerdict('wrong');
     } finally {
@@ -1045,7 +1574,7 @@ export default function ProblemPage() {
   function deleteCase(id: string) {
     setTests(prev => prev.filter(t => t.id !== id));
     setResults(prev => prev.filter(r => r.caseId !== id));
-    setActiveId('1');
+    setActiveId(initialActiveId);
   }
 
   function updateInput(id: string, val: string) {
@@ -1060,37 +1589,61 @@ export default function ProblemPage() {
 
   return (
     <div className="flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
-      <TopNav />
+      <TopNav problem={problem} />
 
-      <div className="flex flex-1 overflow-hidden">
-        <ProblemPanel code={code} />
-
-        <EditorPanel
-          code={code}
-          lang={lang}
-          running={running}
-          results={results}
-          onCodeChange={handleCodeChange}
-          onLangChange={handleLangChange}
-          onReset={handleReset}
-          onRun={() => execTests(false)}
-          onSubmit={() => execTests(true)}
-          verdict={verdict}
-        >
-          <TestCasePanel
-            open={panelOpen}
-            onToggle={() => setPanelOpen(o => !o)}
-            tests={tests}
-            results={results}
-            activeId={activeId}
-            running={running}
-            onSelectCase={setActiveId}
-            onAddCase={addCustomCase}
-            onDeleteCase={deleteCase}
-            onUpdateInput={updateInput}
-            onUpdateExpected={updateExpected}
+      <div className="flex flex-1 overflow-hidden relative">
+        {fullscreen !== 'editor' && (
+          <ProblemPanel
+            problem={problem}
+            code={code}
+            width={leftWidth}
+            fullscreen={fullscreen === 'left'}
+            activeTab={leftTab}
+            onTabChange={setLeftTab}
+            onToggleFullscreen={() =>
+              setFullscreen(fs => (fs === 'left' ? null : 'left'))
+            }
           />
-        </EditorPanel>
+        )}
+
+        {fullscreen === null && <HorizontalResizer onDrag={onLeftResize} />}
+
+        {fullscreen !== 'left' && (
+          <EditorPanel
+            code={code}
+            lang={lang}
+            running={running}
+            results={results}
+            fullscreen={fullscreen === 'editor'}
+            onCodeChange={handleCodeChange}
+            onLangChange={handleLangChange}
+            onReset={handleReset}
+            onRun={() => execTests(false)}
+            onSubmit={() => execTests(true)}
+            onOpenHints={() => openLeftTab('hints')}
+            onOpenTutor={() => openLeftTab('tutor')}
+            onToggleFullscreen={() =>
+              setFullscreen(fs => (fs === 'editor' ? null : 'editor'))
+            }
+            verdict={verdict}
+          >
+            <TestCasePanel
+              open={panelOpen}
+              height={testHeight}
+              onResize={onTestResize}
+              onToggle={() => setPanelOpen(o => !o)}
+              tests={tests}
+              results={results}
+              activeId={activeId}
+              running={running}
+              onSelectCase={setActiveId}
+              onAddCase={addCustomCase}
+              onDeleteCase={deleteCase}
+              onUpdateInput={updateInput}
+              onUpdateExpected={updateExpected}
+            />
+          </EditorPanel>
+        )}
       </div>
     </div>
   );

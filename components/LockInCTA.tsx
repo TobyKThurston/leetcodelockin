@@ -186,7 +186,7 @@ export default function LockInCTA() {
 
           <Link
             ref={btnRef}
-            href="/solve"
+            href="/tutor"
             className="relative flex items-center justify-center rounded-2xl px-16 py-7"
             style={{
               fontFamily: 'var(--font-space-grotesk), sans-serif',

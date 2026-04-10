@@ -1,5 +1,3 @@
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
 import { getSupabaseUser } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import SignOutButton from './SignOutButton';
 import ProfileForm from './ProfileForm';
+import SettingsNav from './SettingsNav';
 
 const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -25,28 +24,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#0b1220' }}>
-      {/* Header */}
-      <header
-        className="fixed top-0 left-0 right-0 z-50"
-        style={{ background: '#070c17', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
-      >
-        <div className="w-full flex items-center gap-3 px-5 h-12">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1 text-[12.5px] text-slate-400 hover:text-slate-200"
-            style={SG}
-          >
-            <ChevronLeft className="size-4" />
-            Back
-          </Link>
-          <span
-            className="ml-2 text-[13px] font-medium text-white"
-            style={SG}
-          >
-            Settings
-          </span>
-        </div>
-      </header>
+      <SettingsNav />
 
       {/* Body */}
       <main className="pt-20 pb-16 px-5">
@@ -112,16 +90,6 @@ export default async function SettingsPage() {
                 </div>
                 <Button variant="outline" size="sm" disabled className="text-[12px]">
                   Dark
-                </Button>
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[13.5px] text-white" style={SG}>Language</p>
-                  <p className="text-[12px] text-slate-500" style={SG}>Interface language for lessons and UI.</p>
-                </div>
-                <Button variant="outline" size="sm" disabled className="text-[12px]">
-                  English
                 </Button>
               </div>
             </CardContent>

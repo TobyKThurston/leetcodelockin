@@ -1,185 +1,261 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-const stages = [
+/* ───────────────────────────────────────────────────────────────────
+   Curriculum section.
+   - Left sidebar is sticky and holds the index + progress meter.
+   - Right column is a stack of tall phase panels that scroll normally.
+   - Each panel has its own `localProgress` (0 → 1 as it passes through
+     the reading zone) so visuals can drive scroll-linked animations
+     (sliding window slides, counter counts up, etc.).
+─────────────────────────────────────────────────────────────────── */
+
+type PhaseVisualProps = { localProgress: number };
+
+const phases = [
   {
     n: '01',
     title: 'Python Foundations',
-    sub: 'Build the base before anything else.',
-    topics: [
-      'Variables & types',
-      'Loops & conditionals',
-      'Functions & scope',
-      'Lists, dicts & sets',
-      'List comprehensions',
-      'Recursion basics',
-    ],
+    tagline: 'Fluency in the language you solve in.',
   },
   {
     n: '02',
     title: 'Core Data Structures',
-    sub: 'Understand the tools before the problems.',
-    topics: [
-      'Arrays & strings',
-      'Hash maps',
-      'Stacks & queues',
-      'Linked lists',
-      'Binary trees',
-      'Graphs',
-    ],
+    tagline: 'The toolkit every problem is built from.',
   },
   {
     n: '03',
     title: 'Pattern Library',
-    sub: 'Every LeetCode problem maps to one of these.',
-    topics: [
-      'Sliding window',
-      'Two pointers',
-      'BFS & DFS',
-      'Binary search',
-      'Dynamic programming',
-      'Backtracking',
-    ],
+    tagline: 'Recognize the shape of any problem.',
   },
   {
     n: '04',
     title: 'Interview Ready',
-    sub: 'Targeted sets by company and role.',
-    topics: [
-      'Google · Meta · Amazon',
-      'Apple · Microsoft',
-      'Startup tracks',
-      'Company-specific patterns',
-      'Timed mock problems',
-      'Behavioral + system design',
-    ],
+    tagline: 'Timed mocks. Company-specific sets.',
   },
 ];
 
-type Stage = (typeof stages)[number];
+/* ───────── Phase visuals ───────── */
 
-function StageContent({ stage, dir }: { stage: Stage; dir: 'left' | 'right' }) {
+/**
+ * Skill Coverage radar — shared between phases 1, 2, and 4.
+ * `growth` is a 0→1 value that drives the polygon's expansion across the whole
+ * Curriculum section, so phase 1 starts it as a tiny speck and phase 4 finishes
+ * it near the outer hexagon.
+ */
+function SkillRadar({ growth }: { growth: number }) {
+  const axes = ['Arrays', 'Graphs', 'DP', 'Trees', 'Strings', 'Math'];
+  // Near-zero starts so phase 1 actually looks empty
+  const startValues = [0.05, 0.04, 0.03, 0.04, 0.06, 0.04];
+  const endValues = [0.94, 0.86, 0.82, 0.90, 0.96, 0.84];
+  const values = axes.map(
+    (_, i) => startValues[i] + (endValues[i] - startValues[i]) * growth
+  );
+
+  const size = 280;
+  const cx = size / 2;
+  const cy = size / 2;
+  const R = 100;
+
+  // Start at top (-90°) and walk clockwise around the hexagon
+  const angleAt = (i: number) =>
+    -Math.PI / 2 + (i * 2 * Math.PI) / axes.length;
+
+  const point = (i: number, r: number) => ({
+    x: cx + Math.cos(angleAt(i)) * r,
+    y: cy + Math.sin(angleAt(i)) * r,
+  });
+
+  const polygonPath = (radiusAt: (i: number) => number) =>
+    axes
+      .map((_, i) => {
+        const p = point(i, radiusAt(i));
+        return `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      })
+      .join(' ') + ' Z';
+
+  const ringLevels = [0.25, 0.5, 0.75, 1.0];
+  const fillPath = polygonPath((i) => R * values[i]);
+
   return (
-    <>
-      <h3
-        className={`text-xl font-semibold text-[#e2e8f0] tracking-tight mb-2 ${
-          dir === 'left' ? 'text-right' : 'text-left'
-        }`}
-      >
-        {stage.title}
-      </h3>
-      <p
-        className={`text-sm text-slate-600 leading-relaxed mb-6 ${
-          dir === 'left' ? 'text-right' : 'text-left'
-        }`}
-      >
-        {stage.sub}
+    <div className="w-full max-w-md">
+      <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-slate-600 mb-2 text-center">
+        Skill Coverage
       </p>
-      <ul className={`space-y-2.5 ${dir === 'left' ? 'flex flex-col items-end' : ''}`}>
-        {stage.topics.map((topic) => (
-          <li
-            key={topic}
-            className={`flex items-center gap-2.5 text-sm text-slate-500 ${
-              dir === 'left' ? 'flex-row-reverse' : ''
-            }`}
-          >
-            <span className="w-[3px] h-[3px] rounded-full bg-slate-700 shrink-0" />
-            {topic}
-          </li>
+      <svg viewBox={`0 0 ${size} ${size}`} className="w-full">
+        {/* Reference rings */}
+        {ringLevels.map((level) => (
+          <path
+            key={level}
+            d={polygonPath(() => R * level)}
+            fill="none"
+            stroke="rgba(255,255,255,0.05)"
+            strokeWidth="1"
+          />
         ))}
-      </ul>
-    </>
+
+        {/* Spokes */}
+        {axes.map((_, i) => {
+          const p = point(i, R);
+          return (
+            <line
+              key={i}
+              x1={cx}
+              y1={cy}
+              x2={p.x}
+              y2={p.y}
+              stroke="rgba(255,255,255,0.05)"
+              strokeWidth="1"
+            />
+          );
+        })}
+
+        {/* Filled skill polygon */}
+        <path
+          d={fillPath}
+          fill="rgba(59,130,246,0.18)"
+          stroke="rgba(96,165,250,0.95)"
+          strokeWidth="1.5"
+          style={{
+            filter: 'drop-shadow(0 0 10px rgba(96,165,250,0.4))',
+          }}
+        />
+
+        {/* Vertex dots */}
+        {values.map((v, i) => {
+          const p = point(i, R * v);
+          return (
+            <circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r="3"
+              fill="rgba(96,165,250,0.95)"
+            />
+          );
+        })}
+
+        {/* Axis labels */}
+        {axes.map((label, i) => {
+          const p = point(i, R + 20);
+          return (
+            <text
+              key={label}
+              x={p.x}
+              y={p.y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="10"
+              fontFamily="ui-monospace, SFMono-Regular, monospace"
+              fill="rgba(148,163,184,0.8)"
+            >
+              {label}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
 
+function PythonVisual({ localProgress }: PhaseVisualProps) {
+  // Phase 1: 0.00 → 0.25
+  return <SkillRadar growth={localProgress * 0.25} />;
+}
+
+function DataStructuresVisual({ localProgress }: PhaseVisualProps) {
+  // Phase 2: 0.25 → 0.50
+  return <SkillRadar growth={0.25 + localProgress * 0.25} />;
+}
+
+function PatternVisual({ localProgress }: PhaseVisualProps) {
+  // Phase 3: 0.50 → 0.75
+  return <SkillRadar growth={0.5 + localProgress * 0.25} />;
+}
+
+function InterviewVisual({ localProgress }: PhaseVisualProps) {
+  // Phase 4: 0.75 → 1.00
+  return <SkillRadar growth={0.75 + localProgress * 0.25} />;
+}
+
+const VISUALS: Array<(props: PhaseVisualProps) => React.JSX.Element> = [
+  PythonVisual,
+  DataStructuresVisual,
+  PatternVisual,
+  InterviewVisual,
+];
+
+/* ───────── Main component ───────── */
+
 export default function Roadmap() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const panelRefs = useRef<Array<HTMLElement | null>>([]);
+  const [active, setActive] = useState(0);
+  const [progresses, setProgresses] = useState<number[]>(() =>
+    Array(phases.length).fill(0)
+  );
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const contentEls = Array.from(
-      container.querySelectorAll<HTMLElement>('[data-parallax]')
-    );
-    const nodeEls = Array.from(
-      container.querySelectorAll<HTMLElement>('[data-node]')
-    );
-    const fillEl = container.querySelector<HTMLElement>('[data-fill]');
-
-    let raf = 0;
-
     const update = () => {
-      const wh = window.innerHeight;
-      let maxFill = 0;
+      const vh = window.innerHeight;
 
-      contentEls.forEach((el, i) => {
+      // Per-panel local progress. 0 when the panel top sits at 80% of the
+      // viewport, 1 when it sits at 20%. That's the "reading zone" where a
+      // panel goes from "just entering" to "fully settled".
+      const nextProgresses = panelRefs.current.map((el) => {
+        if (!el) return 0;
         const rect = el.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const norm = center / wh; // 0 = top of vp, 1 = bottom of vp
-
-        // Parallax: element 60px lower when entering from bottom, 60px higher when exiting top
-        const py = (norm - 0.5) * 80;
-
-        // Opacity: fade zone is top/bottom 22% of viewport
-        let op: number;
-        if (norm > 1.0) op = 0;
-        else if (norm > 0.78) op = (1 - norm) / 0.22;
-        else if (norm > 0.22) op = 1;
-        else if (norm > 0) op = norm / 0.22;
-        else op = 0;
-        op = Math.max(0, Math.min(1, op));
-
-        el.style.transform = `translateY(${py}px)`;
-        el.style.opacity = String(op);
-
-        // Node activation
-        const node = nodeEls[i];
-        if (node) {
-          const active = op > 0.45;
-          node.style.borderColor = active
-            ? 'rgba(59,130,246,0.4)'
-            : 'rgba(255,255,255,0.06)';
-          node.style.background = active ? 'rgba(23,37,84,0.7)' : '#0c1422';
-          node.style.boxShadow = active
-            ? '0 0 22px rgba(59,130,246,0.18)'
-            : 'none';
-          const span = node.querySelector<HTMLElement>('span');
-          if (span) span.style.color = active ? '#60a5fa' : '#334155';
-        }
-
-        if (op > 0.4) {
-          maxFill = Math.max(maxFill, ((i + 0.6) / stages.length) * 100);
-        }
+        const local = (vh * 0.8 - rect.top) / (vh * 0.6);
+        return Math.max(0, Math.min(1, local));
       });
+      setProgresses(nextProgresses);
 
-      if (fillEl) fillEl.style.height = `${maxFill}%`;
+      // Active panel: the last one whose top has crossed the 40% line.
+      let bestIdx = 0;
+      panelRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= vh * 0.4) bestIdx = i;
+      });
+      setActive(bestIdx);
     };
 
+    let raf = 0;
     const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(update);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    // Initial call — needs a small delay so layout is settled
+    window.addEventListener('resize', onScroll);
     requestAnimationFrame(update);
 
     return () => {
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(raf);
     };
   }, []);
 
-  return (
-    <section id="roadmap" className="relative px-4 sm:px-6 pt-36 pb-0 overflow-hidden" style={{ scrollMarginTop: '80px' }}>
-      {/* Top bleed only — bottom stays open so the line continues into LockInCTA */}
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0b1220] to-transparent pointer-events-none z-10" />
+  const scrollToPhase = (i: number) => {
+    panelRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-      <div ref={containerRef} className="max-w-4xl mx-auto">
+  // Smooth fill for the sidebar progress bar
+  const overallProgress = Math.max(
+    0,
+    Math.min(1, (active + (progresses[active] ?? 0)) / phases.length)
+  );
+
+  return (
+    <section
+      id="roadmap"
+      className="relative px-4 sm:px-6 pt-32 pb-32"
+      style={{ scrollMarginTop: '80px' }}
+    >
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-28">
+        <div className="text-center mb-24">
           <p className="text-[11px] text-slate-600 tracking-[0.2em] uppercase font-medium mb-4">
             Curriculum
           </p>
@@ -193,82 +269,120 @@ export default function Roadmap() {
           </h2>
         </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Track */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-5 bottom-5 w-px bg-white/[0.05]" />
-          {/* Animated fill */}
-          <div
-            data-fill
-            className="absolute left-1/2 -translate-x-1/2 top-5 w-px"
-            style={{
-              height: '0%',
-              background:
-                'linear-gradient(to bottom, rgba(59,130,246,0.55), rgba(59,130,246,0.08))',
-              transition: 'height 0.35s ease-out',
-            }}
-          />
+        {/* Body: sticky sidebar + scrolling panels */}
+        <div className="grid md:grid-cols-[240px_1fr] md:gap-20">
+          {/* ─── Left: sticky sidebar ─────────────────────────── */}
+          <aside className="hidden md:block">
+            <div className="sticky top-28">
+              <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase text-slate-700 mb-6">
+                Curriculum Index
+              </p>
 
-          <div className="flex flex-col gap-24">
-            {stages.map((stage, i) => {
-              const contentLeft = i % 2 !== 0;
-              return (
-                <div
-                  key={stage.n}
-                  className="grid grid-cols-[1fr_56px_1fr] items-start"
-                >
-                  {/* Left cell */}
-                  <div className="pr-10 flex justify-end pt-1">
-                    {contentLeft && (
-                      <div
-                        data-parallax
-                        style={{ willChange: 'transform, opacity', opacity: 0 }}
-                      >
-                        <StageContent stage={stage} dir="left" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Node */}
-                  <div className="flex justify-center pt-1 z-10">
-                    <div
-                      data-node
-                      className="w-10 h-10 rounded-full border flex items-center justify-center"
-                      style={{
-                        borderColor: 'rgba(255,255,255,0.06)',
-                        background: '#0c1422',
-                        transition:
-                          'border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease',
-                      }}
+              <nav className="flex flex-col mb-10">
+                {phases.map((phase, i) => {
+                  const isActive = i === active;
+                  return (
+                    <button
+                      key={phase.n}
+                      type="button"
+                      onClick={() => scrollToPhase(i)}
+                      className="group relative text-left pl-4 py-2.5 cursor-pointer"
                     >
                       <span
-                        className="text-[11px] font-mono font-bold"
+                        aria-hidden
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-px transition-all duration-500 ease-out"
                         style={{
-                          color: '#334155',
-                          transition: 'color 0.4s ease',
+                          height: isActive ? '72%' : '0%',
+                          background: 'rgba(96,165,250,0.9)',
+                          boxShadow: isActive
+                            ? '0 0 10px rgba(96,165,250,0.55)'
+                            : 'none',
                         }}
-                      >
-                        {stage.n}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Right cell */}
-                  <div className="pl-10 pt-1">
-                    {!contentLeft && (
-                      <div
-                        data-parallax
-                        style={{ willChange: 'transform, opacity', opacity: 0 }}
-                      >
-                        <StageContent stage={stage} dir="right" />
+                      />
+                      <div className="flex items-baseline gap-3">
+                        <span
+                          className="font-mono text-[10px] tabular-nums transition-colors duration-500"
+                          style={{ color: isActive ? '#60a5fa' : '#334155' }}
+                        >
+                          {phase.n}
+                        </span>
+                        <span
+                          className="text-[13px] font-medium tracking-tight transition-colors duration-500 group-hover:text-slate-300"
+                          style={{
+                            color: isActive
+                              ? '#e2e8f0'
+                              : 'rgba(100,116,139,0.9)',
+                          }}
+                        >
+                          {phase.title}
+                        </span>
                       </div>
-                    )}
-                  </div>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Progress meter */}
+              <div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <p className="text-[10px] font-mono tracking-[0.22em] uppercase text-slate-700">
+                    Phase
+                  </p>
+                  <p className="text-[10px] font-mono tabular-nums text-slate-600">
+                    {String(active + 1).padStart(2, '0')}
+                    <span className="text-slate-800"> / </span>
+                    {String(phases.length).padStart(2, '0')}
+                  </p>
                 </div>
+                <div
+                  className="relative h-px w-full"
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                >
+                  <div
+                    className="absolute inset-y-0 left-0"
+                    style={{
+                      width: `${overallProgress * 100}%`,
+                      background:
+                        'linear-gradient(to right, rgba(59,130,246,0.55), rgba(96,165,250,0.95))',
+                      boxShadow: '0 0 8px rgba(96,165,250,0.4)',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* ─── Right: scrolling phase panels ────────────────── */}
+          <div className="flex flex-col gap-32 md:gap-48">
+            {phases.map((phase, i) => {
+              const Viz = VISUALS[i];
+              return (
+                <article
+                  key={phase.n}
+                  ref={(el) => {
+                    panelRefs.current[i] = el;
+                  }}
+                  className="min-h-[60vh] flex flex-col justify-center"
+                >
+                  <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase text-slate-600 mb-4">
+                    Phase {phase.n}
+                  </p>
+                  <h3
+                    className="text-3xl sm:text-4xl font-bold text-[#e2e8f0] tracking-tight mb-3"
+                    style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+                  >
+                    {phase.title}
+                  </h3>
+                  <p className="text-[14px] text-slate-500 leading-relaxed mb-10 max-w-md">
+                    {phase.tagline}
+                  </p>
+                  <div className="flex justify-start">
+                    <Viz localProgress={progresses[i] ?? 0} />
+                  </div>
+                </article>
               );
             })}
           </div>
-
         </div>
       </div>
     </section>

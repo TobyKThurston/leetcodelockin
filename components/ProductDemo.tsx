@@ -76,7 +76,7 @@ export default function ProductDemo() {
           </div>
           <div className="flex-1 flex justify-center">
             <span className="text-[12px] text-slate-600 font-mono px-4 py-1 rounded-md bg-[#0d1117]">
-              leetlockin.com/solve
+              leetlockin.com/tutor
             </span>
           </div>
         </div>

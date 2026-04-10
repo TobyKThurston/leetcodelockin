@@ -4,13 +4,11 @@ import { useState, useEffect, useCallback, useTransition } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, TrendingUp, Flame, Sparkles, ArrowRight } from 'lucide-react';
-import { createSupabaseBrowser } from '@/lib/supabase-browser';
-import { useRouter } from 'next/navigation';
 import { CURRICULUM, type PathDef, type BlockDef } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
+import AppNav from '@/components/AppNav';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
@@ -42,7 +40,7 @@ const C = {
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type BlockStatus = 'locked' | 'available' | 'active' | 'complete';
-type PathStatus  = 'locked' | 'unlocked' | 'complete';
+export type PathStatus  = 'locked' | 'unlocked' | 'complete';
 
 interface BlockWithStatus extends BlockDef {
   blockStatus: BlockStatus;
@@ -50,7 +48,7 @@ interface BlockWithStatus extends BlockDef {
 
 // ─── Curriculum helpers ───────────────────────────────────────────────────────
 
-function computePathStatuses(completedIds: Set<string>): Record<string, PathStatus> {
+export function computePathStatuses(completedIds: Set<string>): Record<string, PathStatus> {
   const result: Record<string, PathStatus> = {};
   for (const path of CURRICULUM) {
     const allDone = path.blocks.every(b => completedIds.has(b.id));
@@ -559,8 +557,8 @@ def dfs(node, visited=None):
     },
   },
   'p3-twopointers': {
-    concept: "Two pointers replaces a nested O(n²) scan with a single O(n) pass. You keep two indices moving across the array — either toward each other from the ends, or in the same direction at different speeds. The key skill is deciding which pointer to move based on the current comparison.",
-    code: `# Pair sum on a sorted array — classic inward two-pointer
+    concept: "Two pointers is a trick that replaces a nested O(n²) loop with a single O(n) pass. You keep two indices (call them i and j) moving across the array. Either they start at both ends and move toward each other, or they both start at the left and move in the same direction at different speeds. On every step you compare what they point at and use that to decide which pointer to move.",
+    code: `# Pair sum on a sorted array: classic inward two-pointer
 def pair_sum(nums, target):
     i, j = 0, len(nums) - 1
     while i < j:
@@ -568,35 +566,52 @@ def pair_sum(nums, target):
         if s == target:
             return [i, j]
         if s < target:
-            i += 1   # need a bigger sum
+            i += 1   # sum too small, need a bigger value on the left
         else:
-            j -= 1   # need a smaller sum
+            j -= 1   # sum too big, need a smaller value on the right
     return []
 
 pair_sum([1, 2, 4, 7, 11], 9)   # [1, 3]`,
-    breakdown: "Because the array is sorted, comparing `nums[i] + nums[j]` to the target tells you exactly which pointer to move. Too small? Slide `i` right to pull in a larger value. Too big? Slide `j` left. Each element is visited at most once, giving O(n) with O(1) extra space.",
+    breakdown: "Because the array is sorted, the sum nums[i] + nums[j] tells you exactly which pointer to move. If the sum is too small, moving i right pulls in a larger value. If the sum is too big, moving j left pulls in a smaller value. Each element is visited at most once, so the whole thing runs in O(n) time and O(1) extra space.",
+    remember: [
+      "Inward two-pointer needs a SORTED array. If the input is not sorted, either sort it first or use a different pattern (usually a hash map).",
+      "Start with i = 0 and j = len(nums) - 1. Loop while i < j (strict, not i <= j).",
+      "The rule is simple: sum too small, do i += 1. Sum too big, do j -= 1.",
+      "Same-direction two-pointer (like removing duplicates in place) uses a slow index i that only advances when you want to keep the current element.",
+      "Time O(n), space O(1). That is the whole reason to use this pattern over nested loops.",
+    ],
     quiz: {
-      setup: `nums = [1, 3, 4, 6]\n# pair_sum(nums, 7) — i, j start at 0, 3`,
+      setup: `nums = [1, 3, 4, 6]\n# pair_sum(nums, 7) with i = 0, j = 3`,
       question: 'Which pointer moves first?',
-      opts: ['j moves left (1 + 6 = 7 found)', 'i moves right'],
+      opts: ['j moves left (1 + 6 = 7 is found immediately)', 'i moves right'],
       correct: 0,
     },
   },
   'p3-window': {
-    concept: "A sliding window walks a contiguous range through an array or string, expanding on the right and contracting on the left. Instead of recomputing each window from scratch, you update the running state as the window moves — turning O(n·k) into O(n).",
-    code: `# Longest substring without repeating chars — variable window
+    concept: "A sliding window is a contiguous range [left, right] that walks through an array or string. On every iteration, right moves one step forward (expand). If some rule breaks (like a duplicate character), left moves forward until the rule holds again (shrink). Instead of recomputing the window from scratch every time, you update the running state as left and right move. This turns an O(n * k) brute force into O(n).",
+    code: `# Longest substring without repeating characters (variable window)
 def longest_unique(s):
-    seen = {}
-    left = best = 0
+    seen = {}          # char -> most recent index
+    left = 0           # left edge of the window
+    best = 0           # longest window length seen so far
     for right, ch in enumerate(s):
+        # if ch is inside the current window, jump left past it
         if ch in seen and seen[ch] >= left:
-            left = seen[ch] + 1   # shrink past the duplicate
+            left = seen[ch] + 1
         seen[ch] = right
         best = max(best, right - left + 1)
     return best
 
-longest_unique("abcabcbb")   # 3  ("abc")`,
-    breakdown: "The window `[left, right]` only ever moves forward — `right` expands every iteration, and `left` jumps just past the last duplicate when one appears. Each character is visited at most twice (once by `right`, once when `left` passes it), so the total work is O(n).",
+longest_unique("abcabcbb")   # 3  (the substring "abc")`,
+    breakdown: "The window [left, right] only ever moves forward. right expands on every loop iteration, and left jumps just past the last duplicate whenever one appears inside the window. Each character is visited at most twice (once by right, once when left passes it), so the total work is O(n).",
+    remember: [
+      "The window is always contiguous. If the problem asks about a subarray or substring (contiguous), this is your first guess.",
+      "Expand with right (the for loop variable). Shrink with left (usually a while loop that fixes a broken rule).",
+      "Current window length = right - left + 1.",
+      "Fixed-size window: k known in advance, left and right move together. Variable-size window: left catches up only when a rule breaks.",
+      "Use a dict or set to track what is currently inside the window.",
+      "Time O(n) because each element enters and leaves the window at most once.",
+    ],
     quiz: {
       setup: `longest_unique("abba")`,
       question: 'What does this return?',
@@ -605,20 +620,28 @@ longest_unique("abcabcbb")   # 3  ("abc")`,
     },
   },
   'p3-prefix': {
-    concept: "A prefix sum precomputes cumulative totals so any range sum becomes a single subtraction. Build the prefix array in O(n), then answer any `sum(nums[i..j])` query in O(1). Combining prefix sums with a hash map unlocks subarray-count problems.",
+    concept: "A prefix sum is an array where prefix[k] holds the sum of the first k numbers. Once you have it, any range sum nums[i..j] becomes a single subtraction: prefix[j+1] - prefix[i]. Build it in O(n), then answer any range query in O(1). When you pair a running prefix sum with a hash map, you also unlock 'count subarrays with sum k' problems.",
     code: `# Range sums in O(1) after O(n) preprocessing
 nums = [3, 1, 4, 1, 5, 9, 2, 6]
 
-prefix = [0]
+prefix = [0]                   # sentinel so prefix[0] = 0
 for n in nums:
     prefix.append(prefix[-1] + n)
+# prefix = [0, 3, 4, 8, 9, 14, 23, 25, 31]
 
-def range_sum(i, j):          # inclusive
+def range_sum(i, j):           # i and j are both inclusive
     return prefix[j + 1] - prefix[i]
 
 range_sum(1, 3)   # 1 + 4 + 1 = 6
 range_sum(0, 7)   # 31`,
-    breakdown: "`prefix[k]` stores the sum of the first `k` elements. To get `nums[i..j]`, subtract `prefix[i]` (everything before `i`) from `prefix[j+1]` (everything through `j`). The `prefix[0] = 0` sentinel removes edge cases when `i = 0`.",
+    breakdown: "prefix[k] stores the sum of the first k elements of nums. To get nums[i..j] (inclusive on both ends), subtract prefix[i] (everything before i) from prefix[j+1] (everything through j). The prefix[0] = 0 sentinel removes the edge case when i = 0.",
+    remember: [
+      "prefix has length n + 1 (one longer than nums). prefix[0] = 0 is a sentinel.",
+      "Range sum nums[i..j] inclusive = prefix[j + 1] - prefix[i]. Memorize this exact formula.",
+      "Build the prefix array once (O(n)), then every query is O(1).",
+      "Subarray sum equals k: iterate with a running sum, and count how many times (running_sum - k) has appeared before using a hash map.",
+      "2D prefix sums work the same way, but with an inclusion-exclusion formula for rectangles.",
+    ],
     quiz: {
       setup: `nums = [2, 4, 6, 8]\n# prefix = [0, 2, 6, 12, 20]\n# range_sum(1, 2)`,
       question: 'What does range_sum(1, 2) return?',
@@ -627,22 +650,29 @@ range_sum(0, 7)   # 31`,
     },
   },
   'p3-bsearch': {
-    concept: "Binary search halves the search space each step — O(log n) instead of O(n). The power move is recognizing that \"search space\" doesn't have to be an array: you can binary-search an answer range whenever the predicate \"does value X work?\" is monotonic.",
+    concept: "Binary search cuts the search space in half on every step, giving O(log n) instead of O(n). The obvious use is finding a value in a sorted array, but the real power move is 'binary search on the answer': whenever the predicate 'does value X work?' is monotonic (once it is true, it stays true), you can binary search the answer range, not the input array.",
     code: `# Standard binary search on a sorted array
 def bsearch(nums, target):
     lo, hi = 0, len(nums) - 1
-    while lo <= hi:
+    while lo <= hi:                 # NOTE: <= not <
         mid = (lo + hi) // 2
         if nums[mid] == target:
             return mid
         if nums[mid] < target:
-            lo = mid + 1
+            lo = mid + 1            # target is to the right
         else:
-            hi = mid - 1
-    return -1
+            hi = mid - 1            # target is to the left
+    return -1                       # not found
 
 bsearch([1, 3, 5, 7, 9, 11], 7)   # 3`,
-    breakdown: "`mid = (lo + hi) // 2` picks the midpoint; the comparison tells you which half to discard. The `lo <= hi` guard (not `<`) is the standard inclusive-bounds version — forgetting the `=` is the classic off-by-one that misses the target when it lives at `lo == hi`.",
+    breakdown: "mid = (lo + hi) // 2 picks the midpoint, and the comparison with target tells you which half to throw away. The lo <= hi guard (with equals) is the inclusive-bounds version. Forgetting the = is the classic off-by-one that misses the target when it is sitting at lo == hi.",
+    remember: [
+      "Inclusive bounds template: lo = 0, hi = len(nums) - 1, while lo <= hi. Update with lo = mid + 1 or hi = mid - 1.",
+      "Always write mid = lo + (hi - lo) // 2 or (lo + hi) // 2 BEFORE the if checks.",
+      "Binary search the answer: if 'is X feasible?' is monotonic, lo and hi become the min and max possible answers, not array indices.",
+      "Use bisect_left for 'first index where nums[i] >= target' and bisect_right for 'first index where nums[i] > target'.",
+      "Array must be sorted (or the predicate must be monotonic). If not, this pattern does not apply.",
+    ],
     quiz: {
       setup: `bsearch([1, 3, 5, 7, 9], 4)`,
       question: 'What does this return?',
@@ -651,18 +681,25 @@ bsearch([1, 3, 5, 7, 9, 11], 7)   # 3`,
     },
   },
   'p3-hashing': {
-    concept: "Hash-map patterns turn brute-force O(n²) scans into O(n) one-pass solutions. The four shapes to recognize: complement (Two Sum), frequency counting, seen-before tracking, and grouping by key (anagrams). Once you see the shape, the code writes itself.",
-    code: `# Group anagrams — key by the sorted letters
+    concept: "Hash-map patterns turn brute-force O(n²) scans into O(n) one-pass solutions. There are four main shapes to recognize. (1) Complement lookup: Two Sum checks for target - n. (2) Frequency counting: count how many times each value appears. (3) Seen-before tracking: remember indices you have already visited. (4) Grouping by key: anagrams share the same sorted-letter key. Once you match the problem to one of these four shapes, the code writes itself.",
+    code: `# Group anagrams: key each word by its sorted letters
 def group_anagrams(words):
     groups = {}
     for w in words:
-        key = ''.join(sorted(w))
+        key = ''.join(sorted(w))                # canonical key
         groups.setdefault(key, []).append(w)
     return list(groups.values())
 
 group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])
 # [['eat','tea','ate'], ['tan','nat'], ['bat']]`,
-    breakdown: "Anagrams share the same sorted letters, so `sorted(w)` is a canonical key. `setdefault(key, [])` creates an empty list on first sight and returns the existing one afterward — cleaner than `if key not in groups: groups[key] = []`. One pass, O(n·k log k) where k is the word length.",
+    breakdown: "Anagrams always share the same sorted letters, so sorted(w) makes a canonical key. setdefault(key, []) creates an empty list the first time you see a key and returns the existing one afterward, which is cleaner than a manual 'if key not in groups' check. One pass, O(n * k log k) where k is the word length.",
+    remember: [
+      "Two Sum shape: for each n, check if (target - n) is already in the dict. O(n) one pass.",
+      "Frequency counting: use collections.Counter(items) for a quick histogram.",
+      "Seen-before: set() for membership, dict for 'seen at which index'.",
+      "Grouping by key: build a canonical key (sorted letters, tuple of counts, etc.) and use groups.setdefault(key, []).append(item).",
+      "Hash lookups are O(1) average. Trading O(n) extra space for O(1) lookup is almost always worth it in interviews.",
+    ],
     quiz: {
       setup: `sorted("tea") == sorted("eat")`,
       question: 'What does this evaluate to?',
@@ -671,19 +708,27 @@ group_anagrams(["eat", "tea", "tan", "ate", "nat", "bat"])
     },
   },
   'p3-stackpat': {
-    concept: "Monotonic stacks keep their contents sorted (usually decreasing from bottom to top) so the next greater or next smaller element is always one pop away. Reach for this pattern whenever a problem asks \"for each element, what's the next one that...\" over a sequence.",
-    code: `# Next greater element — monotonic decreasing stack
+    concept: "A monotonic stack keeps its contents sorted. Usually the values are strictly decreasing from bottom to top, so that the next greater element for anything sitting on the stack is just one pop away. Reach for this pattern whenever a problem asks 'for each element, what is the next one that is greater (or smaller)?' over a sequence.",
+    code: `# Next greater element: monotonic decreasing stack (of indices)
 def next_greater(nums):
-    res = [-1] * len(nums)
-    stack = []                    # holds indices, values decreasing
+    res = [-1] * len(nums)     # default: no greater element exists
+    stack = []                 # holds indices, values decreasing
     for i, n in enumerate(nums):
+        # while the stack top has a smaller value, n is its answer
         while stack and nums[stack[-1]] < n:
             res[stack.pop()] = n
         stack.append(i)
     return res
 
 next_greater([2, 1, 3, 4])   # [3, 3, 4, -1]`,
-    breakdown: "Each index is pushed and popped at most once — that's the whole reason the pattern is O(n) despite the inner `while`. When a bigger number arrives, every smaller index waiting on the stack finally gets its answer and leaves. Indices still on the stack at the end have no greater element to the right, so they keep the default -1.",
+    breakdown: "Each index is pushed onto the stack once and popped at most once, which is exactly why the pattern is O(n) even with an inner while loop. When a larger number arrives, every smaller index waiting on the stack finally gets its answer and leaves. Any indices still on the stack when the loop ends have no greater element to the right, so they keep the default of -1.",
+    remember: [
+      "Store INDICES on the stack, not values. You usually need the position to write back into the result array.",
+      "Next greater: stack is decreasing. Pop while nums[stack[-1]] < n, then push i.",
+      "Next smaller: flip the comparison. Stack is increasing. Pop while nums[stack[-1]] > n.",
+      "Each index is pushed and popped at most once, so the amortized cost is O(n) overall.",
+      "If no answer exists, the index is never popped. Initialize the result array with a sentinel like -1.",
+    ],
     quiz: {
       setup: `next_greater([5, 4, 3])`,
       question: 'What does this return?',
@@ -692,50 +737,70 @@ next_greater([2, 1, 3, 4])   # [3, 3, 4, -1]`,
     },
   },
   'p3-bfs': {
-    concept: "BFS explores level by level using a queue, which makes it the tool for shortest-path problems on unweighted graphs and grids. The key trick is tracking levels explicitly — either by snapshotting `len(queue)` at the start of each step, or by tagging nodes with their distance as you enqueue them.",
+    concept: "BFS explores a graph or grid level by level using a queue. Because it always sees closer nodes before farther ones, it is the right tool for shortest-path problems on UNWEIGHTED graphs. Two ways to track distance: (1) tag every node with its distance when you enqueue it, or (2) snapshot len(queue) at the start of each level and process exactly that many nodes before incrementing the level counter.",
     code: `from collections import deque
 
-# Shortest path in an unweighted grid
+# Shortest path length in an unweighted grid (0 = open, 1 = wall)
 def shortest(grid, start, end):
     R, C = len(grid), len(grid[0])
-    q = deque([(start, 0)])         # (cell, distance)
-    seen = {start}
+    q = deque([(start, 0)])         # (cell, distance_from_start)
+    seen = {start}                  # mark on ENQUEUE, not on pop
     while q:
         (r, c), d = q.popleft()
         if (r, c) == end:
-            return d
+            return d                # first time we reach end = shortest
         for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
             nr, nc = r + dr, c + dc
-            if 0 <= nr < R and 0 <= nc < C and (nr,nc) not in seen and grid[nr][nc] == 0:
+            if 0 <= nr < R and 0 <= nc < C and (nr, nc) not in seen and grid[nr][nc] == 0:
                 seen.add((nr, nc))
                 q.append(((nr, nc), d + 1))
-    return -1`,
-    breakdown: "Because BFS processes every cell in order of distance from the start, the first time you pop the target, its distance is guaranteed to be the shortest. Mark cells as `seen` the moment you enqueue them, not when you pop — otherwise the same cell can be queued many times and BFS degrades.",
+    return -1                       # end is unreachable`,
+    breakdown: "Because BFS always processes nodes in order of their distance from the start, the very first time you pop the target, its distance is guaranteed to be the shortest. The single biggest mistake beginners make is marking cells as 'seen' when they pop them instead of when they enqueue them, which lets the same cell be queued many times and destroys BFS performance.",
+    remember: [
+      "Use collections.deque. queue.append(x) to enqueue, queue.popleft() to dequeue. Both are O(1).",
+      "Mark nodes as SEEN the moment you enqueue them, not when you pop. Otherwise the same node gets queued many times.",
+      "For shortest path, the first pop of the target IS the answer. You can return immediately.",
+      "To track 'which level am I on', either store (node, distance) tuples in the queue, or do a level-by-level loop with level_size = len(queue) at the start of each step.",
+      "BFS only gives shortest path on UNWEIGHTED graphs. For weighted graphs, use Dijkstra (a heap-based BFS).",
+      "Grid moves: [(-1,0),(1,0),(0,-1),(0,1)] for 4-directional, add diagonals for 8-directional.",
+    ],
     quiz: {
-      setup: `# Unweighted BFS, first time we reach the end...`,
+      setup: `# Unweighted BFS, the first time we pop the target...`,
       question: 'The first time BFS pops the target, its distance is:',
-      opts: ['always the shortest', 'an upper bound, may shorten later'],
+      opts: ['always the shortest', 'just an upper bound, may shorten later'],
       correct: 0,
     },
   },
   'p3-dfs': {
-    concept: "Backtracking explores a decision tree by choosing, recursing, and then un-choosing. At each step you commit to a choice, recurse into the smaller problem, and then roll back before trying the next option. This shape powers subsets, permutations, combinations, and most constraint-satisfaction problems.",
-    code: `# All subsets — the canonical backtracking template
+    concept: "Backtracking is DFS over a decision tree. At every step you commit to a choice, recurse into the smaller problem, and then undo the choice before trying the next option. The rhythm is always: CHOOSE, RECURSE, UNCHOOSE. This single shape powers subsets, permutations, combinations, N-queens, Sudoku, word search, and most constraint-satisfaction problems.",
+    code: `# All subsets: the canonical backtracking template
 def subsets(nums):
     res, path = [], []
+
     def dfs(i):
         if i == len(nums):
-            res.append(path[:])       # snapshot!
+            res.append(path[:])       # snapshot! path[:] makes a COPY
             return
-        dfs(i + 1)                    # skip nums[i]
-        path.append(nums[i])          # take nums[i]
+        # choice 1: skip nums[i]
         dfs(i + 1)
-        path.pop()                    # un-take (backtrack)
+        # choice 2: take nums[i]
+        path.append(nums[i])          # CHOOSE
+        dfs(i + 1)                    # RECURSE
+        path.pop()                    # UNCHOOSE (backtrack)
+
     dfs(0)
     return res
 
-subsets([1, 2, 3])   # 8 subsets, [] through [1,2,3]`,
-    breakdown: "`path[:]` appends a copy of the current state — without the slice, every stored subset would be the same mutating list. The `append` / recurse / `pop` trio is the backtracking heartbeat: commit → explore → undo. Master that rhythm and the rest of the template is just details.",
+subsets([1, 2, 3])   # 8 subsets, from [] through [1,2,3]`,
+    breakdown: "path[:] appends a COPY of the current state. Without the slice, every stored subset would be a reference to the same list, and the list keeps mutating, so you would end up with a bunch of identical entries. The append / recurse / pop trio is the backtracking heartbeat: commit, explore, undo. Master that rhythm and every other backtracking problem is just a variation.",
+    remember: [
+      "The rhythm: CHOOSE (path.append), RECURSE (dfs), UNCHOOSE (path.pop). Never forget the pop.",
+      "Always append a COPY when saving a solution: res.append(path[:]) or res.append(list(path)).",
+      "Subsets: each element is either taken or skipped. 2^n subsets total.",
+      "Permutations: track which elements are already used with a 'used' boolean array, or pop from the unused list.",
+      "Combinations: add a start index to dfs(i) so you never reuse earlier elements.",
+      "Prune early. If the current path cannot possibly lead to a valid answer, return immediately to save work.",
+    ],
     quiz: {
       setup: `len(subsets([1, 2, 3]))`,
       question: 'How many subsets does [1, 2, 3] have?',
@@ -744,133 +809,184 @@ subsets([1, 2, 3])   # 8 subsets, [] through [1,2,3]`,
     },
   },
   'p3-treepat': {
-    concept: "Most tree problems follow the same shape: recurse into the left and right subtrees, then combine the results. You describe what happens at one node and trust the recursion. Diameter, balanced check, path sum, and lowest common ancestor are all variations on this single template.",
-    code: `# Diameter of a binary tree — longest path through any node
+    concept: "Most tree problems follow the same shape: recurse into the left and right subtrees, combine their results, and return something to the parent. You describe what happens at ONE node and trust the recursion to handle the rest. Depth, balanced check, diameter, path sum, and lowest common ancestor are all small variations on this one template.",
+    code: `# Diameter of a binary tree: length of the longest path between any two nodes
 def diameter(root):
     best = 0
+
     def depth(node):
         nonlocal best
         if not node:
             return 0
         L = depth(node.left)
         R = depth(node.right)
-        best = max(best, L + R)     # path through this node
-        return 1 + max(L, R)        # depth returned upward
+        # the path that BENDS at this node has length L + R
+        best = max(best, L + R)
+        # the depth returned UP to the parent is 1 + the longer side
+        return 1 + max(L, R)
+
     depth(root)
     return best`,
-    breakdown: "The helper returns one value (depth) and updates another (best) via closure. At each node, `L + R` is the length of the longest path that bends at this node — we track the max across all nodes. The trick is that the function returns depth *up the call stack* but also *mutates* `best` along the way.",
+    breakdown: "The helper returns one value (the depth of the subtree) and ALSO updates another value (the global best) via closure. At every node, L + R is the length of the longest path that bends at this node. You track the maximum of that value across every node. The trick is that the function returns 'depth' up the call stack while it also mutates 'best' on the way.",
+    remember: [
+      "Recursive tree template: base case is 'if not node: return 0 (or None)'. Then recurse into left and right. Then combine.",
+      "If the answer is 'the best over all nodes', use a nonlocal variable (or a list wrapper) and update it inside the recursion.",
+      "The value you RETURN to the parent can be different from the value you UPDATE globally. Diameter is the classic example: return depth upward, update best along the way.",
+      "Depth = 1 + max(left_depth, right_depth). Memorize this.",
+      "Diameter path length (in edges) = left_depth + right_depth at the bending node.",
+      "Level-order / BFS on a tree uses a queue. In-order / pre-order / post-order are DFS and use recursion.",
+    ],
     quiz: {
       setup: `#     1\n#    / \\\n#   2   3\n#  /\n# 4\n# diameter(root)`,
-      question: 'What is the diameter?',
+      question: 'What is the diameter (in edges)?',
       opts: ['2', '3'],
       correct: 1,
     },
   },
   'p3-heappat': {
-    concept: "Heap patterns solve problems that need repeated access to the smallest or largest element — top K, K closest, merge K sorted lists, running median. Python's `heapq` is always a min-heap; for a max-heap, push negatives. For running median, combine two heaps: a max-heap for the lower half and a min-heap for the upper half.",
+    concept: "Heaps solve any problem that needs fast access to the smallest or largest element. Think: top K, K closest, merge K sorted lists, running median. Python's heapq module is always a MIN-heap. To simulate a max-heap, push negative values. For running median, you combine two heaps: a max-heap for the lower half and a min-heap for the upper half, kept the same size or off by one.",
     code: `import heapq
 
-# K closest points to the origin — bounded max-heap
+# K closest points to the origin using a bounded max-heap of size k
 def k_closest(points, k):
     heap = []
     for x, y in points:
-        dist = x*x + y*y
-        # negate distance to simulate a max-heap
+        dist = x * x + y * y
+        # negate dist so that the LARGEST real distance is at the top
         heapq.heappush(heap, (-dist, x, y))
         if len(heap) > k:
-            heapq.heappop(heap)     # drop the farthest
+            heapq.heappop(heap)         # drop the farthest point
     return [(x, y) for _, x, y in heap]
 
-k_closest([(1,3),(-2,2),(5,8),(0,1)], 2)   # [(-2,2),(0,1)]`,
-    breakdown: "Because `heapq` is min-only, we store `-dist` so the largest actual distance sits at the top and gets popped first. The heap size never exceeds `k`, so every operation is O(log k) — overall O(n log k) instead of O(n log n) for a full sort.",
+k_closest([(1,3), (-2,2), (5,8), (0,1)], 2)   # [(-2,2), (0,1)]`,
+    breakdown: "Because heapq is min-only, we store -dist so that the largest actual distance sits at the top and gets popped first. The heap never exceeds size k, so every push and pop is O(log k). Overall the algorithm is O(n log k), which beats a full O(n log n) sort when k is much smaller than n.",
+    remember: [
+      "heapq in Python is a MIN-heap. For a max-heap, push -x (or a negated key).",
+      "heapq.heappush(heap, x) and heapq.heappop(heap) are O(log n). heap[0] (peek) is O(1).",
+      "Top K LARGEST values: use a MIN-heap of size k. Pop whenever the heap grows past k. The k largest remain.",
+      "Top K SMALLEST values: use a MAX-heap (negate values) of size k. Same pattern.",
+      "Running median: two heaps. Max-heap for the lower half, min-heap for the upper half. Rebalance so their sizes differ by at most 1.",
+      "heapify(list) turns an existing list into a heap in O(n), which is faster than n individual pushes.",
+    ],
     quiz: {
-      setup: `# To track the k LARGEST values, you use a...`,
-      question: 'Which heap type?',
+      setup: `# To track the k LARGEST values as you stream through data, you use...`,
+      question: 'Which heap type and size?',
       opts: ['min-heap of size k', 'max-heap of size k'],
       correct: 0,
     },
   },
   'p3-dp': {
-    concept: "Dynamic programming solves a hard problem by solving smaller overlapping versions of it and caching the answers. Two styles: top-down (recursion + memo) and bottom-up (fill a table). Every DP problem starts by asking: \"what's the smallest piece of state that fully determines the answer?\"",
-    code: `# Climbing stairs — 1D DP, bottom-up
+    concept: "Dynamic programming solves a hard problem by breaking it into smaller, overlapping subproblems and caching the answers. Two styles exist. Top-down: recursion with a memo (a dict or @lru_cache). Bottom-up: fill a table from the base case forward. Every DP problem starts with the same question: what is the smallest piece of state that fully determines the answer?",
+    code: `# Climbing stairs: 1D DP, bottom-up
 def climb(n):
     if n <= 2:
         return n
     dp = [0] * (n + 1)
-    dp[1], dp[2] = 1, 2
+    dp[1], dp[2] = 1, 2                    # base cases
     for i in range(3, n + 1):
-        dp[i] = dp[i - 1] + dp[i - 2]
+        dp[i] = dp[i - 1] + dp[i - 2]      # recurrence
     return dp[n]
 
-climb(5)   # 8   (it's Fibonacci in disguise)`,
-    breakdown: "The state is just `i` — the current step — and the recurrence `dp[i] = dp[i-1] + dp[i-2]` says \"ways to reach step i = ways to reach (i-1) + ways to reach (i-2)\" because your last move was either a 1-step or a 2-step. Recognizing the recurrence is the whole challenge; filling the table is mechanical.",
+climb(5)   # 8   (it is Fibonacci in disguise)`,
+    breakdown: "The state is just i (the current step). The recurrence dp[i] = dp[i-1] + dp[i-2] says 'the number of ways to reach step i equals the number of ways to reach (i-1) plus the number of ways to reach (i-2)' because the last move was either a 1-step or a 2-step. Recognizing the recurrence is the entire challenge. Once you have it, filling the table is mechanical.",
+    remember: [
+      "Step 1: define the STATE. What inputs fully determine the answer? Usually an index, a remaining capacity, or a (row, col) pair.",
+      "Step 2: define the RECURRENCE. dp[state] = some combination of dp[smaller states]. This is the hard part.",
+      "Step 3: define the BASE CASES. Usually dp[0] or dp[0][0].",
+      "Step 4: define the ANSWER. Usually dp[n] or dp[-1][-1], but not always.",
+      "Top-down (memoized recursion) is easier to write. Bottom-up (iterative table) usually uses less memory.",
+      "If the recurrence only uses dp[i-1] and dp[i-2], you can roll the table into two variables and drop memory to O(1).",
+      "Classic 1D: climbing stairs, house robber, longest increasing subsequence. Classic 2D: edit distance, knapsack, unique paths.",
+    ],
     quiz: {
       setup: `climb(4)`,
-      question: 'How many ways to climb 4 stairs (1 or 2 at a time)?',
+      question: 'How many ways to climb 4 stairs (taking 1 or 2 steps at a time)?',
       opts: ['5', '4'],
       correct: 0,
     },
   },
   'p4-breakdown': {
-    concept: "Before writing a single line of code, run every problem through the same four steps: read carefully, identify inputs and outputs, check the constraints for pattern hints, then plan the approach. This ritual stops you from coding random ideas under pressure.",
-    code: `# The 4-step breakdown — apply to every problem
-# 1. READ       — what is actually being asked?
-# 2. IDENTIFY   — inputs, outputs, return type
-# 3. CONSTRAIN  — what do the limits tell you?
-# 4. PLAN       — pick the pattern, sketch pseudocode
+    concept: "Before writing any code, run every problem through the same four steps. (1) READ: what is actually being asked? Restate it in your own words. (2) IDENTIFY: what are the inputs, outputs, and return type? (3) CONSTRAIN: what do the size limits tell you about the required complexity? (4) PLAN: pick the pattern and sketch pseudocode. This simple ritual stops you from coding random ideas under time pressure.",
+    code: `# The 4-step breakdown. Apply to every problem.
+# 1. READ       : what is actually being asked?
+# 2. IDENTIFY   : inputs, outputs, return type
+# 3. CONSTRAIN  : what do the size limits tell you?
+# 4. PLAN       : pick the pattern, write pseudocode
 
 # Example: "Longest substring without repeating chars"
-#   input   : str s,  1 <= len(s) <= 5 * 10**4
-#   output  : int (length)
-#   n ~ 5e4 → O(n**2) is 2.5e9 ops → TOO SLOW
-#                     → must be O(n) or O(n log n)
-#   pattern : sliding window + hash set`,
-    breakdown: "The constraint n ≤ 5·10⁴ is doing real work for you — it rules out O(n²) (≈2.5·10⁹ operations, way over the ~10⁸/sec budget) and tells you to aim for O(n) or O(n log n). Reading constraints first narrows the pattern search before you write any code.",
+#   input      : str s, with 1 <= len(s) <= 5 * 10**4
+#   output     : int (the length)
+#   constraint : n up to 5e4, so O(n**2) is 2.5e9 ops, TOO SLOW
+#                the answer MUST be O(n) or O(n log n)
+#   pattern    : sliding window + hash set`,
+    breakdown: "The constraint n up to 5 * 10^4 is doing real work for you. It rules out O(n^2), which would be about 2.5 * 10^9 operations, way over the rough budget of 10^8 operations per second. So the answer must be O(n) or O(n log n). Reading constraints FIRST narrows the pattern search before you write a single line of code.",
+    remember: [
+      "Follow the 4 steps in order: READ, IDENTIFY, CONSTRAIN, PLAN. Do not skip ahead to code.",
+      "Budget: roughly 10^8 simple operations per second. That is your speed of light.",
+      "n up to 10^3: any algorithm works. n up to 10^5: need O(n log n) or better. n up to 10^7: need O(n) or O(log n).",
+      "Constraints are HINTS. Small n often means DP or backtracking is OK. Large n means you need a clever single-pass pattern.",
+      "Write pseudocode in plain English comments FIRST. Only translate to real Python once the logic is correct.",
+    ],
     quiz: {
       setup: `# n can be up to 10**5\n# is an O(n**2) solution fast enough?`,
-      question: 'With n up to 10⁵, is an O(n²) solution fast enough?',
-      opts: ['Yes', 'No — need O(n log n) or O(n)'],
+      question: 'With n up to 10^5, is an O(n^2) solution fast enough?',
+      opts: ['Yes', 'No, you need O(n log n) or O(n)'],
       correct: 1,
     },
   },
   'p4-optimize': {
-    concept: "Always start with the obvious brute force. It gives you a correctness baseline and exposes the exact bottleneck. Then replace the expensive operation — usually a nested scan — with a better data structure to cut the complexity.",
-    code: `# Two Sum — brute force: O(n**2)
+    concept: "Always start with the obvious brute force. It gives you a correctness baseline and, more importantly, it shows you exactly where the bottleneck is. Then you replace the expensive operation (almost always a nested scan) with a better data structure to cut the complexity. Brute force first, then optimize, is the single most reusable interview technique.",
+    code: `# Two Sum, brute force: O(n**2)
 def two_sum_brute(nums, target):
     for i in range(len(nums)):
         for j in range(i + 1, len(nums)):
             if nums[i] + nums[j] == target:
                 return [i, j]
 
-# Optimal: hash map gives O(1) lookup → O(n)
+# Optimal: hash map gives O(1) lookup, bringing it to O(n)
 def two_sum(nums, target):
-    seen = {}
+    seen = {}                          # value -> its index
     for i, n in enumerate(nums):
-        if target - n in seen:
+        if target - n in seen:         # complement already seen?
             return [seen[target - n], i]
-        seen[n] = i`,
-    breakdown: "The brute force scans the rest of the array for each element — that inner loop *is* the bottleneck. The moment you notice \"I keep re-searching the same data\", reach for a hash map. Trading space for time (the `seen` dict) collapses O(n²) into O(n). This brute-force-then-optimize move is the single most reusable interview technique.",
+        seen[n] = i                    # remember current value
+    return []`,
+    breakdown: "The brute force scans the rest of the array for each element. That inner loop IS the bottleneck. The moment you notice 'I keep re-searching the same data', reach for a hash map. Trading space for time (the seen dict) collapses O(n^2) into O(n). This brute-force-then-optimize move is the single most reusable interview pattern.",
+    remember: [
+      "Always state the brute force out loud first, even if you know the optimal. It shows the interviewer you understand the problem.",
+      "The bottleneck is almost always a nested loop that keeps re-searching the same data.",
+      "Three ways to remove a nested loop: hash map (O(1) lookup), sorting + two pointers, or precomputed prefix sums.",
+      "Trading memory for speed is almost always the right call in an interview.",
+      "State complexity before AND after. 'Brute force is O(n^2) time. With a hash map I can bring it down to O(n) time and O(n) space.'",
+    ],
     quiz: {
-      setup: `# Two Sum brute force — nested loops\nfor i in range(n):\n    for j in range(i + 1, n): ...`,
+      setup: `# Two Sum brute force, nested loops\nfor i in range(n):\n    for j in range(i + 1, n): ...`,
       question: 'What is the time complexity of the brute force?',
-      opts: ['O(n)', 'O(n²)'],
+      opts: ['O(n)', 'O(n^2)'],
       correct: 1,
     },
   },
   'p4-clean': {
-    concept: "Interviewers read your code as you write it. Descriptive names, early returns, and small helpers make your logic legible at a glance. Dense one-liners are a trap — readability beats cleverness every single time.",
-    code: `# ✗ Messy — clever but unreadable
+    concept: "Interviewers read your code as you write it. Descriptive variable names, early returns, and small helpers make your logic legible at a glance. Dense one-liners are a trap. Readability beats cleverness every single time. The point is to make the interviewer think 'this person writes code I would want to work with'.",
+    code: `# Messy: clever but unreadable
 def f(a):
     return [x for x in a if x % 2 == 0 and x > 0][:3][::-1]
 
-# ✓ Clean — each step names its intent
+# Clean: each step names its intent
 def first_three_positive_evens_reversed(nums):
     if not nums:
         return []
     positive_evens = [n for n in nums if n > 0 and n % 2 == 0]
     first_three    = positive_evens[:3]
     return first_three[::-1]`,
-    breakdown: "Named intermediate variables act as self-documenting comments. `if not nums:` also reads directly as \"no nums\" — it expresses intent, not mechanics. Compare that to `if len(nums) == 0:` which forces the reader to translate. Small upgrades like this compound across a solution and make your thinking visible to the interviewer.",
+    breakdown: "Named intermediate variables act as self-documenting comments. 'if not nums:' also reads directly as 'no nums'. It expresses intent, not mechanics. Compare that to 'if len(nums) == 0:' which forces the reader to translate. Small upgrades like this compound across a solution and make your thinking visible to the interviewer.",
+    remember: [
+      "Variable names should describe the VALUE, not the type. Prefer 'positive_evens' over 'arr' or 'result'.",
+      "Early returns beat deeply nested ifs. 'if not nums: return []' then continue at the top level.",
+      "'if not nums:' is idiomatic Python for 'if the list is empty'. Do not write 'if len(nums) == 0:'.",
+      "Extract helpers only if a chunk of logic has a clear name. Premature helpers make code harder to read.",
+      "Comments should explain WHY, not WHAT. If the code needs a comment to explain what it does, rename the variables.",
+    ],
     quiz: {
       setup: `nums = []\n# idiomatic empty-list check?`,
       question: 'Which is the idiomatic Python empty-list check?',
@@ -879,7 +995,7 @@ def first_three_positive_evens_reversed(nums):
     },
   },
   'p4-testing': {
-    concept: "Before you click submit, trace through at least two test cases by hand: a normal case and an edge case. Empty input, a single element, duplicates, and extreme values are where ~90% of interview bugs hide.",
+    concept: "Before you click submit, trace through at least two test cases by hand. One normal, one edge. About 90% of interview bugs live in the edges: empty input, a single element, duplicates, negatives, very large values, and the 'just barely off' case. If you never check these, your 'working' solution is just a guess.",
     code: `def first_duplicate(nums):
     seen = set()
     for n in nums:
@@ -889,11 +1005,18 @@ def first_three_positive_evens_reversed(nums):
     return -1
 
 # Dry run the edges, not just the happy path
-first_duplicate([])           # []           → -1
-first_duplicate([5])          # [5]          → -1
-first_duplicate([1, 1])       # dup at idx 1 → 1
-first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
-    breakdown: "Off-by-one errors hide in loop bounds. Always ask two questions about every loop: \"what does `i` equal on the last iteration?\" and \"do I correctly handle index 0 and index len-1?\" If you can't answer both without hesitating, you don't yet understand your own loop — and neither will the interviewer.",
+first_duplicate([])           # empty list,          -> -1
+first_duplicate([5])          # single element,      -> -1
+first_duplicate([1, 1])       # duplicate at idx 1,  -> 1
+first_duplicate([1, 2, 3, 2]) # duplicate at idx 3,  -> 2`,
+    breakdown: "Off-by-one errors hide in loop bounds. Always ask two questions about every loop. (1) What does i equal on the LAST iteration? (2) Do I correctly handle index 0 and index len-1? If you cannot answer both without hesitating, you do not yet understand your own loop, and neither will the interviewer.",
+    remember: [
+      "Edge cases to ALWAYS check: empty input, single element, all identical, sorted ascending, sorted descending, negatives, zero, max size.",
+      "range(n) goes from 0 to n-1 INCLUSIVE. range(n - 1) stops at n-2.",
+      "Slicing nums[i:j] is [i, j) (i included, j excluded). This rule never changes.",
+      "Do a dry run by writing the values of your key variables in a table as you step through the loop.",
+      "If a loop has an off-by-one bug, fix it by asking what i equals on the last valid iteration.",
+    ],
     quiz: {
       setup: `nums = [10, 20, 30, 40, 50]\n# for i in range(len(nums) - 1): ...`,
       question: 'Which indices does this loop visit?',
@@ -902,19 +1025,28 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
     },
   },
   'p4-easy': {
-    concept: "Easy rounds test fluency, not creativity. The goal is to recognize the pattern in under a minute, implement it in five, and explain it cleanly with time to spare. If you stall on easies, your pattern recall isn't automatic yet — that means more reps, not harder problems.",
+    concept: "Easy rounds test fluency, not creativity. The goal is to recognize the pattern in under a minute, implement it in about five, and explain it cleanly with time left on the clock. If you stall on easies, your pattern recall is not automatic yet. The fix is more reps at the same tier, not jumping to harder problems.",
     code: `# Target pacing for an EASY problem (30-min round)
-# 0:00 - 0:01   read + restate the problem
-# 0:01 - 0:03   walk through the example, identify pattern
-# 0:03 - 0:05   state approach out loud, confirm with interviewer
-# 0:05 - 0:12   code it, narrating as you go
-# 0:12 - 0:15   dry-run 2 test cases (normal + edge)
-# 0:15 - 0:18   state time & space complexity
-# 0:18 - 0:30   follow-up questions
-
-# If you're still coding at 0:20 on an EASY → slow down
-# and talk through what you're stuck on. Silence is the enemy.`,
-    breakdown: "The goal of an easy isn't just to solve it — it's to solve it *calmly and narrated*. Finishing with time to spare and a clean explanation is the exact behavior an interviewer is grading for. Rushing and silently grinding out a correct answer can still fail you because it doesn't show the signal they're looking for.",
+#
+# 0:00  0:01   read the problem, restate it in your own words
+# 0:01  0:03   walk through the example, identify the pattern
+# 0:03  0:05   state your approach out loud, confirm with interviewer
+# 0:05  0:12   code it, narrating as you go
+# 0:12  0:15   dry-run 2 test cases (one normal, one edge)
+# 0:15  0:18   state time AND space complexity
+# 0:18  0:30   answer follow-up questions
+#
+# If you are still coding at 0:20 on an EASY, slow down,
+# breathe, and talk through what you are stuck on out loud.
+# Silence is the enemy. Talking keeps the interviewer with you.`,
+    breakdown: "The goal of an easy is not just to solve it. It is to solve it CALMLY and NARRATED. Finishing with time to spare and a clean explanation is the exact behavior an interviewer is grading for. Rushing and silently grinding out a correct answer can still fail you because it does not show the signal they are looking for.",
+    remember: [
+      "Target: finish an easy in under 15 minutes, leaving 15 for follow-ups.",
+      "If you are stuck after 5 minutes, TALK OUT LOUD about where you are stuck. Silence kills interviews.",
+      "Always restate the problem before coding, even for easy ones. It catches misreads.",
+      "Narrate your approach BEFORE you write code. 'I am going to use a hash map to check for complements'.",
+      "The easiest easies: Two Sum, Valid Parentheses, Reverse Linked List, Merge Two Sorted Lists, Max Subarray. Memorize these cold.",
+    ],
     quiz: {
       setup: `# 30-minute interview round, EASY problem\n# how long should the solve take?`,
       question: 'What is a healthy target time for an easy problem?',
@@ -923,14 +1055,14 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
     },
   },
   'p4-medium': {
-    concept: "Mediums are the real interview benchmark. Two pointers, sliding window, BFS/DFS, hash maps, and DP dominate this tier. Start by committing out loud to the pattern you think applies, sketch pseudocode, *then* write real code. Pattern-first, code-second.",
+    concept: "Mediums are the real interview benchmark. Two pointers, sliding window, BFS, DFS, hash maps, and DP dominate this tier. The biggest mistake is jumping straight to code. Instead: commit out loud to the pattern you think applies, sketch pseudocode in comments, THEN write real code. Pattern first, code second.",
     code: `# Medium: "Longest substring without repeating characters"
 #
-# Pattern recognition (out loud):
-#   "contiguous substring" → sliding window
-#   "without repeating"    → hash set to track chars in window
+# Pattern recognition (say this out loud):
+#   "contiguous substring"  -> sliding window
+#   "without repeating"     -> hash set to track chars in window
 #
-# Pseudocode FIRST:
+# Pseudocode FIRST, in comments:
 #   left = 0
 #   seen = set()
 #   best = 0
@@ -942,8 +1074,16 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
 #       best = max(best, right - left + 1)
 #   return best
 #
-# Only THEN translate pseudocode → real Python.`,
-    breakdown: "Mediums usually have two or three patterns that *could* apply. Commit out loud to one, explain why, then implement. Changing patterns mid-solution is the biggest time sink in interviews — it wastes the code you've already written and rattles your confidence. Pick, commit, execute.",
+# ONLY THEN translate pseudocode to real Python.
+# Do not skip the pseudocode step. It saves time.`,
+    breakdown: "Mediums usually have two or three patterns that COULD apply. Commit out loud to one, explain WHY, then implement. Changing patterns halfway through is the biggest time sink in interviews. It wastes the code you have already written and rattles your confidence. Pick, commit, execute. If your first pattern is wrong, abandon it CLEANLY and restart, do not half-rewrite.",
+    remember: [
+      "Keywords map to patterns. 'Contiguous' or 'substring' -> sliding window. 'Sorted' -> two pointers or binary search. 'Shortest path' -> BFS. 'All possible' -> backtracking.",
+      "Write pseudocode in comments BEFORE writing any real code. This is the single biggest medium-tier upgrade.",
+      "Commit to a pattern out loud, and explain your reasoning. The interviewer can correct you early if you are wrong.",
+      "If you realize your pattern is wrong 10 minutes in, say so and restart cleanly. Do not patch a broken approach.",
+      "Target: 20 to 25 minutes on a medium in a 30-minute round.",
+    ],
     quiz: {
       setup: `# problem: "longest substring without repeating characters"\n# which pattern applies first?`,
       question: 'Which pattern should you reach for first?',
@@ -952,31 +1092,39 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
     },
   },
   'p4-communication': {
-    concept: "Think out loud. Narrate your approach, your reasoning, your tradeoffs, and your complexity analysis. Silent coding reads as luck. Narrated coding reads as engineering — and engineering is what gets the offer.",
+    concept: "Think OUT LOUD. Narrate your approach, your reasoning, your tradeoffs, and your complexity analysis. Silent coding reads as luck. Narrated coding reads as engineering. Engineering is what gets the offer. Even if your code is slightly wrong, a strong narration often saves the interview.",
     code: `# A well-narrated solution sounds like this:
 #
-# "Okay, I'm going to use a hash map to track each number's
-#  index as I iterate. For each element n, I'll check if
+# "Okay, I am going to use a hash map to track each number's
+#  index as I iterate. For each element n, I will check if
 #  target - n is already in the map."
 #
-#  — codes the loop —
+#  [codes the loop while still talking]
 #
-# "Let me trace this with [2, 7, 11, 15], target = 9:
-#   i=0, n=2, need 7, not seen → store 2 → 0
-#   i=1, n=7, need 2, seen at 0 → return [0, 1]. Good."
+# "Let me trace this with [2, 7, 11, 15] and target = 9.
+#   i = 0, n = 2, I need 7, not seen, store 2 -> 0.
+#   i = 1, n = 7, I need 2, seen at index 0, return [0, 1]."
 #
-# "Time O(n) — single pass, hash lookups are O(1) average.
-#  Space O(n) — hash map holds up to n entries."`,
-    breakdown: "Always state complexity at the end: \"O(n) time, O(n) space — one pass, hash lookups are O(1) average.\" Leaving this off is the #1 reason solid solutions get marked down. If the interviewer has to ask \"and what's the time complexity?\" you've left free points on the table.",
+# "Time is O(n) because it is a single pass with O(1)
+#  average hash lookups. Space is O(n) because the hash
+#  map holds up to n entries."`,
+    breakdown: "Always state complexity at the end: 'O(n) time, O(n) space. Single pass, hash lookups are O(1) average.' Leaving this off is the number one reason solid solutions get marked down. If the interviewer has to ASK 'and what is the time complexity?', you have left free points on the table.",
+    remember: [
+      "Narrate the APPROACH before you code. Narrate the CODE as you write it. Narrate the COMPLEXITY at the end.",
+      "Always state BOTH time and space complexity. Never just one.",
+      "If you get stuck, say what you are stuck on out loud. The interviewer can hint, but only if they know where you are.",
+      "Use concrete example values when tracing through your code. Arbitrary variables are harder to follow.",
+      "Ask clarifying questions at the start: 'Can the input be empty? Can there be duplicates? Is the array sorted?'",
+    ],
     quiz: {
       setup: `# Two Sum with a hash map\n# time complexity?`,
       question: 'What is the time complexity of Two Sum with a hash map?',
-      opts: ['O(n)', 'O(n²)'],
+      opts: ['O(n)', 'O(n^2)'],
       correct: 0,
     },
   },
   'p4-review': {
-    concept: "Don't re-grind what you already know — that's comfort practice, not real practice. After every session, write down every problem you hesitated on, looked up, or failed. Those topics are your weak spots. Target them exclusively until they become automatic.",
+    concept: "Do not re-grind what you already know. That is comfort practice, not real practice. After every problem-solving session, write down every problem you hesitated on, looked up, or outright failed. Those topics are your weak spots. Target them EXCLUSIVELY until they become automatic.",
     code: `# A simple weak-spot log beats any fancy tool:
 #
 # | date       | problem                  | pattern         | status    |
@@ -985,31 +1133,46 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
 # | 2026-04-03 | Group Anagrams           | hash + sort key | hesitated |
 # | 2026-04-04 | Course Schedule          | topo sort / DFS | failed    |
 #
-# Rule: retire a topic only when you can solve a fresh
-# problem from it cold, with no hints, narrated cleanly.`,
-    breakdown: "Spaced repetition works here exactly like it does for language learning. A pattern you failed three days ago needs to be re-attempted *today*, not in a month. Keep a plain-text list, schedule quick review sessions, and retire a topic only after a cold, unaided, clean solve. That's the real signal you've learned it.",
+# The rule: retire a topic from the list only when you can
+# solve a FRESH problem from it cold, with no hints, and
+# narrate it cleanly. That is real learning, not recognition.`,
+    breakdown: "Spaced repetition works for coding patterns the same way it works for language learning. A pattern you failed three days ago needs to be re-attempted TODAY, not in a month. Keep a plain-text list. Schedule quick review sessions. Retire a topic only after a cold, unaided, clean solve. That is the real signal you have learned it.",
+    remember: [
+      "Keep a simple log: date, problem, pattern, status (failed, hesitated, solved).",
+      "Only focus on patterns where you hesitated or failed. Solving easies you already know is comfort practice.",
+      "Re-attempt a failed pattern WITHIN A FEW DAYS, not a month later.",
+      "A topic is retired only when you solve a NEW problem from it cold, with no hints, narrated cleanly.",
+      "If you keep failing the same pattern, go back to the pattern lesson and redo the base examples before attempting new problems.",
+    ],
     quiz: {
       setup: `# you failed a sliding-window problem 3 days ago\n# when should you re-attempt it?`,
       question: 'When should you re-attempt a recently failed pattern?',
-      opts: ['Within a few days, while it is fresh', 'In a month or so'],
+      opts: ['Within a few days, while it is still fresh', 'In a month or so'],
       correct: 0,
     },
   },
   'p4-final': {
-    concept: "The final benchmark. A curated set of 25 mixed-pattern problems under real time pressure. If you can solve them cleanly, narrate them out loud, and state correct time/space complexities, you are interview-ready — not earlier.",
-    code: `# Final readiness checklist — all must be YES
+    concept: "This is the final benchmark. Take a curated set of 25 mixed-pattern problems and solve them under real time pressure. If you can solve them cleanly, narrate them out loud, and state correct time and space complexities, you are interview-ready. Not earlier. Not based on how many problems you have READ, but on how many you can EXECUTE cold.",
+    code: `# Final readiness checklist. Every box MUST be YES.
 #
-# [ ] Can recognize the pattern within 60 seconds on 9/10 mediums
-# [ ] Can write bug-free code with minimal edits
-# [ ] Can dry-run 2+ test cases without prompting
-# [ ] Can state time AND space complexity confidently
-# [ ] Can explain tradeoffs (why hash map vs sort, etc.)
-# [ ] Can handle follow-up questions without panicking
-# [ ] Can finish a medium in ~25 minutes, narrated
+# [ ] I can recognize the pattern within 60 seconds on 9/10 mediums
+# [ ] I can write bug-free code with minimal edits
+# [ ] I can dry-run 2+ test cases without being prompted
+# [ ] I can state time AND space complexity confidently
+# [ ] I can explain tradeoffs (why hash map vs sort, etc.)
+# [ ] I can handle follow-up questions without panicking
+# [ ] I can finish a medium in about 25 minutes, fully narrated
 #
-# If any box is empty → go back to p4-review,
+# If any box is still empty, go back to p4-review,
 # target that weakness, then retake the benchmark.`,
-    breakdown: "Readiness isn't \"I've seen all the patterns\" — it's \"I can produce a correct, narrated, complexity-analyzed solution under time pressure.\" The gap between exposure and fluency is exactly what this block closes. Don't confuse having studied a pattern with being able to execute it cold in front of a stranger.",
+    breakdown: "Readiness is not 'I have seen all the patterns'. Readiness is 'I can produce a correct, narrated, complexity-analyzed solution under time pressure'. The gap between EXPOSURE and FLUENCY is exactly what this block closes. Do not confuse having studied a pattern with being able to execute it cold in front of a stranger.",
+    remember: [
+      "Exposure is not fluency. You must be able to solve a NEW problem from a pattern, not just recognize it.",
+      "The readiness checklist is the bar: pattern in 60 seconds, clean code, dry-run, full complexity analysis, handle follow-ups.",
+      "A medium should take you about 25 minutes when you are ready, leaving 5 for follow-ups.",
+      "If any checklist box is empty, the fix is to target that specific weakness, not to grind more random problems.",
+      "The strongest interview-ready signal is consistently solving timed mediums cleanly AND narrated, not a high problem count.",
+    ],
     quiz: {
       setup: `# strongest signal you are interview ready?`,
       question: 'What is the strongest signal you are interview ready?',
@@ -1021,108 +1184,6 @@ first_duplicate([1, 2, 3, 2]) # dup at idx 3 → 2`,
     },
   },
 };
-
-// ─── DashboardNav ─────────────────────────────────────────────────────────────
-
-type DashView = 'path' | 'progress';
-
-function DashboardNav({
-  activeView,
-  onSelectView,
-}: {
-  activeView: DashView;
-  onSelectView: (view: DashView) => void;
-}) {
-  const [user, setUser] = useState<{ name?: string; image?: string } | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const supabase = createSupabaseBrowser();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUser({
-        name: user.user_metadata?.full_name ?? user.email,
-        image: user.user_metadata?.avatar_url,
-      });
-    });
-  }, []);
-
-  const handleSignOut = async () => {
-    const supabase = createSupabaseBrowser();
-    await supabase.auth.signOut();
-    router.push('/sign-in');
-  };
-
-  const initial = user?.name?.[0]?.toUpperCase() ?? '?';
-
-  type Tab =
-    | { label: string; href: string; view?: undefined }
-    | { label: string; view: DashView; href?: undefined };
-
-  const tabs: readonly Tab[] = [
-    { label: 'Path',     view: 'path' },
-    { label: 'Library',  href: '/library' },
-    { label: 'Progress', view: 'progress' },
-    { label: 'Settings', href: '/settings' },
-  ] as const;
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50" style={{ background: C.panelBg, borderBottom: `1px solid ${C.border}` }}>
-      <div className="w-full flex items-center gap-3 px-5 h-12">
-        <Link
-          href="/"
-          className="font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
-          style={SG}
-        >
-          LeetLockin
-        </Link>
-        <nav className="flex items-center gap-0.5">
-          {tabs.map(tab => {
-            const isActive = tab.view !== undefined && tab.view === activeView;
-            const classes = cn(
-              'text-[12px] px-3',
-              isActive ? 'text-white font-medium' : 'text-slate-400 hover:text-slate-200',
-            );
-            if (tab.href !== undefined) {
-              return (
-                <Button
-                  key={tab.label}
-                  variant="ghost"
-                  size="sm"
-                  className={classes}
-                  nativeButton={false}
-                  render={<Link href={tab.href} />}
-                >
-                  {tab.label}
-                </Button>
-              );
-            }
-            const view = tab.view;
-            return (
-              <Button
-                key={tab.label}
-                variant="ghost"
-                size="sm"
-                className={classes}
-                onClick={() => onSelectView(view)}
-              >
-                {tab.label}
-              </Button>
-            );
-          })}
-        </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <Avatar size="sm" className="size-7">
-            <AvatarImage src={user?.image} referrerPolicy="no-referrer" />
-            <AvatarFallback className="text-[11px] font-semibold bg-slate-700 text-slate-200">{initial}</AvatarFallback>
-          </Avatar>
-          <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-[11.5px] text-slate-500 hover:text-slate-300">
-            Sign out
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 // ─── SidebarPathCard ──────────────────────────────────────────────────────────
 
@@ -1616,7 +1677,7 @@ function PathView({
           <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: C.textMuted }}>
             Path {path.order} of {CURRICULUM.length}
           </p>
-          <h2 className="text-[22px] font-bold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
+          <h2 className="text-[22px] font-semibold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
             {path.title}
           </h2>
           <p className="text-[12.5px] mt-1.5" style={{ color: C.textMuted }}>{path.description}</p>
@@ -1667,7 +1728,7 @@ function PathView({
           className="px-3 py-1.5 rounded-md text-[10px] font-semibold tracking-[0.12em] uppercase"
           style={{ border: `1px solid ${C.border}`, color: C.textMuted, background: C.cardBgDark }}
         >
-          {pathStatus === 'complete' ? `${path.title} — Complete` : `${blocks.length} blocks · ${path.title}`}
+          {pathStatus === 'complete' ? `${path.title} · Complete` : `${blocks.length} blocks · ${path.title}`}
         </div>
       </div>
     </div>
@@ -1739,7 +1800,7 @@ function TryIt({ quiz, onCorrect }: { quiz: LessonPreview['quiz']; onCorrect?: (
         {quiz.setup}
       </pre>
 
-      <p className="text-[13px] mb-3 font-medium" style={{ color: C.textSub, ...SG }}>
+      <p className="text-[14px] mb-3 font-medium" style={{ color: C.text, ...SG }}>
         {quiz.question}
       </p>
 
@@ -1782,10 +1843,10 @@ function TryIt({ quiz, onCorrect }: { quiz: LessonPreview['quiz']; onCorrect?: (
       </div>
 
       {answered && (
-        <p className="mt-3 text-[12.5px] font-medium" style={{ color: isCorrect ? C.emerald : '#EF4444', ...SG }}>
+        <p className="mt-3 text-[13px] font-medium" style={{ color: isCorrect ? C.emerald : '#EF4444', ...SG }}>
           {isCorrect
-            ? '✓ Correct — advancing to next lesson…'
-            : `✗ Incorrect — the answer is ${quiz.opts[quiz.correct]}`}
+            ? '✓ Correct. Advancing to next lesson...'
+            : `✗ Incorrect. The answer is ${quiz.opts[quiz.correct]}.`}
         </p>
       )}
     </div>
@@ -1830,7 +1891,7 @@ function LessonPanel({
         </Button>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-[20px] font-bold leading-tight" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
+            <h2 className="text-[20px] font-semibold leading-tight" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
               {block.title}
             </h2>
             <p className="text-[12px] mt-1" style={{ color: C.textMuted }}>
@@ -1851,7 +1912,7 @@ function LessonPanel({
         <div className="px-7 py-7" style={{ maxWidth: 840 }}>
           <section className="mb-7">
             <SectionLabel>Concept</SectionLabel>
-            <p className="text-[14px] leading-relaxed" style={{ color: C.textSub, ...SG }}>
+            <p className="text-[15px]" style={{ color: C.text, lineHeight: 1.7 }}>
               {preview.concept}
             </p>
           </section>
@@ -1867,10 +1928,41 @@ function LessonPanel({
 
           <section className="mb-7">
             <SectionLabel>Breakdown</SectionLabel>
-            <p className="text-[14px] leading-relaxed" style={{ color: C.textSub, ...SG }}>
+            <p className="text-[15px]" style={{ color: C.text, lineHeight: 1.7 }}>
               {preview.breakdown}
             </p>
           </section>
+
+          {preview.remember && preview.remember.length > 0 && (
+            <>
+              <Separator className="mb-7" style={{ background: C.border }} />
+
+              <section className="mb-7">
+                <SectionLabel>Remember</SectionLabel>
+                <ul className="space-y-2.5">
+                  {preview.remember.map((item, i) => (
+                    <li
+                      key={i}
+                      className="text-[15px] flex gap-3"
+                      style={{ color: C.text, lineHeight: 1.65 }}
+                    >
+                      <span
+                        aria-hidden
+                        className="shrink-0 mt-[9px]"
+                        style={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: 999,
+                          background: C.emerald,
+                        }}
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          )}
 
           <Separator className="mb-7" style={{ background: C.border }} />
 
@@ -1911,7 +2003,7 @@ function LessonPanel({
         <div className="px-7 py-8" style={{ maxWidth: 840 }}>
           <section className="mb-7">
             <SectionLabel>About this block</SectionLabel>
-            <p className="text-[14px] leading-relaxed" style={{ color: C.textSub, ...SG }}>
+            <p className="text-[15.5px]" style={{ color: C.text, lineHeight: 1.7 }}>
               {block.description}
             </p>
           </section>
@@ -1919,11 +2011,11 @@ function LessonPanel({
           <Separator className="mb-7" style={{ background: C.border }} />
 
           <section className="mb-7">
-            <SectionLabel>Skills covered</SectionLabel>
-            <ul className="space-y-2.5">
+            <SectionLabel>What you&apos;ll learn</SectionLabel>
+            <ul className="space-y-3">
               {block.skills.map(s => (
-                <li key={s} className="flex items-center gap-3 text-[13px]" style={{ color: C.textSub, ...SG }}>
-                  <span className="size-1 rounded-full bg-slate-600 shrink-0 inline-block" />
+                <li key={s} className="flex items-start gap-3 text-[14.5px]" style={{ color: C.text, lineHeight: 1.55 }}>
+                  <span className="size-1.5 rounded-full bg-emerald-500/70 shrink-0 inline-block mt-[9px]" />
                   {s}
                 </li>
               ))}
@@ -2028,19 +2120,43 @@ function computePathStats(
   });
 }
 
-function StatCard({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
+function StatCard({
+  value, label, icon, accent,
+}: {
+  value: string;
+  label: string;
+  icon: React.ReactNode;
+  accent: 'blue' | 'emerald' | 'violet' | 'amber';
+}) {
+  const accentMap = {
+    blue:    { fg: 'text-blue-300',    bg: 'rgba(59,130,246,0.1)', ring: 'rgba(59,130,246,0.28)' },
+    emerald: { fg: 'text-emerald-300', bg: 'rgba(16,185,129,0.1)', ring: 'rgba(16,185,129,0.28)' },
+    violet:  { fg: 'text-violet-300',  bg: 'rgba(139,92,246,0.1)', ring: 'rgba(139,92,246,0.28)' },
+    amber:   { fg: 'text-amber-300',   bg: 'rgba(245,158,11,0.1)', ring: 'rgba(245,158,11,0.28)' },
+  }[accent];
   return (
     <div
-      className="rounded-lg px-3.5 py-3"
-      style={{ background: C.cardBg, border: `1px solid ${C.border}` }}
+      className="relative rounded-xl px-4 py-4 overflow-hidden"
+      style={{
+        background: `linear-gradient(180deg, ${accentMap.bg} 0%, ${C.cardBg} 78%)`,
+        border: `1px solid ${C.border}`,
+      }}
     >
-      <div className="flex items-center gap-1.5 text-slate-500 mb-2">
+      <div
+        className={cn(
+          'mb-3 inline-flex h-7 w-7 items-center justify-center rounded-md',
+          accentMap.fg,
+        )}
+        style={{ background: accentMap.bg, border: `1px solid ${accentMap.ring}` }}
+      >
         {icon}
       </div>
-      <div className="text-[22px] leading-none font-bold text-white tabular-nums" style={SG}>
+      <div className="text-[26px] leading-none font-bold text-white tabular-nums" style={SG}>
         {value}
       </div>
-      <div className="text-[10.5px] text-slate-500 mt-1.5 leading-tight">{label}</div>
+      <div className="text-[9.5px] text-slate-500 mt-2 leading-tight uppercase tracking-[0.14em] font-semibold">
+        {label}
+      </div>
     </div>
   );
 }
@@ -2056,6 +2172,7 @@ function ProgressPathCard({
   const n = String(path.order).padStart(2, '0');
   const complete = pathStatus === 'complete';
   const isStrength = tone === 'strength';
+  const accentColor = complete || isStrength ? '#10b981' : '#60a5fa';
 
   const label = complete
     ? 'Mastered'
@@ -2068,43 +2185,49 @@ function ProgressPathCard({
       type="button"
       onClick={onClick}
       className={cn(
-        'group w-full text-left rounded-lg px-3.5 py-3 border transition-colors duration-150',
+        'group relative w-full text-left rounded-xl pl-5 pr-4 py-3.5 border overflow-hidden',
+        'transition-all duration-200 hover:-translate-y-px',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        complete && 'bg-slate-800/40 border-emerald-500/30 hover:border-emerald-500/50',
-        !complete && isStrength && 'bg-slate-800/40 border-emerald-500/20 hover:border-emerald-500/40',
-        !complete && !isStrength && 'bg-slate-800/40 border-blue-400/25 hover:border-blue-400/50',
       )}
+      style={{
+        background: C.cardBg,
+        borderColor: complete || isStrength ? 'rgba(16,185,129,0.22)' : 'rgba(96,165,250,0.22)',
+      }}
     >
+      <div
+        aria-hidden
+        className="absolute left-0 top-0 bottom-0 w-[2px]"
+        style={{ background: accentColor, opacity: 0.75 }}
+      />
       <div className="flex items-start justify-between gap-4 mb-2">
         <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className={cn(
-              'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-              complete || isStrength ? 'text-emerald-400/70' : 'text-blue-300',
-            )}
+            className="font-mono text-[10px] font-bold tabular-nums tracking-wider"
+            style={{ color: accentColor, opacity: 0.85 }}
           >
             {n}
           </span>
           <p
-            className="text-[13.5px] font-semibold leading-tight text-slate-100 truncate"
+            className="text-[14px] font-semibold leading-tight text-slate-100 truncate"
             style={{ ...SG, letterSpacing: '-0.005em' }}
           >
             {path.title}
           </p>
         </div>
-        <span className="text-[11.5px] font-semibold text-slate-300 tabular-nums shrink-0">{pct}%</span>
+        <span className="text-[12px] font-bold text-white tabular-nums shrink-0" style={SG}>{pct}%</span>
       </div>
-      <div className="flex items-center justify-between text-[10.5px] text-slate-500 mb-2">
+      <div className="flex items-center justify-between text-[10.5px] text-slate-500 mb-2.5">
         <span>{label}</span>
         <span className="tabular-nums">{blocksComplete} / {blocksTotal} blocks</span>
       </div>
-      <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+      <div className="h-[3px] rounded-full bg-slate-900/60 overflow-hidden">
         <div
-          className={cn(
-            'h-full rounded-full transition-all',
-            complete || isStrength ? 'bg-emerald-500' : 'bg-blue-500',
-          )}
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-all duration-500"
+          style={{
+            width: `${pct}%`,
+            background: `linear-gradient(90deg, ${accentColor}aa, ${accentColor})`,
+            boxShadow: `0 0 10px ${accentColor}66`,
+          }}
         />
       </div>
     </button>
@@ -2114,15 +2237,36 @@ function ProgressPathCard({
 function EmptyHint({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="rounded-lg px-3.5 py-3 text-[12px] text-slate-500"
-      style={{ background: C.cardBg, border: `1px dashed ${C.border}` }}
+      className="rounded-xl px-4 py-3.5 text-[12px] text-slate-500"
+      style={{ background: C.cardBg, border: `1px dashed ${C.borderMid}` }}
     >
       {children}
     </div>
   );
 }
 
-function ProgressView({
+function ProgressSectionHeader({
+  icon, title, count,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  count?: number;
+}) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      {icon}
+      <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
+        {title}
+      </span>
+      {count !== undefined && (
+        <span className="text-[10px] font-semibold text-slate-500 tabular-nums">{count}</span>
+      )}
+      <div className="flex-1 h-px" style={{ background: C.border }} />
+    </div>
+  );
+}
+
+export function ProgressView({
   pathStatuses, completedIds, onNavigateToPath, onResumeBlock,
 }: {
   pathStatuses: Record<string, PathStatus>;
@@ -2168,57 +2312,85 @@ function ProgressView({
   ));
 
   return (
-    <div className="w-full max-w-[880px] mx-auto py-8 px-8 lg:px-12">
-      {/* Header */}
-      <div className="mb-8">
-        <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: C.textMuted }}>
-          Overview
-        </p>
-        <h2 className="text-[26px] font-bold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
-          Your Progress
-        </h2>
-        <p className="text-[13px] mt-1.5" style={{ color: C.textMuted }}>
-          {totalComplete === 0
-            ? "You haven't started yet — pick a block from the Path tab and begin."
-            : `You've completed ${totalComplete} of ${totalBlocks} blocks across ${CURRICULUM.length} paths.`}
-        </p>
-      </div>
-
-      {/* Overall metrics */}
-      <section className="mb-9">
-        <SectionLabel>Overall</SectionLabel>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <StatCard value={`${totalComplete}`}                 label="blocks complete"   icon={<CheckCircle2 size={12} strokeWidth={2.25} />} />
-          <StatCard value={`${totalLessons}`}                  label="lessons covered"   icon={<BookOpen size={12} strokeWidth={2.25} />} />
-          <StatCard value={`${totalProblems}`}                 label="problems practiced" icon={<Target size={12} strokeWidth={2.25} />} />
-          <StatCard value={`${pathsStarted}/${CURRICULUM.length}`} label="paths started" icon={<Flame size={12} strokeWidth={2.25} />} />
-        </div>
+    <div className="w-full max-w-[920px] mx-auto py-10 px-8 lg:px-12">
+      {/* ─── Hero header with overall mastery ─── */}
+      <div
+        className="relative rounded-2xl mb-10 overflow-hidden"
+        style={{
+          background:
+            'radial-gradient(ellipse at top right, rgba(59,130,246,0.18) 0%, transparent 58%), linear-gradient(180deg, rgba(15,23,41,0.92) 0%, rgba(11,18,32,0.92) 100%)',
+          border: `1px solid ${C.borderMid}`,
+        }}
+      >
         <div
-          className="rounded-lg px-4 py-3.5 border"
-          style={{ background: C.cardBg, borderColor: C.borderMid }}
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11.5px] font-medium text-slate-400">Overall mastery</span>
-            <span className="text-[11.5px] font-semibold text-slate-200 tabular-nums">{overallPct}%</span>
+          aria-hidden
+          className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl pointer-events-none"
+          style={{ background: 'rgba(59,130,246,0.16)' }}
+        />
+        <div className="relative flex items-start justify-between gap-8 px-7 pt-7 pb-6">
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(148,163,184,0.9)' }}>
+              Overview
+            </p>
+            <h2 className="text-[32px] font-bold leading-none mb-3" style={{ ...SG, color: C.text, letterSpacing: '-0.025em' }}>
+              Your Progress
+            </h2>
+            <p className="text-[13.5px] leading-relaxed max-w-[420px]" style={{ color: C.textMuted }}>
+              {totalComplete === 0
+                ? "You haven't started yet. Pick a block from the Path tab and begin."
+                : `You've completed ${totalComplete} of ${totalBlocks} blocks across ${CURRICULUM.length} paths.`}
+            </p>
           </div>
-          <div className="h-[3px] rounded-full bg-slate-900/60 overflow-hidden">
+          <div className="shrink-0 text-right">
             <div
-              className="h-full rounded-full transition-all"
-              style={{ width: `${overallPct}%`, background: C.blue }}
+              className="font-bold leading-none tabular-nums"
+              style={{
+                ...SG,
+                fontSize: 56,
+                letterSpacing: '-0.04em',
+                background: 'linear-gradient(135deg, #e5e7eb 0%, #60a5fa 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {overallPct}
+              <span style={{ fontSize: 28, marginLeft: 2 }}>%</span>
+            </div>
+            <p className="text-[10px] font-bold tracking-[0.18em] uppercase mt-2" style={{ color: C.textMuted }}>
+              Mastery
+            </p>
+          </div>
+        </div>
+        <div className="relative px-7 pb-6">
+          <div className="h-[4px] rounded-full bg-slate-900/60 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${overallPct}%`,
+                background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
+                boxShadow: '0 0 16px rgba(59,130,246,0.5)',
+              }}
             />
           </div>
         </div>
+      </div>
+
+      {/* ─── Stats strip ─── */}
+      <section className="mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <StatCard accent="emerald" value={`${totalComplete}`}                     label="blocks"   icon={<CheckCircle2 size={13} strokeWidth={2.25} />} />
+          <StatCard accent="blue"    value={`${totalLessons}`}                      label="lessons"  icon={<BookOpen     size={13} strokeWidth={2.25} />} />
+          <StatCard accent="violet"  value={`${totalProblems}`}                     label="problems" icon={<Target       size={13} strokeWidth={2.25} />} />
+          <StatCard accent="amber"   value={`${pathsStarted}/${CURRICULUM.length}`} label="paths"    icon={<Flame        size={13} strokeWidth={2.25} />} />
+        </div>
       </section>
 
-      {/* Strengths */}
-      <section className="mb-9">
-        <div className="flex items-center gap-2 mb-3.5">
-          <TrendingUp size={13} strokeWidth={2.25} className="text-emerald-400/80" />
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
-            Strengths
-          </span>
-          <div className="flex-1 h-px bg-white/[0.06]" />
-        </div>
+      {/* ─── Strengths ─── */}
+      <section className="mb-10">
+        <ProgressSectionHeader
+          icon={<TrendingUp size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
+          title="Strengths"
+        />
         {strengths.length > 0 ? (
           <div className="space-y-2.5">
             {strengths.map(s => (
@@ -2237,15 +2409,12 @@ function ProgressView({
         )}
       </section>
 
-      {/* Focus Areas */}
-      <section className="mb-9">
-        <div className="flex items-center gap-2 mb-3.5">
-          <Target size={13} strokeWidth={2.25} className="text-blue-300" />
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
-            Focus Areas
-          </span>
-          <div className="flex-1 h-px bg-white/[0.06]" />
-        </div>
+      {/* ─── Focus Areas ─── */}
+      <section className="mb-10">
+        <ProgressSectionHeader
+          icon={<Target size={13} strokeWidth={2.25} className="text-blue-300" />}
+          title="Focus Areas"
+        />
         {focusAreas.length > 0 ? (
           <div className="space-y-2.5">
             {focusAreas.map(s => (
@@ -2259,38 +2428,44 @@ function ProgressView({
           </div>
         ) : (
           <EmptyHint>
-            Nothing to focus on — you&apos;re crushing it.
+            Nothing to focus on. You&apos;re crushing it.
           </EmptyHint>
         )}
       </section>
 
-      {/* What's Next */}
-      <section className="mb-9">
-        <div className="flex items-center gap-2 mb-3.5">
-          <ArrowRight size={13} strokeWidth={2.25} className="text-blue-300" />
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
-            What&apos;s Next
-          </span>
-          <div className="flex-1 h-px bg-white/[0.06]" />
-        </div>
+      {/* ─── What's Next ─── */}
+      <section className="mb-10">
+        <ProgressSectionHeader
+          icon={<ArrowRight size={13} strokeWidth={2.25} className="text-blue-300" />}
+          title="What's Next"
+        />
         {nextUp ? (
           <div
-            className="rounded-lg px-4 py-4 border"
-            style={{ background: 'rgba(59,130,246,0.08)', borderColor: C.blueBorder }}
+            className="relative rounded-2xl px-5 py-5 border overflow-hidden"
+            style={{
+              background:
+                'radial-gradient(ellipse at top left, rgba(59,130,246,0.2) 0%, transparent 55%), linear-gradient(180deg, rgba(59,130,246,0.08) 0%, rgba(15,23,41,0.9) 100%)',
+              borderColor: C.blueBorder,
+            }}
           >
-            <p className="text-[10px] font-bold text-blue-300/80 tracking-[0.14em] uppercase mb-1.5">
+            <div
+              aria-hidden
+              className="absolute -bottom-20 -right-16 w-60 h-60 rounded-full blur-3xl pointer-events-none"
+              style={{ background: 'rgba(59,130,246,0.12)' }}
+            />
+            <p className="relative text-[10px] font-bold text-blue-300/90 tracking-[0.16em] uppercase mb-2">
               Up next in {nextUp.path.title}
             </p>
             <p
-              className="text-[17px] font-semibold leading-tight text-white mb-1"
-              style={{ ...SG, letterSpacing: '-0.01em' }}
+              className="relative text-[20px] font-bold leading-tight text-white mb-1.5"
+              style={{ ...SG, letterSpacing: '-0.015em' }}
             >
               {nextUp.block.title}
             </p>
-            <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3.5">
+            <p className="relative text-[13px] leading-relaxed text-slate-300 mb-4 max-w-[520px]">
               {nextUp.block.subtitle}
             </p>
-            <div className="flex items-center gap-4 mb-3.5 text-[11px] font-medium tabular-nums text-blue-200">
+            <div className="relative flex items-center gap-5 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
               <span className="flex items-center gap-1.5">
                 <BookOpen size={11} strokeWidth={2.25} />
                 {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
@@ -2304,37 +2479,32 @@ function ProgressView({
               type="button"
               onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
               className={cn(
-                'inline-flex items-center gap-1.5 h-9 px-4 rounded-md text-[12px] font-semibold text-blue-200',
-                'bg-blue-500/[0.15] border border-blue-400/50',
-                'hover:bg-blue-500/[0.22] hover:border-blue-400/70',
+                'relative inline-flex items-center gap-1.5 h-10 px-5 rounded-lg text-[12.5px] font-semibold text-white',
+                'bg-blue-500/20 border border-blue-400/60',
+                'hover:bg-blue-500/30 hover:border-blue-400/80',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
                 'transition-colors',
               )}
-              style={SG}
+              style={{ ...SG, boxShadow: '0 0 20px rgba(59,130,246,0.25)' }}
             >
               Resume training
-              <ArrowRight size={12} strokeWidth={2.5} />
+              <ArrowRight size={13} strokeWidth={2.5} />
             </button>
           </div>
         ) : (
           <EmptyHint>
-            No unlocked blocks remaining — you&apos;ve reached the end of the road.
+            No unlocked blocks remaining. You&apos;ve reached the end of the road.
           </EmptyHint>
         )}
       </section>
 
-      {/* Skills Mastered */}
+      {/* ─── Skills Mastered ─── */}
       <section className="mb-6">
-        <div className="flex items-center gap-2 mb-3.5">
-          <Sparkles size={13} strokeWidth={2.25} className="text-emerald-400/80" />
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
-            Skills Mastered
-          </span>
-          <span className="text-[10px] font-medium text-slate-500 tabular-nums">
-            {skillsMastered.length}
-          </span>
-          <div className="flex-1 h-px bg-white/[0.06]" />
-        </div>
+        <ProgressSectionHeader
+          icon={<Sparkles size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
+          title="Skills Mastered"
+          count={skillsMastered.length}
+        />
         {skillsMastered.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {skillsMastered.map(skill => (
@@ -2363,7 +2533,6 @@ function ProgressView({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage({ initialCompleted }: { initialCompleted: string[] }) {
-  const [activeView,      setActiveView]      = useState<DashView>('path');
   const [viewingPathId,   setViewingPathId]   = useState(CURRICULUM[0].id);
   const [completedIds,    setCompletedIds]    = useState<Set<string>>(() => new Set(initialCompleted));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -2405,68 +2574,40 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
     if (pathStatuses[id] === 'locked') return;
     setViewingPathId(id);
     setSelectedBlockId(null);
-    setActiveView('path');
   };
-
-  const handleNavigateToPath = (pathId: string) => {
-    if (pathStatuses[pathId] === 'locked') return;
-    setViewingPathId(pathId);
-    setSelectedBlockId(null);
-    setActiveView('path');
-  };
-
-  const handleResumeBlock = (pathId: string, blockId: string) => {
-    if (pathStatuses[pathId] === 'locked') return;
-    setViewingPathId(pathId);
-    setSelectedBlockId(blockId);
-    setActiveView('path');
-  };
-
-  const isProgressView = activeView === 'progress';
 
   return (
     <div className="min-h-screen" style={{ background: C.appBg }}>
-      <DashboardNav activeView={activeView} onSelectView={setActiveView} />
+      <AppNav activeTab="Path" />
       <Sidebar
         pathStatuses={pathStatuses}
         viewingPathId={viewingPathId}
         completedIds={completedIds}
         onSelectPath={handleSelectPath}
       />
-      {!isProgressView && (
-        <RightRail
-          path={viewingPath}
-          pathStatus={viewingStatus}
-          completedIds={completedIds}
-        />
-      )}
+      <RightRail
+        path={viewingPath}
+        pathStatus={viewingStatus}
+        completedIds={completedIds}
+      />
       <main
         style={{ paddingLeft: 304, paddingTop: 48 }}
         className={cn(
           'min-h-screen overflow-x-auto',
-          !isProgressView && 'lg:pr-[296px]',
+          'lg:pr-[296px]',
         )}
       >
-        {isProgressView ? (
-          <ProgressView
-            pathStatuses={pathStatuses}
-            completedIds={completedIds}
-            onNavigateToPath={handleNavigateToPath}
-            onResumeBlock={handleResumeBlock}
-          />
-        ) : (
-          <CenterPanel
-            path={viewingPath}
-            pathStatus={viewingStatus}
-            completedIds={completedIds}
-            selectedBlockId={selectedBlockId}
-            onSelectBlock={setSelectedBlockId}
-            onClearBlock={() => setSelectedBlockId(null)}
-            onCompleteAndAdvance={completeAndAdvance}
-          />
-        )}
+        <CenterPanel
+          path={viewingPath}
+          pathStatus={viewingStatus}
+          completedIds={completedIds}
+          selectedBlockId={selectedBlockId}
+          onSelectBlock={setSelectedBlockId}
+          onClearBlock={() => setSelectedBlockId(null)}
+          onCompleteAndAdvance={completeAndAdvance}
+        />
       </main>
-      {!isProgressView && nextBlock && viewingStatus !== 'complete' && (
+      {nextBlock && viewingStatus !== 'complete' && (
         <button
           type="button"
           onClick={() => setSelectedBlockId(nextBlock.id)}
