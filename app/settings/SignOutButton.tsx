@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
+import { clearUserCache } from '@/components/AppNav';
 
 const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -16,8 +17,9 @@ export default function SignOutButton() {
     setLoading(true);
     const supabase = createSupabaseBrowser();
     await supabase.auth.signOut();
-    router.refresh();
+    clearUserCache();
     router.push('/');
+    router.refresh();
   }
 
   return (

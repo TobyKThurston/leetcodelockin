@@ -24,6 +24,12 @@ type UserSummary = { name?: string; image?: string };
 let cachedUser: UserSummary | null = null;
 let inflight: Promise<UserSummary | null> | null = null;
 
+/** Clear the module-level user cache (call on sign-out). */
+export function clearUserCache() {
+  cachedUser = null;
+  inflight = null;
+}
+
 function fetchCurrentUser(): Promise<UserSummary | null> {
   if (inflight) return inflight;
   const supabase = createSupabaseBrowser();
