@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useTransition } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowUpRight, Route, Hash, CircleDot, ArrowRight } from 'lucide-react';
+import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight } from 'lucide-react';
 import { CURRICULUM, type PathDef, type BlockDef } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import AppNav from '@/components/AppNav';
@@ -2120,114 +2120,74 @@ function computePathStats(
   });
 }
 
-function StatCard({
-  value, label, icon, accent,
-}: {
-  value: string;
-  label: string;
-  icon: React.ReactNode;
-  accent: 'blue' | 'emerald' | 'violet' | 'amber';
-}) {
-  const accentMap = {
-    blue:    { fg: 'text-blue-300',    bg: 'rgba(59,130,246,0.1)', ring: 'rgba(59,130,246,0.28)' },
-    emerald: { fg: 'text-emerald-300', bg: 'rgba(16,185,129,0.1)', ring: 'rgba(16,185,129,0.28)' },
-    violet:  { fg: 'text-violet-300',  bg: 'rgba(139,92,246,0.1)', ring: 'rgba(139,92,246,0.28)' },
-    amber:   { fg: 'text-amber-300',   bg: 'rgba(245,158,11,0.1)', ring: 'rgba(245,158,11,0.28)' },
-  }[accent];
+// Simple stat box — matches the rail's Metric/RAIL_BOX treatment.
+function StatBox({ value, label }: { value: string; label: string }) {
   return (
-    <div
-      className="relative rounded-xl px-4 py-4 overflow-hidden"
-      style={{
-        background: `linear-gradient(180deg, ${accentMap.bg} 0%, ${C.cardBg} 78%)`,
-        border: `1px solid ${C.border}`,
-      }}
-    >
-      <div
-        className={cn(
-          'mb-3 inline-flex h-7 w-7 items-center justify-center rounded-md',
-          accentMap.fg,
-        )}
-        style={{ background: accentMap.bg, border: `1px solid ${accentMap.ring}` }}
-      >
-        {icon}
-      </div>
-      <div className="text-[26px] leading-none font-bold text-white tabular-nums" style={SG}>
+    <div className="rounded-lg px-3.5 py-3 bg-slate-800/40 border border-slate-700/60">
+      <div className="text-[20px] leading-none font-semibold text-slate-100 tabular-nums" style={SG}>
         {value}
       </div>
-      <div className="text-[9.5px] text-slate-500 mt-2 leading-tight uppercase tracking-[0.14em] font-semibold">
-        {label}
-      </div>
+      <div className="text-[10.5px] text-slate-500 mt-2">{label}</div>
     </div>
   );
 }
 
+// Row for a path — matches an inactive SidebarPathCard.
 function ProgressPathCard({
-  stats, tone, onClick,
+  stats, onClick,
 }: {
   stats: PathStats;
-  tone: 'strength' | 'focus';
   onClick: () => void;
 }) {
   const { path, blocksComplete, blocksTotal, pct, pathStatus } = stats;
   const n = String(path.order).padStart(2, '0');
   const complete = pathStatus === 'complete';
-  const isStrength = tone === 'strength';
-  const accentColor = complete || isStrength ? '#10b981' : '#60a5fa';
-
-  const label = complete
-    ? 'Mastered'
-    : isStrength
-      ? pct >= 75 ? 'Nearly complete' : 'Strong footing'
-      : pct === 0 ? 'Not started' : 'Getting started';
 
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'group relative w-full text-left rounded-xl pl-5 pr-4 py-3.5 border overflow-hidden',
-        'transition-all duration-200 hover:-translate-y-px',
+        'w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+        complete
+          ? 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40'
+          : 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
       )}
-      style={{
-        background: C.cardBg,
-        borderColor: complete || isStrength ? 'rgba(16,185,129,0.22)' : 'rgba(96,165,250,0.22)',
-      }}
     >
+      <div className="flex items-center justify-between mb-1.5">
+        <span
+          className={cn(
+            'font-mono text-[10px] font-bold tabular-nums tracking-wider',
+            complete ? 'text-emerald-400/70' : 'text-slate-500',
+          )}
+        >
+          {n}
+        </span>
+        {complete && <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />}
+      </div>
+      <p
+        className={cn(
+          'text-[12.5px] font-semibold leading-tight mb-2.5 tracking-[-0.005em]',
+          complete ? 'text-slate-300' : 'text-slate-200',
+        )}
+        style={SG}
+      >
+        {path.title}
+      </p>
       <div
-        aria-hidden
-        className="absolute left-0 top-0 bottom-0 w-[2px]"
-        style={{ background: accentColor, opacity: 0.75 }}
-      />
-      <div className="flex items-start justify-between gap-4 mb-2">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span
-            className="font-mono text-[10px] font-bold tabular-nums tracking-wider"
-            style={{ color: accentColor, opacity: 0.85 }}
-          >
-            {n}
-          </span>
-          <p
-            className="text-[14px] font-semibold leading-tight text-slate-100 truncate"
-            style={{ ...SG, letterSpacing: '-0.005em' }}
-          >
-            {path.title}
-          </p>
-        </div>
-        <span className="text-[12px] font-bold text-white tabular-nums shrink-0" style={SG}>{pct}%</span>
+        className={cn(
+          'flex justify-between mb-1 text-[9.5px] font-medium',
+          complete ? 'text-slate-500' : 'text-slate-400',
+        )}
+      >
+        <span>{blocksComplete} / {blocksTotal} blocks</span>
+        <span className="tabular-nums">{pct}%</span>
       </div>
-      <div className="flex items-center justify-between text-[10.5px] text-slate-500 mb-2.5">
-        <span>{label}</span>
-        <span className="tabular-nums">{blocksComplete} / {blocksTotal} blocks</span>
-      </div>
-      <div className="h-[3px] rounded-full bg-slate-900/60 overflow-hidden">
+      <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${accentColor}aa, ${accentColor})`,
-            boxShadow: `0 0 10px ${accentColor}66`,
-          }}
+          className={cn('h-full rounded-full transition-all', complete ? 'bg-emerald-500' : 'bg-blue-500')}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </button>
@@ -2236,33 +2196,19 @@ function ProgressPathCard({
 
 function EmptyHint({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="rounded-xl px-4 py-3.5 text-[12px] text-slate-500"
-      style={{ background: C.cardBg, border: `1px dashed ${C.borderMid}` }}
-    >
+    <div className="rounded-lg px-3 py-2.5 text-[11.5px] text-slate-500 bg-slate-800/40 border border-slate-700/60">
       {children}
     </div>
   );
 }
 
-function ProgressSectionHeader({
-  icon, title, count,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  count?: number;
-}) {
+// Section header — matches the sidebar "Learning Paths" label exactly.
+function SectionHeader({ children, count }: { children: React.ReactNode; count?: number }) {
   return (
-    <div className="flex items-center gap-2 mb-4">
-      {icon}
-      <span className="text-[10px] font-bold tracking-[0.18em] uppercase" style={{ color: C.textMuted }}>
-        {title}
-      </span>
-      {count !== undefined && (
-        <span className="text-[10px] font-semibold text-slate-500 tabular-nums">{count}</span>
-      )}
-      <div className="flex-1 h-px" style={{ background: C.border }} />
-    </div>
+    <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+      {children}
+      {count !== undefined && <span className="ml-2 text-slate-700 tabular-nums">{count}</span>}
+    </p>
   );
 }
 
@@ -2312,92 +2258,55 @@ export function ProgressView({
   ));
 
   return (
-    <div className="w-full max-w-[920px] mx-auto py-10 px-8 lg:px-12">
-      {/* ─── Hero header with overall mastery ─── */}
-      <div
-        className="relative rounded-2xl mb-10 overflow-hidden"
-        style={{
-          background:
-            'radial-gradient(ellipse at top right, rgba(59,130,246,0.18) 0%, transparent 58%), linear-gradient(180deg, rgba(15,23,41,0.92) 0%, rgba(11,18,32,0.92) 100%)',
-          border: `1px solid ${C.borderMid}`,
-        }}
-      >
-        <div
-          aria-hidden
-          className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl pointer-events-none"
-          style={{ background: 'rgba(59,130,246,0.16)' }}
-        />
-        <div className="relative flex items-start justify-between gap-8 px-7 pt-7 pb-6">
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(148,163,184,0.9)' }}>
-              Overview
-            </p>
-            <h2 className="text-[32px] font-bold leading-none mb-3" style={{ ...SG, color: C.text, letterSpacing: '-0.025em' }}>
-              Your Progress
-            </h2>
-            <p className="text-[13.5px] leading-relaxed max-w-[420px]" style={{ color: C.textMuted }}>
-              {totalComplete === 0
-                ? "You haven't started yet. Pick a block from the Path tab and begin."
-                : `You've completed ${totalComplete} of ${totalBlocks} blocks across ${CURRICULUM.length} paths.`}
-            </p>
-          </div>
-          <div className="shrink-0 text-right">
-            <div
-              className="font-bold leading-none tabular-nums"
-              style={{
-                ...SG,
-                fontSize: 56,
-                letterSpacing: '-0.04em',
-                background: 'linear-gradient(135deg, #e5e7eb 0%, #60a5fa 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              {overallPct}
-              <span style={{ fontSize: 28, marginLeft: 2 }}>%</span>
-            </div>
-            <p className="text-[10px] font-bold tracking-[0.18em] uppercase mt-2" style={{ color: C.textMuted }}>
-              Mastery
-            </p>
-          </div>
+    <div className="w-full max-w-[720px] mx-auto py-8 px-8 lg:px-12">
+      {/* Header — matches PathView header */}
+      <div className="mb-8 flex items-end justify-between">
+        <div>
+          <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: C.textMuted }}>
+            Progress
+          </p>
+          <h2 className="text-[22px] font-semibold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
+            Your Progress
+          </h2>
+          <p className="text-[12.5px] mt-1.5" style={{ color: C.textMuted }}>
+            {totalComplete === 0
+              ? "You haven't started yet. Pick a block from the Path tab and begin."
+              : `${totalComplete} of ${totalBlocks} blocks complete across ${CURRICULUM.length} paths.`}
+          </p>
         </div>
-        <div className="relative px-7 pb-6">
-          <div className="h-[4px] rounded-full bg-slate-900/60 overflow-hidden">
+        <div className="text-right pb-0.5 shrink-0 ml-8">
+          <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
             <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{
-                width: `${overallPct}%`,
-                background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)',
-                boxShadow: '0 0 16px rgba(59,130,246,0.5)',
-              }}
+              className="h-full rounded-full transition-all bg-blue-500"
+              style={{ width: `${overallPct}%` }}
             />
           </div>
+          <p className="text-[10px] font-medium text-slate-500 tabular-nums">
+            {overallPct}% mastery
+          </p>
         </div>
       </div>
 
-      {/* ─── Stats strip ─── */}
-      <section className="mb-10">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatCard accent="emerald" value={`${totalComplete}`}                     label="blocks"   icon={<CheckCircle2 size={13} strokeWidth={2.25} />} />
-          <StatCard accent="blue"    value={`${totalLessons}`}                      label="lessons"  icon={<BookOpen     size={13} strokeWidth={2.25} />} />
-          <StatCard accent="violet"  value={`${totalProblems}`}                     label="problems" icon={<Target       size={13} strokeWidth={2.25} />} />
-          <StatCard accent="amber"   value={`${pathsStarted}/${CURRICULUM.length}`} label="paths"    icon={<Route        size={13} strokeWidth={2.25} />} />
+      {/* Overview */}
+      <section className="mb-8">
+        <SectionHeader>Overview</SectionHeader>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <StatBox value={`${totalComplete}`}                     label="blocks complete" />
+          <StatBox value={`${totalLessons}`}                      label="lessons done" />
+          <StatBox value={`${totalProblems}`}                     label="problems done" />
+          <StatBox value={`${pathsStarted} / ${CURRICULUM.length}`} label="paths started" />
         </div>
       </section>
 
-      {/* ─── Strengths ─── */}
-      <section className="mb-10">
-        <ProgressSectionHeader
-          icon={<ArrowUpRight size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
-          title="Strengths"
-        />
+      {/* Strengths */}
+      <section className="mb-8">
+        <SectionHeader>Strengths</SectionHeader>
         {strengths.length > 0 ? (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {strengths.map(s => (
               <ProgressPathCard
                 key={s.path.id}
                 stats={s}
-                tone="strength"
                 onClick={() => onNavigateToPath(s.path.id)}
               />
             ))}
@@ -2409,63 +2318,44 @@ export function ProgressView({
         )}
       </section>
 
-      {/* ─── Focus Areas ─── */}
-      <section className="mb-10">
-        <ProgressSectionHeader
-          icon={<CircleDot size={13} strokeWidth={2.25} className="text-blue-300" />}
-          title="Focus Areas"
-        />
+      {/* Focus Areas */}
+      <section className="mb-8">
+        <SectionHeader>Focus Areas</SectionHeader>
         {focusAreas.length > 0 ? (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {focusAreas.map(s => (
               <ProgressPathCard
                 key={s.path.id}
                 stats={s}
-                tone="focus"
                 onClick={() => onNavigateToPath(s.path.id)}
               />
             ))}
           </div>
         ) : (
           <EmptyHint>
-            Nothing to focus on. You&apos;re crushing it.
+            Nothing to focus on right now.
           </EmptyHint>
         )}
       </section>
 
-      {/* ─── What's Next ─── */}
-      <section className="mb-10">
-        <ProgressSectionHeader
-          icon={<ArrowRight size={13} strokeWidth={2.25} className="text-blue-300" />}
-          title="What's Next"
-        />
+      {/* What's Next */}
+      <section className="mb-8">
+        <SectionHeader>What&apos;s Next</SectionHeader>
         {nextUp ? (
-          <div
-            className="relative rounded-2xl px-5 py-5 border overflow-hidden"
-            style={{
-              background:
-                'radial-gradient(ellipse at top left, rgba(59,130,246,0.2) 0%, transparent 55%), linear-gradient(180deg, rgba(59,130,246,0.08) 0%, rgba(15,23,41,0.9) 100%)',
-              borderColor: C.blueBorder,
-            }}
-          >
-            <div
-              aria-hidden
-              className="absolute -bottom-20 -right-16 w-60 h-60 rounded-full blur-3xl pointer-events-none"
-              style={{ background: 'rgba(59,130,246,0.12)' }}
-            />
-            <p className="relative text-[10px] font-bold text-blue-300/90 tracking-[0.16em] uppercase mb-2">
+          <div className="rounded-lg px-4 py-4 bg-blue-500/[0.08] border border-blue-400/45">
+            <p className="text-[10px] font-bold text-blue-300 tracking-[0.16em] uppercase mb-2">
               Up next in {nextUp.path.title}
             </p>
             <p
-              className="relative text-[20px] font-bold leading-tight text-white mb-1.5"
-              style={{ ...SG, letterSpacing: '-0.015em' }}
+              className="text-[15px] font-semibold leading-snug text-white mb-1 tracking-[-0.01em]"
+              style={SG}
             >
               {nextUp.block.title}
             </p>
-            <p className="relative text-[13px] leading-relaxed text-slate-300 mb-4 max-w-[520px]">
+            <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
               {nextUp.block.subtitle}
             </p>
-            <div className="relative flex items-center gap-5 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
+            <div className="flex items-center gap-4 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
               <span className="flex items-center gap-1.5">
                 <BookOpen size={11} strokeWidth={2.25} />
                 {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
@@ -2479,42 +2369,32 @@ export function ProgressView({
               type="button"
               onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
               className={cn(
-                'relative inline-flex items-center gap-1.5 h-10 px-5 rounded-lg text-[12.5px] font-semibold text-white',
-                'bg-blue-500/20 border border-blue-400/60',
-                'hover:bg-blue-500/30 hover:border-blue-400/80',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+                'inline-flex items-center h-9 px-4 rounded-md text-[12px] font-semibold text-white',
+                'bg-blue-500 hover:bg-blue-400 border border-blue-400/60',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70',
                 'transition-colors',
               )}
-              style={{ ...SG, boxShadow: '0 0 20px rgba(59,130,246,0.25)' }}
+              style={SG}
             >
-              Resume training
-              <ArrowRight size={13} strokeWidth={2.5} />
+              Resume
             </button>
           </div>
         ) : (
           <EmptyHint>
-            No unlocked blocks remaining. You&apos;ve reached the end of the road.
+            No unlocked blocks remaining.
           </EmptyHint>
         )}
       </section>
 
-      {/* ─── Skills Mastered ─── */}
+      {/* Skills Mastered */}
       <section className="mb-6">
-        <ProgressSectionHeader
-          icon={<Hash size={13} strokeWidth={2.25} className="text-emerald-400/80" />}
-          title="Skills Mastered"
-          count={skillsMastered.length}
-        />
+        <SectionHeader count={skillsMastered.length}>Skills Mastered</SectionHeader>
         {skillsMastered.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {skillsMastered.map(skill => (
               <span
                 key={skill}
-                className="rounded-md px-2.5 py-1 text-[11.5px] font-medium text-emerald-200/90"
-                style={{
-                  background: 'rgba(16,185,129,0.08)',
-                  border: '1px solid rgba(16,185,129,0.22)',
-                }}
+                className="rounded-md px-2.5 py-1 text-[11.5px] font-medium text-slate-300 bg-slate-800/40 border border-slate-700/60"
               >
                 {skill}
               </span>
@@ -2568,7 +2448,19 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
   const viewingStatus = pathStatuses[viewingPath.id] ?? 'locked';
 
   const blocksWithStatus = getBlocksWithStatus(viewingPath, viewingStatus, completedIds);
-  const nextBlock        = blocksWithStatus.find(b => b.blockStatus === 'active' || b.blockStatus === 'available');
+  const firstOpenBlock   = blocksWithStatus.find(b => b.blockStatus === 'active' || b.blockStatus === 'available');
+  // If a block is currently open, "Next lesson" should advance past it.
+  // Otherwise fall back to the first active/available block in the path.
+  const nextBlock = (() => {
+    if (selectedBlockId) {
+      const idx = viewingPath.blocks.findIndex(b => b.id === selectedBlockId);
+      if (idx >= 0 && idx + 1 < viewingPath.blocks.length) {
+        return viewingPath.blocks[idx + 1];
+      }
+      return undefined;
+    }
+    return firstOpenBlock;
+  })();
 
   const handleSelectPath = (id: string) => {
     if (pathStatuses[id] === 'locked') return;
@@ -2593,7 +2485,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
       <main
         style={{ paddingLeft: 304, paddingTop: 48 }}
         className={cn(
-          'min-h-screen overflow-x-auto',
+          'min-h-screen overflow-x-auto pb-24',
           'lg:pr-[296px]',
         )}
       >
@@ -2610,7 +2502,12 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
       {nextBlock && viewingStatus !== 'complete' && (
         <button
           type="button"
-          onClick={() => setSelectedBlockId(nextBlock.id)}
+          onClick={() => {
+            setSelectedBlockId(nextBlock.id);
+            if (typeof window !== 'undefined') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
           className={cn(
             'fixed z-50 inline-flex items-center justify-center gap-2',
             'bottom-6 right-6 h-14 px-8 w-auto',
