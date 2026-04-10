@@ -46,12 +46,13 @@ function fetchCurrentUser(): Promise<UserSummary | null> {
   return inflight;
 }
 
-export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Settings';
+export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Review' | 'Settings';
 
 const TABS: { label: AppNavTab; href: string }[] = [
   { label: 'Path',     href: '/dashboard' },
   { label: 'Library',  href: '/library'   },
   { label: 'Progress', href: '/progress'  },
+  { label: 'Review',   href: '/review'    },
   { label: 'Settings', href: '/settings'  },
 ];
 
@@ -111,13 +112,15 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           {isGuest ? (
-            <Link
-              href={`/sign-in?next=${encodeURIComponent(pathname)}`}
-              className="text-[12px] font-medium text-blue-400 hover:text-blue-300 transition-colors px-3 py-1.5 rounded-md border border-blue-500/30 hover:border-blue-400/50 bg-blue-500/[0.06]"
-              style={SG}
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-3 text-[12px] font-medium text-slate-200 border-slate-700 bg-transparent hover:bg-slate-800 hover:text-white"
+              nativeButton={false}
+              render={<Link href={`/sign-in?next=${encodeURIComponent(pathname)}`} />}
             >
               Sign in
-            </Link>
+            </Button>
           ) : (
             <>
               <Avatar size="sm" className="size-7">
