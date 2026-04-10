@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import type { SolveResponse } from '@/lib/types';
+import UpgradePrompt from '@/components/UpgradePrompt';
 
 const PATTERN_COLORS: Record<string, string> = {
   'sliding window': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
@@ -111,6 +112,7 @@ export default function TutorApp() {
   const [response, setResponse] = useState<SolveResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState<{ used: number; limit: number } | null>(null);
   const [hintsShown, setHintsShown] = useState(0);
   const [showSteps, setShowSteps] = useState(false);
   const [showCode, setShowCode] = useState(false);
@@ -129,6 +131,7 @@ export default function TutorApp() {
 
     setLoading(true);
     setError(null);
+    setRateLimited(null);
     setResponse(null);
     setHintsShown(1);
     setShowSteps(false);
@@ -141,6 +144,10 @@ export default function TutorApp() {
         body: JSON.stringify({ problem, attempt }),
       });
       const data = await res.json();
+      if (res.status === 429) {
+        setRateLimited({ used: data.used ?? 3, limit: data.limit ?? 3 });
+        return;
+      }
       if (!res.ok) throw new Error(data.error || 'Request failed');
 
       setResponse(data);
@@ -228,6 +235,11 @@ export default function TutorApp() {
             )}
           </div>
         </form>
+
+        {/* Rate limit */}
+        {rateLimited && (
+          <UpgradePrompt used={rateLimited.used} limit={rateLimited.limit} />
+        )}
 
         {/* Error */}
         {error && (

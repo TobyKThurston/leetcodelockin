@@ -27,12 +27,30 @@ export default async function proxy(req: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Settings requires a real user session — redirect guests to sign-in.
-  if (!user && req.nextUrl.pathname.startsWith('/settings')) {
-    const url = req.nextUrl.clone();
-    url.pathname = '/sign-in';
-    url.searchParams.set('next', req.nextUrl.pathname);
-    return NextResponse.redirect(url);
+  if (!user) {
+    // If ?guest=1 is present, stamp a cookie so subsequent navigations pass through.
+    if (req.nextUrl.searchParams.get('guest') === '1') {
+      const clean = req.nextUrl.clone();
+      clean.searchParams.delete('guest');
+      const redirect = NextResponse.redirect(clean);
+      redirect.cookies.set('guest-browsing', '1', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+      return redirect;
+    }
+
+    // Settings always requires a real session.
+    // Other routes require either a session or the guest-browsing cookie.
+    const hasGuestCookie = req.cookies.get('guest-browsing')?.value === '1';
+    if (!hasGuestCookie || req.nextUrl.pathname.startsWith('/settings')) {
+      const url = req.nextUrl.clone();
+      url.pathname = '/sign-in';
+      url.searchParams.set('next', req.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
   }
 
   return res;

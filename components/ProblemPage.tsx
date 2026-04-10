@@ -14,6 +14,7 @@ import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
 import type { SolveResponse } from '@/lib/types';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
+import UpgradePrompt from '@/components/UpgradePrompt';
 
 // ─── Monaco (browser-only) ────────────────────────────────────────────────────
 
@@ -290,118 +291,11 @@ function QuestionTab({ problem }: { problem: ProblemContent }) {
   );
 }
 
-// Layered gradient orb for the hints empty state — avoids the "cheap flat icon" look
-function HintsOrb() {
-  return (
-    <div
-      className="relative flex items-center justify-center"
-      style={{
-        width: 64,
-        height: 64,
-        borderRadius: 18,
-        background:
-          'linear-gradient(155deg, rgba(96,165,250,0.28) 0%, rgba(59,130,246,0.1) 55%, rgba(11,18,32,0.85) 100%)',
-        border: '1px solid rgba(96,165,250,0.38)',
-        boxShadow:
-          '0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.3) inset, 0 20px 50px -18px rgba(59,130,246,0.55), 0 0 0 1px rgba(96,165,250,0.1)',
-      }}
-    >
-      {/* inner highlight glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          borderRadius: 18,
-          background:
-            'radial-gradient(circle at 50% 18%, rgba(186,230,253,0.32), transparent 60%)',
-        }}
-      />
-      {/* rim ring */}
-      <div
-        className="absolute inset-[3px] pointer-events-none"
-        style={{
-          borderRadius: 15,
-          border: '1px solid rgba(191,219,254,0.12)',
-        }}
-      />
-      <svg
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="relative"
-        style={{ filter: 'drop-shadow(0 1px 2px rgba(12,20,40,0.6))' }}
-      >
-        <defs>
-          <linearGradient id="hints-orb-bulb" x1="12" y1="2" x2="12" y2="18" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#f0f9ff" />
-            <stop offset="55%" stopColor="#bfdbfe" />
-            <stop offset="100%" stopColor="#60a5fa" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.6 1.2 1.3 1.4 2.1.1.4.4.4.6.4h4c.2 0 .5 0 .6-.4.2-.8.7-1.5 1.4-2.1A6 6 0 0 0 12 3Z"
-          stroke="url(#hints-orb-bulb)"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M12 3a6 6 0 0 0-4 10.5c.7.6 1.2 1.3 1.4 2.1.1.4.4.4.6.4h4c.2 0 .5 0 .6-.4.2-.8.7-1.5 1.4-2.1A6 6 0 0 0 12 3Z"
-          fill="url(#hints-orb-bulb)"
-          fillOpacity="0.18"
-        />
-      </svg>
-    </div>
-  );
-}
-
-// Premium tinted chip for toolbar actions — gradient fill, inset highlight, soft outer glow
-interface PremiumChipProps {
-  onClick: () => void;
-  title: string;
-  label: string;
-  tone: 'blue' | 'violet';
-}
-function PremiumChip({ onClick, title, label, tone }: PremiumChipProps) {
-  const palette =
-    tone === 'blue'
-      ? {
-          text: '#dbeafe',
-          bg: 'linear-gradient(180deg, rgba(96,165,250,0.22) 0%, rgba(59,130,246,0.08) 100%)',
-          border: '1px solid rgba(96,165,250,0.38)',
-          shadow:
-            '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(59,130,246,0.55)',
-        }
-      : {
-          text: '#e9d5ff',
-          bg: 'linear-gradient(180deg, rgba(167,139,250,0.22) 0%, rgba(139,92,246,0.08) 100%)',
-          border: '1px solid rgba(167,139,250,0.38)',
-          shadow:
-            '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(139,92,246,0.55)',
-        };
-
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      className="group relative flex items-center px-2.5 py-1 rounded-md text-[11.5px] font-semibold transition-all hover:brightness-110 active:brightness-95"
-      style={{
-        color: palette.text,
-        background: palette.bg,
-        border: palette.border,
-        boxShadow: palette.shadow,
-        ...SG,
-      }}
-    >
-      {label}
-    </button>
-  );
-}
-
 function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) {
   const [response, setResponse]     = useState<SolveResponse | null>(null);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState<{ used: number; limit: number } | null>(null);
   const [hintsShown, setHintsShown] = useState(0);
   const [showSteps, setShowSteps]   = useState(false);
   const [showCode, setShowCode]     = useState(false);
@@ -409,6 +303,7 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
   async function getHints() {
     setLoading(true);
     setError(null);
+    setRateLimited(null);
     setResponse(null);
     setHintsShown(1);
     setShowSteps(false);
@@ -424,6 +319,10 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
         body: JSON.stringify({ problem: problemDescription, attempt: code.trim() }),
       });
       const data = await res.json();
+      if (res.status === 429) {
+        setRateLimited({ used: data.used ?? 3, limit: data.limit ?? 3 });
+        return;
+      }
       if (!res.ok) throw new Error(data.error || 'Request failed');
       setResponse(data);
     } catch (err) {
@@ -437,7 +336,6 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
     <div className="px-5 py-5 overflow-y-auto flex-1 space-y-4" style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}>
       {!response && !loading && (
         <div className="flex flex-col items-center justify-center py-14 text-center space-y-5">
-          <HintsOrb />
           <div>
             <p className="text-[14px] font-semibold text-zinc-200 mb-1 tracking-tight" style={SG}>Need a nudge?</p>
             <p className="text-[12px] text-zinc-500 max-w-[240px] leading-relaxed">AI hints will analyze your current code and guide you to the solution.</p>
@@ -468,6 +366,10 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
             </div>
           ))}
         </div>
+      )}
+
+      {rateLimited && (
+        <UpgradePrompt used={rateLimited.used} limit={rateLimited.limit} />
       )}
 
       {error && (
@@ -819,8 +721,6 @@ interface EditorPanelProps {
   onReset:       () => void;
   onRun:         () => void;
   onSubmit:      () => void;
-  onOpenHints:   () => void;
-  onOpenTutor:   () => void;
   onToggleFullscreen: () => void;
   verdict:       'accepted' | 'wrong' | null;
   children:      React.ReactNode;
@@ -834,7 +734,7 @@ function parseErrorLine(msg: string): number {
 function EditorPanel({
   code, lang, running, results, fullscreen,
   onCodeChange, onLangChange, onReset,
-  onRun, onSubmit, onOpenHints, onOpenTutor, onToggleFullscreen, verdict, children,
+  onRun, onSubmit, onToggleFullscreen, verdict, children,
 }: EditorPanelProps) {
   const onRunRef  = useRef(onRun);
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -919,21 +819,6 @@ function EditorPanel({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <PremiumChip
-            onClick={onOpenHints}
-            title="Open hints"
-            label="Hints"
-            tone="blue"
-          />
-          <PremiumChip
-            onClick={onOpenTutor}
-            title="Open AI tutor"
-            label="Tutor"
-            tone="violet"
-          />
-
-          <div className="w-px h-4 mx-1" style={{ background: BORDER }} />
-
           <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-700 select-none">
             <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
             <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
@@ -1262,6 +1147,7 @@ function TutorChat({ code, problem }: { code: string; problem: ProblemContent })
   const [input, setInput]     = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError]     = useState<string | null>(null);
+  const [rateLimited, setRateLimited] = useState<{ used: number; limit: number } | null>(null);
   const scrollRef             = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -1293,6 +1179,10 @@ function TutorChat({ code, problem }: { code: string; problem: ProblemContent })
         }),
       });
       const data = await res.json();
+      if (res.status === 429) {
+        setRateLimited({ used: data.used ?? 3, limit: data.limit ?? 3 });
+        return;
+      }
       if (!res.ok) throw new Error(data.error || 'Request failed');
       setMessages(m => [...m, { role: 'assistant', content: data.reply }]);
     } catch (err) {
@@ -1360,6 +1250,11 @@ function TutorChat({ code, problem }: { code: string; problem: ProblemContent })
                 ))}
               </div>
             </div>
+          </div>
+        )}
+        {rateLimited && (
+          <div className="px-1">
+            <UpgradePrompt used={rateLimited.used} limit={rateLimited.limit} />
           </div>
         )}
         {error && (
@@ -1605,8 +1500,6 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
             onReset={handleReset}
             onRun={() => execTests(false)}
             onSubmit={() => execTests(true)}
-            onOpenHints={() => openLeftTab('hints')}
-            onOpenTutor={() => openLeftTab('tutor')}
             onToggleFullscreen={() =>
               setFullscreen(fs => (fs === 'editor' ? null : 'editor'))
             }

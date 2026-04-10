@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
+import { getSupabaseUser } from '@/lib/supabase';
+import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
 
 const schema = z.object({
   hints: z
@@ -37,6 +39,19 @@ CODE: Clean Python with helpful inline comments. Use beginner-friendly variable 
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getSupabaseUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Sign in to use AI hints' }, { status: 401 });
+    }
+
+    const rateLimit = await checkAiRateLimit(user.id);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Daily limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: false },
+        { status: 429 },
+      );
+    }
+
     const { problem, attempt } = await req.json();
 
     if (!problem?.trim()) {
@@ -54,6 +69,7 @@ export async function POST(req: NextRequest) {
       output: Output.object({ schema }),
     });
 
+    await recordAiUsage(user.id, 'solve');
     return NextResponse.json(output);
   } catch (err) {
     console.error('/api/solve error:', err);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle2, ExternalLink, Circle } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Circle, Shuffle } from 'lucide-react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { LIBRARY, type CategoryDef, type Difficulty } from '@/lib/library';
 import AppNav from '@/components/AppNav';
@@ -433,12 +433,13 @@ const RAIL_BOX =
   'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
 
 function LibraryRightRail({
-  category, solvedInCategory, totalSolved, totalProblems,
+  category, solvedInCategory, totalSolved, totalProblems, onRandomProblem,
 }: {
   category: CategoryDef;
   solvedInCategory: number;
   totalSolved: number;
   totalProblems: number;
+  onRandomProblem: () => void;
 }) {
   const categoryTotal = category.problems.length;
   const categoryPct   = categoryTotal === 0 ? 0 : Math.round((solvedInCategory / categoryTotal) * 100);
@@ -531,6 +532,25 @@ function LibraryRightRail({
               <MetricRow label="Solved Today"  value={String(solvedToday)} />
               <MetricRow label="In Category"   value={`${solvedInCategory} / ${categoryTotal}`} />
             </div>
+          </section>
+
+          {/* 4 — Random Problem */}
+          <section>
+            <RailHeader>Feeling Lucky</RailHeader>
+            <button
+              type="button"
+              onClick={onRandomProblem}
+              className={cn(
+                RAIL_BOX,
+                'w-full flex items-center gap-2.5 transition-colors',
+                'hover:bg-slate-700/40 hover:border-slate-600/60 cursor-pointer',
+              )}
+            >
+              <Shuffle size={14} className="text-slate-400" />
+              <span className="text-[12px] font-medium text-slate-300" style={SG}>
+                Random problem
+              </span>
+            </button>
           </section>
 
         </div>
@@ -682,6 +702,19 @@ export default function LibraryPage() {
     router.push(`/solve/${encodeURIComponent(slug)}`);
   }, [router]);
 
+  const handleRandomProblem = useCallback(() => {
+    // Collect all unsolved, published problems across all categories.
+    const pool: string[] = [];
+    for (const cat of LIBRARY) {
+      for (const p of cat.problems) {
+        if (publishedSlugs.has(p.slug) && !solvedIds.has(p.slug)) pool.push(p.slug);
+      }
+    }
+    if (pool.length === 0) return;
+    const slug = pool[Math.floor(Math.random() * pool.length)];
+    router.push(`/solve/${encodeURIComponent(slug)}`);
+  }, [publishedSlugs, solvedIds, router]);
+
   const handleSelectCategory = useCallback((id: string) => {
     setViewingCategoryId(id);
     const el = document.getElementById(categoryAnchor(id));
@@ -707,6 +740,7 @@ export default function LibraryPage() {
         solvedInCategory={solvedByCategory[viewingCategory.id] ?? 0}
         totalSolved={totalSolved}
         totalProblems={totalProblems}
+        onRandomProblem={handleRandomProblem}
       />
       <main
         className="min-h-screen"
@@ -714,6 +748,9 @@ export default function LibraryPage() {
           paddingTop: 48,
           paddingLeft: 304,
           paddingRight: 0,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
         }}
       >
         <div className="lg:pr-[304px]">

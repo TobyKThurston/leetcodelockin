@@ -1,4 +1,5 @@
 import { getSupabaseUser } from '@/lib/supabase';
+import { getUserSubscription } from '@/lib/subscription';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,11 +13,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import SignOutButton from './SignOutButton';
 import ProfileForm from './ProfileForm';
 import SettingsNav from './SettingsNav';
+import SubscriptionCard from '@/components/SubscriptionCard';
 
 const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
 export default async function SettingsPage() {
   const user = await getSupabaseUser();
+  const sub = user ? await getUserSubscription(user.id) : null;
   const name = (user?.user_metadata?.full_name as string | undefined) ?? '';
   const email = user?.email ?? '';
   const avatar = user?.user_metadata?.avatar_url as string | undefined;
@@ -71,6 +74,14 @@ export default async function SettingsPage() {
               <ProfileForm initialName={name} email={email} />
             </CardContent>
           </Card>
+
+          {/* Subscription */}
+          <SubscriptionCard
+            isPro={sub?.isPro ?? false}
+            status={sub?.status ?? 'inactive'}
+            currentPeriodEnd={sub?.currentPeriodEnd?.toISOString() ?? null}
+            cancelAtPeriodEnd={sub?.cancelAtPeriodEnd ?? false}
+          />
 
           {/* Preferences */}
           <Card className="bg-white/[0.025] border-white/10">

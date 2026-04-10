@@ -343,7 +343,7 @@ export default async function SignInPage({
         </Card>
 
         <Link
-          href={nextUrl}
+          href={`${nextUrl}${nextUrl.includes('?') ? '&' : '?'}guest=1`}
           className="mt-5 block text-center text-[12.5px] text-zinc-500 hover:text-zinc-300 transition-colors"
           style={SG}
         >

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
+import { getSupabaseUser } from '@/lib/supabase';
+import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
 
 const SYSTEM_PROMPT = `You are a patient, Socratic coding tutor helping a student solve a LeetCode-style problem.
 
@@ -20,6 +22,19 @@ interface ChatMessage {
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getSupabaseUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Sign in to use AI chat' }, { status: 401 });
+    }
+
+    const rateLimit = await checkAiRateLimit(user.id);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Daily limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: false },
+        { status: 429 },
+      );
+    }
+
     const body = await req.json();
     const messages: ChatMessage[] = Array.isArray(body.messages) ? body.messages : [];
     const problemContext: string = typeof body.problem === 'string' ? body.problem : '';
@@ -49,6 +64,7 @@ export async function POST(req: NextRequest) {
       messages: modelMessages,
     });
 
+    await recordAiUsage(user.id, 'tutor-chat');
     return NextResponse.json({ reply: text });
   } catch (err) {
     console.error('/api/tutor-chat error:', err);
