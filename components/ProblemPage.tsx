@@ -343,8 +343,12 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
       {!response && !loading && (
         <div className="flex flex-col items-center justify-center py-14 text-center space-y-5">
           <div>
-            <p className="text-[14px] font-semibold text-zinc-200 mb-1 tracking-tight" style={SG}>Need a nudge?</p>
-            <p className="text-[12px] text-zinc-500 max-w-[240px] leading-relaxed">AI hints will analyze your current code and guide you to the solution.</p>
+            <p className="text-[14px] font-semibold text-zinc-200 mb-1 tracking-tight" style={SG}>Stuck? Get a nudge.</p>
+            <p className="text-[12px] text-zinc-500 max-w-[260px] leading-relaxed">
+              {code.trim()
+                ? 'Hints will be based on the code you have right now — the more you write, the better the hints.'
+                : 'Write some code first and hints will be tailored to your approach. Or generate hints from scratch to get started.'}
+            </p>
           </div>
           <button
             onClick={getHints}
@@ -357,13 +361,16 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
               ...SG,
             }}
           >
-            Get hints
+            {code.trim() ? 'Analyze my code' : 'Get hints'}
           </button>
         </div>
       )}
 
       {loading && (
         <div className="space-y-3">
+          <p className="text-[11px] text-zinc-600 text-center animate-pulse" style={SG}>
+            {code.trim() ? 'Reading your code…' : 'Generating hints…'}
+          </p>
           {[1,2,3].map(i => (
             <div key={i} className="rounded-lg px-4 py-3 space-y-2" style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}` }}>
               <div className="h-2 w-14 rounded-full animate-pulse" style={{ background: 'rgba(255,255,255,0.06)' }} />
@@ -458,7 +465,7 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
           )}
 
           <button onClick={getHints} className="text-[11px] text-zinc-700 hover:text-zinc-500 transition-colors flex items-center gap-1">
-            <RotateCcw size={10} /> Re-analyze
+            <RotateCcw size={10} /> Re-analyze with current code
           </button>
         </div>
       )}
