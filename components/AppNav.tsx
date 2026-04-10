@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -49,18 +50,24 @@ const TABS: { label: AppNavTab; href: string }[] = [
 ];
 
 export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
+  const pathname = usePathname();
   const [user, setUser] = useState<UserSummary | null>(cachedUser);
+  const [checked, setChecked] = useState(cachedUser !== null);
 
   useEffect(() => {
     let cancelled = false;
     fetchCurrentUser().then(u => {
-      if (!cancelled && u) setUser(u);
+      if (!cancelled) {
+        if (u) setUser(u);
+        setChecked(true);
+      }
     });
     return () => { cancelled = true; };
   }, []);
 
   const initial = user?.name?.[0]?.toUpperCase() ?? '?';
   const hasName = !!user?.name;
+  const isGuest = checked && !user;
 
   return (
     <header
@@ -97,21 +104,33 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <Avatar size="sm" className="size-7">
-            <AvatarImage src={user?.image} referrerPolicy="no-referrer" />
-            <AvatarFallback className="text-[11px] font-semibold bg-slate-700 text-slate-200">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
-          {/* Always rendered so the layout doesn't reflow when the name arrives.
-              `visibility: hidden` preserves the intrinsic width of the text. */}
-          <span
-            aria-hidden={!hasName}
-            className="hidden sm:inline text-[12px] text-slate-300 font-medium max-w-[160px] truncate"
-            style={{ ...SG, visibility: hasName ? 'visible' : 'hidden' }}
-          >
-            {user?.name ?? 'Loading user'}
-          </span>
+          {isGuest ? (
+            <Link
+              href={`/sign-in?next=${encodeURIComponent(pathname)}`}
+              className="text-[12px] font-medium text-blue-400 hover:text-blue-300 transition-colors px-3 py-1.5 rounded-md border border-blue-500/30 hover:border-blue-400/50 bg-blue-500/[0.06]"
+              style={SG}
+            >
+              Sign in
+            </Link>
+          ) : (
+            <>
+              <Avatar size="sm" className="size-7">
+                <AvatarImage src={user?.image} referrerPolicy="no-referrer" />
+                <AvatarFallback className="text-[11px] font-semibold bg-slate-700 text-slate-200">
+                  {initial}
+                </AvatarFallback>
+              </Avatar>
+              {/* Always rendered so the layout doesn't reflow when the name arrives.
+                  `visibility: hidden` preserves the intrinsic width of the text. */}
+              <span
+                aria-hidden={!hasName}
+                className="hidden sm:inline text-[12px] text-slate-300 font-medium max-w-[160px] truncate"
+                style={{ ...SG, visibility: hasName ? 'visible' : 'hidden' }}
+              >
+                {user?.name ?? 'Loading user'}
+              </span>
+            </>
+          )}
         </div>
       </div>
     </header>

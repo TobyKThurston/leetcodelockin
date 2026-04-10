@@ -120,12 +120,6 @@ export default function HeroSection() {
           </a>
         </div>
 
-        <p
-          className="mt-4 text-xs text-zinc-700 animate-fade-up"
-          style={{ animationDelay: '1000ms' }}
-        >
-          Free to start · No account needed
-        </p>
       </div>
     </section>
   );

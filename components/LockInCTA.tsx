@@ -203,9 +203,6 @@ export default function LockInCTA() {
         </div>
       </div>
 
-      <p className="mt-8 text-[11px] text-slate-700">
-        Free to start &middot; No account needed
-      </p>
     </section>
   );
 }

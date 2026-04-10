@@ -27,7 +27,8 @@ export default async function proxy(req: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  // Settings requires a real user session — redirect guests to sign-in.
+  if (!user && req.nextUrl.pathname.startsWith('/settings')) {
     const url = req.nextUrl.clone();
     url.pathname = '/sign-in';
     url.searchParams.set('next', req.nextUrl.pathname);

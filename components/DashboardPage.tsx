@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useTransition } from 'react';
+import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight } from 'lucide-react';
 import { CURRICULUM, type PathDef, type BlockDef } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
@@ -2092,6 +2094,22 @@ function CenterPanel({
 
 // ─── ProgressView (center — when "Progress" tab is active) ───────────────────
 
+// Per-path color palette — keeps progress view color-coded without looking random.
+const PATH_COLORS: Record<number, {
+  bar: string;       // gradient for progress bar
+  accent: string;    // text/icon accent
+  bg: string;        // subtle card tint
+  border: string;    // card border on hover/complete
+  pill: string;      // stat pill bg
+}> = {
+  1: { bar: 'linear-gradient(90deg, #3b82f6, #6366f1)',   accent: '#818cf8', bg: 'rgba(99,102,241,0.06)',  border: 'rgba(99,102,241,0.35)',  pill: 'rgba(99,102,241,0.12)' },
+  2: { bar: 'linear-gradient(90deg, #8b5cf6, #a78bfa)',   accent: '#a78bfa', bg: 'rgba(167,139,250,0.06)', border: 'rgba(167,139,250,0.35)', pill: 'rgba(167,139,250,0.12)' },
+  3: { bar: 'linear-gradient(90deg, #f59e0b, #f97316)',   accent: '#fbbf24', bg: 'rgba(251,191,36,0.06)',  border: 'rgba(251,191,36,0.3)',   pill: 'rgba(251,191,36,0.12)' },
+  4: { bar: 'linear-gradient(90deg, #14b8a6, #06b6d4)',   accent: '#2dd4bf', bg: 'rgba(45,212,191,0.06)',  border: 'rgba(45,212,191,0.35)',  pill: 'rgba(45,212,191,0.12)' },
+};
+const DEFAULT_PATH_COLOR = PATH_COLORS[1];
+function pathColor(order: number) { return PATH_COLORS[order] ?? DEFAULT_PATH_COLOR; }
+
 interface PathStats {
   path: PathDef;
   pathStatus: PathStatus;
@@ -2120,10 +2138,18 @@ function computePathStats(
   });
 }
 
-// Simple stat box — matches the rail's Metric/RAIL_BOX treatment.
-function StatBox({ value, label }: { value: string; label: string }) {
+// Simple stat box with optional accent color strip at the top.
+function StatBox({ value, label, accent }: { value: string; label: string; accent?: string }) {
   return (
-    <div className="rounded-lg px-3.5 py-3 bg-slate-800/40 border border-slate-700/60">
+    <div
+      className="rounded-lg px-3.5 py-3 bg-slate-800/40 border border-slate-700/60 overflow-hidden relative"
+    >
+      {accent && (
+        <div
+          className="absolute inset-x-0 top-0 h-[2px]"
+          style={{ background: accent }}
+        />
+      )}
       <div className="text-[20px] leading-none font-semibold text-slate-100 tabular-nums" style={SG}>
         {value}
       </div>
@@ -2132,7 +2158,7 @@ function StatBox({ value, label }: { value: string; label: string }) {
   );
 }
 
-// Row for a path — matches an inactive SidebarPathCard.
+// Row for a path — color-coded by path order.
 function ProgressPathCard({
   stats, onClick,
 }: {
@@ -2142,6 +2168,7 @@ function ProgressPathCard({
   const { path, blocksComplete, blocksTotal, pct, pathStatus } = stats;
   const n = String(path.order).padStart(2, '0');
   const complete = pathStatus === 'complete';
+  const pc = pathColor(path.order);
 
   return (
     <button
@@ -2154,13 +2181,14 @@ function ProgressPathCard({
           ? 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40'
           : 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
       )}
+      style={pct > 0 && !complete ? { background: pc.bg } : undefined}
     >
       <div className="flex items-center justify-between mb-1.5">
         <span
           className={cn(
             'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-            complete ? 'text-emerald-400/70' : 'text-slate-500',
           )}
+          style={{ color: complete ? 'rgb(52 211 153 / 0.7)' : pc.accent }}
         >
           {n}
         </span>
@@ -2184,10 +2212,15 @@ function ProgressPathCard({
         <span>{blocksComplete} / {blocksTotal} blocks</span>
         <span className="tabular-nums">{pct}%</span>
       </div>
-      <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+      <div className="h-[3px] rounded-full bg-slate-900/60 overflow-hidden">
         <div
-          className={cn('h-full rounded-full transition-all', complete ? 'bg-emerald-500' : 'bg-blue-500')}
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${pct}%`,
+            background: complete
+              ? 'linear-gradient(90deg, #10b981, #34d399)'
+              : pc.bar,
+          }}
         />
       </div>
     </button>
@@ -2275,10 +2308,13 @@ export function ProgressView({
           </p>
         </div>
         <div className="text-right pb-0.5 shrink-0 ml-8">
-          <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
+          <div className="h-[5px] w-32 rounded-full bg-slate-800 mb-1.5 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all bg-blue-500"
-              style={{ width: `${overallPct}%` }}
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${overallPct}%`,
+                background: 'linear-gradient(90deg, #6366f1, #3b82f6, #06b6d4)',
+              }}
             />
           </div>
           <p className="text-[10px] font-medium text-slate-500 tabular-nums">
@@ -2291,10 +2327,10 @@ export function ProgressView({
       <section className="mb-8">
         <SectionHeader>Overview</SectionHeader>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <StatBox value={`${totalComplete}`}                     label="blocks complete" />
-          <StatBox value={`${totalLessons}`}                      label="lessons done" />
-          <StatBox value={`${totalProblems}`}                     label="problems done" />
-          <StatBox value={`${pathsStarted} / ${CURRICULUM.length}`} label="paths started" />
+          <StatBox value={`${totalComplete}`}                       label="blocks complete"  accent="linear-gradient(90deg, #6366f1, #818cf8)" />
+          <StatBox value={`${totalLessons}`}                        label="lessons done"     accent="linear-gradient(90deg, #8b5cf6, #a78bfa)" />
+          <StatBox value={`${totalProblems}`}                       label="problems done"    accent="linear-gradient(90deg, #f59e0b, #f97316)" />
+          <StatBox value={`${pathsStarted} / ${CURRICULUM.length}`} label="paths started"    accent="linear-gradient(90deg, #14b8a6, #06b6d4)" />
         </div>
       </section>
 
@@ -2342,8 +2378,16 @@ export function ProgressView({
       <section className="mb-8">
         <SectionHeader>What&apos;s Next</SectionHeader>
         {nextUp ? (
-          <div className="rounded-lg px-4 py-4 bg-blue-500/[0.08] border border-blue-400/45">
-            <p className="text-[10px] font-bold text-blue-300 tracking-[0.16em] uppercase mb-2">
+          <div
+            className="rounded-lg px-4 py-4 border border-blue-400/30"
+            style={{
+              background: `linear-gradient(135deg, ${pathColor(nextUp.path.order).bg.replace('0.06', '0.1')}, rgba(59,130,246,0.06))`,
+            }}
+          >
+            <p
+              className="text-[10px] font-bold tracking-[0.16em] uppercase mb-2"
+              style={{ color: pathColor(nextUp.path.order).accent }}
+            >
               Up next in {nextUp.path.title}
             </p>
             <p
@@ -2391,14 +2435,18 @@ export function ProgressView({
         <SectionHeader count={skillsMastered.length}>Skills Mastered</SectionHeader>
         {skillsMastered.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
-            {skillsMastered.map(skill => (
-              <span
-                key={skill}
-                className="rounded-md px-2.5 py-1 text-[11.5px] font-medium text-slate-300 bg-slate-800/40 border border-slate-700/60"
-              >
-                {skill}
-              </span>
-            ))}
+            {skillsMastered.map((skill, i) => {
+              const pc = pathColor((i % 4) + 1);
+              return (
+                <span
+                  key={skill}
+                  className="rounded-md px-2.5 py-1 text-[11.5px] font-medium border border-slate-700/60"
+                  style={{ background: pc.pill, color: pc.accent }}
+                >
+                  {skill}
+                </span>
+              );
+            })}
           </div>
         ) : (
           <EmptyHint>
@@ -2413,12 +2461,27 @@ export function ProgressView({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage({ initialCompleted }: { initialCompleted: string[] }) {
+  const pathname = usePathname();
   const [viewingPathId,   setViewingPathId]   = useState(CURRICULUM[0].id);
   const [completedIds,    setCompletedIds]    = useState<Set<string>>(() => new Set(initialCompleted));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [showGuestGate,   setShowGuestGate]   = useState(false);
   const [, startTransition] = useTransition();
+  const isGuestRef = useRef<boolean | null>(null);
+
+  // Check auth once on mount — used to gate write actions for guests.
+  useEffect(() => {
+    const supabase = createSupabaseBrowser();
+    supabase.auth.getUser().then(({ data }) => {
+      isGuestRef.current = !data.user;
+    });
+  }, []);
 
   const completeAndAdvance = useCallback((blockId: string) => {
+    if (isGuestRef.current) {
+      setShowGuestGate(true);
+      return;
+    }
     // Mark the block complete (idempotent — no-op if already complete).
     if (!completedIds.has(blockId)) {
       setCompletedIds(prev => {
@@ -2524,6 +2587,56 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
           <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       )}
+
+      {/* Guest gate overlay */}
+      <AnimatePresence>
+        {showGuestGate && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowGuestGate(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-sm mx-4 rounded-xl border p-6 text-center"
+              style={{ background: C.cardBg, borderColor: C.borderMid }}
+            >
+              <Lock size={28} className="mx-auto text-blue-400 mb-3" />
+              <h3
+                className="text-[16px] font-semibold text-white mb-1.5"
+                style={SG}
+              >
+                Sign in to save progress
+              </h3>
+              <p className="text-[13px] text-slate-400 mb-5" style={SG}>
+                Create a free account to track completed lessons and unlock your full learning path.
+              </p>
+              <div className="flex flex-col gap-2.5">
+                <Link
+                  href={`/sign-in?next=${encodeURIComponent(pathname)}`}
+                  className="inline-flex items-center justify-center h-10 rounded-lg bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-500 transition-colors"
+                  style={SG}
+                >
+                  Sign in
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setShowGuestGate(false)}
+                  className="text-[12.5px] text-slate-500 hover:text-slate-300 transition-colors"
+                  style={SG}
+                >
+                  Keep browsing
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

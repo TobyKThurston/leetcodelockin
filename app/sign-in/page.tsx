@@ -342,11 +342,18 @@ export default async function SignInPage({
           </CardFooter>
         </Card>
 
-        <p
-          className="mt-5 text-center text-[11.5px] text-zinc-600"
+        <Link
+          href={nextUrl}
+          className="mt-5 block text-center text-[12.5px] text-zinc-500 hover:text-zinc-300 transition-colors"
           style={SG}
         >
-          By continuing you agree to save progress on your account.
+          Continue as guest →
+        </Link>
+        <p
+          className="mt-2 text-center text-[11px] text-zinc-700"
+          style={SG}
+        >
+          You can browse everything — sign in to save progress.
         </p>
       </div>
     </div>

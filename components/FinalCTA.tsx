@@ -41,10 +41,6 @@ export default function FinalCTA() {
           </Link>
         </div>
 
-        {/* Below button note */}
-        <p className="mt-4 text-[11px] text-slate-700">
-          Free to start · No account needed
-        </p>
 
       </div>
     </section>
