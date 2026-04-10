@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseUser } from '@/lib/supabase';
 import { recordSubmission } from '@/lib/problems-server';
+import { generateReviewCards } from '@/lib/review';
+import { findPracticeStepsBySlug } from '@/lib/curriculum';
+import { setBlockCompleted } from '@/lib/progress';
 
 interface SubmitRequestBody {
   slug: string;
@@ -49,6 +52,17 @@ export async function POST(req: NextRequest) {
     passedCount,
     totalCount,
   });
+
+  // Generate spaced repetition review cards for Pro users on accepted submissions
+  if (status === 'accepted') {
+    await generateReviewCards(user.id, slug, code);
+
+    // Mark any curriculum practice steps that reference this problem as complete
+    const practiceStepIds = findPracticeStepsBySlug(slug);
+    for (const stepId of practiceStepIds) {
+      await setBlockCompleted(stepId, true);
+    }
+  }
 
   return NextResponse.json({ ok: true });
 }

@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
-import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight } from 'lucide-react';
-import { CURRICULUM, type PathDef, type BlockDef } from '@/lib/curriculum';
+import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap } from 'lucide-react';
+import { CURRICULUM, type PathDef, type BlockDef, type CurriculumStep, type PracticeStepDef, isLesson, isPractice } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import AppNav from '@/components/AppNav';
+import ReviewDueWidget from '@/components/ReviewDueWidget';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -44,9 +45,7 @@ const C = {
 type BlockStatus = 'locked' | 'available' | 'active' | 'complete';
 export type PathStatus  = 'locked' | 'unlocked' | 'complete';
 
-interface BlockWithStatus extends BlockDef {
-  blockStatus: BlockStatus;
-}
+type BlockWithStatus = CurriculumStep & { blockStatus: BlockStatus };
 
 // ─── Curriculum helpers ───────────────────────────────────────────────────────
 
@@ -58,6 +57,11 @@ export function computePathStatuses(completedIds: Set<string>): Record<string, P
   }
   return result;
 }
+
+// ─── Practice card sizing ────────────────────────────────────────────────────
+const PRACTICE_W      = 200;
+const PRACTICE_H      = 72;
+const PRACTICE_ROW_H  = 140;  // 72px card + 68px gap
 
 function getBlocksWithStatus(
   path: PathDef,
@@ -1397,12 +1401,48 @@ function Metric({ value, label }: { value: string; label: string }) {
 const RAIL_BOX =
   'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
 
+// ─── Recommendation algorithm ─────────────────────────────────────────────────
+// Picks the single best block to work on next, factoring in:
+//   1. The active block on the currently-viewed path (highest priority)
+//   2. The first active block on ANY unlocked path (cross-path fallback)
+//   3. The first available (non-active, non-complete) block if nothing is active
+// Returns { block, path } or null when everything is complete.
+
+function getRecommendedBlock(
+  viewingPath: PathDef,
+  completedIds: Set<string>,
+  pathStatuses: Record<string, PathStatus>,
+): { block: CurriculumStep; path: PathDef } | null {
+  // Helper: find the first incomplete block in a path
+  const firstIncomplete = (p: PathDef) =>
+    p.blocks.find(b => !completedIds.has(b.id));
+
+  // 1. Prefer the active block on the path the user is looking at
+  if (pathStatuses[viewingPath.id] !== 'locked' && pathStatuses[viewingPath.id] !== 'complete') {
+    const b = firstIncomplete(viewingPath);
+    if (b) return { block: b, path: viewingPath };
+  }
+
+  // 2. Fall back to the first active block across all unlocked paths (in order)
+  for (const p of CURRICULUM) {
+    if (pathStatuses[p.id] === 'locked' || pathStatuses[p.id] === 'complete') continue;
+    const b = firstIncomplete(p);
+    if (b) return { block: b, path: p };
+  }
+
+  return null;
+}
+
+
 function RightRail({
-  path, pathStatus, completedIds,
+  path, pathStatus, completedIds, pathStatuses, onSelectBlock, onSelectPath,
 }: {
   path: PathDef;
   pathStatus: PathStatus;
   completedIds: Set<string>;
+  pathStatuses: Record<string, PathStatus>;
+  onSelectBlock: (id: string) => void;
+  onSelectPath: (id: string) => void;
 }) {
   const blocksComplete = path.blocks.filter(b => completedIds.has(b.id)).length;
   const blocksTotal    = path.blocks.length;
@@ -1505,6 +1545,58 @@ function RightRail({
             </div>
           </section>
 
+          {/* 4 — Recommended Problem */}
+          {(() => {
+            const rec = getRecommendedBlock(path, completedIds, pathStatuses);
+            if (!rec) return null;
+            const recN = String(rec.block.order).padStart(2, '0');
+            const isSamePath = rec.path.id === path.id;
+            return (
+              <section>
+                <RailHeader>Up Next</RailHeader>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isSamePath) onSelectPath(rec.path.id);
+                    onSelectBlock(rec.block.id);
+                  }}
+                  className={cn(
+                    'w-full text-left rounded-lg px-3 py-3 border transition-colors',
+                    'bg-slate-800/40 border-slate-700/60',
+                    'hover:bg-slate-800/60 hover:border-slate-600/70',
+                  )}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-mono text-[10px] font-bold tabular-nums tracking-wider text-slate-500">
+                      {recN}
+                    </span>
+                    {!isSamePath && (
+                      <span className="text-[9px] text-slate-600 font-medium">
+                        · {rec.path.title}
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-[12.5px] font-semibold leading-tight text-slate-200 tracking-[-0.005em] mb-1"
+                    style={SG}
+                  >
+                    {rec.block.title}
+                  </p>
+                  <p className="text-[11px] text-slate-500 leading-snug line-clamp-2">
+                    {isLesson(rec.block) ? rec.block.subtitle : `Practice · ${rec.block.difficulty}`}
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-2.5 text-[10px] text-slate-500 font-medium">
+                    <ArrowRight size={10} strokeWidth={2} />
+                    <span>Continue</span>
+                  </div>
+                </button>
+              </section>
+            );
+          })()}
+
+          {/* 5 — Spaced Repetition Review (Pro only, shows when cards due) */}
+          <ReviewDueWidget />
+
         </div>
       </ScrollArea>
     </aside>
@@ -1515,9 +1607,10 @@ function RightRail({
 
 const CARD_W      = 272;
 const CARD_H      = 158;
-const ROW_HEIGHT  = 218;
+const ROW_HEIGHT  = 228;
 const CONTAINER_W = 640;
-const ZIGZAG_X    = [470, 320, 170, 320, 470, 320, 170, 320, 470, 320, 170];
+const CENTER_X    = CONTAINER_W / 2;
+const ZIGZAG_X    = [CENTER_X + 150, CENTER_X, CENTER_X - 150, CENTER_X, CENTER_X + 150, CENTER_X, CENTER_X - 150, CENTER_X, CENTER_X + 150, CENTER_X, CENTER_X - 150];
 
 function connPath(i: number): string {
   const x1 = ZIGZAG_X[i], x2 = ZIGZAG_X[i + 1];
@@ -1528,19 +1621,22 @@ function connPath(i: number): string {
 }
 
 function connStroke(from: BlockStatus, to: BlockStatus): string {
-  if (from === 'complete' && to === 'complete') return 'rgba(16,185,129,0.35)';
-  if (from === 'complete' && to === 'active')   return 'rgba(96,165,250,0.45)';
-  if (from === 'complete')                      return 'rgba(16,185,129,0.3)';
-  return 'rgba(255,255,255,0.14)';
+  if (from === 'complete' && to === 'complete') return 'rgba(16,185,129,0.55)';
+  if (from === 'complete' && to === 'active')   return 'rgba(96,165,250,0.65)';
+  if (from === 'complete')                      return 'rgba(16,185,129,0.45)';
+  if (from === 'active')                        return 'rgba(96,165,250,0.35)';
+  return 'rgba(255,255,255,0.10)';
 }
 
 function connDash(from: BlockStatus): string {
-  return from === 'complete' ? '0' : '4 6';
+  if (from === 'complete') return '0';
+  if (from === 'active') return '6 8';
+  return '4 8';
 }
 
 // ─── Block Card (zigzag node) ─────────────────────────────────────────────────
 
-function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => void }) {
+function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson' }; onOpen: () => void }) {
   const { blockStatus } = block;
   const locked   = blockStatus === 'locked';
   const active   = blockStatus === 'active';
@@ -1552,20 +1648,28 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
       type="button"
       onClick={locked ? undefined : onOpen}
       disabled={locked}
-      style={{ width: CARD_W, height: CARD_H }}
+      style={{
+        width: CARD_W,
+        height: CARD_H,
+        ...(active ? {
+          transform: 'scale(1.04)',
+          boxShadow: '0 0 24px 4px rgba(59,130,246,0.18), 0 0 48px 8px rgba(59,130,246,0.08)',
+        } : {}),
+      }}
       className={cn(
         'group relative text-left rounded-lg overflow-hidden p-4 flex flex-col',
-        'border transition-colors duration-150',
+        'border transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        locked && 'cursor-default opacity-40 bg-[#0f1729] border-white/[0.04]',
+        locked && 'cursor-default opacity-[0.28] bg-[#0c1220] border-white/[0.03] saturate-[0.3]',
         !locked && 'cursor-pointer',
         active && [
-          'bg-blue-500/[0.08] border-blue-400/45',
-          'hover:bg-blue-500/[0.12] hover:border-blue-400/60',
+          'bg-blue-500/[0.10] border-blue-400/60',
+          'hover:bg-blue-500/[0.15] hover:border-blue-400/75',
+          'ring-1 ring-blue-400/25',
         ],
         complete && [
-          'bg-[#0f1729] border-emerald-500/25',
-          'hover:border-emerald-500/40',
+          'bg-emerald-500/[0.05] border-emerald-400/35',
+          'hover:border-emerald-400/50',
         ],
         !locked && !active && !complete && [
           'bg-[#0f1729] border-white/[0.06]',
@@ -1577,26 +1681,26 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
       <div className="flex items-center justify-between mb-2.5">
         <span
           className={cn(
-            'font-mono text-[11px] font-bold tabular-nums tracking-[0.12em]',
-            locked && 'text-slate-700',
+            'font-mono text-[13px] font-extrabold tabular-nums tracking-[0.14em]',
+            locked && 'text-slate-700/60',
             active && 'text-blue-300',
-            complete && 'text-emerald-400/70',
+            complete && 'text-emerald-400',
             !locked && !active && !complete && 'text-slate-400',
           )}
         >
           {n}
         </span>
-        {complete && <CheckCircle2 size={13} strokeWidth={2.25} className="text-emerald-400" />}
-        {locked && <Lock size={11} className="text-slate-700" />}
+        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-400" />}
+        {locked && <Lock size={11} className="text-slate-700/60" />}
       </div>
 
       {/* Title */}
       <p
         className={cn(
           'text-[15px] font-semibold leading-snug mb-1 tracking-[-0.01em]',
-          locked && 'text-slate-600',
+          locked && 'text-slate-600/60',
           active && 'text-white',
-          complete && 'text-slate-400',
+          complete && 'text-slate-300',
           !locked && !active && !complete && 'text-slate-100 group-hover:text-white',
         )}
         style={SG}
@@ -1607,11 +1711,11 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
       {/* Subtitle */}
       <p
         className={cn(
-          'text-[12.5px] leading-relaxed',
-          locked && 'text-slate-700',
-          active && 'text-slate-300',
-          complete && 'text-slate-500',
-          !locked && !active && !complete && 'text-slate-400',
+          'text-[12px] leading-relaxed line-clamp-2',
+          locked && 'text-slate-700/50',
+          active && 'text-slate-400',
+          complete && 'text-slate-500/80',
+          !locked && !active && !complete && 'text-slate-500',
         )}
       >
         {block.subtitle}
@@ -1632,7 +1736,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
             className={cn(
               'flex items-center gap-1.5',
               active && 'text-blue-200',
-              complete && 'text-slate-600',
+              complete && 'text-slate-500',
               !active && !complete && 'text-slate-400',
             )}
           >
@@ -1643,7 +1747,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
             className={cn(
               'flex items-center gap-1.5',
               active && 'text-blue-200',
-              complete && 'text-slate-600',
+              complete && 'text-slate-500',
               !active && !complete && 'text-slate-400',
             )}
           >
@@ -1656,20 +1760,129 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus; onOpen: () => vo
   );
 }
 
+// ─── Practice Card (compact zigzag node for practice problems) ───────────────
+
+function PracticeCard({ step, blockStatus, onOpen }: {
+  step: PracticeStepDef;
+  blockStatus: BlockStatus;
+  onOpen: () => void;
+}) {
+  const locked   = blockStatus === 'locked';
+  const active   = blockStatus === 'active';
+  const complete = blockStatus === 'complete';
+
+  return (
+    <button
+      type="button"
+      onClick={locked ? undefined : onOpen}
+      disabled={locked}
+      style={{
+        width: PRACTICE_W,
+        height: PRACTICE_H,
+        ...(active ? {
+          transform: 'scale(1.04)',
+          boxShadow: '0 0 18px 3px rgba(251,191,36,0.16), 0 0 36px 6px rgba(251,191,36,0.06)',
+        } : {}),
+      }}
+      className={cn(
+        'group relative text-left rounded-lg overflow-hidden px-3.5 py-2.5 flex flex-col justify-center',
+        'border transition-all duration-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50',
+        locked && 'cursor-default opacity-[0.28] bg-[#0c1220] border-white/[0.03] saturate-[0.3]',
+        !locked && 'cursor-pointer',
+        active && [
+          'bg-amber-500/[0.08] border-amber-400/50',
+          'hover:bg-amber-500/[0.13] hover:border-amber-400/65',
+          'ring-1 ring-amber-400/20',
+        ],
+        complete && [
+          'bg-emerald-500/[0.05] border-emerald-400/35',
+          'hover:border-emerald-400/50',
+        ],
+        !locked && !active && !complete && [
+          'bg-[#0f1729] border-amber-400/[0.15]',
+          'hover:bg-[#131b30] hover:border-amber-400/30',
+        ],
+      )}
+    >
+      {/* Title row */}
+      <div className="flex items-center gap-2 mb-1">
+        <Target
+          size={12}
+          strokeWidth={2.25}
+          className={cn(
+            locked && 'text-slate-700/60',
+            active && 'text-amber-300',
+            complete && 'text-emerald-400',
+            !locked && !active && !complete && 'text-amber-400/70',
+          )}
+        />
+        <p
+          className={cn(
+            'text-[13px] font-semibold leading-snug truncate',
+            locked && 'text-slate-600/60',
+            active && 'text-white',
+            complete && 'text-slate-300',
+            !locked && !active && !complete && 'text-slate-100 group-hover:text-white',
+          )}
+          style={SG}
+        >
+          {step.title}
+        </p>
+        {complete && <CheckCircle2 size={12} strokeWidth={2.5} className="text-emerald-400 shrink-0 ml-auto" />}
+        {locked && <Lock size={10} className="text-slate-700/60 shrink-0 ml-auto" />}
+      </div>
+      {/* Difficulty pill */}
+      {!locked && (
+        <span
+          className={cn(
+            'inline-flex items-center self-start ml-5 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-[0.08em] uppercase',
+            step.difficulty === 'Easy'
+              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
+              : 'bg-amber-500/15 text-amber-400 border border-amber-500/25',
+          )}
+        >
+          {step.difficulty}
+        </span>
+      )}
+    </button>
+  );
+}
+
 // ─── Path View (zigzag roadmap) ───────────────────────────────────────────────
 
 function PathView({
-  path, pathStatus, completedIds, onSelectBlock,
+  path, pathStatus, completedIds, onSelectBlock, onOpenPractice,
 }: {
   path: PathDef;
   pathStatus: PathStatus;
   completedIds: Set<string>;
   onSelectBlock: (id: string) => void;
+  onOpenPractice: (slug: string) => void;
 }) {
   const blocks         = getBlocksWithStatus(path, pathStatus, completedIds);
   const blocksComplete = blocks.filter(b => b.blockStatus === 'complete').length;
-  const totalHeight    = blocks.length * ROW_HEIGHT + 40;
   const pct            = Math.round((blocksComplete / blocks.length) * 100);
+
+  // Compute cumulative y-offsets for variable-height cards
+  const yOffsets: number[] = [];
+  let cumulativeY = 0;
+  for (let i = 0; i < blocks.length; i++) {
+    yOffsets.push(cumulativeY);
+    cumulativeY += isPractice(blocks[i]) ? PRACTICE_ROW_H : ROW_HEIGHT;
+  }
+  const totalHeight = cumulativeY + 40;
+
+  // Build connector paths between items with variable heights
+  function varConnPath(i: number): string {
+    const x1 = ZIGZAG_X[i % ZIGZAG_X.length];
+    const x2 = ZIGZAG_X[(i + 1) % ZIGZAG_X.length];
+    const cardH = isPractice(blocks[i]) ? PRACTICE_H : CARD_H;
+    const y1 = yOffsets[i] + cardH;
+    const y2 = yOffsets[i + 1];
+    const m  = (y1 + y2) / 2;
+    return `M ${x1} ${y1} C ${x1} ${m} ${x2} ${m} ${x2} ${y2}`;
+  }
 
   return (
     <div className="w-full max-w-[720px] lg:max-w-none py-8 px-8 lg:px-12">
@@ -1704,23 +1917,41 @@ function PathView({
             {blocks.slice(0, -1).map((block, i) => (
               <path
                 key={block.id}
-                d={connPath(i)}
+                d={varConnPath(i)}
                 stroke={connStroke(block.blockStatus, blocks[i + 1].blockStatus)}
-                strokeWidth={2}
+                strokeWidth={3}
                 strokeDasharray={connDash(block.blockStatus)}
                 strokeLinecap="round"
                 fill="none"
+                style={{ filter: block.blockStatus === 'complete' ? 'drop-shadow(0 0 3px rgba(16,185,129,0.2))' : undefined }}
               />
             ))}
           </svg>
-          {blocks.map((block, i) => (
-            <div
-              key={block.id}
-              style={{ position: 'absolute', left: ZIGZAG_X[i] - CARD_W / 2, top: i * ROW_HEIGHT, width: CARD_W }}
-            >
-              <BlockCard block={block} onOpen={() => onSelectBlock(block.id)} />
-            </div>
-          ))}
+          {blocks.map((block, i) => {
+            const zigX = ZIGZAG_X[i % ZIGZAG_X.length];
+            if (isPractice(block)) {
+              return (
+                <div
+                  key={block.id}
+                  style={{ position: 'absolute', left: zigX - PRACTICE_W / 2, top: yOffsets[i], width: PRACTICE_W }}
+                >
+                  <PracticeCard
+                    step={block}
+                    blockStatus={block.blockStatus}
+                    onOpen={() => onOpenPractice(block.problemSlug)}
+                  />
+                </div>
+              );
+            }
+            return (
+              <div
+                key={block.id}
+                style={{ position: 'absolute', left: zigX - CARD_W / 2, top: yOffsets[i], width: CARD_W }}
+              >
+                <BlockCard block={block as BlockWithStatus & { type: 'lesson' }} onOpen={() => onSelectBlock(block.id)} />
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -1730,7 +1961,7 @@ function PathView({
           className="px-3 py-1.5 rounded-md text-[10px] font-semibold tracking-[0.12em] uppercase"
           style={{ border: `1px solid ${C.border}`, color: C.textMuted, background: C.cardBgDark }}
         >
-          {pathStatus === 'complete' ? `${path.title} · Complete` : `${blocks.length} blocks · ${path.title}`}
+          {pathStatus === 'complete' ? `${path.title} · Complete` : `${blocks.length} steps · ${path.title}`}
         </div>
       </div>
     </div>
@@ -1860,7 +2091,7 @@ function TryIt({ quiz, onCorrect }: { quiz: LessonPreview['quiz']; onCorrect?: (
 function LessonPanel({
   block, path, blocksWithStatus, onBack, onCompleteAndAdvance,
 }: {
-  block: BlockWithStatus;
+  block: BlockWithStatus & { type: 'lesson' };
   path: PathDef;
   blocksWithStatus: BlockWithStatus[];
   onBack: () => void;
@@ -2048,7 +2279,7 @@ function LessonPanel({
 // ─── Center panel (orchestrates zigzag ↔ lesson) ─────────────────────────────
 
 function CenterPanel({
-  path, pathStatus, completedIds, selectedBlockId, onSelectBlock, onClearBlock, onCompleteAndAdvance,
+  path, pathStatus, completedIds, selectedBlockId, onSelectBlock, onClearBlock, onCompleteAndAdvance, onOpenPractice,
 }: {
   path: PathDef;
   pathStatus: PathStatus;
@@ -2057,16 +2288,20 @@ function CenterPanel({
   onSelectBlock: (id: string) => void;
   onClearBlock: () => void;
   onCompleteAndAdvance: (id: string) => void;
+  onOpenPractice: (slug: string) => void;
 }) {
   const blocks        = getBlocksWithStatus(path, pathStatus, completedIds);
-  const selectedBlock = selectedBlockId ? blocks.find(b => b.id === selectedBlockId) : null;
+  const selectedStep  = selectedBlockId ? blocks.find(b => b.id === selectedBlockId) : null;
+  const selectedLesson = selectedStep && isLesson(selectedStep)
+    ? (selectedStep as BlockWithStatus & { type: 'lesson' })
+    : null;
 
   return (
     <AnimatePresence mode="wait">
-      {selectedBlock ? (
+      {selectedLesson ? (
         <LessonPanel
-          key={selectedBlock.id}
-          block={selectedBlock}
+          key={selectedLesson.id}
+          block={selectedLesson}
           path={path}
           blocksWithStatus={blocks}
           onBack={onClearBlock}
@@ -2085,6 +2320,7 @@ function CenterPanel({
             pathStatus={pathStatus}
             completedIds={completedIds}
             onSelectBlock={onSelectBlock}
+            onOpenPractice={onOpenPractice}
           />
         </motion.div>
       )}
@@ -2132,8 +2368,8 @@ function computePathStats(
       blocksComplete: completedBlocks.length,
       blocksTotal: path.blocks.length,
       pct: Math.round((completedBlocks.length / path.blocks.length) * 100),
-      lessonsComplete: completedBlocks.reduce((s, b) => s + b.lessonCount, 0),
-      problemsComplete: completedBlocks.reduce((s, b) => s + b.problemCount, 0),
+      lessonsComplete: completedBlocks.filter(isLesson).reduce((s, b) => s + b.lessonCount, 0),
+      problemsComplete: completedBlocks.filter(isLesson).reduce((s, b) => s + b.problemCount, 0),
     };
   });
 }
@@ -2276,7 +2512,7 @@ export function ProgressView({
     .slice(0, 3);
 
   // What's next: first incomplete block in the earliest unlocked, not-complete path.
-  let nextUp: { path: PathDef; block: BlockDef } | null = null;
+  let nextUp: { path: PathDef; block: CurriculumStep } | null = null;
   for (const s of stats) {
     if (s.pathStatus !== 'unlocked') continue;
     const block = s.path.blocks.find(b => !completedIds.has(b.id));
@@ -2287,6 +2523,7 @@ export function ProgressView({
   const skillsMastered = Array.from(new Set(
     CURRICULUM.flatMap(p => p.blocks)
       .filter(b => completedIds.has(b.id))
+      .filter(isLesson)
       .flatMap(b => b.skills),
   ));
 
@@ -2439,19 +2676,28 @@ export function ProgressView({
             >
               {nextUp.block.title}
             </p>
-            <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
-              {nextUp.block.subtitle}
-            </p>
-            <div className="flex items-center gap-4 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
-              <span className="flex items-center gap-1.5">
-                <BookOpen size={11} strokeWidth={2.25} />
-                {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Target size={11} strokeWidth={2.25} />
-                {nextUp.block.problemCount} {nextUp.block.problemCount === 1 ? 'problem' : 'problems'}
-              </span>
-            </div>
+            {isLesson(nextUp.block) && (
+              <>
+                <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
+                  {nextUp.block.subtitle}
+                </p>
+                <div className="flex items-center gap-4 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
+                  <span className="flex items-center gap-1.5">
+                    <BookOpen size={11} strokeWidth={2.25} />
+                    {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Target size={11} strokeWidth={2.25} />
+                    {nextUp.block.problemCount} {nextUp.block.problemCount === 1 ? 'problem' : 'problems'}
+                  </span>
+                </div>
+              </>
+            )}
+            {isPractice(nextUp.block) && (
+              <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
+                Practice problem · {nextUp.block.difficulty}
+              </p>
+            )}
             <button
               type="button"
               onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
@@ -2505,6 +2751,7 @@ export function ProgressView({
 
 export default function DashboardPage({ initialCompleted }: { initialCompleted: string[] }) {
   const pathname = usePathname();
+  const router   = useRouter();
   const [viewingPathId,   setViewingPathId]   = useState(CURRICULUM[0].id);
   const [completedIds,    setCompletedIds]    = useState<Set<string>>(() => new Set(initialCompleted));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -2513,12 +2760,42 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
   const isGuestRef = useRef<boolean | null>(null);
 
   // Check auth once on mount — used to gate write actions for guests.
+  // Also sync any already-solved problems with curriculum practice steps.
   useEffect(() => {
     const supabase = createSupabaseBrowser();
     supabase.auth.getUser().then(({ data }) => {
       isGuestRef.current = !data.user;
+      if (!data.user) return;
+
+      // Catch-up sync: if a user solved a problem before (or from the library),
+      // mark the matching curriculum practice steps as complete.
+      fetch('/api/solved-slugs')
+        .then(r => r.json())
+        .then(({ slugs }: { slugs: string[] }) => {
+          if (!slugs?.length) return;
+          const solvedSet = new Set(slugs);
+          const toSync: string[] = [];
+          for (const path of CURRICULUM) {
+            for (const step of path.blocks) {
+              if (isPractice(step) && solvedSet.has(step.problemSlug) && !completedIds.has(step.id)) {
+                toSync.push(step.id);
+              }
+            }
+          }
+          if (toSync.length > 0) {
+            setCompletedIds(prev => {
+              const next = new Set(prev);
+              for (const id of toSync) next.add(id);
+              return next;
+            });
+            for (const id of toSync) {
+              startTransition(() => { setBlockCompleted(id, true); });
+            }
+          }
+        })
+        .catch(() => { /* non-critical */ });
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const completeAndAdvance = useCallback((blockId: string) => {
     if (isGuestRef.current) {
@@ -2538,11 +2815,13 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
       });
     }
     // Advance to the next block in the same path.
+    // If the next step is a practice problem, go back to the path view so the
+    // user sees the practice card highlighted as active.
     const path = CURRICULUM.find(p => p.blocks.some(b => b.id === blockId));
     if (!path) return;
     const idx  = path.blocks.findIndex(b => b.id === blockId);
     const next = path.blocks[idx + 1];
-    setSelectedBlockId(next ? next.id : null);
+    setSelectedBlockId(next && isLesson(next) ? next.id : null);
     // Scroll back to the top so the next lesson starts at the beginning.
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2587,9 +2866,18 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
         path={viewingPath}
         pathStatus={viewingStatus}
         completedIds={completedIds}
+        pathStatuses={pathStatuses}
+        onSelectBlock={(id) => setSelectedBlockId(id)}
+        onSelectPath={handleSelectPath}
       />
       <main
-        style={{ paddingLeft: 304, paddingTop: 48 }}
+        style={{
+          paddingLeft: 304,
+          paddingTop: 48,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
         className={cn(
           'min-h-screen overflow-x-auto pb-24',
           'lg:pr-[296px]',
@@ -2603,15 +2891,20 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
           onSelectBlock={setSelectedBlockId}
           onClearBlock={() => setSelectedBlockId(null)}
           onCompleteAndAdvance={completeAndAdvance}
+          onOpenPractice={(slug) => router.push(`/solve/${slug}`)}
         />
       </main>
       {nextBlock && viewingStatus !== 'complete' && (
         <button
           type="button"
           onClick={() => {
-            setSelectedBlockId(nextBlock.id);
-            if (typeof window !== 'undefined') {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (isPractice(nextBlock)) {
+              router.push(`/solve/${nextBlock.problemSlug}`);
+            } else {
+              setSelectedBlockId(nextBlock.id);
+              if (typeof window !== 'undefined') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
             }
           }}
           className={cn(
@@ -2619,14 +2912,15 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
             'bottom-6 right-6 h-14 px-8 w-auto',
             'lg:bottom-4 lg:right-4 lg:h-16 lg:w-[272px] lg:px-6',
             'rounded-xl text-[15px] lg:text-[16px] font-semibold text-white tracking-[-0.005em]',
-            'bg-blue-500 hover:bg-blue-400 border border-blue-400/60',
-            'shadow-[0_10px_30px_-10px_rgba(59,130,246,0.7),0_0_0_1px_rgba(96,165,250,0.35)]',
+            isPractice(nextBlock)
+              ? 'bg-amber-500 hover:bg-amber-400 border border-amber-400/60 shadow-[0_10px_30px_-10px_rgba(251,191,36,0.7),0_0_0_1px_rgba(251,191,36,0.35)]'
+              : 'bg-blue-500 hover:bg-blue-400 border border-blue-400/60 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.7),0_0_0_1px_rgba(96,165,250,0.35)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
             'transition-colors',
           )}
           style={SG}
         >
-          Next lesson
+          {isPractice(nextBlock) ? 'Solve problem' : 'Next lesson'}
           <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       )}
