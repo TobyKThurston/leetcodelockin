@@ -2623,7 +2623,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
           )}
           style={SG}
         >
-          Continue
+          Next lesson
           <ArrowRight size={16} strokeWidth={2.5} />
         </button>
       )}
