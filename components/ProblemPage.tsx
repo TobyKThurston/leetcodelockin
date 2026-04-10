@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   ChevronLeft, ChevronRight, RotateCcw, ChevronUp,
-  Lightbulb, Plus, X, Play, Send, Sparkles,
+  Plus, X, Play, Send,
   FileText, Maximize2, Minimize2,
 } from 'lucide-react';
 import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
@@ -361,9 +361,8 @@ interface PremiumChipProps {
   title: string;
   label: string;
   tone: 'blue' | 'violet';
-  icon: React.ReactNode;
 }
-function PremiumChip({ onClick, title, label, tone, icon }: PremiumChipProps) {
+function PremiumChip({ onClick, title, label, tone }: PremiumChipProps) {
   const palette =
     tone === 'blue'
       ? {
@@ -372,7 +371,6 @@ function PremiumChip({ onClick, title, label, tone, icon }: PremiumChipProps) {
           border: '1px solid rgba(96,165,250,0.38)',
           shadow:
             '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(59,130,246,0.55)',
-          iconGlow: 'radial-gradient(circle, rgba(147,197,253,0.45) 0%, transparent 70%)',
         }
       : {
           text: '#e9d5ff',
@@ -380,14 +378,13 @@ function PremiumChip({ onClick, title, label, tone, icon }: PremiumChipProps) {
           border: '1px solid rgba(167,139,250,0.38)',
           shadow:
             '0 1px 0 rgba(255,255,255,0.1) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 18px -10px rgba(139,92,246,0.55)',
-          iconGlow: 'radial-gradient(circle, rgba(196,181,253,0.45) 0%, transparent 70%)',
         };
 
   return (
     <button
       onClick={onClick}
       title={title}
-      className="group relative flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11.5px] font-semibold transition-all hover:brightness-110 active:brightness-95"
+      className="group relative flex items-center px-2.5 py-1 rounded-md text-[11.5px] font-semibold transition-all hover:brightness-110 active:brightness-95"
       style={{
         color: palette.text,
         background: palette.bg,
@@ -396,16 +393,6 @@ function PremiumChip({ onClick, title, label, tone, icon }: PremiumChipProps) {
         ...SG,
       }}
     >
-      <span
-        className="relative flex items-center justify-center"
-        style={{ width: 14, height: 14 }}
-      >
-        <span
-          className="absolute inset-[-2px] rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
-          style={{ background: palette.iconGlow }}
-        />
-        <span className="relative flex">{icon}</span>
-      </span>
       {label}
     </button>
   );
@@ -586,10 +573,10 @@ interface ProblemPanelProps {
 function ProblemPanel({
   problem, code, width, fullscreen, activeTab, onTabChange, onToggleFullscreen,
 }: ProblemPanelProps) {
-  const TABS: { id: LeftTab; label: string; icon: React.ReactNode }[] = [
+  const TABS: { id: LeftTab; label: string; icon?: React.ReactNode }[] = [
     { id: 'question', label: 'Question', icon: <FileText size={12} /> },
-    { id: 'hints',    label: 'Hints',    icon: <Lightbulb size={12} style={{ color: 'rgba(147,197,253,0.9)' }} /> },
-    { id: 'tutor',    label: 'Tutor',    icon: <Sparkles size={12} style={{ color: 'rgba(196,181,253,0.95)' }} /> },
+    { id: 'hints',    label: 'Hints' },
+    { id: 'tutor',    label: 'Tutor' },
   ];
 
   return (
@@ -937,14 +924,12 @@ function EditorPanel({
             title="Open hints"
             label="Hints"
             tone="blue"
-            icon={<Lightbulb size={11} strokeWidth={2.2} style={{ color: '#dbeafe' }} />}
           />
           <PremiumChip
             onClick={onOpenTutor}
             title="Open AI tutor"
             label="Tutor"
             tone="violet"
-            icon={<Sparkles size={11} strokeWidth={2.2} style={{ color: '#e9d5ff' }} />}
           />
 
           <div className="w-px h-4 mx-1" style={{ background: BORDER }} />
