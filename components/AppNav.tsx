@@ -69,7 +69,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
     >
       <div className="w-full flex items-center gap-3 px-5 h-12">
         <Link
-          href="/"
+          href="/?home=1"
           className="font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
           style={SG}
         >
