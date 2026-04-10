@@ -61,7 +61,7 @@ export default function ProductDemo() {
 
       {/* Mockup */}
       <div
-        className="w-full max-w-6xl rounded-2xl overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,0.7)] border border-white/[0.06]"
+        className="w-full max-w-6xl rounded-2xl overflow-hidden shadow-[0_40px_120px_rgba(99,102,241,0.15)] border border-white/[0.06]"
         style={{ background: '#0a0e1a' }}
       >
         {/* Chrome bar */}

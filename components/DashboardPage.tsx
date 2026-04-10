@@ -2891,7 +2891,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
           onSelectBlock={setSelectedBlockId}
           onClearBlock={() => setSelectedBlockId(null)}
           onCompleteAndAdvance={completeAndAdvance}
-          onOpenPractice={(slug) => router.push(`/solve/${slug}`)}
+          onOpenPractice={(slug) => router.push(`/solve/${slug}?from=dashboard`)}
         />
       </main>
       {nextBlock && viewingStatus !== 'complete' && (
@@ -2899,7 +2899,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
           type="button"
           onClick={() => {
             if (isPractice(nextBlock)) {
-              router.push(`/solve/${nextBlock.problemSlug}`);
+              router.push(`/solve/${nextBlock.problemSlug}?from=dashboard`);
             } else {
               setSelectedBlockId(nextBlock.id);
               if (typeof window !== 'undefined') {

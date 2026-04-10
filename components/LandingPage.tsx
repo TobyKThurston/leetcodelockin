@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import HeroSection from './HeroSection';
 import NavBar from './NavBar';
@@ -21,12 +22,15 @@ function Footer() {
           {/* Brand column */}
           <div className="space-y-4">
             <div>
-              <span
-                className="text-base font-bold text-white tracking-tight"
-                style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', letterSpacing: '-0.02em' }}
-              >
-                LeetLockin
-              </span>
+              <div className="flex items-center gap-1.5">
+                <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
+                <span
+                  className="text-base font-bold text-white tracking-tight"
+                  style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', letterSpacing: '-0.02em' }}
+                >
+                  LeetLockin
+                </span>
+              </div>
               <span className="ml-2 text-[11px] font-mono text-slate-700 tracking-widest uppercase">
                 LLC
               </span>

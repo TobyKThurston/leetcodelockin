@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
@@ -84,9 +85,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
       <div className="w-full flex items-center gap-3 px-5 h-12">
         <Link
           href="/?home=1"
-          className="font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
+          className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
           style={SG}
         >
+          <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           LeetLockin
         </Link>
         <nav className="flex items-center gap-0.5">

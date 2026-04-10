@@ -165,6 +165,7 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 4,
         problemCount: 10,
       },
+      practice('p1-solve', 1, 'fibonacci-number', 'Fibonacci Number', 'Easy', 9),
     ],
   },
 
@@ -362,8 +363,8 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 3,
         problemCount: 9,
       },
-      practice('p3-hashing', 1, 'two-sum', 'Two Sum', 'Easy', 13),
-      practice('p3-hashing', 2, 'contains-duplicate', 'Contains Duplicate', 'Easy', 14),
+      practice('p3-hashing', 1, 'group-anagrams', 'Group Anagrams', 'Medium', 13),
+      practice('p3-hashing', 2, 'subarray-sum-equals-k', 'Subarray Sum Equals K', 'Medium', 14),
       {
         type: 'lesson',
         id: 'p3-stackpat',
@@ -388,7 +389,7 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 4,
         problemCount: 10,
       },
-      practice('p3-bfs', 1, 'flood-fill', 'Flood Fill', 'Easy', 19),
+      practice('p3-bfs', 1, 'rotting-oranges', 'Rotting Oranges', 'Medium', 19),
       practice('p3-bfs', 2, 'island-perimeter', 'Island Perimeter', 'Easy', 20),
       {
         type: 'lesson',
@@ -427,7 +428,7 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 3,
         problemCount: 8,
       },
-      practice('p3-heappat', 1, 'last-stone-weight', 'Last Stone Weight', 'Easy', 28),
+      practice('p3-heappat', 1, 'k-closest-points-to-origin', 'K Closest Points to Origin', 'Medium', 28),
       {
         type: 'lesson',
         id: 'p3-dp',
@@ -462,7 +463,7 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 4,
         problemCount: 5,
       },
-      practice('p4-breakdown', 1, 'two-sum', 'Two Sum', 'Easy', 2),
+      practice('p4-breakdown', 1, 'plus-one', 'Plus One', 'Easy', 2),
       practice('p4-breakdown', 2, 'reverse-string', 'Reverse String', 'Easy', 3),
       {
         type: 'lesson',
@@ -475,8 +476,8 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 3,
         problemCount: 8,
       },
-      practice('p4-optimize', 1, 'best-time-to-buy-and-sell-stock', 'Best Time to Buy and Sell Stock', 'Easy', 5),
-      practice('p4-optimize', 2, 'contains-duplicate', 'Contains Duplicate', 'Easy', 6),
+      practice('p4-optimize', 1, 'maximum-subarray', 'Maximum Subarray', 'Medium', 5),
+      practice('p4-optimize', 2, 'product-of-array-except-self', 'Product of Array Except Self', 'Medium', 6),
       {
         type: 'lesson',
         id: 'p4-clean',
@@ -489,7 +490,7 @@ export const CURRICULUM: PathDef[] = [
         problemCount: 5,
       },
       practice('p4-clean', 1, 'merge-two-sorted-lists', 'Merge Two Sorted Lists', 'Easy', 8),
-      practice('p4-clean', 2, 'valid-palindrome', 'Valid Palindrome', 'Easy', 9),
+      practice('p4-clean', 2, 'longest-common-prefix', 'Longest Common Prefix', 'Easy', 9),
       {
         type: 'lesson',
         id: 'p4-testing',
@@ -527,8 +528,8 @@ export const CURRICULUM: PathDef[] = [
         lessonCount: 1,
         problemCount: 15,
       },
-      practice('p4-medium', 1, 'reverse-linked-list', 'Reverse Linked List', 'Easy', 17),
-      practice('p4-medium', 2, 'maximum-depth-of-binary-tree', 'Maximum Depth of Binary Tree', 'Easy', 18),
+      practice('p4-medium', 1, 'container-with-most-water', 'Container With Most Water', 'Medium', 17),
+      practice('p4-medium', 2, 'validate-binary-search-tree', 'Validate Binary Search Tree', 'Medium', 18),
       {
         type: 'lesson',
         id: 'p4-communication',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function NavBar({ flush }: { flush?: boolean } = {}) {
@@ -24,7 +25,8 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
           }
         `}
       >
-        <div className="flex items-center mr-auto">
+        <div className="flex items-center gap-1.5 mr-auto">
+          <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           <span
             className={`font-semibold tracking-tight text-white transition-all duration-500 ${
               compact ? 'text-sm' : 'text-[15px]'

@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -104,6 +106,9 @@ function testsFromProblem(problem: ProblemContent): TestCase[] {
 // ─── Top Nav (glass — matches DashboardNav) ───────────────────────────────────
 
 function TopNav({ problem }: { problem: ProblemContent }) {
+  const searchParams = useSearchParams();
+  const backHref = searchParams.get('from') === 'dashboard' ? '/dashboard' : '/library';
+  const backLabel = searchParams.get('from') === 'dashboard' ? 'Dashboard' : 'Library';
   return (
     <header
       className="flex items-center gap-3 px-5 shrink-0"
@@ -114,7 +119,8 @@ function TopNav({ problem }: { problem: ProblemContent }) {
       }}
     >
       {/* Brand */}
-      <Link href="/" className="font-semibold text-[15px] tracking-tight text-white mr-0" style={SG}>
+      <Link href="/" className="flex items-center gap-1.5 font-semibold text-[15px] tracking-tight text-white mr-0" style={SG}>
+        <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
         LeetLockin
       </Link>
 
@@ -122,12 +128,12 @@ function TopNav({ problem }: { problem: ProblemContent }) {
 
       {/* Back */}
       <Link
-        href="/library"
+        href={backHref}
         className="flex items-center gap-1.5 text-[12px] text-zinc-500 hover:text-zinc-300 transition-colors"
         style={SG}
       >
         <ChevronLeft size={13} />
-        Library
+        {backLabel}
       </Link>
 
       <div className="w-px h-4 mx-1" style={{ background: BORDER }} />
