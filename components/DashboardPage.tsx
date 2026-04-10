@@ -1911,7 +1911,7 @@ function LessonPanel({
 
       {/* Content */}
       {preview ? (
-        <div className="px-7 py-7" style={{ maxWidth: 840 }}>
+        <div className="px-7 py-7">
           <section className="mb-7">
             <SectionLabel>Concept</SectionLabel>
             <p className="text-[15px]" style={{ color: C.text, lineHeight: 1.7 }}>
@@ -2002,7 +2002,7 @@ function LessonPanel({
           </div>
         </div>
       ) : (
-        <div className="px-7 py-8" style={{ maxWidth: 840 }}>
+        <div className="px-7 py-8">
           <section className="mb-7">
             <SectionLabel>About this block</SectionLabel>
             <p className="text-[15.5px]" style={{ color: C.text, lineHeight: 1.7 }}>
@@ -2307,19 +2307,62 @@ export function ProgressView({
               : `${totalComplete} of ${totalBlocks} blocks complete across ${CURRICULUM.length} paths.`}
           </p>
         </div>
-        <div className="text-right pb-0.5 shrink-0 ml-8">
-          <div className="h-[5px] w-32 rounded-full bg-slate-800 mb-1.5 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all"
+        <div className="relative shrink-0 ml-8 flex items-center justify-center"
+             style={{ width: 110, height: 110 }}>
+          {/* Circular track */}
+          <svg className="absolute inset-0" width="110" height="110" viewBox="0 0 110 110">
+            <circle cx="55" cy="55" r="48" fill="none" stroke="#1e293b" strokeWidth="8" />
+            <circle
+              cx="55" cy="55" r="48"
+              fill="none"
+              strokeWidth="8"
+              strokeLinecap="round"
+              stroke="url(#progressGrad)"
+              strokeDasharray={`${2 * Math.PI * 48}`}
+              strokeDashoffset={`${2 * Math.PI * 48 * (1 - overallPct / 100)}`}
               style={{
-                width: `${overallPct}%`,
-                background: 'linear-gradient(90deg, #6366f1, #3b82f6, #06b6d4)',
+                transform: 'rotate(-90deg)',
+                transformOrigin: '55px 55px',
+                transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
             />
+            <defs>
+              <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="50%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#06b6d4" />
+              </linearGradient>
+            </defs>
+          </svg>
+          {/* Big number */}
+          <div className="relative text-center">
+            <span
+              className="text-[32px] font-extrabold tabular-nums leading-none"
+              style={{
+                ...SG,
+                background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: `drop-shadow(0 0 ${overallPct > 0 ? 12 : 0}px rgba(99,102,241,0.5))`,
+                transition: 'filter 0.6s ease',
+              }}
+            >
+              {overallPct}
+            </span>
+            <span
+              className="text-[13px] font-bold ml-0.5"
+              style={{
+                background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              %
+            </span>
+            <p className="text-[9px] font-semibold tracking-[0.12em] uppercase text-slate-500 mt-0.5">
+              mastery
+            </p>
           </div>
-          <p className="text-[10px] font-medium text-slate-500 tabular-nums">
-            {overallPct}% mastery
-          </p>
         </div>
       </div>
 
