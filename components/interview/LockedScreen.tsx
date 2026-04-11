@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import {
-  Brain, BarChart3, Timer, Code2, Lock, ArrowRight, ArrowDown, Check,
+  Brain, Timer, Lock, ArrowRight, ArrowDown, Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -71,13 +71,6 @@ const STEPS = [
   { title: 'Choose your challenge', desc: 'Easy+Medium to build confidence, or Medium+Hard for the real thing.' },
   { title: 'Code under pressure', desc: '45 minutes. 2 problems. Full editor with test runner. No pauses.' },
   { title: 'Get your AI debrief', desc: 'Approach analysis, time splits, code quality score, and a clear readiness verdict.' },
-];
-
-const FEATURES = [
-  { icon: Brain, color: 'rgba(96,165,250,0.85)', bg: 'rgba(59,130,246,0.08)', title: 'AI-Powered Debriefs', desc: 'Detailed feedback on your approach, correctness, and time management after every session.' },
-  { icon: BarChart3, color: 'rgba(52,211,153,0.85)', bg: 'rgba(16,185,129,0.08)', title: 'Readiness Score', desc: 'A clear 1-10 signal: are you interview-ready or do you need more reps?' },
-  { icon: Timer, color: 'rgba(251,191,36,0.85)', bg: 'rgba(245,158,11,0.08)', title: 'Real Interview Pressure', desc: '45-minute timed sessions with the same constraints you\'ll face in the real thing.' },
-  { icon: Code2, color: 'rgba(167,139,250,0.85)', bg: 'rgba(139,92,246,0.08)', title: 'Full Coding Environment', desc: 'Monaco editor with syntax highlighting, test runner, and autocomplete.' },
 ];
 
 const STATS = [
@@ -295,36 +288,7 @@ export default function LockedScreen() {
           </div>
         </Reveal>
 
-        {/* ── 5. Feature Grid ───────────────────────────────────────── */}
-        <Reveal>
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-zinc-600 mb-6 text-center" style={SG}>
-            Everything you need to prepare
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map((f, i) => (
-              <Reveal key={f.title} delay={i * 0.08}>
-                <div
-                  className="rounded-xl px-5 py-5"
-                  style={{
-                    background: 'rgba(255,255,255,0.015)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                  }}
-                >
-                  <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
-                    style={{ background: f.bg }}
-                  >
-                    <f.icon size={18} style={{ color: f.color }} />
-                  </div>
-                  <p className="text-[14px] font-semibold text-white mb-1" style={SG}>{f.title}</p>
-                  <p className="text-[12px] text-zinc-500 leading-relaxed">{f.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Reveal>
-
-        {/* ── 6. Pricing CTA ────────────────────────────────────────── */}
+        {/* ── 5. Pricing CTA ────────────────────────────────────────── */}
         <Reveal>
           <div ref={pricingRef} className="text-center space-y-8">
             <div className="space-y-3">
