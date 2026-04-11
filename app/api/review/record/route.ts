@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseUser, getSupabase } from '@/lib/supabase';
+import { recordActivityForUser } from '@/lib/streaks';
 
 export async function POST(req: NextRequest) {
   const user = await getSupabaseUser();
@@ -50,6 +51,8 @@ export async function POST(req: NextRequest) {
       last_reviewed: today,
     })
     .eq('id', body.cardId);
+
+  await recordActivityForUser(user.id);
 
   return NextResponse.json({ ok: true, nextReview: nextDate });
 }

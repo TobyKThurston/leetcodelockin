@@ -59,8 +59,10 @@ export default async function proxy(req: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/interview/:path*',
     '/library/:path*',
     '/learn/:path*',
+    '/onboarding/:path*',
     '/settings/:path*',
     '/solve/:path*',
     '/tutor/:path*',

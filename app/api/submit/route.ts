@@ -4,6 +4,7 @@ import { recordSubmission } from '@/lib/problems-server';
 import { generateReviewCards } from '@/lib/review';
 import { findPracticeStepsBySlug } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
+import { recordActivityForUser } from '@/lib/streaks';
 
 interface SubmitRequestBody {
   slug: string;
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
 
   // Generate spaced repetition review cards for Pro users on accepted submissions
   if (status === 'accepted') {
+    await recordActivityForUser(user.id);
     await generateReviewCards(user.id, slug, code);
 
     // Mark any curriculum practice steps that reference this problem as complete

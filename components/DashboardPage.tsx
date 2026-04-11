@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
-import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap } from 'lucide-react';
+import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap, Flame, Snowflake, AlertTriangle } from 'lucide-react';
+import type { WeaknessSpotlight } from '@/lib/weaknesses';
 import { CURRICULUM, type PathDef, type BlockDef, type CurriculumStep, type PracticeStepDef, isLesson, isPractice } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import AppNav from '@/components/AppNav';
@@ -16,6 +17,8 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useStreakFreeze, type StreakData, type HeatmapDay } from '@/lib/streaks';
+import ActivityHeatmap from '@/components/ActivityHeatmap';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO_FONT = 'var(--font-geist-mono), ui-monospace, monospace';
@@ -1291,12 +1294,13 @@ function SidebarPathCard({
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
 function Sidebar({
-  pathStatuses, viewingPathId, completedIds, onSelectPath,
+  pathStatuses, viewingPathId, completedIds, onSelectPath, streakData,
 }: {
   pathStatuses: Record<string, PathStatus>;
   viewingPathId: string;
   completedIds: Set<string>;
   onSelectPath: (id: string) => void;
+  streakData: StreakData;
 }) {
   const totalBlocks   = CURRICULUM.reduce((s, p) => s + p.blocks.length, 0);
   const totalComplete = completedIds.size;
@@ -1349,15 +1353,21 @@ function Sidebar({
               />
             </div>
           </div>
-          {([
-            ['Streak',   '0 days'],
-            ['Problems', `${totalComplete} done`],
-          ] as [string, string][]).map(([label, value]) => (
-            <div key={label} className="flex justify-between text-[11.5px]">
-              <span className="text-slate-500">{label}</span>
-              <span className="text-slate-400 font-medium tabular-nums">{value}</span>
-            </div>
-          ))}
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-slate-500">Streak</span>
+            <span className="flex items-center gap-1 text-slate-400 font-medium tabular-nums">
+              {streakData.currentStreak > 0 && (
+                streakData.todayActive
+                  ? <Flame size={11} className="text-emerald-400" />
+                  : <Snowflake size={11} className="text-blue-400" />
+              )}
+              {streakData.currentStreak} day{streakData.currentStreak !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-slate-500">Problems</span>
+            <span className="text-slate-400 font-medium tabular-nums">{totalComplete} done</span>
+          </div>
         </div>
       </div>
     </aside>
@@ -1436,6 +1446,7 @@ function getRecommendedBlock(
 
 function RightRail({
   path, pathStatus, completedIds, pathStatuses, onSelectBlock, onSelectPath,
+  streakData, heatmapData, weaknessSpotlight,
 }: {
   path: PathDef;
   pathStatus: PathStatus;
@@ -1443,6 +1454,9 @@ function RightRail({
   pathStatuses: Record<string, PathStatus>;
   onSelectBlock: (id: string) => void;
   onSelectPath: (id: string) => void;
+  streakData: StreakData;
+  heatmapData: HeatmapDay[];
+  weaknessSpotlight: WeaknessSpotlight | null;
 }) {
   const blocksComplete = path.blocks.filter(b => completedIds.has(b.id)).length;
   const blocksTotal    = path.blocks.length;
@@ -1458,10 +1472,20 @@ function RightRail({
   const pctStr  = `${pct}%`;
   const etaStr  = remaining === 0 ? 'Done' : etaDays !== null ? `${etaDays}d` : '—';
 
-  // Focus Signal — mocked values, deterministic so they don't jitter.
-  const timeFocused    = 42;
-  const problemsSolved = 5;
-  const errors         = 2;
+  // Streak freeze handler
+  const [freezePending, startFreezeTransition] = useTransition();
+  const [localFreezesRemaining, setLocalFreezesRemaining] = useState(streakData.freezesRemaining);
+  const [freezeUsed, setFreezeUsed] = useState(false);
+
+  async function handleUseFreeze() {
+    startFreezeTransition(async () => {
+      const result = await useStreakFreeze();
+      if (result.ok) {
+        setLocalFreezesRemaining(result.freezesRemaining);
+        setFreezeUsed(true);
+      }
+    });
+  }
 
   const n = String(path.order).padStart(2, '0');
 
@@ -1535,15 +1559,108 @@ function RightRail({
             </div>
           </section>
 
-          {/* 3 — Focus Signal */}
+          {/* 3 — Activity Heatmap + Streak Freeze */}
           <section>
-            <RailHeader>Focus Signal</RailHeader>
-            <div className={cn(RAIL_BOX, 'space-y-2')}>
-              <MetricRow label="Time Focused"    value={`${timeFocused} min`} />
-              <MetricRow label="Problems Solved" value={String(problemsSolved)} />
-              <MetricRow label="Errors"          value={String(errors)} />
+            <RailHeader>Activity</RailHeader>
+            <div className={cn(RAIL_BOX, 'space-y-3')}>
+              <ActivityHeatmap data={heatmapData} weeks={7} />
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="text-slate-500">
+                  {streakData.currentStreak > 0
+                    ? `${streakData.currentStreak} day streak${streakData.todayActive ? '' : ' · do something today!'}`
+                    : 'Start your streak today'}
+                </span>
+                {streakData.longestStreak > 0 && (
+                  <span className="text-slate-600 tabular-nums">Best: {streakData.longestStreak}d</span>
+                )}
+              </div>
+              {/* Streak freeze */}
+              {streakData.streakAtRisk && !freezeUsed && streakData.isPro && (
+                <button
+                  type="button"
+                  onClick={handleUseFreeze}
+                  disabled={freezePending || localFreezesRemaining <= 0}
+                  className="w-full flex items-center justify-center gap-1.5 rounded-md py-1.5 text-[10px] font-medium bg-blue-500/10 border border-blue-400/30 text-blue-300 hover:bg-blue-500/20 transition-colors disabled:opacity-40"
+                >
+                  <Snowflake size={10} />
+                  {freezePending ? 'Saving...' : `Use Streak Freeze (${localFreezesRemaining} left)`}
+                </button>
+              )}
+              {freezeUsed && (
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-blue-300">
+                  <Snowflake size={10} />
+                  Streak saved!
+                </div>
+              )}
+              {!streakData.isPro && streakData.currentStreak > 0 && (
+                <div className="flex items-center justify-between text-[10px] text-slate-600">
+                  <span className="flex items-center gap-1">
+                    <Snowflake size={9} />
+                    Streak Freeze
+                  </span>
+                  <Badge variant="outline" className="text-[8px] px-1.5 py-0 h-3.5 border-slate-700 text-slate-500">
+                    Pro
+                  </Badge>
+                </div>
+              )}
             </div>
           </section>
+
+          {/* 3.5 — Weakness Spotlight */}
+          {weaknessSpotlight && (
+            <section>
+              <RailHeader>Weakness Spotlight</RailHeader>
+              <div className={cn(RAIL_BOX, 'space-y-2.5')}>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={12} className="text-amber-400 shrink-0" />
+                  <span
+                    className="text-[12px] font-semibold text-white tracking-[-0.005em]"
+                    style={SG}
+                  >
+                    {weaknessSpotlight.pattern}
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  {weaknessSpotlight.failCount} of {weaknessSpotlight.totalAttempts} attempts failed
+                  {' · '}
+                  <span className="text-amber-400/80 font-medium">
+                    {Math.round(weaknessSpotlight.failRate * 100)}% fail rate
+                  </span>
+                </p>
+                <div className="space-y-1.5 pt-1">
+                  {weaknessSpotlight.recommendedProblems.map(p => (
+                    <Link
+                      key={p.slug}
+                      href={`/solve/${p.slug}?from=dashboard`}
+                      className={cn(
+                        'flex items-center justify-between rounded-md px-2.5 py-2',
+                        'bg-slate-900/60 border border-slate-700/40',
+                        'hover:bg-slate-800/60 hover:border-slate-600/50 transition-colors',
+                      )}
+                    >
+                      <span
+                        className="text-[11px] font-medium text-slate-200 truncate mr-2"
+                        style={SG}
+                      >
+                        {p.title}
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[8px] px-1.5 py-0 h-3.5 shrink-0 font-semibold',
+                          p.difficulty === 'Easy' && 'border-emerald-500/40 text-emerald-400',
+                          p.difficulty === 'Medium' && 'border-amber-500/40 text-amber-400',
+                          p.difficulty === 'Hard' && 'border-red-500/40 text-red-400',
+                        )}
+                      >
+                        {p.difficulty}
+                      </Badge>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* 4 — Recommended Problem */}
           {(() => {
@@ -2749,10 +2866,21 @@ export function ProgressView({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function DashboardPage({ initialCompleted }: { initialCompleted: string[] }) {
+export default function DashboardPage({ initialCompleted, streakData, heatmapData, weaknessSpotlight }: {
+  initialCompleted: string[];
+  streakData: StreakData;
+  heatmapData: HeatmapDay[];
+  weaknessSpotlight: WeaknessSpotlight | null;
+}) {
   const pathname = usePathname();
   const router   = useRouter();
-  const [viewingPathId,   setViewingPathId]   = useState(CURRICULUM[0].id);
+  const [viewingPathId,   setViewingPathId]   = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('zl-viewing-path');
+      if (saved && CURRICULUM.some(p => p.id === saved)) return saved;
+    }
+    return CURRICULUM[0].id;
+  });
   const [completedIds,    setCompletedIds]    = useState<Set<string>>(() => new Set(initialCompleted));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [showGuestGate,   setShowGuestGate]   = useState(false);
@@ -2850,6 +2978,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
   const handleSelectPath = (id: string) => {
     if (pathStatuses[id] === 'locked') return;
     setViewingPathId(id);
+    localStorage.setItem('zl-viewing-path', id);
     setSelectedBlockId(null);
   };
 
@@ -2861,6 +2990,7 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
         viewingPathId={viewingPathId}
         completedIds={completedIds}
         onSelectPath={handleSelectPath}
+        streakData={streakData}
       />
       <RightRail
         path={viewingPath}
@@ -2869,6 +2999,9 @@ export default function DashboardPage({ initialCompleted }: { initialCompleted: 
         pathStatuses={pathStatuses}
         onSelectBlock={(id) => setSelectedBlockId(id)}
         onSelectPath={handleSelectPath}
+        streakData={streakData}
+        heatmapData={heatmapData}
+        weaknessSpotlight={weaknessSpotlight}
       />
       <main
         style={{

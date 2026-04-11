@@ -47,14 +47,15 @@ function fetchCurrentUser(): Promise<UserSummary | null> {
   return inflight;
 }
 
-export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Review' | 'Settings';
+export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Interview' | 'Review' | 'Settings';
 
 const TABS: { label: AppNavTab; href: string }[] = [
-  { label: 'Path',     href: '/dashboard' },
-  { label: 'Library',  href: '/library'   },
-  { label: 'Progress', href: '/progress'  },
-  { label: 'Review',   href: '/review'    },
-  { label: 'Settings', href: '/settings'  },
+  { label: 'Path',      href: '/dashboard'  },
+  { label: 'Library',   href: '/library'    },
+  { label: 'Progress',  href: '/progress'   },
+  { label: 'Interview', href: '/interview'  },
+  { label: 'Review',    href: '/review'     },
+  { label: 'Settings',  href: '/settings'   },
 ];
 
 export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {

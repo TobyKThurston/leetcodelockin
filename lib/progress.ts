@@ -1,6 +1,7 @@
 'use server';
 
 import { getSupabase, getSupabaseUser } from '@/lib/supabase';
+import { recordActivity } from '@/lib/streaks';
 
 export interface ModuleProgress {
   current_lesson: string;
@@ -89,8 +90,12 @@ export async function setBlockCompleted(blockId: string, complete: boolean): Pro
     .single();
 
   const current = new Set<string>(((row?.completed as string[] | null) ?? []));
-  if (complete) current.add(blockId);
-  else current.delete(blockId);
+  if (complete) {
+    current.add(blockId);
+    await recordActivity();
+  } else {
+    current.delete(blockId);
+  }
   const next = [...current];
 
   await db.from('progress').upsert(
