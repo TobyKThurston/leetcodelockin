@@ -96,7 +96,7 @@ export default function LockedScreen() {
         </div>
 
         {/* ── 2. Interview Preview ──────────────────────────────────── */}
-        <Reveal>
+        <>
           <div
             className="relative rounded-2xl overflow-hidden"
             style={{
@@ -162,7 +162,7 @@ export default function LockedScreen() {
               </div>
             </div>
           </div>
-        </Reveal>
+        </>
 
         {/* ── 3. Pricing ─────────────────────────────────────────── */}
         <div ref={pricingRef} className="space-y-8">
