@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
+import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardAction, CardContent, CardFooter } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { ReviewCard, KeyLinesContent, ApproachContent, ComplexityContent } from '@/lib/review';
@@ -750,41 +751,60 @@ function ProGateBanner() {
   if (!show) return null;
 
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-[#111827] p-5 mb-6 relative">
-      <button
-        onClick={() => setShow(false)}
-        className="absolute top-3 right-3 text-slate-500 hover:text-slate-300 transition-colors"
-      >
-        <X size={14} />
-      </button>
-      <div className="flex items-center gap-2 mb-3">
-        <Sparkles size={16} className="text-indigo-400" />
-        <h3 className="text-[14px] font-bold text-white" style={SG}>
-          Why upgrade to Pro?
-        </h3>
-      </div>
-      <ul className="space-y-2 mb-4">
-        {[
-          { icon: Brain, text: 'Spaced repetition cards generated from your accepted solutions' },
-          { icon: Zap, text: 'Cards adapt to your weak spots — review what you actually forget' },
-          { icon: Timer, text: 'Smart scheduling so you review at the optimal time for retention' },
-        ].map(({ icon: Icon, text }) => (
-          <li key={text} className="flex items-start gap-2.5">
-            <Icon size={14} className="text-indigo-400 mt-0.5 shrink-0" />
-            <span className="text-[12.5px] text-slate-300 leading-relaxed">{text}</span>
-          </li>
-        ))}
-      </ul>
-      <Button
-        size="sm"
-        className="bg-indigo-500 hover:bg-indigo-400 text-white text-[12px] font-semibold h-8 px-4"
-        onClick={handleUpgrade}
-        disabled={loading}
-      >
-        {loading ? 'Loading...' : 'Upgrade to Pro'}
-        {!loading && <ArrowRight size={13} className="ml-1.5" />}
-      </Button>
-    </div>
+    <Card size="sm" className="mb-6 bg-card">
+      <CardHeader>
+        <CardTitle className="text-sm font-semibold" style={SG}>
+          Unlock spaced repetition
+        </CardTitle>
+        <CardAction>
+          <button
+            onClick={() => setShow(false)}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={14} />
+          </button>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
+            <Brain size={13} className="text-primary" />
+          </div>
+          <div>
+            <p className="text-[13px] font-medium text-foreground">Auto-generated cards</p>
+            <p className="text-xs text-muted-foreground">Built from your accepted solutions</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
+            <Zap size={13} className="text-primary" />
+          </div>
+          <div>
+            <p className="text-[13px] font-medium text-foreground">Adapts to weak spots</p>
+            <p className="text-xs text-muted-foreground">Focus on what you actually forget</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
+            <Timer size={13} className="text-primary" />
+          </div>
+          <div>
+            <p className="text-[13px] font-medium text-foreground">Optimal timing</p>
+            <p className="text-xs text-muted-foreground">Review right before you'd forget</p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={handleUpgrade}
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : 'Upgrade to Pro'}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 

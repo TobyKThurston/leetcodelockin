@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Zap } from 'lucide-react';
 
@@ -120,8 +121,14 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          {isPro === null && !isGuest && checked && (
+            <Skeleton className="h-7 w-[72px] rounded-[min(var(--radius-md),12px)]" />
+          )}
           {isPro === false && !isGuest && (
-            <button
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-[12px] font-medium text-slate-200 border-slate-700 bg-transparent hover:bg-slate-800 hover:text-white"
               onClick={async () => {
                 const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
                 if (!priceId) return;
@@ -133,11 +140,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
                 const { url } = await res.json();
                 if (url) window.location.href = url;
               }}
-              className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
             >
               <Zap size={12} />
               Get Pro
-            </button>
+            </Button>
           )}
           {isGuest ? (
             <Button
