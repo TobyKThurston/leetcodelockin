@@ -1290,7 +1290,7 @@ function SidebarPathCard({
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function Sidebar({
+export function Sidebar({
   pathStatuses, viewingPathId, completedIds, onSelectPath,
 }: {
   pathStatuses: Record<string, PathStatus>;

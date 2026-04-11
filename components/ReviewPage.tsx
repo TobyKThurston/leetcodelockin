@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, Sparkles, GraduationCap } from 'lucide-react';
 import AppNav from '@/components/AppNav';
@@ -51,6 +51,8 @@ const QUICK_TYPE_META = {
   code_reading: { icon: Code2,        label: 'Code Reading', color: C.blue },
 } as const;
 
+type InteractionMode = 'mcq' | 'type_answer' | 'reveal';
+
 interface QuickCard {
   id: string;
   type: QuickCardType;
@@ -58,106 +60,186 @@ interface QuickCard {
   question: string;
   answer: string;
   code?: string;
+  interaction: InteractionMode;
+  choices?: string[];
+  correctChoice?: number;
+  typePrompt?: string;
+  acceptableAnswers?: string[];
 }
 
 const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-bigo-1',
     type: 'big_o',
-    title: 'Array Operations',
-    question: 'What is the time complexity of:\n• Accessing an element by index\n• Searching for an element (unsorted)\n• Inserting at the end\n• Inserting at the beginning',
-    answer: '• Access by index: O(1)\n• Search (unsorted): O(n)\n• Insert at end: O(1) amortized\n• Insert at beginning: O(n) — must shift all elements',
+    title: 'Array: Access by Index',
+    question: 'What is the time complexity of accessing an element by index in an array?',
+    answer: 'O(1) -- Arrays store elements in contiguous memory. Index access computes the memory address directly: base + (index * element_size). No iteration needed.',
+    interaction: 'mcq',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'],
+    correctChoice: 0,
   },
   {
     id: 'qr-bigo-2',
     type: 'big_o',
-    title: 'Hash Map Operations',
-    question: 'What is the average and worst-case time complexity for:\n• Insert\n• Lookup\n• Delete\n\nWhen does worst case happen?',
-    answer: '• Insert: O(1) average, O(n) worst\n• Lookup: O(1) average, O(n) worst\n• Delete: O(1) average, O(n) worst\n\nWorst case happens with hash collisions — all keys map to the same bucket, degenerating into a linked list.',
+    title: 'Array: Search (Unsorted)',
+    question: 'What is the time complexity of searching for a value in an unsorted array?',
+    answer: 'O(n) -- Without any ordering, you must check every element in the worst case. There is no shortcut to skip elements.',
+    interaction: 'mcq',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n^2)'],
+    correctChoice: 2,
   },
   {
     id: 'qr-bigo-3',
     type: 'big_o',
-    title: 'Sorting Complexity',
-    question: 'What is the time and space complexity of these sorting algorithms?\n• Merge Sort\n• Quick Sort\n• Heap Sort\n• Python\'s built-in sort (Timsort)',
-    answer: '• Merge Sort: O(n log n) time, O(n) space\n• Quick Sort: O(n log n) avg, O(n²) worst, O(log n) space\n• Heap Sort: O(n log n) time, O(1) space\n• Timsort: O(n log n) time, O(n) space — hybrid of merge + insertion sort, optimized for real-world data',
+    title: 'Array: Insert at Beginning',
+    question: 'What is the time complexity of inserting at the beginning of a dynamic array?',
+    answer: 'O(n) -- Every existing element must shift one position to the right to make room at index 0.',
+    interaction: 'mcq',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n^2)'],
+    correctChoice: 2,
   },
   {
     id: 'qr-bigo-4',
     type: 'big_o',
-    title: 'Binary Search Tree',
-    question: 'What is the time complexity for search, insert, and delete in:\n• A balanced BST\n• A skewed (unbalanced) BST\n\nWhat about a heap — can you search in O(log n)?',
-    answer: '• Balanced BST: O(log n) for all three\n• Skewed BST: O(n) — degenerates into a linked list\n\nA heap does NOT support O(log n) search — only O(n). Heaps are optimized for min/max extraction, not arbitrary search.',
+    title: 'Hash Map: Average Lookup',
+    question: 'What is the average time complexity of looking up a key in a hash map?',
+    answer: 'O(1) average -- The hash function maps keys to bucket indices directly. Worst case is O(n) when all keys collide into the same bucket.',
+    interaction: 'mcq',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'],
+    correctChoice: 0,
+  },
+  {
+    id: 'qr-bigo-5',
+    type: 'big_o',
+    title: 'Merge Sort',
+    question: 'What is the time complexity of Merge Sort?',
+    answer: 'O(n log n) -- The array is split in half log(n) times, and each level does O(n) work to merge. Space complexity is O(n) for the auxiliary arrays.',
+    interaction: 'mcq',
+    choices: ['O(n)', 'O(n log n)', 'O(n^2)', 'O(log n)'],
+    correctChoice: 1,
+  },
+  {
+    id: 'qr-bigo-6',
+    type: 'big_o',
+    title: 'Binary Search',
+    question: 'What is the time complexity of binary search on a sorted array?',
+    answer: 'O(log n) -- Each comparison eliminates half the remaining elements. After log(n) comparisons, only one element remains.',
+    interaction: 'mcq',
+    choices: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'],
+    correctChoice: 1,
+  },
+  {
+    id: 'qr-bigo-7',
+    type: 'big_o',
+    title: 'BFS / DFS on a Graph',
+    question: 'What is the time complexity of BFS or DFS on a graph with V vertices and E edges (adjacency list)?',
+    answer: 'O(V + E) -- Every vertex is visited once, and every edge is examined once. An adjacency matrix would be O(V^2) since you check every possible edge.',
+    interaction: 'mcq',
+    choices: ['O(V)', 'O(E)', 'O(V + E)', 'O(V * E)'],
+    correctChoice: 2,
   },
   {
     id: 'qr-pattern-1',
     type: 'pattern',
     title: 'Two Pointers',
-    question: 'When should you use the Two Pointers pattern?\n\nGive two classic problem types that use it.',
-    answer: 'Use Two Pointers when you have a sorted array (or linked list) and need to find pairs or subarrays meeting a condition.\n\nClassic examples:\n1. Two Sum II (sorted array) — one pointer at start, one at end, move inward\n2. Remove Duplicates — slow pointer for write position, fast pointer to scan',
+    question: 'You have a sorted array and need to find two numbers that sum to a target. Which pattern should you use?',
+    answer: 'Two Pointers -- Place one pointer at the start and one at the end. If the sum is too small, move the left pointer right. If too big, move the right pointer left. O(n) time.',
+    interaction: 'mcq',
+    choices: ['Sliding Window', 'Two Pointers', 'Binary Search', 'Hash Map'],
+    correctChoice: 1,
   },
   {
     id: 'qr-pattern-2',
     type: 'pattern',
     title: 'Sliding Window',
-    question: 'What defines a Sliding Window problem? How do you decide between a fixed-size vs. variable-size window?',
-    answer: 'Sliding Window problems ask about contiguous subarrays/substrings with some constraint (max sum, unique chars, etc.).\n\n• Fixed-size: "Find max sum of k consecutive elements" — window size is given\n• Variable-size: "Smallest subarray with sum ≥ target" — expand right to satisfy, shrink left to minimize\n\nKey insight: instead of recalculating from scratch, slide the window by adding/removing one element at a time → O(n).',
+    question: 'You need to find the longest substring without repeating characters. Which pattern fits?',
+    answer: 'Sliding Window -- Maintain a window [left, right] and a set of seen characters. Expand right; when a duplicate is found, shrink from the left until the duplicate is removed. O(n) time.',
+    interaction: 'mcq',
+    choices: ['Two Pointers', 'Dynamic Programming', 'Sliding Window', 'Backtracking'],
+    correctChoice: 2,
   },
   {
     id: 'qr-pattern-3',
     type: 'pattern',
     title: 'BFS vs DFS',
-    question: 'When would you choose BFS over DFS (and vice versa)? What data structure does each use?',
-    answer: 'BFS (queue): Best for shortest path in unweighted graphs, level-order traversal. Explores neighbors first.\n\nDFS (stack/recursion): Best for exploring all paths, detecting cycles, topological sort, backtracking. Uses less memory on wide graphs.\n\nRule of thumb: BFS for "shortest/minimum steps", DFS for "all possibilities/paths".',
+    question: 'You need to find the shortest path in an unweighted graph. Which traversal should you use?',
+    answer: 'BFS -- BFS explores all nodes at the current depth before moving deeper, guaranteeing the shortest path in unweighted graphs. DFS may find a path first, but not necessarily the shortest.',
+    interaction: 'mcq',
+    choices: ['DFS (Depth-First Search)', 'BFS (Breadth-First Search)', 'Dijkstra\'s Algorithm', 'Topological Sort'],
+    correctChoice: 1,
   },
   {
     id: 'qr-pattern-4',
     type: 'pattern',
-    title: 'Dynamic Programming',
-    question: 'What two properties must a problem have for DP to apply? What\'s the difference between top-down and bottom-up?',
-    answer: '1. Optimal substructure — optimal solution builds on optimal sub-solutions\n2. Overlapping subproblems — same subproblems are solved repeatedly\n\nTop-down (memoization): recursive + cache. Write the natural recursion, add a memo dict.\nBottom-up (tabulation): iterative, fill a table from base cases up. Usually more space-efficient.\n\nStart with top-down (easier to think about), convert to bottom-up if needed for performance.',
-  },
-  {
-    id: 'qr-code-1',
-    type: 'code_reading',
-    title: 'What does this code do?',
-    question: 'Read the code and determine what it returns for nums = [2, 7, 11, 15] and target = 9.',
-    code: 'def solve(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        comp = target - n\n        if comp in seen:\n            return [seen[comp], i]\n        seen[n] = i\n    return []',
-    answer: 'This is the classic Two Sum solution using a hash map.\n\nWalkthrough with [2, 7, 11, 15], target=9:\n• i=0, n=2: comp=7, not in seen → seen={2:0}\n• i=1, n=7: comp=2, 2 IS in seen → return [0, 1]\n\nReturns [0, 1] — indices of 2 and 7 which sum to 9.\nTime: O(n), Space: O(n)',
-  },
-  {
-    id: 'qr-code-2',
-    type: 'code_reading',
-    title: 'What does this code do?',
-    question: 'What pattern does this implement? What does it return for s = "abcabcbb"?',
-    code: 'def solve(s):\n    seen = set()\n    l = ans = 0\n    for r in range(len(s)):\n        while s[r] in seen:\n            seen.remove(s[l])\n            l += 1\n        seen.add(s[r])\n        ans = max(ans, r - l + 1)\n    return ans',
-    answer: 'This is the Sliding Window pattern — finds the length of the longest substring without repeating characters.\n\nFor "abcabcbb":\n• Window expands: "a", "ab", "abc"\n• \'a\' repeats → shrink from left: "bca", "bcab" → shrink: "cab", "cabc" → shrink: "abc"\n• Best window was length 3: "abc"\n\nReturns 3. Time: O(n), Space: O(min(n, alphabet))',
-  },
-  {
-    id: 'qr-code-3',
-    type: 'code_reading',
-    title: 'What does this code do?',
-    question: 'What is the time complexity? What does it return for [3, 2, 1, 5, 6, 4] and k = 2?',
-    code: 'import heapq\n\ndef solve(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]',
-    answer: 'This finds the kth largest element using a min-heap of size k.\n\nThe heap always keeps the k largest values seen so far. The smallest of those k (the root) is the kth largest overall.\n\nFor [3,2,1,5,6,4], k=2:\n• After all pushes/pops: heap = [5, 6]\n• heap[0] = 5 (2nd largest)\n\nReturns 5. Time: O(n log k), Space: O(k)',
-  },
-  {
-    id: 'qr-bigo-5',
-    type: 'big_o',
-    title: 'Graph Algorithms',
-    question: 'What is the time complexity of:\n• BFS / DFS on an adjacency list\n• Dijkstra\'s with a min-heap\n• Detecting a cycle in a directed graph',
-    answer: '• BFS / DFS: O(V + E) — visit every vertex and edge once\n• Dijkstra\'s (min-heap): O((V + E) log V)\n• Cycle detection (DFS): O(V + E) — track visiting/visited states\n\nV = vertices, E = edges. Adjacency matrix would be O(V²) for BFS/DFS.',
+    title: 'Dynamic Programming Signal',
+    question: 'What two properties must a problem have for Dynamic Programming to apply?',
+    answer: '1. Optimal substructure -- the optimal solution builds on optimal sub-solutions.\n2. Overlapping subproblems -- the same subproblems are solved repeatedly.\n\nIf only #1 exists without #2, greedy may work instead.',
+    interaction: 'mcq',
+    choices: [
+      'Optimal substructure + Overlapping subproblems',
+      'Sorted input + Monotonic property',
+      'Divide and conquer + Merge step',
+      'Graph structure + Cycle detection',
+    ],
+    correctChoice: 0,
   },
   {
     id: 'qr-pattern-5',
     type: 'pattern',
     title: 'Stack Problems',
-    question: 'Name three common problem types that use a stack. What makes a problem a "stack problem"?',
-    answer: 'Stack problems involve matching, nesting, or maintaining monotonic order:\n\n1. Valid Parentheses — match opening/closing brackets\n2. Monotonic Stack — next greater/smaller element, largest rectangle in histogram\n3. Expression Evaluation — parse infix/postfix expressions\n\nKey signal: you need to process items in LIFO order, or need to look back at "the most recent unresolved item".',
+    question: 'You need to find the next greater element for each item in an array. Which data structure is key?',
+    answer: 'Stack (Monotonic Stack) -- Iterate through the array and maintain a stack of indices whose next greater element hasn\'t been found yet. When you find a larger element, pop and record.',
+    interaction: 'mcq',
+    choices: ['Queue', 'Stack', 'Heap', 'Hash Map'],
+    correctChoice: 1,
+  },
+  {
+    id: 'qr-code-1',
+    type: 'code_reading',
+    title: 'Two Sum',
+    question: 'What does this function return for nums = [2, 7, 11, 15] and target = 9?',
+    code: 'def solve(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        comp = target - n\n        if comp in seen:\n            return [seen[comp], i]\n        seen[n] = i\n    return []',
+    answer: '[0, 1] -- This is the Two Sum pattern using a hash map.\n\ni=0: n=2, comp=7, not in seen, store {2:0}\ni=1: n=7, comp=2, 2 IS in seen, return [0, 1]\n\nIndices 0 and 1 point to values 2 and 7, which sum to 9.',
+    interaction: 'type_answer',
+    typePrompt: 'Type the return value (e.g. [0, 1])',
+    acceptableAnswers: ['[0, 1]', '[0,1]', '0, 1', '0,1'],
+  },
+  {
+    id: 'qr-code-2',
+    type: 'code_reading',
+    title: 'Longest Substring',
+    question: 'What does this return for s = "abcabcbb"?',
+    code: 'def solve(s):\n    seen = set()\n    l = ans = 0\n    for r in range(len(s)):\n        while s[r] in seen:\n            seen.remove(s[l])\n            l += 1\n        seen.add(s[r])\n        ans = max(ans, r - l + 1)\n    return ans',
+    answer: '3 -- This is the Sliding Window pattern for longest substring without repeating characters.\n\nThe longest non-repeating substring is "abc" (length 3). When a duplicate is found, the left pointer shrinks the window until the duplicate is removed.',
+    interaction: 'type_answer',
+    typePrompt: 'Type the return value (a number)',
+    acceptableAnswers: ['3'],
+  },
+  {
+    id: 'qr-code-3',
+    type: 'code_reading',
+    title: 'Kth Largest Element',
+    question: 'What does this return for nums = [3, 2, 1, 5, 6, 4] and k = 2?',
+    code: 'import heapq\n\ndef solve(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]',
+    answer: '5 -- This finds the kth largest element using a min-heap of size k.\n\nThe heap keeps the k largest values seen so far. The smallest of those (the root) is the kth largest overall.\n\nAfter processing all elements, heap = [5, 6]. heap[0] = 5 (2nd largest).\n\nTime: O(n log k), Space: O(k)',
+    interaction: 'type_answer',
+    typePrompt: 'Type the return value (a number)',
+    acceptableAnswers: ['5'],
+  },
+  {
+    id: 'qr-code-4',
+    type: 'code_reading',
+    title: 'What pattern is this?',
+    question: 'What algorithmic pattern does this code implement?',
+    code: 'def solve(nums, target):\n    left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1',
+    answer: 'Binary Search -- The code repeatedly halves the search space by comparing the middle element to the target. If the middle is too small, search the right half; if too large, search the left half.\n\nTime: O(log n), Space: O(1)',
+    interaction: 'mcq',
+    choices: ['Two Pointers', 'Binary Search', 'Sliding Window', 'Divide and Conquer'],
+    correctChoice: 1,
   },
 ];
 
-// ─── Shared rail primitives (same as Library / Dashboard) ────────────────────
+// ─── Shared rail primitives ────────────────────────────────────────────────
 
 function RailHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -208,7 +290,7 @@ function CodeBlock({
 
   return (
     <pre
-      className="rounded-lg p-4 text-[12px] leading-[1.6] overflow-x-auto"
+      className="rounded-lg p-4 text-[13px] leading-[1.7] overflow-x-auto"
       style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
     >
       {lines.map((line, i) => {
@@ -218,7 +300,7 @@ function CodeBlock({
             <div key={i} className="flex items-center gap-2">
               <span className="text-slate-600 select-none w-6 text-right mr-2">{i + 1}</span>
               <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-[11px] font-medium">
-                {'_'.repeat(Math.max(line.trim().length, 12))} ← recall this line
+                {'_'.repeat(Math.max(line.trim().length, 12))} -- recall this line
               </span>
             </div>
           );
@@ -246,13 +328,13 @@ function CodeBlock({
   );
 }
 
-// ─── Card front/back renderers ───────────────────────────────────────────────
+// ─── Card front/back renderers (SR mode) ────────────────────────────────────
 
 function KeyLinesFront({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
   return (
     <div className="space-y-3">
-      <p className="text-[13px] text-slate-400">
+      <p className="text-[14px] text-slate-400">
         Fill in the blanked-out lines from your solution:
       </p>
       <CodeBlock
@@ -268,7 +350,7 @@ function KeyLinesBack({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
   return (
     <div className="space-y-3">
-      <p className="text-[13px] text-emerald-400 font-medium">Here are the key lines:</p>
+      <p className="text-[14px] text-emerald-400 font-medium">Here are the key lines:</p>
       <CodeBlock
         code={card.codeSnapshot}
         blankIndices={content.blank_indices}
@@ -282,7 +364,7 @@ function KeyLinesBack({ card }: { card: ReviewCard }) {
 function ApproachFront({ card }: { card: ReviewCard }) {
   return (
     <div className="space-y-3">
-      <p className="text-[13px] text-slate-400">
+      <p className="text-[14px] text-slate-400">
         What pattern and approach did you use to solve this problem?
       </p>
       <p className="text-[13px] text-slate-500 italic">
@@ -298,11 +380,11 @@ function ApproachBack({ card }: { card: ReviewCard }) {
     <div className="space-y-4">
       <div>
         <span className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">Pattern</span>
-        <p className="text-[14px] text-white font-semibold mt-1" style={SG}>{content.pattern}</p>
+        <p className="text-[15px] text-white font-semibold mt-1" style={SG}>{content.pattern}</p>
       </div>
       <div>
         <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Approach</span>
-        <p className="text-[13px] text-slate-300 leading-relaxed mt-1">{content.explanation}</p>
+        <p className="text-[14px] text-slate-300 leading-relaxed mt-1">{content.explanation}</p>
       </div>
       <div>
         <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Your Code</span>
@@ -315,7 +397,7 @@ function ApproachBack({ card }: { card: ReviewCard }) {
 function ComplexityFront({ card }: { card: ReviewCard }) {
   return (
     <div className="space-y-3">
-      <p className="text-[13px] text-slate-400">
+      <p className="text-[14px] text-slate-400">
         What is the time and space complexity of your solution?
       </p>
       <CodeBlock code={card.codeSnapshot} revealed={true} />
@@ -330,14 +412,238 @@ function ComplexityBack({ card }: { card: ReviewCard }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Time</span>
-          <p className="text-[18px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.time}</p>
+          <p className="text-[20px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.time}</p>
         </div>
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Space</span>
-          <p className="text-[18px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.space}</p>
+          <p className="text-[20px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.space}</p>
         </div>
       </div>
-      <p className="text-[13px] text-slate-400 leading-relaxed">{content.reasoning}</p>
+      <p className="text-[14px] text-slate-400 leading-relaxed">{content.reasoning}</p>
+    </div>
+  );
+}
+
+// ─── Interactive Quick Card Components ──────────────────────────────────────
+
+function MCQCard({
+  card,
+  onAnswer,
+}: {
+  card: QuickCard;
+  onAnswer: (correct: boolean) => void;
+}) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const answered = selected !== null;
+  const isCorrect = selected === card.correctChoice;
+
+  function handleSelect(idx: number) {
+    if (answered) return;
+    setSelected(idx);
+    onAnswer(idx === card.correctChoice!);
+  }
+
+  return (
+    <div className="space-y-5">
+      <p className="text-[15px] text-slate-200 leading-relaxed">
+        {card.question}
+      </p>
+
+      {card.code && (
+        <pre
+          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto"
+          style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
+        >
+          {card.code.split('\n').map((line, i) => (
+            <div key={i} className="flex">
+              <span className="text-slate-600 select-none w-6 text-right mr-3">{i + 1}</span>
+              <span className="text-slate-300">{line || ' '}</span>
+            </div>
+          ))}
+        </pre>
+      )}
+
+      <div className="grid grid-cols-1 gap-2.5">
+        {card.choices!.map((choice, idx) => {
+          const isThis = selected === idx;
+          const isCorrectChoice = idx === card.correctChoice;
+
+          let borderColor = 'border-slate-700/60';
+          let bg = 'bg-slate-800/40';
+          let textColor = 'text-slate-200';
+          let labelColor = 'text-slate-500';
+          let labelBg = 'bg-slate-700/40';
+
+          if (answered && isCorrectChoice) {
+            borderColor = 'border-emerald-500/50';
+            bg = 'bg-emerald-500/[0.08]';
+            textColor = 'text-emerald-300';
+            labelColor = 'text-emerald-400';
+            labelBg = 'bg-emerald-500/20';
+          } else if (answered && isThis && !isCorrect) {
+            borderColor = 'border-red-500/50';
+            bg = 'bg-red-500/[0.08]';
+            textColor = 'text-red-300';
+            labelColor = 'text-red-400';
+            labelBg = 'bg-red-500/20';
+          }
+
+          return (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSelect(idx)}
+              disabled={answered}
+              className={cn(
+                'w-full text-left rounded-lg px-4 py-3.5 border transition-all duration-150',
+                'flex items-center gap-3',
+                borderColor, bg,
+                !answered && 'hover:bg-slate-700/50 hover:border-slate-600/80 cursor-pointer',
+                answered && 'cursor-default',
+              )}
+            >
+              <span className={cn(
+                'shrink-0 w-7 h-7 rounded-md flex items-center justify-center text-[12px] font-bold',
+                labelBg, labelColor,
+              )}>
+                {String.fromCharCode(65 + idx)}
+              </span>
+              <span className={cn('text-[14px] font-medium', textColor)}>
+                {choice}
+              </span>
+              {answered && isCorrectChoice && (
+                <Check size={16} className="ml-auto text-emerald-400 shrink-0" />
+              )}
+              {answered && isThis && !isCorrect && (
+                <X size={16} className="ml-auto text-red-400 shrink-0" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {answered && (
+        <div
+          className={cn(
+            'rounded-lg p-4 border text-[14px] leading-relaxed',
+            isCorrect
+              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-300'
+              : 'bg-red-500/[0.06] border-red-500/20 text-slate-300',
+          )}
+        >
+          <p className={cn(
+            'text-[12px] font-bold uppercase tracking-wider mb-2',
+            isCorrect ? 'text-emerald-400' : 'text-red-400',
+          )}>
+            {isCorrect ? 'Correct' : 'Incorrect'}
+          </p>
+          <p className="whitespace-pre-line">{card.answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TypeAnswerCard({
+  card,
+  onAnswer,
+}: {
+  card: QuickCard;
+  onAnswer: (correct: boolean) => void;
+}) {
+  const [input, setInput] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const isCorrect = submitted && card.acceptableAnswers?.some(
+    a => a.trim().toLowerCase() === input.trim().toLowerCase()
+  );
+
+  function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (submitted || !input.trim()) return;
+    setSubmitted(true);
+    const correct = card.acceptableAnswers?.some(
+      a => a.trim().toLowerCase() === input.trim().toLowerCase()
+    ) ?? false;
+    onAnswer(correct);
+  }
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  return (
+    <div className="space-y-5">
+      <p className="text-[15px] text-slate-200 leading-relaxed">
+        {card.question}
+      </p>
+
+      {card.code && (
+        <pre
+          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto"
+          style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
+        >
+          {card.code.split('\n').map((line, i) => (
+            <div key={i} className="flex">
+              <span className="text-slate-600 select-none w-6 text-right mr-3">{i + 1}</span>
+              <span className="text-slate-300">{line || ' '}</span>
+            </div>
+          ))}
+        </pre>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <label className="block text-[12px] text-slate-500 font-medium">
+          {card.typePrompt ?? 'Type your answer'}
+        </label>
+        <div className="flex gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            disabled={submitted}
+            placeholder="Your answer..."
+            className={cn(
+              'flex-1 rounded-lg px-4 py-3 text-[15px] font-medium border outline-none transition-colors',
+              'bg-slate-800/60 text-white placeholder:text-slate-600',
+              !submitted && 'border-slate-700/60 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20',
+              submitted && isCorrect && 'border-emerald-500/50 bg-emerald-500/[0.06]',
+              submitted && !isCorrect && 'border-red-500/50 bg-red-500/[0.06]',
+            )}
+            style={{ fontFamily: MONO }}
+          />
+          {!submitted && (
+            <Button
+              type="submit"
+              disabled={!input.trim()}
+              className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-5 shrink-0"
+            >
+              Check
+            </Button>
+          )}
+        </div>
+      </form>
+
+      {submitted && (
+        <div
+          className={cn(
+            'rounded-lg p-4 border text-[14px] leading-relaxed',
+            isCorrect
+              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-300'
+              : 'bg-red-500/[0.06] border-red-500/20 text-slate-300',
+          )}
+        >
+          <p className={cn(
+            'text-[12px] font-bold uppercase tracking-wider mb-2',
+            isCorrect ? 'text-emerald-400' : 'text-red-400',
+          )}>
+            {isCorrect ? 'Correct' : `Not quite -- the answer is ${card.acceptableAnswers?.[0]}`}
+          </p>
+          <p className="whitespace-pre-line">{card.answer}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -403,7 +709,7 @@ function SidebarCardRow({
   );
 }
 
-// ─── Left Sidebar ────────────────────────────────────────────────────────────
+// ─── Left Sidebar (SR mode) ─────────────────────────────────────────────────
 
 function ReviewSidebar({
   cards, currentIdx, reviewedSet, onSelectCard,
@@ -474,7 +780,7 @@ function ReviewSidebar({
   );
 }
 
-// ─── Right Rail ──────────────────────────────────────────────────────────────
+// ─── Right Rail (SR mode only) ──────────────────────────────────────────────
 
 function ReviewRightRail({
   card, cards, reviewedCount, totalDue, forgotCount, gotItCount,
@@ -489,7 +795,6 @@ function ReviewRightRail({
   const remaining = cards.length - reviewedCount;
   const accuracy = reviewedCount === 0 ? 0 : Math.round((gotItCount / reviewedCount) * 100);
 
-  // Count card types in queue
   const typeCounts = useMemo(() => {
     const counts = { key_lines: 0, approach: 0, complexity: 0 };
     for (const c of cards) counts[c.cardType]++;
@@ -510,7 +815,7 @@ function ReviewRightRail({
       <ScrollArea className="flex-1">
         <div className="px-4 pt-5 pb-5 space-y-5">
 
-          {/* 1 — Current Card (mirrors category/path progress box) */}
+          {/* Current Card */}
           {card && (
             <section>
               <RailHeader>Current Card</RailHeader>
@@ -552,14 +857,14 @@ function ReviewRightRail({
                 )}
                 {card.reviewCount > 0 && (
                   <p className="text-[10px] text-slate-500 mt-1">
-                    Reviewed {card.reviewCount}× before
+                    Reviewed {card.reviewCount}x before
                   </p>
                 )}
               </div>
             </section>
           )}
 
-          {/* 2 — Session Progress (3-col metric grid) */}
+          {/* Session Progress */}
           <section>
             <RailHeader>Session Progress</RailHeader>
             <div className={cn(RAIL_BOX, 'grid grid-cols-3 gap-3')}>
@@ -569,7 +874,7 @@ function ReviewRightRail({
             </div>
           </section>
 
-          {/* 3 — Results (MetricRows) */}
+          {/* Results */}
           <section>
             <RailHeader>Results</RailHeader>
             <div className={cn(RAIL_BOX, 'space-y-2')}>
@@ -579,7 +884,7 @@ function ReviewRightRail({
             </div>
           </section>
 
-          {/* 4 — Card Types (breakdown of queue) */}
+          {/* Card Types */}
           <section>
             <RailHeader>Queue Breakdown</RailHeader>
             <div className={cn(RAIL_BOX, 'space-y-2')}>
@@ -606,7 +911,7 @@ function ReviewRightRail({
   );
 }
 
-// ─── Pro upgrade banner (inline, not a full-page takeover) ──────────────────
+// ─── Pro upgrade banner ─────────────────────────────────────────────────────
 
 function ProGateBanner() {
   const [loading, setLoading] = useState(false);
@@ -642,7 +947,7 @@ function ProGateBanner() {
           </h3>
           <p className="text-[12.5px] text-slate-400 leading-relaxed mb-3">
             When you solve problems, Pro automatically generates personalized flashcards
-            from your accepted solutions. Cards are scheduled using spaced repetition — you review
+            from your accepted solutions. Cards are scheduled using spaced repetition -- you review
             them at increasing intervals to build long-term recall.
           </p>
           <div className="flex items-center gap-2">
@@ -670,49 +975,15 @@ function ProGateBanner() {
   );
 }
 
-// ─── Quick Review card front / back ─────────────────────────────────────────
-
-function QuickCardFront({ card }: { card: QuickCard }) {
-  return (
-    <div className="space-y-3">
-      <p className="text-[13px] text-slate-300 leading-relaxed whitespace-pre-line">
-        {card.question}
-      </p>
-      {card.code && (
-        <pre
-          className="rounded-lg p-4 text-[12px] leading-[1.6] overflow-x-auto"
-          style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
-        >
-          {card.code.split('\n').map((line, i) => (
-            <div key={i} className="flex">
-              <span className="text-slate-600 select-none w-6 text-right mr-2">{i + 1}</span>
-              <span className="text-slate-300">{line || ' '}</span>
-            </div>
-          ))}
-        </pre>
-      )}
-    </div>
-  );
-}
-
-function QuickCardBack({ card }: { card: QuickCard }) {
-  return (
-    <div className="space-y-3">
-      <p className="text-[13px] text-slate-200 leading-relaxed whitespace-pre-line">
-        {card.answer}
-      </p>
-    </div>
-  );
-}
-
 // ─── Quick Review sidebar row ───────────────────────────────────────────────
 
 function QuickSidebarRow({
-  card, isActive, isReviewed, onClick,
+  card, isActive, isReviewed, result, onClick,
 }: {
   card: QuickCard;
   isActive: boolean;
   isReviewed: boolean;
+  result?: 'correct' | 'incorrect';
   onClick: () => void;
 }) {
   const meta = QUICK_TYPE_META[card.type];
@@ -726,7 +997,8 @@ function QuickSidebarRow({
         'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150 cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
         isActive && 'bg-blue-500/[0.08] border-blue-400/50',
-        !isActive && isReviewed && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
+        !isActive && isReviewed && result === 'correct' && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
+        !isActive && isReviewed && result === 'incorrect' && 'bg-slate-800/30 border-red-500/25 hover:border-red-500/40',
         !isActive && !isReviewed && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
       )}
     >
@@ -738,7 +1010,8 @@ function QuickSidebarRow({
           <Icon size={10} />
           {meta.label}
         </div>
-        {isReviewed && <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />}
+        {isReviewed && result === 'correct' && <Check size={12} strokeWidth={2.25} className="text-emerald-400" />}
+        {isReviewed && result === 'incorrect' && <X size={12} strokeWidth={2.25} className="text-red-400" />}
       </div>
       <p
         className={cn(
@@ -755,7 +1028,7 @@ function QuickSidebarRow({
   );
 }
 
-// ─── Empty / sign-in / upgrade states (centered, no sidebars) ───────────────
+// ─── Empty / sign-in / upgrade states ───────────────────────────────────────
 
 function CenteredMessage({ children }: { children: React.ReactNode }) {
   return (
@@ -771,17 +1044,20 @@ function CenteredMessage({ children }: { children: React.ReactNode }) {
 // ─── Quick Review Left Sidebar ──────────────────────────────────────────────
 
 function QuickReviewSidebar({
-  cards, currentIdx, reviewedSet, onSelectCard, srDueCount, mode,
+  cards, currentIdx, reviewedSet, results, onSelectCard, srDueCount, mode, isPro,
 }: {
   cards: QuickCard[];
   currentIdx: number;
   reviewedSet: Set<number>;
+  results: Map<number, 'correct' | 'incorrect'>;
   onSelectCard: (idx: number) => void;
   srDueCount: number;
   mode: 'quick' | 'sr';
+  isPro: boolean;
 }) {
   const totalCards = cards.length;
   const reviewedCount = reviewedSet.size;
+  const correctCount = Array.from(results.values()).filter(r => r === 'correct').length;
   const pct = totalCards === 0 ? 0 : Math.round((reviewedCount / totalCards) * 100);
 
   return (
@@ -796,15 +1072,26 @@ function QuickReviewSidebar({
     >
       <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
         <div className="px-4 pt-5 pb-3 space-y-2">
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-1 px-1">
             {mode === 'sr' ? 'Due for Review' : 'Quick Review'}
           </p>
+
+          {/* Context message */}
+          <div className="px-1 pb-2">
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              {isPro
+                ? 'These are random fundamentals. As you solve more problems, your review cards will be based on your actual solutions.'
+                : 'Random fundamentals to sharpen your foundations. Upgrade to Pro to get personalized cards from problems you solve.'}
+            </p>
+          </div>
+
           {cards.map((card, idx) => (
             <QuickSidebarRow
               key={card.id}
               card={card}
               isActive={idx === currentIdx}
               isReviewed={reviewedSet.has(idx)}
+              result={results.get(idx)}
               onClick={() => onSelectCard(idx)}
             />
           ))}
@@ -830,9 +1117,9 @@ function QuickReviewSidebar({
             </div>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-slate-500">Reviewed</span>
+            <span className="text-slate-500">Score</span>
             <span className="text-slate-400 font-medium tabular-nums">
-              {reviewedCount} / {totalCards}
+              {correctCount} / {reviewedCount} correct
             </span>
           </div>
           {srDueCount > 0 && mode === 'quick' && (
@@ -843,157 +1130,6 @@ function QuickReviewSidebar({
           )}
         </div>
       </div>
-    </aside>
-  );
-}
-
-// ─── Quick Review Right Rail ────────────────────────────────────────────────
-
-function QuickReviewRightRail({
-  card, reviewedCount, totalCards, isPro, srDueCount, sessionMessage,
-}: {
-  card: QuickCard | undefined;
-  reviewedCount: number;
-  totalCards: number;
-  isPro: boolean;
-  srDueCount: number;
-  sessionMessage: string | null;
-}) {
-  const remaining = totalCards - reviewedCount;
-
-  const typeCounts = useMemo(() => {
-    const counts = { big_o: 0, pattern: 0, code_reading: 0 };
-    for (const c of QUICK_CARDS) counts[c.type]++;
-    return counts;
-  }, []);
-
-  return (
-    <aside
-      className="hidden lg:flex fixed right-0 flex-col"
-      style={{
-        top: 48,
-        bottom: 0,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-5 space-y-5">
-
-          {/* Current Card */}
-          {card && (
-            <section>
-              <RailHeader>Current Card</RailHeader>
-              <div
-                className={cn(
-                  'rounded-lg px-3 py-2.5 border',
-                  'bg-blue-500/[0.08] border-blue-400/50',
-                )}
-              >
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  {(() => {
-                    const meta = QUICK_TYPE_META[card.type];
-                    const Icon = meta.icon;
-                    return (
-                      <div
-                        className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold"
-                        style={{ background: `${meta.color}15`, color: meta.color }}
-                      >
-                        <Icon size={10} />
-                        {meta.label}
-                      </div>
-                    );
-                  })()}
-                </div>
-                <p
-                  className="text-[12.5px] font-semibold leading-tight text-white tracking-[-0.005em]"
-                  style={SG}
-                >
-                  {card.title}
-                </p>
-              </div>
-            </section>
-          )}
-
-          {/* Session Progress */}
-          <section>
-            <RailHeader>Session Progress</RailHeader>
-            <div className={cn(RAIL_BOX, 'grid grid-cols-2 gap-3')}>
-              <Metric value={String(reviewedCount)} label="reviewed" />
-              <Metric value={String(remaining)} label="remaining" />
-            </div>
-          </section>
-
-          {/* How Spaced Repetition Works */}
-          <section>
-            <RailHeader>How It Works</RailHeader>
-            <div className={cn(RAIL_BOX, 'space-y-2.5')}>
-              <div className="flex items-start gap-2">
-                <Sparkles size={12} className="text-amber-400 mt-0.5 shrink-0" />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  <span className="text-slate-300 font-medium">Solve problems</span> — when your solution is accepted, AI generates personalized flashcards
-                </p>
-              </div>
-              <div className="flex items-start gap-2">
-                <Brain size={12} className="text-emerald-400 mt-0.5 shrink-0" />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  <span className="text-slate-300 font-medium">Spaced repetition</span> — cards appear at increasing intervals (1d → 2d → 4d → ...) so you review right before you forget
-                </p>
-              </div>
-              <div className="flex items-start gap-2">
-                <GraduationCap size={12} className="text-blue-400 mt-0.5 shrink-0" />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  <span className="text-slate-300 font-medium">Quick Review</span> — fundamentals like Big-O and patterns are always available to sharpen your foundations
-                </p>
-              </div>
-              {!isPro && (
-                <div className="flex items-start gap-2 pt-1 border-t" style={{ borderColor: C.border }}>
-                  <Zap size={12} className="text-amber-400 mt-0.5 shrink-0" />
-                  <p className="text-[11px] text-amber-300/80 leading-relaxed">
-                    Spaced repetition cards require <span className="font-semibold text-amber-300">Pro</span>
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Card Types breakdown */}
-          <section>
-            <RailHeader>Quick Review Topics</RailHeader>
-            <div className={cn(RAIL_BOX, 'space-y-2')}>
-              {(['big_o', 'pattern', 'code_reading'] as const).map(type => {
-                const meta = QUICK_TYPE_META[type];
-                return (
-                  <div key={type} className="flex items-center justify-between text-[11.5px]">
-                    <div className="flex items-center gap-1.5">
-                      <meta.icon size={11} style={{ color: meta.color }} />
-                      <span className="text-slate-500">{meta.label}</span>
-                    </div>
-                    <span className="text-slate-300 font-medium tabular-nums">
-                      {typeCounts[type]}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* SR status */}
-          {isPro && (
-            <section>
-              <RailHeader>Spaced Repetition</RailHeader>
-              <div className={cn(RAIL_BOX, 'space-y-2')}>
-                <MetricRow label="Cards due" value={String(srDueCount)} />
-                {sessionMessage && (
-                  <p className="text-[10.5px] text-slate-500 leading-relaxed pt-1">{sessionMessage}</p>
-                )}
-              </div>
-            </section>
-          )}
-
-        </div>
-      </ScrollArea>
     </aside>
   );
 }
@@ -1020,8 +1156,10 @@ export default function ReviewPageClient({
 
   // ── Quick review state ──
   const [quickIdx, setQuickIdx] = useState(0);
-  const [quickRevealed, setQuickRevealed] = useState(false);
   const [quickReviewedSet, setQuickReviewedSet] = useState<Set<number>>(new Set());
+  const [quickResults, setQuickResults] = useState<Map<number, 'correct' | 'incorrect'>>(new Map());
+  // Key to force remount of interactive cards when switching
+  const [cardKey, setCardKey] = useState(0);
 
   // Are we in SR mode (have due cards) or quick review mode?
   const mode = srCards.length > 0 ? 'sr' : 'quick';
@@ -1083,12 +1221,25 @@ export default function ReviewPageClient({
     setSrRevealed(false);
   }
 
-  function handleQuickNext() {
+  function handleQuickAnswer(correct: boolean) {
     setQuickReviewedSet(prev => new Set(prev).add(quickIdx));
-    setQuickRevealed(false);
+    setQuickResults(prev => {
+      const next = new Map(prev);
+      next.set(quickIdx, correct ? 'correct' : 'incorrect');
+      return next;
+    });
+  }
+
+  function handleQuickNext() {
     if (quickIdx < QUICK_CARDS.length - 1) {
       setQuickIdx(i => i + 1);
+      setCardKey(k => k + 1);
     }
+  }
+
+  function handleQuickSelectCard(idx: number) {
+    setQuickIdx(idx);
+    setCardKey(k => k + 1);
   }
 
   // ─── Sign-in state ────────────────────────────────────────────────────────
@@ -1211,7 +1362,7 @@ export default function ReviewPageClient({
                         </span>
                         {card.reviewCount > 0 && (
                           <span className="text-[10px] text-slate-600">
-                            reviewed {card.reviewCount}×
+                            reviewed {card.reviewCount}x
                           </span>
                         )}
                       </div>
@@ -1300,12 +1451,7 @@ export default function ReviewPageClient({
   const quickCard = QUICK_CARDS[quickIdx];
   const quickMeta = quickCard ? QUICK_TYPE_META[quickCard.type] : null;
   const QuickIcon = quickMeta?.icon ?? Brain;
-
-  const sessionMessage = isPro
-    ? (srReviewed > 0
-      ? `You reviewed ${srReviewed} spaced repetition card${srReviewed === 1 ? '' : 's'} this session.`
-      : 'No spaced repetition cards due right now. Solve problems to generate them!')
-    : null;
+  const isCurrentAnswered = quickReviewedSet.has(quickIdx);
 
   return (
     <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
@@ -1314,18 +1460,13 @@ export default function ReviewPageClient({
         cards={QUICK_CARDS}
         currentIdx={quickIdx}
         reviewedSet={quickReviewedSet}
-        onSelectCard={(idx) => { setQuickIdx(idx); setQuickRevealed(false); }}
+        results={quickResults}
+        onSelectCard={handleQuickSelectCard}
         srDueCount={totalDue}
         mode="quick"
-      />
-      <QuickReviewRightRail
-        card={quickCard}
-        reviewedCount={quickReviewedSet.size}
-        totalCards={QUICK_CARDS.length}
         isPro={isPro}
-        srDueCount={totalDue}
-        sessionMessage={sessionMessage}
       />
+      {/* No right rail in quick review mode -- main content takes full width */}
       <main
         className="min-h-screen"
         style={{
@@ -1337,129 +1478,147 @@ export default function ReviewPageClient({
           backgroundSize: '40px 40px',
         }}
       >
-        <div className="lg:pr-[304px]">
-          <div className="max-w-3xl mx-auto px-8 pt-10">
+        <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
 
-            {/* Pro upgrade banner for non-pro users */}
-            {!isPro && <ProGateBanner />}
+          {/* Pro upgrade banner for non-pro users */}
+          {!isPro && <ProGateBanner />}
 
-            {/* Session complete banner */}
-            {isPro && srReviewed > 0 && srCards.length === 0 && (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 mb-6 flex items-center gap-3">
-                <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
-                <div>
-                  <p className="text-[13px] text-white font-semibold" style={SG}>All caught up!</p>
-                  <p className="text-[12px] text-slate-400">
-                    You reviewed {srReviewed} spaced repetition card{srReviewed === 1 ? '' : 's'} this session. Keep sharp with the fundamentals below.
-                  </p>
-                </div>
+          {/* Session complete banner */}
+          {isPro && srReviewed > 0 && srCards.length === 0 && (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 mb-6 flex items-center gap-3">
+              <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
+              <div>
+                <p className="text-[13px] text-white font-semibold" style={SG}>All caught up</p>
+                <p className="text-[12px] text-slate-400">
+                  You reviewed {srReviewed} spaced repetition card{srReviewed === 1 ? '' : 's'} this session. Keep sharp with the fundamentals below.
+                </p>
               </div>
-            )}
-
-            {/* Quick Review heading */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center gap-2">
-                <BookOpen size={16} className="text-blue-400" />
-                <h1 className="text-[16px] font-bold text-white" style={SG}>Quick Review</h1>
-              </div>
-              <div className="flex-1 h-px bg-slate-800" />
-              <span className="text-[11px] text-slate-500">
-                Fundamentals &amp; Concepts
-              </span>
             </div>
+          )}
 
-            {/* Progress bar */}
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-[12px] text-slate-500 font-medium tabular-nums">
-                {quickIdx + 1} of {QUICK_CARDS.length}
-              </span>
-              <div className="flex-1 h-[3px] rounded-full bg-slate-800 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-blue-500 transition-all duration-300"
-                  style={{ width: `${((quickIdx + 1) / QUICK_CARDS.length) * 100}%` }}
-                />
-              </div>
-              {quickReviewedSet.size > 0 && (
-                <span className="text-[11px] text-emerald-400 font-medium">
-                  {quickReviewedSet.size} reviewed
-                </span>
-              )}
-            </div>
+          {/* Quick Review heading */}
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-[20px] font-bold text-white" style={SG}>Quick Review</h1>
+          </div>
+          <p className="text-[13px] text-slate-500 mb-6">
+            Test your knowledge of fundamentals. Pick or type answers -- no peeking.
+          </p>
 
-            {/* Quick card */}
-            {quickCard && quickMeta ? (
+          {/* Progress bar */}
+          <div className="flex items-center gap-3 mb-8">
+            <span className="text-[12px] text-slate-500 font-medium tabular-nums">
+              {quickIdx + 1} / {QUICK_CARDS.length}
+            </span>
+            <div className="flex-1 h-[3px] rounded-full bg-slate-800 overflow-hidden">
               <div
-                className="rounded-xl border overflow-hidden"
-                style={{ background: C.cardBg, borderColor: C.border }}
+                className="h-full rounded-full bg-blue-500 transition-all duration-300"
+                style={{ width: `${((quickIdx + 1) / QUICK_CARDS.length) * 100}%` }}
+              />
+            </div>
+            {quickReviewedSet.size > 0 && (() => {
+              const correct = Array.from(quickResults.values()).filter(r => r === 'correct').length;
+              return (
+                <span className="text-[11px] text-slate-400 font-medium tabular-nums">
+                  {correct}/{quickReviewedSet.size} correct
+                </span>
+              );
+            })()}
+          </div>
+
+          {/* Quick card */}
+          {quickCard && quickMeta ? (
+            <div
+              className="rounded-xl border overflow-hidden"
+              style={{ background: C.cardBg, borderColor: C.border }}
+            >
+              {/* Card header */}
+              <div
+                className="flex items-center justify-between px-6 py-3.5 border-b"
+                style={{ borderColor: C.border }}
               >
-                {/* Card header */}
-                <div
-                  className="flex items-center justify-between px-5 py-3 border-b"
-                  style={{ borderColor: C.border }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-semibold"
-                      style={{ background: `${quickMeta.color}15`, color: quickMeta.color }}
-                    >
-                      <QuickIcon size={12} />
-                      {quickMeta.label}
-                    </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-semibold"
+                    style={{ background: `${quickMeta.color}15`, color: quickMeta.color }}
+                  >
+                    <QuickIcon size={12} />
+                    {quickMeta.label}
                   </div>
                 </div>
+                {isCurrentAnswered && (
+                  <span className={cn(
+                    'text-[11px] font-semibold',
+                    quickResults.get(quickIdx) === 'correct' ? 'text-emerald-400' : 'text-red-400',
+                  )}>
+                    {quickResults.get(quickIdx) === 'correct' ? 'Correct' : 'Incorrect'}
+                  </span>
+                )}
+              </div>
 
-                {/* Card title */}
-                <div className="px-5 pt-4 pb-2">
-                  <h2 className="text-[16px] font-bold text-white" style={SG}>
-                    {quickCard.title}
-                  </h2>
-                </div>
+              {/* Card title */}
+              <div className="px-6 pt-5 pb-1">
+                <h2 className="text-[18px] font-bold text-white" style={SG}>
+                  {quickCard.title}
+                </h2>
+              </div>
 
-                {/* Card content */}
-                <div className="px-5 pb-5">
-                  {!quickRevealed ? (
-                    <QuickCardFront card={quickCard} />
-                  ) : (
-                    <QuickCardBack card={quickCard} />
-                  )}
-                </div>
+              {/* Card content -- interactive */}
+              <div className="px-6 pb-6 pt-3">
+                {quickCard.interaction === 'mcq' && (
+                  <MCQCard key={cardKey} card={quickCard} onAnswer={handleQuickAnswer} />
+                )}
+                {quickCard.interaction === 'type_answer' && (
+                  <TypeAnswerCard key={cardKey} card={quickCard} onAnswer={handleQuickAnswer} />
+                )}
+              </div>
 
-                {/* Actions */}
+              {/* Next button -- only after answering */}
+              {isCurrentAnswered && quickIdx < QUICK_CARDS.length - 1 && (
                 <div
-                  className="flex items-center justify-center gap-3 px-5 py-4 border-t"
+                  className="flex items-center justify-center px-6 py-4 border-t"
                   style={{ borderColor: C.border }}
                 >
-                  {!quickRevealed ? (
-                    <Button
-                      onClick={() => setQuickRevealed(true)}
-                      className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-6"
-                    >
-                      <Eye size={14} className="mr-2" />
-                      Reveal Answer
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleQuickNext}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] font-semibold px-6"
-                    >
-                      {quickIdx < QUICK_CARDS.length - 1 ? (
-                        <>
-                          Next Card
-                          <ArrowRight size={14} className="ml-2" />
-                        </>
-                      ) : (
-                        <>
-                          <Check size={14} className="mr-2" />
-                          Done
-                        </>
-                      )}
-                    </Button>
-                  )}
+                  <Button
+                    onClick={handleQuickNext}
+                    className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-8 py-2.5"
+                  >
+                    Next Question
+                    <ArrowRight size={15} className="ml-2" />
+                  </Button>
                 </div>
-              </div>
-            ) : null}
+              )}
 
-          </div>
+              {/* Completion state */}
+              {isCurrentAnswered && quickIdx === QUICK_CARDS.length - 1 && (
+                <div
+                  className="flex flex-col items-center justify-center px-6 py-6 border-t gap-3"
+                  style={{ borderColor: C.border }}
+                >
+                  <p className="text-[15px] font-semibold text-white" style={SG}>
+                    Review complete
+                  </p>
+                  <p className="text-[13px] text-slate-400">
+                    {Array.from(quickResults.values()).filter(r => r === 'correct').length} / {QUICK_CARDS.length} correct.
+                    {' '}Solve problems to unlock personalized spaced repetition cards.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setQuickIdx(0);
+                      setQuickReviewedSet(new Set());
+                      setQuickResults(new Map());
+                      setCardKey(k => k + 1);
+                    }}
+                    variant="outline"
+                    className="border-slate-700 text-slate-300 hover:bg-slate-800 text-[13px] mt-1"
+                  >
+                    <RotateCcw size={13} className="mr-2" />
+                    Try Again
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : null}
+
         </div>
       </main>
     </div>
