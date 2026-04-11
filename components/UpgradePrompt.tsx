@@ -1,10 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, MessageSquare, Code2, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
+
+const FEATURES = [
+  { icon: MessageSquare, label: 'Unlimited AI tutor chats', desc: 'No daily cap on hints or explanations' },
+  { icon: Code2, label: 'AI code review', desc: 'Get feedback on every solution you write' },
+  { icon: Brain, label: 'Mock interview access', desc: 'Timed sessions with AI-powered feedback' },
+];
 
 export default function UpgradePrompt({
   used,
@@ -39,18 +45,47 @@ export default function UpgradePrompt({
   const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
-    <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5 space-y-3">
-      <div className="flex items-center gap-2">
-        <Zap size={16} className="text-amber-400" />
-        <p className="text-[14px] font-semibold text-white" style={SG}>
-          Daily limit reached
+    <div
+      className="rounded-xl p-5 space-y-4"
+      style={{
+        background: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }}
+    >
+      {/* Header */}
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-2">
+          <div
+            className="flex items-center justify-center w-7 h-7 rounded-lg"
+            style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}
+          >
+            <Zap size={14} className="text-amber-400" />
+          </div>
+          <p className="text-[14px] font-semibold text-white" style={SG}>
+            Upgrade to Pro
+          </p>
+        </div>
+        <p className="text-[13px] text-zinc-400 leading-relaxed">
+          You've used{' '}
+          <span className="text-zinc-200 font-medium">{used}/{limit}</span>{' '}
+          free requests today. Go Pro for unlimited access.
         </p>
       </div>
-      <p className="text-[13px] text-slate-300 leading-relaxed">
-        You&apos;ve used all{' '}
-        <span className="font-semibold text-white">{used}/{limit}</span>{' '}
-        free AI requests today. Upgrade to Pro for unlimited hints and chat.
-      </p>
+
+      {/* Features */}
+      <div className="space-y-2">
+        {FEATURES.map(f => (
+          <div key={f.label} className="flex items-start gap-2.5">
+            <f.icon size={14} className="shrink-0 mt-0.5 text-zinc-500" />
+            <div>
+              <p className="text-[12px] font-medium text-zinc-300" style={SG}>{f.label}</p>
+              <p className="text-[11px] text-zinc-500">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pricing CTAs */}
       <div className="flex gap-2 pt-1">
         <Button
           size="sm"
@@ -58,16 +93,16 @@ export default function UpgradePrompt({
           onClick={() => handleUpgrade(monthlyPriceId)}
           disabled={loading || !monthlyPriceId}
         >
-          {loading ? 'Loading...' : '$9/month'}
+          {loading ? 'Loading...' : '$9 / month'}
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="border-amber-500/30 text-amber-300 hover:bg-amber-500/10 text-[12px] font-semibold"
+          className="border-white/10 text-zinc-300 hover:bg-white/[0.04] text-[12px] font-semibold"
           onClick={() => handleUpgrade(yearlyPriceId)}
           disabled={loading || !yearlyPriceId}
         >
-          $90/year (save $18)
+          $90 / year — save $18
         </Button>
       </div>
     </div>
