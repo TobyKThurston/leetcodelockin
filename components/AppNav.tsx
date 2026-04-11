@@ -90,16 +90,16 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
       className="fixed top-0 left-0 right-0 z-50"
       style={{ background: C.panelBg, borderBottom: `1px solid ${C.border}` }}
     >
-      <div className="w-full flex items-center gap-3 px-5 h-12">
+      <div className="w-full relative flex items-center gap-3 px-5 h-12">
         <Link
           href="/?home=1"
-          className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight text-white mr-auto whitespace-nowrap"
+          className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight text-white whitespace-nowrap"
           style={SG}
         >
           <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           LeetLockin
         </Link>
-        <nav className="flex items-center gap-0.5">
+        <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5">
           {TABS.map(tab => {
             const active = tab.label === activeTab;
             const classes = cn(

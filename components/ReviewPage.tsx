@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap } from 'lucide-react';
+import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap, Sparkles } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent, CardFooter } from '@/components/ui/card';
@@ -724,7 +724,7 @@ function ReviewRightRail({
   );
 }
 
-// ─── Pro upgrade banner ─────────────────────────────────────────────────────
+// ─── Pro upgrade modal ──────────────────────────────────────────────────────
 
 function ProGateBanner() {
   const [loading, setLoading] = useState(false);
@@ -751,60 +751,82 @@ function ProGateBanner() {
   if (!show) return null;
 
   return (
-    <Card size="sm" className="mb-6 bg-card">
-      <CardHeader>
-        <CardTitle className="text-sm font-semibold" style={SG}>
-          Unlock spaced repetition
-        </CardTitle>
-        <CardAction>
-          <button
-            onClick={() => setShow(false)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X size={14} />
-          </button>
-        </CardAction>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-            <Brain size={13} className="text-primary" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div
+        className="relative w-full max-w-sm mx-4 rounded-2xl border border-white/10 bg-[#111827] p-6 shadow-2xl"
+        style={{ boxShadow: '0 25px 60px -15px rgba(0,0,0,0.5), 0 0 40px -10px rgba(59,130,246,0.15)' }}
+      >
+        {/* Close button */}
+        <button
+          onClick={() => setShow(false)}
+          className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors"
+        >
+          <X size={16} />
+        </button>
+
+        {/* Header */}
+        <div className="mb-5">
+          <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1 mb-4">
+            <Sparkles size={12} className="text-blue-400" />
+            <span className="text-[11px] font-semibold text-blue-400 uppercase tracking-wider" style={SG}>Pro Feature</span>
           </div>
-          <div>
-            <p className="text-[13px] font-medium text-foreground">Auto-generated cards</p>
-            <p className="text-xs text-muted-foreground">Built from your accepted solutions</p>
+          <h3 className="text-lg font-bold text-white" style={SG}>
+            Unlock spaced repetition
+          </h3>
+          <p className="text-[13px] text-zinc-400 mt-1">
+            Never forget what you&apos;ve learned.
+          </p>
+        </div>
+
+        {/* Features */}
+        <div className="space-y-3 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <Brain size={14} className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-[13px] font-medium text-white">Auto-generated cards</p>
+              <p className="text-xs text-zinc-500">Built from your accepted solutions</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <Zap size={14} className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-[13px] font-medium text-white">Adapts to weak spots</p>
+              <p className="text-xs text-zinc-500">Focus on what you actually forget</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
+              <Timer size={14} className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-[13px] font-medium text-white">Optimal timing</p>
+              <p className="text-xs text-zinc-500">Review right before you&apos;d forget</p>
+            </div>
           </div>
         </div>
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-            <Zap size={13} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-foreground">Adapts to weak spots</p>
-            <p className="text-xs text-muted-foreground">Focus on what you actually forget</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-            <Timer size={13} className="text-primary" />
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-foreground">Optimal timing</p>
-            <p className="text-xs text-muted-foreground">Review right before you'd forget</p>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter>
+
+        {/* CTA */}
         <Button
-          size="sm"
-          className="w-full"
+          className="w-full text-[13px] font-semibold h-10 text-white gap-1.5"
+          style={{
+            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+            border: '1px solid rgba(147,197,253,0.4)',
+            boxShadow: '0 1px 0 rgba(255,255,255,0.2) inset, 0 -1px 0 rgba(0,0,0,0.15) inset, 0 12px 30px -10px rgba(59,130,246,0.5)',
+            ...SG,
+          }}
           onClick={handleUpgrade}
           disabled={loading}
         >
           {loading ? 'Loading...' : 'Upgrade to Pro'}
         </Button>
-      </CardFooter>
-    </Card>
+
+        <p className="text-[11px] text-zinc-600 text-center mt-3">$9/mo · Cancel anytime</p>
+      </div>
+    </div>
   );
 }
 
