@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Sparkles } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -136,8 +136,8 @@ export default function Pricing() {
             </CardFooter>
           </Card>
 
-          {/* Pro Yearly — highlighted */}
-          <Card className="relative bg-gradient-to-b from-blue-500/[0.08] to-blue-500/[0.02] ring-blue-500/25 rounded-2xl py-0 gap-0 shadow-[0_0_60px_-15px_rgba(59,130,246,0.35)]">
+          {/* Pro Yearly */}
+          <Card className="relative bg-gradient-to-b from-blue-500/[0.05] to-blue-500/[0.01] ring-blue-500/20 rounded-2xl py-0 gap-0 shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)]">
             <CardHeader className="px-8 pt-8 pb-0">
               <div className="flex items-center gap-2">
                 <span
@@ -146,8 +146,7 @@ export default function Pricing() {
                 >
                   Pro Yearly
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  <Sparkles size={10} />
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
                   Save $18
                 </span>
               </div>
@@ -166,7 +165,8 @@ export default function Pricing() {
             </CardContent>
             <CardFooter className="px-8 pb-8 pt-8 bg-transparent border-0">
               <Button
-                className="w-full h-12 rounded-xl text-[13px] font-semibold bg-white text-zinc-900 hover:bg-zinc-100"
+                className="w-full h-12 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                variant="outline"
                 onClick={() => handleCheckout(yearlyPriceId)}
                 disabled={loading !== null || !yearlyPriceId}
               >

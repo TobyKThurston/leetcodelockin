@@ -493,7 +493,7 @@ function ProStep({
           </div>
           {yearlyPriceId && (
             <p className="mt-1 text-[11px] text-slate-600">
-              or $90/year ($7.50/mo)
+              or $90/year (save $18)
             </p>
           )}
         </div>
@@ -528,7 +528,7 @@ function ProStep({
           disabled={!!checkoutLoading}
           className="h-12 w-full text-[13px] font-semibold bg-white text-zinc-900 hover:bg-zinc-100 rounded-lg"
         >
-          {checkoutLoading ? 'Loading...' : yearlyPriceId ? 'Start Pro yearly ($7.50/mo)' : 'Start Pro ($9/mo)'}
+          {checkoutLoading ? 'Loading...' : yearlyPriceId ? 'Start Pro yearly ($90/year)' : 'Start Pro ($9/mo)'}
         </Button>
         {yearlyPriceId && monthlyPriceId && (
           <button

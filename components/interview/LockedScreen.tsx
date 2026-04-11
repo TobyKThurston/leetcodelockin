@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Clock, Brain, TrendingUp, Zap, ArrowRight, Code2, Timer, BarChart3, Sparkles, Check } from 'lucide-react';
+import { Brain, ArrowRight, Code2, Timer, BarChart3, Check } from 'lucide-react';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -43,6 +43,7 @@ const SCORE_BARS = [4, 5, 6, 5, 7, 6, 8, 7, 9, 8];
 
 export default function LockedScreen() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [billing, setBilling] = useState<'monthly' | 'yearly'>('monthly');
 
   async function handleCheckout(period: 'monthly' | 'yearly') {
     const priceId = period === 'monthly'
@@ -70,10 +71,9 @@ export default function LockedScreen() {
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className="text-center space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#a78bfa', background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.15)' }}>
-            <Sparkles size={12} />
+          <span className="text-[11px] font-semibold tracking-[0.18em] uppercase text-zinc-500" style={SG}>
             Pro Feature
-          </div>
+          </span>
 
           <h1 className="text-[32px] sm:text-[40px] font-bold text-white tracking-tight leading-[1.1]" style={SG}>
             Stop guessing if you&apos;re<br />interview ready.
@@ -174,8 +174,8 @@ export default function LockedScreen() {
         <div
           className="rounded-2xl px-6 py-8 sm:px-10 text-center space-y-6"
           style={{
-            background: 'linear-gradient(180deg, rgba(139,92,246,0.06) 0%, rgba(59,130,246,0.04) 100%)',
-            border: '1px solid rgba(139,92,246,0.15)',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
           }}
         >
           <div className="space-y-2">
@@ -187,38 +187,59 @@ export default function LockedScreen() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* Billing toggle */}
+          <div className="inline-flex rounded-lg p-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
             <button
-              onClick={() => handleCheckout('yearly')}
-              disabled={loading !== null}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl text-[14px] font-semibold text-white transition-all hover:brightness-110 disabled:opacity-50"
+              onClick={() => setBilling('monthly')}
+              className="px-5 py-1.5 rounded-md text-[13px] font-medium transition-colors"
               style={{
-                background: 'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)',
-                border: '1px solid rgba(196,181,253,0.5)',
-                boxShadow: '0 1px 0 rgba(255,255,255,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 16px 40px -12px rgba(139,92,246,0.5), 0 0 0 1px rgba(167,139,250,0.3)',
                 ...SG,
+                background: billing === 'monthly' ? 'rgba(255,255,255,0.08)' : 'transparent',
+                color: billing === 'monthly' ? '#fff' : 'rgba(161,161,170,1)',
               }}
             >
-              {loading === 'yearly' ? 'Loading...' : (
-                <>
-                  Go Pro — $7.50/mo
-                  <ArrowRight size={15} />
-                </>
-              )}
+              Monthly
             </button>
             <button
-              onClick={() => handleCheckout('monthly')}
-              disabled={loading !== null}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-[13px] font-medium text-zinc-400 transition-colors hover:text-zinc-200 hover:bg-white/[0.03] disabled:opacity-50"
-              style={{ border: '1px solid rgba(255,255,255,0.06)', ...SG }}
+              onClick={() => setBilling('yearly')}
+              className="px-5 py-1.5 rounded-md text-[13px] font-medium transition-colors"
+              style={{
+                ...SG,
+                background: billing === 'yearly' ? 'rgba(255,255,255,0.08)' : 'transparent',
+                color: billing === 'yearly' ? '#fff' : 'rgba(161,161,170,1)',
+              }}
             >
-              {loading === 'monthly' ? 'Loading...' : 'or $9/month'}
+              Yearly
             </button>
           </div>
 
+          {/* Price display */}
+          <div>
+            <div className="flex items-baseline justify-center gap-1.5">
+              <span className="text-[40px] font-bold text-white" style={SG}>
+                {billing === 'monthly' ? '$9' : '$90'}
+              </span>
+              <span className="text-[16px] text-zinc-500">
+                /{billing === 'monthly' ? 'month' : 'year'}
+              </span>
+            </div>
+            {billing === 'yearly' && (
+              <p className="text-[13px] text-zinc-500 mt-1">$7.50/mo equivalent</p>
+            )}
+          </div>
+
+          <button
+            onClick={() => handleCheckout(billing)}
+            disabled={loading !== null}
+            className="px-8 py-3 rounded-xl text-[14px] font-semibold text-zinc-900 bg-white hover:bg-zinc-100 transition-colors disabled:opacity-50"
+            style={SG}
+          >
+            {loading ? 'Loading...' : 'Start Pro'}
+          </button>
+
           <div className="flex items-center justify-center gap-5 text-[12px] text-zinc-500">
             <span className="flex items-center gap-1.5"><Check size={13} className="text-zinc-600" />Cancel anytime</span>
-            <span className="flex items-center gap-1.5"><Zap size={13} className="text-zinc-600" />Instant access</span>
+            <span className="flex items-center gap-1.5"><Check size={13} className="text-zinc-600" />Instant access</span>
           </div>
         </div>
 

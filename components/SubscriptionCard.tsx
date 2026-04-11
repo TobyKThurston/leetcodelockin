@@ -132,7 +132,7 @@ export default function SubscriptionCard({
               onClick={() => handleUpgrade(monthlyPriceId)}
               disabled={loading !== null || !monthlyPriceId}
             >
-              {loading === 'checkout' ? 'Loading...' : 'Upgrade to Pro — $9/month'}
+              {loading === 'checkout' ? 'Loading...' : 'Upgrade to Pro'}
             </Button>
           </>
         )}

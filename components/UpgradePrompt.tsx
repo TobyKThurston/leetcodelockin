@@ -89,20 +89,21 @@ export default function UpgradePrompt({
       <div className="flex gap-2 pt-1">
         <Button
           size="sm"
-          className="bg-white text-zinc-900 hover:bg-zinc-100 text-[12px] font-semibold"
+          variant="outline"
+          className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
           onClick={() => handleUpgrade(monthlyPriceId)}
           disabled={loading || !monthlyPriceId}
         >
-          {loading ? 'Loading...' : '$9 / month'}
+          {loading ? 'Loading...' : '$9/month'}
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="border-white/10 text-zinc-300 hover:bg-white/[0.04] text-[12px] font-semibold"
+          className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
           onClick={() => handleUpgrade(yearlyPriceId)}
           disabled={loading || !yearlyPriceId}
         >
-          $90 / year — save $18
+          $90/year (save $18)
         </Button>
       </div>
     </div>
