@@ -1861,6 +1861,15 @@ export default function ReviewPageClient({
   const [srForgot, setSrForgot] = useState(0);
 
   // ── Quick review state ──
+  // Shuffle cards on each mount so they're different every session
+  const shuffledQuickCards = useMemo(() => {
+    const arr = [...QUICK_CARDS];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, []);
   const [quickIdx, setQuickIdx] = useState(0);
   const [quickReviewedSet, setQuickReviewedSet] = useState<Set<number>>(new Set());
   const [quickResults, setQuickResults] = useState<Map<number, 'correct' | 'incorrect'>>(new Map());
@@ -1937,7 +1946,7 @@ export default function ReviewPageClient({
   }
 
   function handleQuickNext() {
-    if (quickIdx < QUICK_CARDS.length - 1) {
+    if (quickIdx < shuffledQuickCards.length - 1) {
       setQuickIdx(i => i + 1);
       setCardKey(k => k + 1);
     }
@@ -2154,7 +2163,7 @@ export default function ReviewPageClient({
 
   // ─── Quick Review mode (no SR cards due, or not Pro) ──────────────────────
 
-  const quickCard = QUICK_CARDS[quickIdx];
+  const quickCard = shuffledQuickCards[quickIdx];
   const quickMeta = quickCard ? QUICK_TYPE_META[quickCard.type] : null;
   const QuickIcon = quickMeta?.icon ?? Brain;
   const isCurrentAnswered = quickReviewedSet.has(quickIdx);
@@ -2163,7 +2172,7 @@ export default function ReviewPageClient({
     <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
       <AppNav activeTab="Review" />
       <QuickReviewSidebar
-        cards={QUICK_CARDS}
+        cards={shuffledQuickCards}
         currentIdx={quickIdx}
         reviewedSet={quickReviewedSet}
         results={quickResults}
@@ -2174,7 +2183,7 @@ export default function ReviewPageClient({
       />
       <QuickReviewRightRail
         reviewedCount={quickReviewedSet.size}
-        totalCards={QUICK_CARDS.length}
+        totalCards={shuffledQuickCards.length}
         correctCount={Array.from(quickResults.values()).filter(r => r === 'correct').length}
         isPro={isPro}
         srDueCount={totalDue}
@@ -2221,12 +2230,12 @@ export default function ReviewPageClient({
           {/* Progress bar */}
           <div className="flex items-center gap-3 mb-8">
             <span className="text-[12px] text-slate-500 font-medium tabular-nums">
-              {quickIdx + 1} / {QUICK_CARDS.length}
+              {quickIdx + 1} / {shuffledQuickCards.length}
             </span>
             <div className="flex-1 h-[3px] rounded-full bg-slate-800 overflow-hidden">
               <div
                 className="h-full rounded-full bg-blue-500 transition-all duration-300"
-                style={{ width: `${((quickIdx + 1) / QUICK_CARDS.length) * 100}%` }}
+                style={{ width: `${((quickIdx + 1) / shuffledQuickCards.length) * 100}%` }}
               />
             </div>
             {quickReviewedSet.size > 0 && (() => {
@@ -2287,7 +2296,7 @@ export default function ReviewPageClient({
               </div>
 
               {/* Next button -- only after answering */}
-              {isCurrentAnswered && quickIdx < QUICK_CARDS.length - 1 && (
+              {isCurrentAnswered && quickIdx < shuffledQuickCards.length - 1 && (
                 <div
                   className="flex items-center justify-center px-6 py-4 border-t"
                   style={{ borderColor: C.border }}
@@ -2303,7 +2312,7 @@ export default function ReviewPageClient({
               )}
 
               {/* Completion state */}
-              {isCurrentAnswered && quickIdx === QUICK_CARDS.length - 1 && (
+              {isCurrentAnswered && quickIdx === shuffledQuickCards.length - 1 && (
                 <div
                   className="flex flex-col items-center justify-center px-6 py-6 border-t gap-3"
                   style={{ borderColor: C.border }}
@@ -2312,7 +2321,7 @@ export default function ReviewPageClient({
                     Review complete
                   </p>
                   <p className="text-[13px] text-slate-400">
-                    {Array.from(quickResults.values()).filter(r => r === 'correct').length} / {QUICK_CARDS.length} correct.
+                    {Array.from(quickResults.values()).filter(r => r === 'correct').length} / {shuffledQuickCards.length} correct.
                     {' '}Solve problems to unlock personalized spaced repetition cards.
                   </p>
                   <Button
