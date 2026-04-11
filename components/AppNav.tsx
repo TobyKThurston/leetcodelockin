@@ -8,6 +8,7 @@ import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Zap } from 'lucide-react';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -62,6 +63,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSummary | null>(cachedUser);
   const [checked, setChecked] = useState(cachedUser !== null);
+  const [isPro, setIsPro] = useState<boolean | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +73,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
         setChecked(true);
       }
     });
+    fetch('/api/ai-usage')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!cancelled && d) setIsPro(d.isPro); })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
@@ -114,6 +120,25 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          {isPro === false && !isGuest && (
+            <button
+              onClick={async () => {
+                const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
+                if (!priceId) return;
+                const res = await fetch('/api/stripe/checkout', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ priceId }),
+                });
+                const { url } = await res.json();
+                if (url) window.location.href = url;
+              }}
+              className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
+            >
+              <Zap size={12} />
+              Get Pro
+            </button>
+          )}
           {isGuest ? (
             <Button
               variant="outline"

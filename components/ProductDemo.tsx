@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Check } from 'lucide-react';
 
 const CODE = `def twoSum(nums, target):
@@ -17,6 +17,27 @@ export default function ProductDemo() {
   const [phase, setPhase] = useState<Phase>('typing');
   const [charIndex, setCharIndex] = useState(0);
   const [hintsVisible, setHintsVisible] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    // Check if already in viewport before setting up observer
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const typed = CODE.slice(0, charIndex);
   const lines = typed.split('\n');
@@ -53,16 +74,17 @@ export default function ProductDemo() {
     phase === 'accepted' ? 'Accepted' : phase === 'submitting' ? 'Running\u2026' : 'Submit';
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center bg-[#0b1220] px-4 sm:px-6 py-16">
-      {/* Section label */}
-      <p className="text-[11px] text-slate-600 tracking-[0.2em] uppercase mb-8 font-medium">
-        See it in action
-      </p>
-
-      {/* Mockup */}
+    <section className="relative flex flex-col items-center bg-[#0b1220] px-4 sm:px-6 pt-8 sm:pt-12 pb-0">
+      {/* Mockup — peeks into the viewport, fades in on scroll */}
       <div
-        className="w-full max-w-6xl rounded-2xl overflow-hidden shadow-[0_40px_120px_rgba(99,102,241,0.15)] border border-white/[0.06]"
-        style={{ background: '#0a0e1a' }}
+        ref={wrapperRef}
+        className="w-full max-w-6xl rounded-t-2xl overflow-hidden shadow-[0_-10px_80px_rgba(99,102,241,0.18),0_0_200px_rgba(59,130,246,0.08)] border border-b-0 border-white/[0.08]"
+        style={{
+          background: '#0a0e1a',
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0)' : 'translateY(40px)',
+          transition: 'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
+        }}
       >
         {/* Chrome bar */}
         <div

@@ -10,7 +10,7 @@ import FinalCTA from './FinalCTA';
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
-function Footer() {
+export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer style={{ background: '#070c17', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
@@ -52,7 +52,7 @@ function Footer() {
               Product
             </p>
             <nav className="flex flex-col gap-3">
-              <Link href="/dashboard" className="text-[13px] text-slate-500 hover:text-slate-300 transition-colors">
+              <Link href="/sign-in" className="text-[13px] text-slate-500 hover:text-slate-300 transition-colors">
                 Start Learning
               </Link>
               <a href="#curriculum" className="text-[13px] text-slate-500 hover:text-slate-300 transition-colors">

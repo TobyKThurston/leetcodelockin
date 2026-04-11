@@ -259,7 +259,10 @@ export default function HowItWorks() {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
-    requestAnimationFrame(update);
+    // Run immediately to catch elements already in viewport
+    update();
+    // Run again after a frame to handle any layout shifts from hydration
+    raf = requestAnimationFrame(update);
 
     return () => {
       window.removeEventListener('scroll', onScroll);

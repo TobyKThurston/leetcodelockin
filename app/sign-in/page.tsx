@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { headers, cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { getSupabaseUser } from '@/lib/supabase';
+import { hasCompletedOnboarding } from '@/lib/onboarding';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -52,7 +53,10 @@ export default async function SignInPage({
 }) {
   const user = await getSupabaseUser();
   const { next, mode: modeParam, error, message } = await searchParams;
-  if (user) redirect(next ?? '/dashboard');
+  if (user) {
+    const onboarded = await hasCompletedOnboarding();
+    redirect(onboarded ? (next ?? '/dashboard') : '/onboarding');
+  }
 
   const mode: Mode = modeParam === 'signup' ? 'signup' : 'signin';
   const nextUrl = next ?? '/dashboard';
@@ -97,7 +101,8 @@ export default async function SignInPage({
       );
     }
 
-    redirect(nextUrl);
+    const onboarded = await hasCompletedOnboarding();
+    redirect(onboarded ? nextUrl : '/onboarding');
   }
 
   async function signUpWithPassword(formData: FormData) {
@@ -144,7 +149,8 @@ export default async function SignInPage({
       );
     }
 
-    redirect(nextUrl);
+    // New sign-up always goes to onboarding
+    redirect('/onboarding');
   }
 
   const isSignIn = mode === 'signin';

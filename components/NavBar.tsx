@@ -47,7 +47,7 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
         </nav>
 
         <Link
-          href="/dashboard"
+          href="/sign-in"
           className={`ml-auto bg-white text-zinc-900 rounded-lg font-semibold hover:bg-zinc-100 transition-all duration-500 ${
             compact ? 'text-[11px] px-3 py-1.5' : 'text-xs px-4 py-2'
           }`}
