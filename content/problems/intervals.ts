@@ -645,6 +645,31 @@ the free slots. A heap-based approach is slightly more efficient but has the sam
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Flatten, Sort, Merge, Find Gaps',
+        intuition: 'Flatten all employee intervals into one list, sort by start, merge overlapping busy periods, then the gaps between consecutive merged intervals are the common free times.',
+        code: `class Solution:
+    def employeeFreeTime(self, schedule: list[list[list[int]]]) -> list[list[int]]:
+        flat: list[list[int]] = []
+        for emp in schedule:
+            for iv in emp:
+                flat.append(iv)
+        flat.sort(key=lambda x: x[0])
+        merged: list[list[int]] = []
+        for a, b in flat:
+            if merged and a <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], b)
+            else:
+                merged.append([a, b])
+        out: list[list[int]] = []
+        for i in range(1, len(merged)):
+            out.append([merged[i - 1][1], merged[i][0]])
+        return out`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Divide Intervals Into Minimum Number of Groups (LC #2406) ────────────
@@ -691,5 +716,26 @@ answer.`,
       { label: 'Single',       inputJson: '{"intervals":[[1,2]]}',                             expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sweep Line',
+        intuition: 'Convert each interval into two events: +1 at start and -1 at end+1. Sort events by time and sweep, tracking the running overlap count. The maximum overlap is the answer.',
+        code: `class Solution:
+    def minGroups(self, intervals: list[list[int]]) -> int:
+        events: list[tuple[int, int]] = []
+        for a, b in intervals:
+            events.append((a, 1))
+            events.append((b + 1, -1))
+        events.sort()
+        best = cur = 0
+        for _, delta in events:
+            cur += delta
+            if cur > best:
+                best = cur
+        return best`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 ];

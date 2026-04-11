@@ -492,6 +492,26 @@ when you see a negative \`nums[i]\` the new max comes from the old **min**.`,
       { label: 'Single',          inputJson: '{"nums":[7]}',         expectedJson: '7'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Track Max and Min Products',
+        intuition: 'A negative number can flip a large negative product into a large positive one. Track both the current max and min product ending at each index, swapping them when encountering a negative number.',
+        code: `class Solution:
+    def maxProduct(self, nums: list[int]) -> int:
+        best = cur_max = cur_min = nums[0]
+        for v in nums[1:]:
+            if v < 0:
+                cur_max, cur_min = cur_min, cur_max
+            cur_max = max(v, cur_max * v)
+            cur_min = min(v, cur_min * v)
+            if cur_max > best:
+                best = cur_max
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Word Break (LC #139) ──────────────────────────────────────────────────
@@ -539,6 +559,50 @@ whenever there's some \`j < i\` with \`dp[j]\` true and \`s[j..i]\` in \`wordDic
       { label: 'Single char', inputJson: '{"s":"a","wordDict":["a"]}',                                    expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive (Brute Force)',
+        intuition: 'Try every possible split point: dp(i) is True if s[:i] can be segmented. For each i, check all j < i where dp(j) is True and s[j:i] is in the dictionary.',
+        code: `class Solution:
+    def wordBreak(self, s: str, wordDict: list[str]) -> bool:
+        words = set(wordDict)
+        memo = {}
+        def dp(start):
+            if start == len(s):
+                return True
+            if start in memo:
+                return memo[start]
+            for end in range(start + 1, len(s) + 1):
+                if s[start:end] in words and dp(end):
+                    memo[start] = True
+                    return True
+            memo[start] = False
+            return False
+        return dp(0)
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP',
+        intuition: 'Build a boolean dp array where dp[i] = True means s[:i] can be segmented. For each position i, check all prior positions j where dp[j] is True and s[j:i] is a dictionary word.',
+        code: `class Solution:
+    def wordBreak(self, s: str, wordDict: list[str]) -> bool:
+        words = set(wordDict)
+        n = len(s)
+        dp = [False] * (n + 1)
+        dp[0] = True
+        for i in range(1, n + 1):
+            for j in range(i):
+                if dp[j] and s[j:i] in words:
+                    dp[i] = True
+                    break
+        return dp[n]
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Longest Increasing Subsequence (LC #300) ──────────────────────────────
@@ -585,6 +649,45 @@ array maintained by binary search.`,
       { label: 'Single',       inputJson: '{"nums":[5]}',           expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'O(n^2) DP',
+        intuition: 'For each element, look back at all earlier elements. If nums[j] < nums[i], then dp[i] = max(dp[i], dp[j] + 1). The answer is the maximum across all dp values.',
+        code: `class Solution:
+    def lengthOfLIS(self, nums: list[int]) -> int:
+        if not nums:
+            return 0
+        dp = [1] * len(nums)
+        for i in range(1, len(nums)):
+            for j in range(i):
+                if nums[j] < nums[i]:
+                    dp[i] = max(dp[i], dp[j] + 1)
+        return max(dp)
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Patience Sorting (Binary Search)',
+        intuition: 'Maintain a tails array where tails[i] is the smallest tail element for an increasing subsequence of length i+1. For each number, binary search for its position in tails. The length of tails is the LIS length.',
+        code: `from bisect import bisect_left
+
+
+class Solution:
+    def lengthOfLIS(self, nums: list[int]) -> int:
+        tails = []
+        for v in nums:
+            pos = bisect_left(tails, v)
+            if pos == len(tails):
+                tails.append(v)
+            else:
+                tails[pos] = v
+        return len(tails)
+`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Coin Change (LC #322) ─────────────────────────────────────────────────
@@ -633,6 +736,46 @@ with \`dp[0] = 0\`, and relaxes as
       { label: 'Zero amount', inputJson: '{"coins":[1],"amount":0}',       expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive with Memoization',
+        intuition: 'For each amount, try subtracting each coin and recursively solve the remainder. Memoize to avoid recomputation.',
+        code: `class Solution:
+    def coinChange(self, coins: list[int], amount: int) -> int:
+        memo = {}
+        def dp(rem):
+            if rem == 0:
+                return 0
+            if rem < 0:
+                return float('inf')
+            if rem in memo:
+                return memo[rem]
+            memo[rem] = min(dp(rem - c) + 1 for c in coins)
+            return memo[rem]
+        res = dp(amount)
+        return -1 if res == float('inf') else res
+`,
+        timeComplexity: 'O(amount * len(coins))',
+        spaceComplexity: 'O(amount)',
+      },
+      {
+        approach: 'Bottom-Up DP',
+        intuition: 'Build dp[i] = fewest coins for amount i, starting from dp[0] = 0. For each amount, try each coin and take the minimum.',
+        code: `class Solution:
+    def coinChange(self, coins: list[int], amount: int) -> int:
+        INF = amount + 1
+        dp = [INF] * (amount + 1)
+        dp[0] = 0
+        for i in range(1, amount + 1):
+            for c in coins:
+                if c <= i and dp[i - c] + 1 < dp[i]:
+                    dp[i] = dp[i - c] + 1
+        return -1 if dp[amount] >= INF else dp[amount]
+`,
+        timeComplexity: 'O(amount * len(coins))',
+        spaceComplexity: 'O(amount)',
+      },
+    ],
   },
 
   // ─── Decode Ways (LC #91) ──────────────────────────────────────────────────
@@ -681,6 +824,54 @@ between \`10\` and \`26\`.`,
       { label: 'Too large',   inputJson: '{"s":"27"}',  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive with Memoization',
+        intuition: 'At each position, a single non-zero digit contributes dp(i+1) decodings, and a valid two-digit number (10-26) contributes dp(i+2). Memoize to avoid recomputation.',
+        code: `class Solution:
+    def numDecodings(self, s: str) -> int:
+        memo = {}
+        def dp(i):
+            if i == len(s):
+                return 1
+            if s[i] == '0':
+                return 0
+            if i in memo:
+                return memo[i]
+            res = dp(i + 1)
+            if i + 1 < len(s) and int(s[i:i+2]) <= 26:
+                res += dp(i + 2)
+            memo[i] = res
+            return res
+        return dp(0)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP',
+        intuition: 'Iterate left to right, accumulating the count of decodings. At each position, add the previous count if the current digit is valid, and the count two steps back if the two-digit number is valid (10-26).',
+        code: `class Solution:
+    def numDecodings(self, s: str) -> int:
+        if not s or s[0] == '0':
+            return 0
+        n = len(s)
+        prev2 = 1
+        prev1 = 1
+        for i in range(1, n):
+            cur = 0
+            if s[i] != '0':
+                cur += prev1
+            two = int(s[i - 1:i + 1])
+            if 10 <= two <= 26:
+                cur += prev2
+            prev2, prev1 = prev1, cur
+        return prev1
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Perfect Squares (LC #279) ─────────────────────────────────────────────
@@ -728,5 +919,48 @@ useful for sanity checks.)`,
       { label: 'n = 4',  inputJson: '{"n":4}',  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive with Memoization',
+        intuition: 'For each number n, try subtracting every perfect square j*j <= n and recursively solve the remainder. The answer is 1 + min over all such subproblems.',
+        code: `class Solution:
+    def numSquares(self, n: int) -> int:
+        memo = {}
+        def dp(rem):
+            if rem == 0:
+                return 0
+            if rem in memo:
+                return memo[rem]
+            best = rem
+            j = 1
+            while j * j <= rem:
+                best = min(best, dp(rem - j * j) + 1)
+                j += 1
+            memo[rem] = best
+            return best
+        return dp(n)
+`,
+        timeComplexity: 'O(n * sqrt(n))',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP',
+        intuition: 'Build dp[i] = least number of perfect squares summing to i. For each i, try all perfect squares j*j <= i and take dp[i] = 1 + min(dp[i - j*j]).',
+        code: `class Solution:
+    def numSquares(self, n: int) -> int:
+        dp = [0] * (n + 1)
+        for i in range(1, n + 1):
+            best = i
+            j = 1
+            while j * j <= i:
+                best = min(best, dp[i - j * j] + 1)
+                j += 1
+            dp[i] = best
+        return dp[n]
+`,
+        timeComplexity: 'O(n * sqrt(n))',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 ];

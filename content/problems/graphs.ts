@@ -743,6 +743,25 @@ directed edges.`,
       { label: 'Single room',inputJson: '{"rooms":[[]]}',                         expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'Treat rooms as nodes and keys as directed edges. DFS/BFS from room 0, collecting keys and visiting new rooms. If the visited set size equals the total number of rooms, return True.',
+        code: `class Solution:
+    def canVisitAllRooms(self, rooms: list[list[int]]) -> bool:
+        seen = {0}
+        stack = [0]
+        while stack:
+            room = stack.pop()
+            for key in rooms[room]:
+                if key not in seen:
+                    seen.add(key)
+                    stack.append(key)
+        return len(seen) == len(rooms)`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V)',
+      },
+    ],
   },
 
   // ─── Number of Provinces (LC #547) ─────────────────────────────────────────
@@ -791,6 +810,59 @@ pair, gives the count.`,
       { label: 'Singleton',     inputJson: '{"isConnected":[[1]]}',                      expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'For each unvisited city, run a DFS to mark all transitively connected cities as visited, then increment the province count. This counts connected components in the adjacency matrix.',
+        code: `class Solution:
+    def findCircleNum(self, isConnected: list[list[int]]) -> int:
+        n = len(isConnected)
+        visited = [False] * n
+        count = 0
+
+        def dfs(i: int):
+            visited[i] = True
+            for j in range(n):
+                if isConnected[i][j] == 1 and not visited[j]:
+                    dfs(j)
+
+        for i in range(n):
+            if not visited[i]:
+                dfs(i)
+                count += 1
+        return count`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Union-Find',
+        intuition: 'Initialize each city as its own component. For every connected pair (i, j), union them. The final number of distinct roots is the province count. Path compression keeps find nearly O(1).',
+        code: `class Solution:
+    def findCircleNum(self, isConnected: list[list[int]]) -> int:
+        n = len(isConnected)
+        parent = list(range(n))
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        def union(a: int, b: int):
+            ra = find(a)
+            rb = find(b)
+            if ra != rb:
+                parent[ra] = rb
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                if isConnected[i][j] == 1:
+                    union(i, j)
+        return len({find(i) for i in range(n)})`,
+        timeComplexity: 'O(n^2 * alpha(n))',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Shortest Path in Binary Matrix (LC #1091) ────────────────────────────
@@ -838,6 +910,37 @@ BFS from \`(0, 0)\` over the 8-neighbour lattice is the straightforward solution
       { label: 'Single cell',  inputJson: '{"grid":[[0]]}',          expectedJson: '1'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'BFS',
+        intuition: 'BFS from (0,0) over the 8-directional grid, only stepping onto cells with value 0. Track distance as the number of cells visited. If the start or end cell is blocked, return -1 immediately.',
+        code: `from collections import deque
+
+
+class Solution:
+    def shortestPathBinaryMatrix(self, grid: list[list[int]]) -> int:
+        n = len(grid)
+        if grid[0][0] != 0 or grid[n - 1][n - 1] != 0:
+            return -1
+        queue = deque([(0, 0, 1)])
+        seen = {(0, 0)}
+        while queue:
+            r, c, d = queue.popleft()
+            if r == n - 1 and c == n - 1:
+                return d
+            for dr in (-1, 0, 1):
+                for dc in (-1, 0, 1):
+                    if dr == 0 and dc == 0:
+                        continue
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < n and 0 <= nc < n and grid[nr][nc] == 0 and (nr, nc) not in seen:
+                        seen.add((nr, nc))
+                        queue.append((nr, nc, d + 1))
+        return -1`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n^2)',
+      },
+    ],
   },
 
   // ─── Detonate the Maximum Bombs (LC #2101) ─────────────────────────────────
@@ -887,5 +990,43 @@ run a BFS/DFS from every node and return the largest reachable-set size.`,
       { label: 'Chain of three',   inputJson: '{"bombs":[[0,0,3],[1,1,3],[2,2,3]]}',  expectedJson: '3' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Directed Graph + BFS',
+        intuition: 'Build a directed graph where bomb i has an edge to bomb j if j\'s center is within i\'s blast radius. Then BFS from each bomb to find the largest reachable set.',
+        code: `from collections import deque
+
+
+class Solution:
+    def maximumDetonation(self, bombs: list[list[int]]) -> int:
+        n = len(bombs)
+        graph = [[] for _ in range(n)]
+        for i in range(n):
+            xi, yi, ri = bombs[i]
+            for j in range(n):
+                if i == j:
+                    continue
+                xj, yj, _ = bombs[j]
+                dx = xi - xj
+                dy = yi - yj
+                if dx * dx + dy * dy <= ri * ri:
+                    graph[i].append(j)
+        best = 0
+        for start in range(n):
+            seen = {start}
+            queue = deque([start])
+            while queue:
+                cur = queue.popleft()
+                for nb in graph[cur]:
+                    if nb not in seen:
+                        seen.add(nb)
+                        queue.append(nb)
+            if len(seen) > best:
+                best = len(seen)
+        return best`,
+        timeComplexity: 'O(n^3)',
+        spaceComplexity: 'O(n^2)',
+      },
+    ],
   },
 ];

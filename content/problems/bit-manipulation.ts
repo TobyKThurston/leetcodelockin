@@ -38,6 +38,20 @@ the values together. Pairs cancel each other out, leaving the singleton.`,
       { label: 'Single',  inputJson: '{"nums":[7]}',          expectedJson: '7' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'XOR All Values',
+        intuition: 'XOR is self-inverse: a ^ a = 0. XOR-ing all values cancels out every pair, leaving only the singleton.',
+        code: `class Solution:
+    def singleNumber(self, nums: list[int]) -> int:
+        result = 0
+        for v in nums:
+            result ^= v
+        return result`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Number of 1 Bits (LC #191) ────────────────────────────────────────────
@@ -73,6 +87,21 @@ times you can apply it before \`n\` becomes zero.`,
       { label: 'All ones',   inputJson: '{"n":15}', expectedJson: '4' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brian Kernighan (n & (n-1))',
+        intuition: 'The expression n & (n - 1) clears the lowest set bit. Count how many times you can apply it before n becomes zero.',
+        code: `class Solution:
+    def hammingWeight(self, n: int) -> int:
+        count = 0
+        while n:
+            n &= n - 1
+            count += 1
+        return count`,
+        timeComplexity: 'O(k) where k is the number of set bits',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Counting Bits (LC #338) ───────────────────────────────────────────────
@@ -109,6 +138,20 @@ for \`i\` shifted right by one bit, plus an extra 1 if the LSB of \`i\` is set.`
       { label: 'n = 2', inputJson: '{"n":2}', expectedJson: '[0,1,1]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DP (Bit Shift Recurrence)',
+        intuition: 'The popcount of i equals the popcount of i >> 1 (drop the LSB) plus i & 1 (whether the LSB was set). Build the table bottom-up.',
+        code: `class Solution:
+    def countBits(self, n: int) -> list[int]:
+        out = [0] * (n + 1)
+        for i in range(1, n + 1):
+            out[i] = out[i >> 1] + (i & 1)
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Reverse Bits (LC #190) ────────────────────────────────────────────────
@@ -143,6 +186,21 @@ Walk 32 iterations, in each one shifting the result left and OR-ing the LSB of t
       { label: 'One',     inputJson: '{"n":1}',         expectedJson: '2147483648' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bit-by-Bit Reversal',
+        intuition: 'Iterate 32 times. Each step, shift result left and OR the LSB of n, then shift n right. This builds the reversed 32-bit number.',
+        code: `class Solution:
+    def reverseBits(self, n: int) -> int:
+        result = 0
+        for _ in range(32):
+            result = (result << 1) | (n & 1)
+            n >>= 1
+        return result`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Missing Number (LC #268) ──────────────────────────────────────────────
@@ -183,6 +241,31 @@ also works.`,
       { label: 'Zero missing',inputJson: '{"nums":[1,2,3]}', expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sum Formula',
+        intuition: 'The expected sum of 0..n is n*(n+1)/2. Subtract the actual sum of nums to get the missing value.',
+        code: `class Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+        n = len(nums)
+        return n * (n + 1) // 2 - sum(nums)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'XOR',
+        intuition: 'XOR all values in nums with all indices 0..n. Pairs cancel out, leaving only the missing number.',
+        code: `class Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+        n = len(nums)
+        result = n
+        for i, v in enumerate(nums):
+            result ^= i ^ v
+        return result`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Power of Two (LC #231) ────────────────────────────────────────────────
@@ -218,6 +301,17 @@ A power of two has exactly one set bit, so \`n > 0 and n & (n - 1) == 0\`.`,
       { label: 'One',      inputJson: '{"n":1}',  expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bit Trick (n & (n-1))',
+        intuition: 'A power of two has exactly one set bit. The expression n & (n - 1) clears the lowest set bit, so if it equals 0 and n > 0, there was exactly one bit set.',
+        code: `class Solution:
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n > 0 and (n & (n - 1)) == 0`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Hamming Distance (LC #461) ────────────────────────────────────────────
@@ -253,6 +347,22 @@ One-liner: popcount of \`x XOR y\`.`,
       { label: 'Same',      inputJson: '{"x":5,"y":5}', expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'XOR + Popcount',
+        intuition: 'XOR x and y to get a number with 1s only where the bits differ. Count those 1s using Brian Kernighan\'s trick.',
+        code: `class Solution:
+    def hammingDistance(self, x: int, y: int) -> int:
+        z = x ^ y
+        count = 0
+        while z:
+            z &= z - 1
+            count += 1
+        return count`,
+        timeComplexity: 'O(k) where k is the number of differing bits',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Bitwise AND of Numbers Range (LC #201) ───────────────────────────────
@@ -292,6 +402,22 @@ same amount.`,
       { label: 'Wide',    inputJson: '{"left":0,"right":5}', expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Common Prefix (Shift Until Equal)',
+        intuition: 'The AND of a range keeps only the common prefix of left and right. Shift both right until they are equal (discarding differing lower bits), then shift back.',
+        code: `class Solution:
+    def rangeBitwiseAnd(self, left: int, right: int) -> int:
+        shift = 0
+        while left != right:
+            left >>= 1
+            right >>= 1
+            shift += 1
+        return left << shift`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Single Number III (LC #260) ───────────────────────────────────────────
@@ -333,6 +459,27 @@ and \`b\`.`,
       { label: 'Negative zero',inputJson: '{"nums":[-1,0]}',         expectedJson: '[-1,0]' },
     ],
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'XOR + Isolate Differing Bit',
+        intuition: 'XOR all values to get a ^ b. Pick any bit where a and b differ (lowest set bit of the XOR). Partition nums by that bit and XOR each group separately to isolate a and b.',
+        code: `class Solution:
+    def singleNumber(self, nums: list[int]) -> list[int]:
+        xor_all = 0
+        for v in nums:
+            xor_all ^= v
+        diff_bit = xor_all & -xor_all
+        a = b = 0
+        for v in nums:
+            if v & diff_bit:
+                a ^= v
+            else:
+                b ^= v
+        return [a, b]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Minimum Flips to Make a OR b Equal to c (LC #1318) ───────────────────
@@ -371,6 +518,29 @@ that's **two** flips.`,
       { label: 'No flips',    inputJson: '{"a":1,"b":2,"c":3}', expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bit-by-Bit Comparison',
+        intuition: 'Walk each bit position. Compare a_bit | b_bit with c_bit. If they differ and the target bit is 0, you need to flip every set input bit (could be 2 flips). If the target is 1 and OR is 0, one flip suffices.',
+        code: `class Solution:
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        flips = 0
+        while a or b or c:
+            ab = (a & 1) | (b & 1)
+            cb = c & 1
+            if ab != cb:
+                if cb == 0:
+                    flips += (a & 1) + (b & 1)
+                else:
+                    flips += 1
+            a >>= 1
+            b >>= 1
+            c >>= 1
+        return flips`,
+        timeComplexity: 'O(log(max(a, b, c)))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Sum of Two Integers (LC #371) ─────────────────────────────────────────
@@ -411,6 +581,25 @@ need to mask to 32 bits each iteration and handle the sign at the end.`,
       { label: 'Larger',   inputJson: '{"a":20,"b":22}',expectedJson: '42' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bitwise XOR + Carry with 32-bit Mask',
+        intuition: 'XOR gives the sum without carries; AND shifted left gives the carry. Repeat until carry is zero. Mask to 32 bits each iteration to handle Python\'s arbitrary-precision integers, and convert back from two\'s complement at the end.',
+        code: `class Solution:
+    def getSum(self, a: int, b: int) -> int:
+        MASK = 0xFFFFFFFF
+        SIGN = 0x80000000
+        while b & MASK:
+            carry = (a & b) << 1
+            a = (a ^ b) & MASK
+            b = carry & MASK
+        if a & SIGN:
+            return a - (1 << 32)
+        return a`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Single Number II (LC #137) ────────────────────────────────────────────
@@ -452,5 +641,20 @@ and \`twos\` that track bits seen once and twice (mod 3) respectively.`,
       { label: 'Singleton', inputJson: '{"nums":[42]}',                expectedJson: '42' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Ones/Twos State Machine',
+        intuition: 'Use two variables ones and twos to track bits seen once and twice (mod 3). For each value, update ones then twos with XOR and mask. After processing all values, ones holds the singleton.',
+        code: `class Solution:
+    def singleNumber(self, nums: list[int]) -> int:
+        ones = twos = 0
+        for v in nums:
+            ones = (ones ^ v) & ~twos
+            twos = (twos ^ v) & ~ones
+        return ones`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 ];

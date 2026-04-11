@@ -39,6 +39,35 @@ reverses the second half of the digits and compares to the first half.`,
       { label: 'Zero',                inputJson: '{"x":0}',    expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'String Conversion',
+        intuition: 'Convert the integer to a string and check if it equals its reverse. Simple and readable.',
+        code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        s = str(x)
+        return s == s[::-1]`,
+        timeComplexity: 'O(d) where d is the number of digits',
+        spaceComplexity: 'O(d)',
+      },
+      {
+        approach: 'Half-Reversal (No String)',
+        intuition: 'Reverse only the second half of the digits. If the first half equals the reversed second half (or equals it with the middle digit removed for odd-length), it is a palindrome.',
+        code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0 or (x % 10 == 0 and x != 0):
+            return False
+        rev = 0
+        while x > rev:
+            rev = rev * 10 + x % 10
+            x //= 10
+        return x == rev or x == rev // 10`,
+        timeComplexity: 'O(d)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Plus One (LC #66) ─────────────────────────────────────────────────────
@@ -79,6 +108,25 @@ when you fall off the left, prepend a \`1\`.`,
       { label: 'Zero',      inputJson: '{"digits":[0]}',      expectedJson: '[1]'     },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Right-to-Left Carry Propagation',
+        intuition: 'Walk from the least significant digit. If it is less than 9, increment and return immediately. Otherwise set it to 0 and carry. If you exhaust all digits, prepend a 1.',
+        code: `class Solution:
+    def plusOne(self, digits: list[int]) -> list[int]:
+        out = digits[:]
+        i = len(out) - 1
+        while i >= 0:
+            if out[i] < 9:
+                out[i] += 1
+                return out
+            out[i] = 0
+            i -= 1
+        return [1] + out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Happy Number (LC #202) ────────────────────────────────────────────────
@@ -115,6 +163,26 @@ use Floyd's cycle-detection with two pointers.`,
       { label: 'One',       inputJson: '{"n":1}',  expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Set Cycle Detection',
+        intuition: 'Repeatedly replace n with the sum of squares of its digits. Keep a set of seen values. If you reach 1, it is happy. If you see a repeat, it loops forever.',
+        code: `class Solution:
+    def isHappy(self, n: int) -> bool:
+        seen: set[int] = set()
+        while n != 1 and n not in seen:
+            seen.add(n)
+            total = 0
+            while n > 0:
+                d = n % 10
+                total += d * d
+                n //= 10
+            n = total
+        return n == 1`,
+        timeComplexity: 'O(log n) per step, finite steps',
+        spaceComplexity: 'O(log n)',
+      },
+    ],
   },
 
   // ─── Ugly Number (LC #263) ─────────────────────────────────────────────────
@@ -151,6 +219,22 @@ Repeatedly divide \`n\` by \`2\`, \`3\`, and \`5\` while divisible; if the final
       { label: 'One',   inputJson: '{"n":1}',  expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Divide by Primes',
+        intuition: 'Repeatedly divide n by 2, 3, and 5 while divisible. If the result is 1, the only prime factors were 2, 3, and 5.',
+        code: `class Solution:
+    def isUgly(self, n: int) -> bool:
+        if n <= 0:
+            return False
+        for p in (2, 3, 5):
+            while n % p == 0:
+                n //= p
+        return n == 1`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Rotate Image (LC #48) ─────────────────────────────────────────────────
@@ -194,6 +278,23 @@ rotation.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Transpose + Reverse Rows',
+        intuition: 'A 90-degree clockwise rotation equals transposing the matrix (swap rows and columns) then reversing each row. Both operations are done in place.',
+        code: `class Solution:
+    def rotate(self, matrix: list[list[int]]) -> list[list[int]]:
+        n = len(matrix)
+        for i in range(n):
+            for j in range(i + 1, n):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+        for row in matrix:
+            row.reverse()
+        return matrix`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Spiral Matrix (LC #54) ────────────────────────────────────────────────
@@ -237,6 +338,37 @@ traversed.`,
       { label: 'Row',    inputJson: '{"matrix":[[1,2,3]]}', expectedJson: '[1,2,3]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Four-Boundary Sweep',
+        intuition: 'Maintain top, bottom, left, right boundaries. Traverse right along top, down along right, left along bottom, up along left, shrinking each boundary after traversal.',
+        code: `class Solution:
+    def spiralOrder(self, matrix: list[list[int]]) -> list[int]:
+        m = len(matrix)
+        n = len(matrix[0]) if m else 0
+        out: list[int] = []
+        top, bottom = 0, m - 1
+        left, right = 0, n - 1
+        while top <= bottom and left <= right:
+            for c in range(left, right + 1):
+                out.append(matrix[top][c])
+            top += 1
+            for r in range(top, bottom + 1):
+                out.append(matrix[r][right])
+            right -= 1
+            if top <= bottom:
+                for c in range(right, left - 1, -1):
+                    out.append(matrix[bottom][c])
+                bottom -= 1
+            if left <= right:
+                for r in range(bottom, top - 1, -1):
+                    out.append(matrix[r][left])
+                left += 1
+        return out`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Spiral Matrix II (LC #59) ─────────────────────────────────────────────
@@ -271,6 +403,40 @@ Same four-boundary sweep as "Spiral Matrix", only writing values instead of read
       { label: 'n = 2', inputJson: '{"n":2}', expectedJson: '[[1,2],[4,3]]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Four-Boundary Fill',
+        intuition: 'Same boundary sweep as Spiral Matrix, but write values 1 through n^2 instead of reading them.',
+        code: `class Solution:
+    def generateMatrix(self, n: int) -> list[list[int]]:
+        out = [[0] * n for _ in range(n)]
+        val = 1
+        top, bottom = 0, n - 1
+        left, right = 0, n - 1
+        while top <= bottom and left <= right:
+            for c in range(left, right + 1):
+                out[top][c] = val
+                val += 1
+            top += 1
+            for r in range(top, bottom + 1):
+                out[r][right] = val
+                val += 1
+            right -= 1
+            if top <= bottom:
+                for c in range(right, left - 1, -1):
+                    out[bottom][c] = val
+                    val += 1
+                bottom -= 1
+            if left <= right:
+                for r in range(bottom, top - 1, -1):
+                    out[r][left] = val
+                    val += 1
+                left += 1
+        return out`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n^2)',
+      },
+    ],
   },
 
   // ─── Set Matrix Zeroes (LC #73) ────────────────────────────────────────────
@@ -318,6 +484,30 @@ first column themselves as the record.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Row/Column Sets',
+        intuition: 'First pass records which rows and columns contain a zero. Second pass zeros out every cell in those rows and columns.',
+        code: `class Solution:
+    def setZeroes(self, matrix: list[list[int]]) -> list[list[int]]:
+        m = len(matrix)
+        n = len(matrix[0]) if m else 0
+        zero_rows: set[int] = set()
+        zero_cols: set[int] = set()
+        for r in range(m):
+            for c in range(n):
+                if matrix[r][c] == 0:
+                    zero_rows.add(r)
+                    zero_cols.add(c)
+        for r in range(m):
+            for c in range(n):
+                if r in zero_rows or c in zero_cols:
+                    matrix[r][c] = 0
+        return matrix`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m + n)',
+      },
+    ],
   },
 
   // ─── Multiply Strings (LC #43) ─────────────────────────────────────────────
@@ -359,6 +549,29 @@ leading zeros.`,
       { label: 'Zero',          inputJson: '{"num1":"0","num2":"99"}',    expectedJson: '"0"'    },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Schoolbook Multiplication',
+        intuition: 'Multiply each digit of num1 by each digit of num2, accumulating into a result buffer at the correct positional offset. Then carry-propagate and strip leading zeros.',
+        code: `class Solution:
+    def multiply(self, num1: str, num2: str) -> str:
+        if num1 == '0' or num2 == '0':
+            return '0'
+        m, n = len(num1), len(num2)
+        result = [0] * (m + n)
+        for i in range(m - 1, -1, -1):
+            for j in range(n - 1, -1, -1):
+                mul = (ord(num1[i]) - 48) * (ord(num2[j]) - 48)
+                p1, p2 = i + j, i + j + 1
+                total = mul + result[p2]
+                result[p2] = total % 10
+                result[p1] += total // 10
+        out = ''.join(str(d) for d in result).lstrip('0')
+        return out if out else '0'`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m + n)',
+      },
+    ],
   },
 
   // ─── Max Points on a Line (LC #149) ────────────────────────────────────────
@@ -399,6 +612,46 @@ floating-point error, and handle vertical lines as a special slope.`,
       { label: 'Single',   inputJson: '{"points":[[5,5]]}',                    expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Slope Grouping with Reduced Fractions',
+        intuition: 'For each point p, group all other points by the slope of the line through p. Use reduced fractions (via GCD) as hash keys to avoid floating-point issues. The largest group + 1 (for p itself) is the local best.',
+        code: `from math import gcd
+
+
+class Solution:
+    def maxPoints(self, points: list[list[int]]) -> int:
+        n = len(points)
+        if n < 2:
+            return n
+        best = 1
+        for i in range(n):
+            slopes: dict[tuple[int, int], int] = {}
+            for j in range(n):
+                if i == j:
+                    continue
+                dx = points[j][0] - points[i][0]
+                dy = points[j][1] - points[i][1]
+                if dx == 0:
+                    key = (0, 1)
+                elif dy == 0:
+                    key = (1, 0)
+                else:
+                    g = gcd(dx, dy)
+                    dx //= g
+                    dy //= g
+                    if dx < 0:
+                        dx, dy = -dx, -dy
+                    key = (dx, dy)
+                slopes[key] = slopes.get(key, 0) + 1
+            local_best = max(slopes.values())
+            if local_best + 1 > best:
+                best = local_best + 1
+        return best`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Rectangle Area (LC #223) ──────────────────────────────────────────────
@@ -457,6 +710,22 @@ Compute the area of each rectangle, then subtract the area of their intersection
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Area Arithmetic',
+        intuition: 'Compute the area of each rectangle, then subtract the area of their intersection (which may be zero if they do not overlap). The intersection is found by clamping the x and y ranges.',
+        code: `class Solution:
+    def computeArea(self, ax1: int, ay1: int, ax2: int, ay2: int, bx1: int, by1: int, bx2: int, by2: int) -> int:
+        area_a = (ax2 - ax1) * (ay2 - ay1)
+        area_b = (bx2 - bx1) * (by2 - by1)
+        overlap_w = max(0, min(ax2, bx2) - max(ax1, bx1))
+        overlap_h = max(0, min(ay2, by2) - max(ay1, by1))
+        overlap = overlap_w * overlap_h
+        return area_a + area_b - overlap`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Best Meeting Point (LC #296) ──────────────────────────────────────────
@@ -506,5 +775,35 @@ the total distance from every friend to the median row and median column.`,
       { label: 'Single',       inputJson: '{"grid":[[1]]}',    expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Median via Sorted Coordinates',
+        intuition: 'Manhattan distance decomposes into independent x and y components. The optimal 1-D meeting point is the median. Collect all row and column indices of friends, sort them, and sum distances to the median using a two-pointer technique.',
+        code: `class Solution:
+    def minTotalDistance(self, grid: list[list[int]]) -> int:
+        rows: list[int] = []
+        cols: list[int] = []
+        for r, row in enumerate(grid):
+            for c, v in enumerate(row):
+                if v == 1:
+                    rows.append(r)
+                    cols.append(c)
+        rows.sort()
+        cols.sort()
+
+        def median_distance(xs: list[int]) -> int:
+            lo, hi = 0, len(xs) - 1
+            total = 0
+            while lo < hi:
+                total += xs[hi] - xs[lo]
+                lo += 1
+                hi -= 1
+            return total
+
+        return median_distance(rows) + median_distance(cols)`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(k) where k is the number of friends',
+      },
+    ],
   },
 ];
