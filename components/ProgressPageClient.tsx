@@ -1,27 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { CURRICULUM } from '@/lib/curriculum';
 import AppNav from '@/components/AppNav';
 import {
   ProgressView,
-  Sidebar,
   computePathStatuses,
 } from '@/components/DashboardPage';
 
 const C = {
-  appBg: '#0b1220',
+  appBg:    '#0b1220',
+  panelBg:  '#070c17',
+  border:   'rgba(255,255,255,0.06)',
 };
 
 export default function ProgressPageClient({ initialCompleted }: { initialCompleted: string[] }) {
   const router = useRouter();
   const completedIds = new Set(initialCompleted);
   const pathStatuses = computePathStatuses(completedIds);
-  const [viewingPathId, setViewingPathId] = useState(CURRICULUM[0].id);
 
-  const handleNavigateToPath = (pathId?: string) => {
+  const handleNavigateToPath = () => {
     router.push('/dashboard');
   };
 
@@ -29,20 +27,33 @@ export default function ProgressPageClient({ initialCompleted }: { initialComple
     router.push('/dashboard');
   };
 
-  const handleSelectPath = (id: string) => {
-    if (pathStatuses[id] === 'locked') return;
-    setViewingPathId(id);
-  };
-
   return (
     <div className="min-h-screen" style={{ background: C.appBg }}>
       <AppNav activeTab="Progress" />
-      <Sidebar
-        pathStatuses={pathStatuses}
-        viewingPathId={viewingPathId}
-        completedIds={completedIds}
-        onSelectPath={handleSelectPath}
+
+      {/* Left panel — empty, matches sidebar shell from dashboard/library */}
+      <aside
+        className="fixed left-0 bottom-0"
+        style={{
+          top: 48,
+          width: 304,
+          background: C.panelBg,
+          borderRight: `1px solid ${C.border}`,
+        }}
       />
+
+      {/* Right panel — empty, matches right rail shell from dashboard/library */}
+      <aside
+        className="hidden lg:block fixed right-0"
+        style={{
+          top: 48,
+          bottom: 0,
+          width: 304,
+          background: C.panelBg,
+          borderLeft: `1px solid ${C.border}`,
+        }}
+      />
+
       <main
         style={{
           paddingLeft: 304,
@@ -51,7 +62,7 @@ export default function ProgressPageClient({ initialCompleted }: { initialComple
             'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
         }}
-        className={cn('min-h-screen overflow-x-auto pb-24')}
+        className={cn('min-h-screen overflow-x-auto pb-24', 'lg:pr-[304px]')}
       >
         <ProgressView
           pathStatuses={pathStatuses}
