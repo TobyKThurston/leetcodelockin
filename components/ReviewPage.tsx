@@ -141,19 +141,19 @@ const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-pattern-1',
     type: 'pattern',
-    title: 'Two Pointers',
-    question: 'You have a sorted array and need to find two numbers that sum to a target. Which pattern should you use?',
-    answer: 'Two Pointers -- Place one pointer at the start and one at the end. If the sum is too small, move the left pointer right. If too big, move the right pointer left. O(n) time.',
+    title: 'Sorted Array Pair Sum',
+    question: 'You have a SORTED array and need to find two numbers that sum to a target in O(n) time. Which approach takes advantage of the sort order?',
+    answer: 'Two Pointers -- Place one pointer at the start and one at the end. If the sum is too small, move the left pointer right. If too big, move the right pointer left. O(n) time, O(1) space.\n\nA hash map also works for pair sum in O(n) time, but it uses O(n) space and doesn\'t leverage the sorted property.',
     interaction: 'mcq',
-    choices: ['Sliding Window', 'Two Pointers', 'Binary Search', 'Hash Map'],
+    choices: ['Sliding Window', 'Two Pointers', 'Binary Search on each element', 'Brute Force nested loops'],
     correctChoice: 1,
   },
   {
     id: 'qr-pattern-2',
     type: 'pattern',
-    title: 'Sliding Window',
-    question: 'You need to find the longest substring without repeating characters. Which pattern fits?',
-    answer: 'Sliding Window -- Maintain a window [left, right] and a set of seen characters. Expand right; when a duplicate is found, shrink from the left until the duplicate is removed. O(n) time.',
+    title: 'Contiguous Subarray',
+    question: 'You need to find the longest contiguous substring with at most k distinct characters. What pattern is this?',
+    answer: 'Sliding Window -- Maintain a window [left, right] with a frequency map. Expand right to add characters; when distinct count exceeds k, shrink from the left. Each element is added/removed at most once, so it runs in O(n).',
     interaction: 'mcq',
     choices: ['Two Pointers', 'Dynamic Programming', 'Sliding Window', 'Backtracking'],
     correctChoice: 2,
@@ -161,42 +161,42 @@ const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-pattern-3',
     type: 'pattern',
-    title: 'BFS vs DFS',
-    question: 'You need to find the shortest path in an unweighted graph. Which traversal should you use?',
-    answer: 'BFS -- BFS explores all nodes at the current depth before moving deeper, guaranteeing the shortest path in unweighted graphs. DFS may find a path first, but not necessarily the shortest.',
+    title: 'Shortest Path (Unweighted)',
+    question: 'You need to find the minimum number of moves to reach a target in a grid where each move costs the same. Which traversal guarantees the shortest path?',
+    answer: 'BFS -- BFS explores all nodes at the current depth before moving deeper, so the first time it reaches any node is via the shortest path. DFS may find a path, but not necessarily the shortest one.',
     interaction: 'mcq',
-    choices: ['DFS (Depth-First Search)', 'BFS (Breadth-First Search)', 'Dijkstra\'s Algorithm', 'Topological Sort'],
+    choices: ['DFS with backtracking', 'BFS', 'Dijkstra\'s Algorithm', 'Topological Sort'],
     correctChoice: 1,
   },
   {
     id: 'qr-pattern-4',
     type: 'pattern',
-    title: 'Dynamic Programming Signal',
-    question: 'What two properties must a problem have for Dynamic Programming to apply?',
-    answer: '1. Optimal substructure -- the optimal solution builds on optimal sub-solutions.\n2. Overlapping subproblems -- the same subproblems are solved repeatedly.\n\nIf only #1 exists without #2, greedy may work instead.',
+    title: 'Fibonacci-style Problem',
+    question: 'You\'re computing the number of ways to climb n stairs, taking 1 or 2 steps at a time. The answer for n depends on answers for n-1 and n-2, and these sub-problems repeat. What technique should you use?',
+    answer: 'Dynamic Programming -- This has both required properties:\n1. Optimal substructure: ways(n) = ways(n-1) + ways(n-2)\n2. Overlapping subproblems: ways(3) is needed by both ways(4) and ways(5)\n\nWithout memoization, the naive recursion is O(2^n). With DP it\'s O(n).',
     interaction: 'mcq',
     choices: [
-      'Optimal substructure + Overlapping subproblems',
-      'Sorted input + Monotonic property',
-      'Divide and conquer + Merge step',
-      'Graph structure + Cycle detection',
+      'Greedy algorithm',
+      'Dynamic Programming',
+      'Divide and conquer',
+      'Backtracking with pruning',
     ],
-    correctChoice: 0,
+    correctChoice: 1,
   },
   {
     id: 'qr-pattern-5',
     type: 'pattern',
-    title: 'Stack Problems',
-    question: 'You need to find the next greater element for each item in an array. Which data structure is key?',
-    answer: 'Stack (Monotonic Stack) -- Iterate through the array and maintain a stack of indices whose next greater element hasn\'t been found yet. When you find a larger element, pop and record.',
+    title: 'Next Greater Element',
+    question: 'For each element in an array, you need to find the next element to its right that is strictly greater. What data structure gives you O(n) total time?',
+    answer: 'Monotonic Stack -- Iterate left to right, maintaining a stack of elements (or indices) in decreasing order. When you see a larger element, pop everything smaller and record the answer for each popped item. Each element is pushed and popped at most once, so total work is O(n).',
     interaction: 'mcq',
-    choices: ['Queue', 'Stack', 'Heap', 'Hash Map'],
+    choices: ['Queue', 'Stack', 'Heap / Priority Queue', 'Balanced BST'],
     correctChoice: 1,
   },
   {
     id: 'qr-code-1',
     type: 'code_reading',
-    title: 'Two Sum',
+    title: 'Trace the Output',
     question: 'What does this function return for nums = [2, 7, 11, 15] and target = 9?',
     code: 'def solve(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        comp = target - n\n        if comp in seen:\n            return [seen[comp], i]\n        seen[n] = i\n    return []',
     answer: '[0, 1] -- This is the Two Sum pattern using a hash map.\n\ni=0: n=2, comp=7, not in seen, store {2:0}\ni=1: n=7, comp=2, 2 IS in seen, return [0, 1]\n\nIndices 0 and 1 point to values 2 and 7, which sum to 9.',
@@ -207,7 +207,7 @@ const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-code-2',
     type: 'code_reading',
-    title: 'Longest Substring',
+    title: 'Trace the Output',
     question: 'What does this return for s = "abcabcbb"?',
     code: 'def solve(s):\n    seen = set()\n    l = ans = 0\n    for r in range(len(s)):\n        while s[r] in seen:\n            seen.remove(s[l])\n            l += 1\n        seen.add(s[r])\n        ans = max(ans, r - l + 1)\n    return ans',
     answer: '3 -- This is the Sliding Window pattern for longest substring without repeating characters.\n\nThe longest non-repeating substring is "abc" (length 3). When a duplicate is found, the left pointer shrinks the window until the duplicate is removed.',
@@ -218,7 +218,7 @@ const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-code-3',
     type: 'code_reading',
-    title: 'Kth Largest Element',
+    title: 'Trace the Output',
     question: 'What does this return for nums = [3, 2, 1, 5, 6, 4] and k = 2?',
     code: 'import heapq\n\ndef solve(nums, k):\n    heap = []\n    for n in nums:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)\n    return heap[0]',
     answer: '5 -- This finds the kth largest element using a min-heap of size k.\n\nThe heap keeps the k largest values seen so far. The smallest of those (the root) is the kth largest overall.\n\nAfter processing all elements, heap = [5, 6]. heap[0] = 5 (2nd largest).\n\nTime: O(n log k), Space: O(k)',
@@ -229,7 +229,7 @@ const QUICK_CARDS: QuickCard[] = [
   {
     id: 'qr-code-4',
     type: 'code_reading',
-    title: 'What pattern is this?',
+    title: 'Name That Pattern',
     question: 'What algorithmic pattern does this code implement?',
     code: 'def solve(nums, target):\n    left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1',
     answer: 'Binary Search -- The code repeatedly halves the search space by comparing the middle element to the target. If the middle is too small, search the right half; if too large, search the left half.\n\nTime: O(log n), Space: O(1)',
@@ -1028,6 +1028,143 @@ function QuickSidebarRow({
   );
 }
 
+// ─── Quick Review Right Rail ────────────────────────────────────────────────
+
+function QuickReviewRightRail({
+  reviewedCount, totalCards, correctCount, isPro, srDueCount, srReviewed,
+}: {
+  reviewedCount: number;
+  totalCards: number;
+  correctCount: number;
+  isPro: boolean;
+  srDueCount: number;
+  srReviewed: number;
+}) {
+  const remaining = totalCards - reviewedCount;
+
+  return (
+    <aside
+      className="hidden lg:flex fixed right-0 flex-col"
+      style={{
+        top: 48,
+        bottom: 0,
+        width: 304,
+        background: C.panelBg,
+        borderLeft: `1px solid ${C.border}`,
+      }}
+    >
+      <ScrollArea className="flex-1">
+        <div className="px-4 pt-5 pb-5 space-y-5">
+
+          {/* Session Score */}
+          <section>
+            <RailHeader>Session Score</RailHeader>
+            <div className={cn(RAIL_BOX, 'grid grid-cols-3 gap-3')}>
+              <Metric value={String(correctCount)} label="correct" />
+              <Metric value={String(reviewedCount - correctCount)} label="wrong" />
+              <Metric value={String(remaining)} label="remaining" />
+            </div>
+          </section>
+
+          {/* Spaced Repetition -- the key feature */}
+          <section>
+            <RailHeader>Spaced Repetition</RailHeader>
+            <div className={cn(RAIL_BOX, 'space-y-3')}>
+              {isPro ? (
+                <>
+                  <div className="space-y-2">
+                    <MetricRow label="Cards due now" value={String(srDueCount)} />
+                    {srReviewed > 0 && (
+                      <MetricRow label="Reviewed this session" value={String(srReviewed)} />
+                    )}
+                  </div>
+                  {srDueCount === 0 && (
+                    <p className="text-[11px] text-slate-500 leading-relaxed pt-1 border-t" style={{ borderColor: C.border }}>
+                      No cards due right now. As you solve more problems, personalized review cards are generated from your accepted solutions and scheduled at increasing intervals.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-2.5">
+                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                    Pro generates personalized flashcards every time you solve a problem. Cards come back at increasing intervals so you review right before you forget.
+                  </p>
+                  <div className="space-y-1.5 pt-1 border-t" style={{ borderColor: C.border }}>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <span className="text-[11px] text-slate-500">Day 1: first review</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <span className="text-[11px] text-slate-500">Day 2: second review</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <span className="text-[11px] text-slate-500">Day 4, 8, 16, 30...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* How it works */}
+          <section>
+            <RailHeader>How Review Works</RailHeader>
+            <div className={cn(RAIL_BOX, 'space-y-3')}>
+              <div className="space-y-2.5">
+                <div className="flex items-start gap-2.5">
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/15 text-blue-400 flex items-center justify-center text-[10px] font-bold mt-0.5">1</span>
+                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                    <span className="text-slate-300 font-medium">Quick Review</span> -- random fundamentals to test Big-O, patterns, and code reading
+                  </p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-[10px] font-bold mt-0.5">2</span>
+                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                    <span className="text-slate-300 font-medium">Solve problems</span> -- AI generates flashcards from your accepted code
+                  </p>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="shrink-0 w-5 h-5 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center text-[10px] font-bold mt-0.5">3</span>
+                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                    <span className="text-slate-300 font-medium">Spaced repetition</span> -- your cards come back at optimized intervals so you never forget
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Coming up */}
+          <section>
+            <RailHeader>Coming Up</RailHeader>
+            <div className={cn(RAIL_BOX, 'space-y-2.5')}>
+              <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                The more problems you solve, the more personalized this page becomes. Instead of random fundamentals, you will review:
+              </p>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <Code2 size={11} className="text-blue-400 shrink-0" />
+                  <span className="text-[11px] text-slate-300">Key lines from your solutions</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Brain size={11} className="text-emerald-400 shrink-0" />
+                  <span className="text-[11px] text-slate-300">Patterns and approaches you used</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Timer size={11} className="text-amber-400 shrink-0" />
+                  <span className="text-[11px] text-slate-300">Time and space complexity</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </ScrollArea>
+    </aside>
+  );
+}
+
 // ─── Empty / sign-in / upgrade states ───────────────────────────────────────
 
 function CenteredMessage({ children }: { children: React.ReactNode }) {
@@ -1466,7 +1603,14 @@ export default function ReviewPageClient({
         mode="quick"
         isPro={isPro}
       />
-      {/* No right rail in quick review mode -- main content takes full width */}
+      <QuickReviewRightRail
+        reviewedCount={quickReviewedSet.size}
+        totalCards={QUICK_CARDS.length}
+        correctCount={Array.from(quickResults.values()).filter(r => r === 'correct').length}
+        isPro={isPro}
+        srDueCount={totalDue}
+        srReviewed={srReviewed}
+      />
       <main
         className="min-h-screen"
         style={{
@@ -1478,6 +1622,7 @@ export default function ReviewPageClient({
           backgroundSize: '40px 40px',
         }}
       >
+        <div className="lg:pr-[304px]">
         <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
 
           {/* Pro upgrade banner for non-pro users */}
@@ -1619,6 +1764,7 @@ export default function ReviewPageClient({
             </div>
           ) : null}
 
+        </div>
         </div>
       </main>
     </div>
