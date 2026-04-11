@@ -59,6 +59,51 @@ class Solution:
       { label: 'Single',     inputJson: '{"root":[7]}',                  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Recursive',
+        intuition: 'The depth of a tree is 1 plus the maximum depth of its left and right subtrees. The base case is a null node, which has depth 0.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def maxDepth(self, root: list) -> int:
+        tree = _to_tree(root)
+
+        def depth(node):
+            if node is None:
+                return 0
+            return 1 + max(depth(node.left), depth(node.right))
+
+        return depth(tree)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h) where h is the height of the tree',
+      },
+      {
+        approach: 'BFS Iterative',
+        intuition: 'Use a queue to traverse level by level. Each time we finish processing one full level, increment the depth counter. The final count is the maximum depth.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def maxDepth(self, root: list) -> int:
+        tree = _to_tree(root)
+        if tree is None:
+            return 0
+        depth = 0
+        queue = [tree]
+        while queue:
+            depth += 1
+            next_queue = []
+            for node in queue:
+                if node.left:
+                    next_queue.append(node.left)
+                if node.right:
+                    next_queue.append(node.right)
+            queue = next_queue
+        return depth
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Same Tree (LC #100) ───────────────────────────────────────────────────
@@ -112,6 +157,53 @@ class Solution:
       { label: 'Different values', inputJson: '{"p":[1,2,1],"q":[1,1,2]}',     expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Recursive',
+        intuition: 'Recursively compare two trees in parallel: both null means equal, one null means unequal, otherwise check values match and recurse into left-left and right-right.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isSameTree(self, p: list, q: list) -> bool:
+        tp = _to_tree(p)
+        tq = _to_tree(q)
+
+        def same(a, b):
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)
+
+        return same(tp, tq)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+      {
+        approach: 'BFS Iterative',
+        intuition: 'Use a queue of node pairs. Dequeue a pair, check if both null (continue), one null (return False), or values differ (return False). Otherwise enqueue left-left and right-right pairs.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isSameTree(self, p: list, q: list) -> bool:
+        tp = _to_tree(p)
+        tq = _to_tree(q)
+        queue = [(tp, tq)]
+        while queue:
+            a, b = queue.pop(0)
+            if a is None and b is None:
+                continue
+            if a is None or b is None:
+                return False
+            if a.val != b.val:
+                return False
+            queue.append((a.left, b.left))
+            queue.append((a.right, b.right))
+        return True
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Invert Binary Tree (LC #226) ──────────────────────────────────────────
@@ -164,6 +256,49 @@ class Solution:
       { label: 'Empty',     inputJson: '{"root":[]}',               expectedJson: '[]'             },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Recursive',
+        intuition: 'At each node, swap its left and right children, then recurse into both subtrees. The base case is null, which returns null unchanged.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def invertTree(self, root: list) -> list:
+        tree = _to_tree(root)
+
+        def invert(node):
+            if node is None:
+                return None
+            node.left, node.right = invert(node.right), invert(node.left)
+            return node
+
+        return _from_tree(invert(tree))
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+      {
+        approach: 'BFS Iterative',
+        intuition: 'Use a queue to visit every node level by level. At each node, swap its left and right children. This inverts the entire tree without recursion.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def invertTree(self, root: list) -> list:
+        tree = _to_tree(root)
+        if tree is None:
+            return []
+        queue = [tree]
+        while queue:
+            node = queue.pop(0)
+            node.left, node.right = node.right, node.left
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        return _from_tree(tree)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Symmetric Tree (LC #101) ──────────────────────────────────────────────
@@ -215,6 +350,55 @@ class Solution:
       { label: 'Empty',        inputJson: '{"root":[]}',                     expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Recursive',
+        intuition: 'A tree is symmetric if its left and right subtrees are mirror images. Write a helper isMirror(a, b) that checks a.left vs b.right and a.right vs b.left recursively.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isSymmetric(self, root: list) -> bool:
+        tree = _to_tree(root)
+
+        def mirror(a, b):
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            return a.val == b.val and mirror(a.left, b.right) and mirror(a.right, b.left)
+
+        if tree is None:
+            return True
+        return mirror(tree.left, tree.right)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+      {
+        approach: 'BFS Iterative',
+        intuition: 'Use a queue of pairs, starting with (left, right). For each pair, check both null (continue), one null (false), values differ (false), then enqueue (a.left, b.right) and (a.right, b.left).',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isSymmetric(self, root: list) -> bool:
+        tree = _to_tree(root)
+        if tree is None:
+            return True
+        queue = [(tree.left, tree.right)]
+        while queue:
+            a, b = queue.pop(0)
+            if a is None and b is None:
+                continue
+            if a is None or b is None:
+                return False
+            if a.val != b.val:
+                return False
+            queue.append((a.left, b.right))
+            queue.append((a.right, b.left))
+        return True
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Diameter of Binary Tree (LC #543) ─────────────────────────────────────
@@ -268,6 +452,32 @@ class Solution:
       { label: 'Chain',      inputJson: '{"root":[1,2,null,3]}', expectedJson: '2' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with Height Tracking',
+        intuition: 'Run a single DFS that returns the height of each subtree. At each node, compute left_height + right_height and update a global best. The diameter is the maximum such sum across all nodes.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def diameterOfBinaryTree(self, root: list) -> int:
+        tree = _to_tree(root)
+        best = [0]
+
+        def height(node):
+            if node is None:
+                return 0
+            lh = height(node.left)
+            rh = height(node.right)
+            if lh + rh > best[0]:
+                best[0] = lh + rh
+            return 1 + max(lh, rh)
+
+        height(tree)
+        return best[0]
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 
   // ─── Balanced Binary Tree (LC #110) ────────────────────────────────────────
@@ -319,6 +529,34 @@ class Solution:
       { label: 'Empty',       inputJson: '{"root":[]}',                              expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with Sentinel',
+        intuition: 'A single DFS returns either the subtree height or -1 as a sentinel indicating imbalance. At each node, if the left or right subtree returns -1, propagate -1 upward. Otherwise check if heights differ by more than 1.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isBalanced(self, root: list) -> bool:
+        tree = _to_tree(root)
+
+        def check(node):
+            if node is None:
+                return 0
+            lh = check(node.left)
+            if lh == -1:
+                return -1
+            rh = check(node.right)
+            if rh == -1:
+                return -1
+            if abs(lh - rh) > 1:
+                return -1
+            return 1 + max(lh, rh)
+
+        return check(tree) != -1
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 
   // ─── Subtree of Another Tree (LC #572) ─────────────────────────────────────
@@ -371,6 +609,38 @@ class Solution:
       { label: 'Not a subtree', inputJson: '{"root":[1,2,3],"subRoot":[2,3]}',        expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with sameTree Helper',
+        intuition: 'Compose two helpers: sameTree checks if two trees are structurally identical, and walk tries every node in root as a candidate match against subRoot. If sameTree matches at any node, return True.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isSubtree(self, root: list, subRoot: list) -> bool:
+        t = _to_tree(root)
+        s = _to_tree(subRoot)
+
+        def same(a, b):
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            return a.val == b.val and same(a.left, b.left) and same(a.right, b.right)
+
+        def walk(node):
+            if node is None:
+                return False
+            if same(node, s):
+                return True
+            return walk(node.left) or walk(node.right)
+
+        if s is None:
+            return True
+        return walk(t)
+`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 
   // ─── Validate Binary Search Tree (LC #98) ──────────────────────────────────
@@ -424,6 +694,52 @@ class Solution:
       { label: 'Single node', inputJson: '{"root":[1]}',                        expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with Bounds',
+        intuition: 'Carry a (lo, hi) open interval down the tree. Start with (-infinity, +infinity). Going left tightens hi to node.val; going right tightens lo to node.val. If any node falls outside its bounds, the tree is invalid.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isValidBST(self, root: list) -> bool:
+        tree = _to_tree(root)
+
+        def check(node, lo, hi):
+            if node is None:
+                return True
+            if not (lo < node.val < hi):
+                return False
+            return check(node.left, lo, node.val) and check(node.right, node.val, hi)
+
+        return check(tree, float('-inf'), float('inf'))
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+      {
+        approach: 'Inorder Traversal',
+        intuition: 'An inorder traversal of a valid BST produces a strictly increasing sequence. Perform an inorder walk and check that each value is greater than the previous one.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def isValidBST(self, root: list) -> bool:
+        tree = _to_tree(root)
+        prev = [float('-inf')]
+
+        def inorder(node):
+            if node is None:
+                return True
+            if not inorder(node.left):
+                return False
+            if node.val <= prev[0]:
+                return False
+            prev[0] = node.val
+            return inorder(node.right)
+
+        return inorder(tree)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 
   // ─── Lowest Common Ancestor of a Binary Search Tree (LC #235) ─────────────
@@ -477,6 +793,48 @@ class Solution:
       { label: 'Ancestor is p',inputJson: '{"root":[5,3,7],"p":5,"q":7}',          expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Iterative Walk',
+        intuition: 'Exploit the BST property: if both p and q are smaller than the current node, go left. If both are larger, go right. Otherwise the current node is the split point and must be the LCA.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def lowestCommonAncestor(self, root: list, p: int, q: int) -> int:
+        tree = _to_tree(root)
+        cur = tree
+        while cur is not None:
+            if p < cur.val and q < cur.val:
+                cur = cur.left
+            elif p > cur.val and q > cur.val:
+                cur = cur.right
+            else:
+                return cur.val
+        return -1
+`,
+        timeComplexity: 'O(h)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Recursive',
+        intuition: 'Same logic as the iterative approach but expressed recursively: recurse left if both targets are smaller, right if both are larger, otherwise return the current node.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def lowestCommonAncestor(self, root: list, p: int, q: int) -> int:
+        tree = _to_tree(root)
+
+        def lca(node):
+            if p < node.val and q < node.val:
+                return lca(node.left)
+            if p > node.val and q > node.val:
+                return lca(node.right)
+            return node.val
+
+        return lca(tree)
+`,
+        timeComplexity: 'O(h)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 
   // ─── Binary Tree Level Order Traversal (LC #102) ───────────────────────────
@@ -526,6 +884,59 @@ class Solution:
       { label: 'Single',       inputJson: '{"root":[1]}',                      expectedJson: '[[1]]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'BFS with Queue',
+        intuition: 'Use a queue initialized with the root. On each iteration, drain all nodes at the current level, collect their values into a list, and enqueue their children. Each drained batch forms one level of the output.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def levelOrder(self, root: list) -> list[list[int]]:
+        tree = _to_tree(root)
+        if tree is None:
+            return []
+        out = []
+        queue = [tree]
+        while queue:
+            level = []
+            next_queue = []
+            for node in queue:
+                level.append(node.val)
+                if node.left is not None:
+                    next_queue.append(node.left)
+                if node.right is not None:
+                    next_queue.append(node.right)
+            out.append(level)
+            queue = next_queue
+        return out
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'DFS Recursive',
+        intuition: 'Recurse through the tree carrying the current depth. Append the node value to the list at index depth, creating a new sub-list when entering a new level for the first time.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def levelOrder(self, root: list) -> list[list[int]]:
+        tree = _to_tree(root)
+        out = []
+
+        def dfs(node, depth):
+            if node is None:
+                return
+            if depth == len(out):
+                out.append([])
+            out[depth].append(node.val)
+            dfs(node.left, depth + 1)
+            dfs(node.right, depth + 1)
+
+        dfs(tree, 0)
+        return out
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Construct Binary Tree from Preorder and Inorder Traversal (LC #105) ──
@@ -585,6 +996,35 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive with Index Map',
+        intuition: 'The first element of preorder is the root. Find its position in inorder to split into left and right subtrees. Use a hash map for O(1) index lookup. Recurse on both halves, consuming preorder values via an iterator.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def buildTree(self, preorder: list[int], inorder: list[int]) -> list:
+        if not preorder:
+            return []
+        index_of = {v: i for i, v in enumerate(inorder)}
+        pre_iter = iter(preorder)
+
+        def build(lo, hi):
+            if lo > hi:
+                return None
+            val = next(pre_iter)
+            node = TreeNode(val)
+            mid = index_of[val]
+            node.left = build(lo, mid - 1)
+            node.right = build(mid + 1, hi)
+            return node
+
+        root = build(0, len(inorder) - 1)
+        return _from_tree(root)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Binary Tree Maximum Path Sum (LC #124) ────────────────────────────────
@@ -641,5 +1081,32 @@ class Solution:
       { label: 'Hard case',    inputJson: '{"root":[-10,9,20,null,null,15,7]}', expectedJson: '42' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Post-order DFS',
+        intuition: 'For each node, compute the best "downward" path sum through left or right (clamped to 0 to ignore negative branches). Update a global best with left + node.val + right, which represents the path bending at this node. Return node.val + max(left, right) upward.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def maxPathSum(self, root: list) -> int:
+        tree = _to_tree(root)
+        best = [float('-inf')]
+
+        def gain(node):
+            if node is None:
+                return 0
+            left = max(gain(node.left), 0)
+            right = max(gain(node.right), 0)
+            through = node.val + left + right
+            if through > best[0]:
+                best[0] = through
+            return node.val + max(left, right)
+
+        gain(tree)
+        return best[0]
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
   },
 ];

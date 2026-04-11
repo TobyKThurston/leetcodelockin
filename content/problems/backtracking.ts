@@ -48,6 +48,31 @@ excludes the current element.`,
       { label: 'Single',       inputJson: '{"nums":[9]}',     expectedJson: '[[],[9]]' },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'At each index, decide to either include or exclude the current element, then recurse. Collect the current subset when you reach the end of the array.',
+        code: `class Solution:
+    def subsets(self, nums: list[int]) -> list[list[int]]:
+        out = []
+        cur = []
+
+        def backtrack(i: int):
+            if i == len(nums):
+                out.append(list(cur))
+                return
+            backtrack(i + 1)
+            cur.append(nums[i])
+            backtrack(i + 1)
+            cur.pop()
+
+        backtrack(0)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n * 2^n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Subsets II (LC #90) ───────────────────────────────────────────────────
@@ -94,6 +119,32 @@ The idiomatic approach sorts \`nums\` and then backtracks, skipping a value \`nu
       { label: 'All same', inputJson: '{"nums":[4,4,4]}', expectedJson: '[[],[4],[4,4],[4,4,4]]'            },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking with Duplicate Skipping',
+        intuition: 'Sort the array first, then use the standard subset backtracking template but skip nums[i] when it equals nums[i-1] and i > start. This avoids generating duplicate subsets.',
+        code: `class Solution:
+    def subsetsWithDup(self, nums: list[int]) -> list[list[int]]:
+        nums = sorted(nums)
+        out = []
+        cur = []
+
+        def backtrack(start: int):
+            out.append(list(cur))
+            for i in range(start, len(nums)):
+                if i > start and nums[i] == nums[i - 1]:
+                    continue
+                cur.append(nums[i])
+                backtrack(i + 1)
+                cur.pop()
+
+        backtrack(0)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n * 2^n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Permutations (LC #46) ─────────────────────────────────────────────────
@@ -141,6 +192,30 @@ or equivalently maintains a "used" set and picks each unused element in turn.`,
       { label: 'Single',       inputJson: '{"nums":[5]}',     expectedJson: '[[5]]' },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Build each permutation by picking one unused element at a time. For each recursive call, try every remaining element, append it, recurse, then remove it to try the next.',
+        code: `class Solution:
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        out = []
+
+        def backtrack(cur: list[int], remaining: list[int]):
+            if not remaining:
+                out.append(list(cur))
+                return
+            for i in range(len(remaining)):
+                cur.append(remaining[i])
+                backtrack(cur, remaining[:i] + remaining[i + 1:])
+                cur.pop()
+
+        backtrack([], nums)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n! * n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Permutations II (LC #47) ──────────────────────────────────────────────
@@ -187,6 +262,39 @@ avoids picking the same value in the same position via a different "copy".`,
       { label: 'Distinct',  inputJson: '{"nums":[1,2]}',   expectedJson: '[[1,2],[2,1]]'             },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking with Duplicate Skipping',
+        intuition: 'Sort nums, then use a used-array to track which elements are placed. Skip nums[i] when it equals nums[i-1] and used[i-1] is false -- this prevents placing the same value at the same position via a different copy.',
+        code: `class Solution:
+    def permuteUnique(self, nums: list[int]) -> list[list[int]]:
+        nums = sorted(nums)
+        out = []
+        used = [False] * len(nums)
+        cur = []
+
+        def backtrack():
+            if len(cur) == len(nums):
+                out.append(list(cur))
+                return
+            for i in range(len(nums)):
+                if used[i]:
+                    continue
+                if i > 0 and nums[i] == nums[i - 1] and not used[i - 1]:
+                    continue
+                used[i] = True
+                cur.append(nums[i])
+                backtrack()
+                cur.pop()
+                used[i] = False
+
+        backtrack()
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n! * n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Combinations (LC #77) ─────────────────────────────────────────────────
@@ -233,6 +341,31 @@ indices, only allowing values larger than the one just picked.`,
       { label: 'C(1,1)', inputJson: '{"n":1,"k":1}', expectedJson: '[[1]]'    },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Iterate from a start index through n, appending each value and recursing with start = i+1 to avoid duplicates. Stop when the current list reaches length k.',
+        code: `class Solution:
+    def combine(self, n: int, k: int) -> list[list[int]]:
+        out = []
+        cur = []
+
+        def backtrack(start: int):
+            if len(cur) == k:
+                out.append(list(cur))
+                return
+            for i in range(start, n + 1):
+                cur.append(i)
+                backtrack(i + 1)
+                cur.pop()
+
+        backtrack(1)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(k * C(n, k))',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── Combination Sum (LC #39) ──────────────────────────────────────────────
@@ -280,6 +413,34 @@ indices, only allowing values larger than the one just picked.`,
       { label: 'Ones',        inputJson: '{"candidates":[1],"target":3}',   expectedJson: '[[1,1,1]]'       },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Sort candidates, then backtrack from a start index. At each step, try each candidate (allowing reuse by recursing with the same index i). Prune early when the candidate exceeds the remaining target.',
+        code: `class Solution:
+    def combinationSum(self, candidates: list[int], target: int) -> list[list[int]]:
+        candidates = sorted(candidates)
+        out = []
+        cur = []
+
+        def backtrack(start: int, remaining: int):
+            if remaining == 0:
+                out.append(list(cur))
+                return
+            for i in range(start, len(candidates)):
+                if candidates[i] > remaining:
+                    break
+                cur.append(candidates[i])
+                backtrack(i, remaining - candidates[i])
+                cur.pop()
+
+        backtrack(0, target)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n^(target/min))',
+        spaceComplexity: 'O(target/min)',
+      },
+    ],
   },
 
   // ─── Combination Sum II (LC #40) ───────────────────────────────────────────
@@ -326,6 +487,36 @@ duplicates**) and a target number \`target\`, return every unique combination of
       { label: 'No match',  inputJson: '{"candidates":[1,1],"target":3}',       expectedJson: '[]'            },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking with Duplicate Skipping',
+        intuition: 'Sort candidates, then backtrack similarly to Combination Sum but advance to i+1 (each element used at most once). Skip candidates[i] when it equals candidates[i-1] and i > start to avoid duplicate combinations.',
+        code: `class Solution:
+    def combinationSum2(self, candidates: list[int], target: int) -> list[list[int]]:
+        candidates = sorted(candidates)
+        out = []
+        cur = []
+
+        def backtrack(start: int, remaining: int):
+            if remaining == 0:
+                out.append(list(cur))
+                return
+            for i in range(start, len(candidates)):
+                if i > start and candidates[i] == candidates[i - 1]:
+                    continue
+                if candidates[i] > remaining:
+                    break
+                cur.append(candidates[i])
+                backtrack(i + 1, remaining - candidates[i])
+                cur.pop()
+
+        backtrack(0, target)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(2^n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Palindrome Partitioning (LC #131) ─────────────────────────────────────
@@ -372,6 +563,36 @@ A DFS over starting positions plus an inline palindrome check is the idiomatic s
       { label: 'Non-palindrome pair', inputJson: '{"s":"ab"}', expectedJson: '[["a","b"]]' },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'DFS over starting positions in the string. At each position, try every substring ending beyond it; if the substring is a palindrome, include it and recurse on the remainder.',
+        code: `class Solution:
+    def partition(self, s: str) -> list[list[str]]:
+        out = []
+        cur = []
+
+        def is_pal(a: str) -> bool:
+            return a == a[::-1]
+
+        def backtrack(start: int):
+            if start == len(s):
+                out.append(list(cur))
+                return
+            for end in range(start + 1, len(s) + 1):
+                piece = s[start:end]
+                if is_pal(piece):
+                    cur.append(piece)
+                    backtrack(end)
+                    cur.pop()
+
+        backtrack(0)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n * 2^n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Letter Combinations of a Phone Number (LC #17) ───────────────────────
@@ -425,6 +646,36 @@ Return the empty list if \`digits\` is empty.
       },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Map each digit to its letters. Recursively build combinations by picking one letter for each digit and appending it to the current path.',
+        code: `class Solution:
+    def letterCombinations(self, digits: str) -> list[str]:
+        if not digits:
+            return []
+        mapping = {
+            '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+            '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz',
+        }
+        out = []
+
+        def backtrack(i: int, path: list[str]):
+            if i == len(digits):
+                out.append(''.join(path))
+                return
+            for ch in mapping[digits[i]]:
+                path.append(ch)
+                backtrack(i + 1, path)
+                path.pop()
+
+        backtrack(0, [])
+        out.sort()
+        return out`,
+        timeComplexity: 'O(4^n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Word Search (LC #79) ──────────────────────────────────────────────────
@@ -474,6 +725,36 @@ place (e.g. overwriting with \`'#'\`) and restoring them on return.`,
       { label: 'Single no', inputJson: '{"board":[["a"]],"word":"b"}',                  expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Backtracking (DFS)',
+        intuition: 'Try every cell as a starting point. DFS along the word, marking cells as visited by overwriting with "#" and restoring on backtrack. Check bounds and character match at each step.',
+        code: `class Solution:
+    def exist(self, board: list[list[str]], word: str) -> bool:
+        m = len(board)
+        n = len(board[0]) if m else 0
+
+        def dfs(r: int, c: int, i: int) -> bool:
+            if i == len(word):
+                return True
+            if r < 0 or r >= m or c < 0 or c >= n or board[r][c] != word[i]:
+                return False
+            saved = board[r][c]
+            board[r][c] = '#'
+            found = (dfs(r + 1, c, i + 1) or dfs(r - 1, c, i + 1)
+                     or dfs(r, c + 1, i + 1) or dfs(r, c - 1, i + 1))
+            board[r][c] = saved
+            return found
+
+        for r in range(m):
+            for c in range(n):
+                if dfs(r, c, 0):
+                    return True
+        return False`,
+        timeComplexity: 'O(m * n * 4^L) where L is word length',
+        spaceComplexity: 'O(L)',
+      },
+    ],
   },
 
   // ─── N-Queens (LC #51) ─────────────────────────────────────────────────────
@@ -526,6 +807,47 @@ already occupied by a queen.`,
       },
     ],
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Place queens row by row. Track occupied columns and both diagonals (r-c and r+c) with sets. For each row, try every column that is not attacked, place the queen, recurse, then undo.',
+        code: `class Solution:
+    def solveNQueens(self, n: int) -> list[list[str]]:
+        out = []
+        cols = set()
+        diag1 = set()  # r - c
+        diag2 = set()  # r + c
+        queens = []
+
+        def backtrack(r: int):
+            if r == n:
+                board = []
+                for col in queens:
+                    row = ['.'] * n
+                    row[col] = 'Q'
+                    board.append(''.join(row))
+                out.append(board)
+                return
+            for c in range(n):
+                if c in cols or (r - c) in diag1 or (r + c) in diag2:
+                    continue
+                cols.add(c)
+                diag1.add(r - c)
+                diag2.add(r + c)
+                queens.append(c)
+                backtrack(r + 1)
+                queens.pop()
+                cols.remove(c)
+                diag1.remove(r - c)
+                diag2.remove(r + c)
+
+        backtrack(0)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n!)',
+        spaceComplexity: 'O(n^2)',
+      },
+    ],
   },
 
   // ─── Sudoku Solver (LC #37) ────────────────────────────────────────────────
@@ -584,5 +906,51 @@ and backtracking whenever a digit would violate one of the three constraints.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Backtracking',
+        intuition: 'Collect all empty cells, then try digits 1-9 in each. Use sets for each row, column, and 3x3 box to check validity in O(1). If a digit leads to a dead end, undo and try the next.',
+        code: `class Solution:
+    def solveSudoku(self, board: list[list[str]]) -> list[list[str]]:
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        boxes = [set() for _ in range(9)]
+        empties = []
+        for r in range(9):
+            for c in range(9):
+                ch = board[r][c]
+                if ch == '.':
+                    empties.append((r, c))
+                else:
+                    rows[r].add(ch)
+                    cols[c].add(ch)
+                    boxes[(r // 3) * 3 + (c // 3)].add(ch)
+
+        def backtrack(i: int) -> bool:
+            if i == len(empties):
+                return True
+            r, c = empties[i]
+            b = (r // 3) * 3 + (c // 3)
+            for d in '123456789':
+                if d in rows[r] or d in cols[c] or d in boxes[b]:
+                    continue
+                rows[r].add(d)
+                cols[c].add(d)
+                boxes[b].add(d)
+                board[r][c] = d
+                if backtrack(i + 1):
+                    return True
+                rows[r].remove(d)
+                cols[c].remove(d)
+                boxes[b].remove(d)
+                board[r][c] = '.'
+            return False
+
+        backtrack(0)
+        return board`,
+        timeComplexity: 'O(9^E) where E is number of empty cells',
+        spaceComplexity: 'O(E)',
+      },
+    ],
   },
 ];

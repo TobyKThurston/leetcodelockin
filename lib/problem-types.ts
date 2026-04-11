@@ -7,6 +7,14 @@
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export type ResultCompare = 'exact' | 'sorted_array' | 'set';
 
+export interface SolutionApproach {
+  approach: string;
+  intuition: string;
+  code: string;
+  timeComplexity: string;
+  spaceComplexity: string;
+}
+
 export interface ProblemExample {
   input: string;
   output: string;
@@ -34,6 +42,7 @@ export interface ProblemContent {
   argKeys: string[];
   defaultTests: ProblemTest[];
   resultCompare: ResultCompare;
+  solutions?: SolutionApproach[];
 }
 
 // Raw snake_case row shape returned by Supabase.

@@ -63,6 +63,26 @@ class Solution:
       { label: 'Single',     inputJson: '{"values":[7]}',         expectedJson: '[7]'         },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Iterative Pointer Reversal',
+        intuition: 'Walk the list once, flipping each node\'s next pointer to point at the previous node. Track prev, cur, and a temporary nxt.',
+        code: `class Solution:
+    def reverseList(self, values: list[int]) -> list[int]:
+        head = _to_list(values)
+        prev = None
+        cur = head
+        while cur is not None:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        return _from_list(prev)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Merge Two Sorted Lists (LC #21) ───────────────────────────────────────
@@ -123,6 +143,31 @@ class Solution:
       { label: 'Both empty',  inputJson: '{"list1":[],"list2":[]}',           expectedJson: '[]'            },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two-Pointer Merge',
+        intuition: 'Use a dummy head and a tail pointer. At each step, attach whichever of the two current nodes has the smaller value, then advance that pointer. Append the remaining list at the end.',
+        code: `class Solution:
+    def mergeTwoLists(self, list1: list[int], list2: list[int]) -> list[int]:
+        a = _to_list(list1)
+        b = _to_list(list2)
+        dummy = ListNode()
+        tail = dummy
+        while a is not None and b is not None:
+            if a.val <= b.val:
+                tail.next = a
+                a = a.next
+            else:
+                tail.next = b
+                b = b.next
+            tail = tail.next
+        tail.next = a if a is not None else b
+        return _from_list(dummy.next)
+`,
+        timeComplexity: 'O(m + n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Remove Duplicates from Sorted List (LC #83) ───────────────────────────
@@ -176,6 +221,25 @@ class Solution:
       { label: 'Empty',   inputJson: '{"values":[]}',            expectedJson: '[]'      },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Single Pass',
+        intuition: 'Walk the sorted list. Whenever cur.next has the same value as cur, skip it by setting cur.next = cur.next.next. Otherwise advance cur.',
+        code: `class Solution:
+    def deleteDuplicates(self, values: list[int]) -> list[int]:
+        head = _to_list(values)
+        cur = head
+        while cur is not None and cur.next is not None:
+            if cur.next.val == cur.val:
+                cur.next = cur.next.next
+            else:
+                cur = cur.next
+        return _from_list(head)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Remove Linked List Elements (LC #203) ─────────────────────────────────
@@ -228,6 +292,26 @@ class Solution:
       { label: 'Empty',        inputJson: '{"values":[],"val":1}',        expectedJson: '[]'      },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Dummy Head + Single Pass',
+        intuition: 'Use a dummy node before the head to handle edge cases. Walk through the list and skip any node whose value matches val by relinking around it.',
+        code: `class Solution:
+    def removeElements(self, values: list[int], val: int) -> list[int]:
+        head = _to_list(values)
+        dummy = ListNode(0, head)
+        cur = dummy
+        while cur.next is not None:
+            if cur.next.val == val:
+                cur.next = cur.next.next
+            else:
+                cur = cur.next
+        return _from_list(dummy.next)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Linked List Cycle (LC #141) ───────────────────────────────────────────
@@ -298,6 +382,44 @@ class Solution:
       { label: 'Empty',        inputJson: '{"values":[],"pos":-1}',        expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Set',
+        intuition: 'Store visited node IDs in a set. If you visit the same node twice, there is a cycle. Uses O(n) extra space.',
+        code: `class Solution:
+    def hasCycle(self, values: list[int], pos: int) -> bool:
+        head = _build_cyclic(values, pos)
+        seen = set()
+        cur = head
+        while cur is not None:
+            if id(cur) in seen:
+                return True
+            seen.add(id(cur))
+            cur = cur.next
+        return False
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: "Floyd's Tortoise and Hare",
+        intuition: 'Advance a slow pointer by one step and a fast pointer by two steps. If they ever meet, there is a cycle. If fast reaches the end, there is not.',
+        code: `class Solution:
+    def hasCycle(self, values: list[int], pos: int) -> bool:
+        head = _build_cyclic(values, pos)
+        slow = head
+        fast = head
+        while fast is not None and fast.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+            if slow is fast:
+                return True
+        return False
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Middle of the Linked List (LC #876) ───────────────────────────────────
@@ -351,6 +473,24 @@ class Solution:
       { label: 'Single node', inputJson: '{"values":[7]}',           expectedJson: '[7]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Fast / Slow Pointers',
+        intuition: 'Advance fast by two steps and slow by one. When fast reaches the end, slow is at the middle. For even-length lists this gives the second middle.',
+        code: `class Solution:
+    def middleNode(self, values: list[int]) -> list[int]:
+        head = _to_list(values)
+        slow = head
+        fast = head
+        while fast is not None and fast.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+        return _from_list(slow)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Remove Nth Node From End of List (LC #19) ─────────────────────────────
@@ -405,6 +545,50 @@ class Solution:
       { label: 'Head removed',  inputJson: '{"values":[1,2],"n":2}',       expectedJson: '[2]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two-Pass (Count then Remove)',
+        intuition: 'First count the list length, then compute the target index from the front and walk to one node before it to remove it. Requires two passes.',
+        code: `class Solution:
+    def removeNthFromEnd(self, values: list[int], n: int) -> list[int]:
+        head = _to_list(values)
+        dummy = ListNode(0, head)
+        length = 0
+        cur = head
+        while cur is not None:
+            length += 1
+            cur = cur.next
+        target = length - n
+        cur = dummy
+        for _ in range(target):
+            cur = cur.next
+        cur.next = cur.next.next
+        return _from_list(dummy.next)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'One-Pass with Two Pointers',
+        intuition: 'Use a dummy node and two pointers separated by n steps. Advance both until the leading pointer reaches the end; the trailing pointer is right before the node to delete.',
+        code: `class Solution:
+    def removeNthFromEnd(self, values: list[int], n: int) -> list[int]:
+        head = _to_list(values)
+        dummy = ListNode(0, head)
+        fast = dummy
+        slow = dummy
+        for _ in range(n):
+            fast = fast.next
+        while fast.next is not None:
+            fast = fast.next
+            slow = slow.next
+        slow.next = slow.next.next
+        return _from_list(dummy.next)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Palindrome Linked List (LC #234) ──────────────────────────────────────
@@ -455,6 +639,56 @@ class Solution:
       { label: 'Single',           inputJson: '{"values":[7]}',       expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Collect Values and Compare',
+        intuition: 'Walk the list to collect all values into an array, then check if the array equals its reverse. O(n) extra space but simple.',
+        code: `class Solution:
+    def isPalindrome(self, values: list[int]) -> bool:
+        head = _to_list(values)
+        vals = []
+        cur = head
+        while cur is not None:
+            vals.append(cur.val)
+            cur = cur.next
+        return vals == vals[::-1]
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Reverse Second Half In-Place',
+        intuition: 'Use fast/slow pointers to find the middle, reverse the second half in place, then compare the two halves node by node. Uses O(1) extra space.',
+        code: `class Solution:
+    def isPalindrome(self, values: list[int]) -> bool:
+        head = _to_list(values)
+        if head is None or head.next is None:
+            return True
+        slow = head
+        fast = head
+        while fast.next is not None and fast.next.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+        prev = None
+        cur = slow.next
+        while cur is not None:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        left = head
+        right = prev
+        while right is not None:
+            if left.val != right.val:
+                return False
+            left = left.next
+            right = right.next
+        return True
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Reorder List (LC #143) ────────────────────────────────────────────────
@@ -510,6 +744,43 @@ class Solution:
       { label: 'Single',      inputJson: '{"values":[1]}',         expectedJson: '[1]'         },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Find Middle, Reverse, Weave',
+        intuition: 'Three steps: (1) find the middle with fast/slow pointers, (2) reverse the second half in place, (3) interleave nodes from the two halves one at a time.',
+        code: `class Solution:
+    def reorderList(self, values: list[int]) -> list[int]:
+        head = _to_list(values)
+        if head is None or head.next is None:
+            return _from_list(head)
+        slow = head
+        fast = head
+        while fast.next is not None and fast.next.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+        prev = None
+        cur = slow.next
+        slow.next = None
+        while cur is not None:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        first = head
+        second = prev
+        while second is not None:
+            t1 = first.next
+            t2 = second.next
+            first.next = second
+            second.next = t1
+            first = t1
+            second = t2
+        return _from_list(head)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Add Two Numbers (LC #2) ───────────────────────────────────────────────
@@ -570,6 +841,34 @@ class Solution:
       { label: 'No carry',       inputJson: '{"l1":[2,4,3],"l2":[5,6,4]}', expectedJson: '[7,0,8]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Schoolbook Addition with Carry',
+        intuition: 'Walk both lists simultaneously with a running carry. At each step emit (a + b + carry) % 10 and update carry. Continue until both lists and carry are exhausted.',
+        code: `class Solution:
+    def addTwoNumbers(self, l1: list[int], l2: list[int]) -> list[int]:
+        a = _to_list(l1)
+        b = _to_list(l2)
+        dummy = ListNode()
+        tail = dummy
+        carry = 0
+        while a is not None or b is not None or carry:
+            x = a.val if a is not None else 0
+            y = b.val if b is not None else 0
+            total = x + y + carry
+            carry = total // 10
+            tail.next = ListNode(total % 10)
+            tail = tail.next
+            if a is not None:
+                a = a.next
+            if b is not None:
+                b = b.next
+        return _from_list(dummy.next)
+`,
+        timeComplexity: 'O(max(m, n))',
+        spaceComplexity: 'O(max(m, n))',
+      },
+    ],
   },
 
   // ─── Copy List with Random Pointer (LC #138) ───────────────────────────────
@@ -663,6 +962,32 @@ class Solution:
       { label: 'Single',      inputJson: '{"nodes":[[1,null]]}',               expectedJson: '[[1,null]]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Map (Two Passes)',
+        intuition: 'First pass: create a new node for every original node and store the mapping in a dictionary. Second pass: wire up next and random pointers using the mapping.',
+        code: `class Solution:
+    def copyRandomList(self, nodes: list) -> list:
+        head = _to_rand_list(nodes)
+        if head is None:
+            return []
+        mapping = {}
+        cur = head
+        while cur is not None:
+            mapping[id(cur)] = Node(cur.val)
+            cur = cur.next
+        cur = head
+        while cur is not None:
+            new_node = mapping[id(cur)]
+            new_node.next = mapping[id(cur.next)] if cur.next is not None else None
+            new_node.random = mapping[id(cur.random)] if cur.random is not None else None
+            cur = cur.next
+        return _from_rand_list(mapping[id(head)])
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Reverse Nodes in k-Group (LC #25) ─────────────────────────────────────
@@ -718,5 +1043,36 @@ class Solution:
       { label: 'Empty',         inputJson: '{"values":[],"k":1}',        expectedJson: '[]'          },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Iterative Group Reversal',
+        intuition: 'Use a dummy node. For each group, check k nodes ahead. If fewer than k remain, stop. Otherwise reverse the group in place by flipping pointers, then reconnect the group boundaries.',
+        code: `class Solution:
+    def reverseKGroup(self, values: list[int], k: int) -> list[int]:
+        head = _to_list(values)
+        dummy = ListNode(0, head)
+        group_prev = dummy
+        while True:
+            kth = group_prev
+            for _ in range(k):
+                kth = kth.next
+                if kth is None:
+                    return _from_list(dummy.next)
+            group_next = kth.next
+            prev = group_next
+            cur = group_prev.next
+            while cur is not group_next:
+                nxt = cur.next
+                cur.next = prev
+                prev = cur
+                cur = nxt
+            new_group_prev = group_prev.next
+            group_prev.next = kth
+            group_prev = new_group_prev
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 ];

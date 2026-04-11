@@ -52,6 +52,30 @@ record it as seen or report a collision.`,
       { label: 'Single element',  inputJson: '{"nums":[42]}',         expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sorting)',
+        intuition: 'Sort the array — if there are duplicates, they will be adjacent. Compare each element with its neighbor.',
+        code: `class Solution:
+    def containsDuplicate(self, nums: list[int]) -> bool:
+        nums.sort()
+        for i in range(1, len(nums)):
+            if nums[i] == nums[i - 1]:
+                return True
+        return False`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Hash Set',
+        intuition: 'Insert each element into a set. If we ever try to insert an element that is already there, we found a duplicate. Alternatively, just compare the set size to the array length.',
+        code: `class Solution:
+    def containsDuplicate(self, nums: list[int]) -> bool:
+        return len(set(nums)) != len(nums)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Valid Anagram (LC #242) ────────────────────────────────────────────────
@@ -99,6 +123,35 @@ character-frequency map for one string and decrements while scanning the other.`
       { label: 'Different length', inputJson: '{"s":"abc","t":"abcd"}',    expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sorting)',
+        intuition: 'Sort both strings and compare. Anagrams will produce the same sorted string.',
+        code: `class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        return sorted(s) == sorted(t)`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Hash Map (Frequency Count)',
+        intuition: 'Count character frequencies for the first string, then decrement for the second. If all counts return to zero, the strings are anagrams.',
+        code: `class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        if len(s) != len(t):
+            return False
+        counts = {}
+        for ch in s:
+            counts[ch] = counts.get(ch, 0) + 1
+        for ch in t:
+            if counts.get(ch, 0) == 0:
+                return False
+            counts[ch] -= 1
+        return True`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Two Sum (LC #1) ────────────────────────────────────────────────────────
@@ -152,6 +205,36 @@ remembering each value you have seen so far in a hash map keyed by value.`,
     ],
     // sorted_array: the pair may come back in either index order.
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each element, scan every other element to see if any pair sums to target. Simple but slow.',
+        code: `class Solution:
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                if nums[i] + nums[j] == target:
+                    return [i, j]
+        return []`,
+        timeComplexity: 'O(n²)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Hash Map (One Pass)',
+        intuition: 'As we iterate, store each value and its index in a hash map. For each new value, check if its complement (target - value) was already seen.',
+        code: `class Solution:
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        seen = {}
+        for i, v in enumerate(nums):
+            j = seen.get(target - v)
+            if j is not None:
+                return [j, i]
+            seen[v] = i
+        return []`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Group Anagrams (LC #49) ────────────────────────────────────────────────
@@ -218,6 +301,47 @@ input.`,
     ],
     // sorted_array: outer list order is normalised by the grader.
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Sorting',
+        intuition: 'Sort each string to get a canonical key. Group strings that share the same sorted key using a hash map.',
+        code: `class Solution:
+    def groupAnagrams(self, strs: list[str]) -> list[list[str]]:
+        buckets = {}
+        for s in strs:
+            key = ''.join(sorted(s))
+            buckets.setdefault(key, []).append(s)
+        out = []
+        for group in buckets.values():
+            group.sort()
+            out.append(group)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n · k log k)',
+        spaceComplexity: 'O(n · k)',
+      },
+      {
+        approach: 'Character Count Key',
+        intuition: 'Instead of sorting each string, count the frequency of each letter and use that count tuple as the hash key. This avoids the k log k sorting cost per string.',
+        code: `class Solution:
+    def groupAnagrams(self, strs: list[str]) -> list[list[str]]:
+        buckets = {}
+        for s in strs:
+            counts = [0] * 26
+            for ch in s:
+                counts[ord(ch) - ord('a')] += 1
+            key = tuple(counts)
+            buckets.setdefault(key, []).append(s)
+        out = []
+        for group in buckets.values():
+            group.sort()
+            out.append(group)
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n · k)',
+        spaceComplexity: 'O(n · k)',
+      },
+    ],
   },
 
   // ─── Top K Frequent Elements (LC #347) ──────────────────────────────────────
@@ -266,6 +390,42 @@ highest to lowest gives the top \`k\` in linear time.`,
     ],
     // set: problem says "order does not matter".
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'Heap',
+        intuition: 'Count frequencies with a hash map, then use a max-heap (or min-heap of size k) to extract the k most frequent elements.',
+        code: `class Solution:
+    def topKFrequent(self, nums: list[int], k: int) -> list[int]:
+        import heapq
+        counts = {}
+        for v in nums:
+            counts[v] = counts.get(v, 0) + 1
+        return heapq.nlargest(k, counts.keys(), key=counts.get)`,
+        timeComplexity: 'O(n log k)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bucket Sort',
+        intuition: 'Create an array of buckets where index i holds elements that appear i times. The max frequency is n, so we walk the buckets from high to low collecting k elements in linear time.',
+        code: `class Solution:
+    def topKFrequent(self, nums: list[int], k: int) -> list[int]:
+        counts = {}
+        for v in nums:
+            counts[v] = counts.get(v, 0) + 1
+        buckets = [[] for _ in range(len(nums) + 1)]
+        for v, c in counts.items():
+            buckets[c].append(v)
+        out = []
+        for c in range(len(buckets) - 1, 0, -1):
+            for v in buckets[c]:
+                out.append(v)
+                if len(out) == k:
+                    return out
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Product of Array Except Self (LC #238) ─────────────────────────────────
@@ -315,6 +475,43 @@ multiply each entry by "product of everything to my right" computed on the way b
       { label: 'Has zero',     inputJson: '{"nums":[2,0,3]}',   expectedJson: '[0,6,0]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Extra Arrays)',
+        intuition: 'Build a prefix product array and a suffix product array. The answer at index i is prefix[i] * suffix[i].',
+        code: `class Solution:
+    def productExceptSelf(self, nums: list[int]) -> list[int]:
+        n = len(nums)
+        prefix = [1] * n
+        suffix = [1] * n
+        for i in range(1, n):
+            prefix[i] = prefix[i - 1] * nums[i - 1]
+        for i in range(n - 2, -1, -1):
+            suffix[i] = suffix[i + 1] * nums[i + 1]
+        return [prefix[i] * suffix[i] for i in range(n)]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Optimal (Constant Extra Space)',
+        intuition: 'Use the output array to store prefix products in the first pass, then multiply by suffix products in a second pass using a single running variable.',
+        code: `class Solution:
+    def productExceptSelf(self, nums: list[int]) -> list[int]:
+        n = len(nums)
+        out = [1] * n
+        left = 1
+        for i in range(n):
+            out[i] = left
+            left *= nums[i]
+        right = 1
+        for i in range(n - 1, -1, -1):
+            out[i] *= right
+            right *= nums[i]
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Intersection of Two Arrays (LC #349) ───────────────────────────────────
@@ -362,6 +559,17 @@ that are present in the set.`,
     ],
     // set: result is distinct values, order irrelevant.
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'Hash Set',
+        intuition: 'Convert both arrays to sets and return their intersection. Python makes this a one-liner with the & operator.',
+        code: `class Solution:
+    def intersection(self, nums1: list[int], nums2: list[int]) -> list[int]:
+        return list(set(nums1) & set(nums2))`,
+        timeComplexity: 'O(n + m)',
+        spaceComplexity: 'O(n + m)',
+      },
+    ],
   },
 
   // ─── Find All Numbers Disappeared in an Array (LC #448) ─────────────────────
@@ -410,6 +618,31 @@ sort" pattern tag.`,
     ],
     // sorted_array: the problem says the answer is a list; order doesn't matter to graders.
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Hash Set',
+        intuition: 'Put all values into a set, then check which numbers from 1 to n are missing from the set.',
+        code: `class Solution:
+    def findDisappearedNumbers(self, nums: list[int]) -> list[int]:
+        present = set(nums)
+        return [v for v in range(1, len(nums) + 1) if v not in present]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Index Marking (O(1) Space)',
+        intuition: 'Use the array itself as a hash map. For each value v, negate nums[v-1] to mark that v exists. After one pass, positive values at index i mean i+1 was never seen.',
+        code: `class Solution:
+    def findDisappearedNumbers(self, nums: list[int]) -> list[int]:
+        for v in nums:
+            idx = abs(v) - 1
+            if nums[idx] > 0:
+                nums[idx] = -nums[idx]
+        return [i + 1 for i in range(len(nums)) if nums[i] > 0]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Unique Number of Occurrences (LC #1207) ───────────────────────────────
@@ -456,6 +689,21 @@ is the same size as the list of counts.`,
       { label: 'Singleton',     inputJson: '{"arr":[5,5]}',         expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Map + Set',
+        intuition: 'Count the frequency of each value using a hash map, then check if all frequency counts are unique by comparing the length of the counts list to a set of counts.',
+        code: `class Solution:
+    def uniqueOccurrences(self, arr: list[int]) -> bool:
+        counts = {}
+        for v in arr:
+            counts[v] = counts.get(v, 0) + 1
+        vals = list(counts.values())
+        return len(set(vals)) == len(vals)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Valid Sudoku (LC #36) ─────────────────────────────────────────────────
@@ -523,6 +771,31 @@ and a set per 3x3 box, and reports a collision as soon as any set would receive 
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Sets (Rows, Cols, Boxes)',
+        intuition: 'Walk every cell once. Maintain a set per row, a set per column, and a set per 3x3 box. If any digit is already in a set when we try to add it, the board is invalid.',
+        code: `class Solution:
+    def isValidSudoku(self, board: list[list[str]]) -> bool:
+        rows = [set() for _ in range(9)]
+        cols = [set() for _ in range(9)]
+        boxes = [set() for _ in range(9)]
+        for r in range(9):
+            for c in range(9):
+                ch = board[r][c]
+                if ch == '.':
+                    continue
+                b = (r // 3) * 3 + (c // 3)
+                if ch in rows[r] or ch in cols[c] or ch in boxes[b]:
+                    return False
+                rows[r].add(ch)
+                cols[c].add(ch)
+                boxes[b].add(ch)
+        return True`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Subarray Sum Equals K (LC #560) ───────────────────────────────────────
@@ -573,6 +846,40 @@ here with sum \`k\` is exactly the number of previously-seen prefix sums equal t
       { label: 'No hits',      inputJson: '{"nums":[5,5,5],"k":3}',     expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For every pair (i, j), compute the sum of the subarray from i to j. Count how many equal k.',
+        code: `class Solution:
+    def subarraySum(self, nums: list[int], k: int) -> int:
+        count = 0
+        for i in range(len(nums)):
+            total = 0
+            for j in range(i, len(nums)):
+                total += nums[j]
+                if total == k:
+                    count += 1
+        return count`,
+        timeComplexity: 'O(n²)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Prefix Sum + Hash Map',
+        intuition: 'Maintain a running prefix sum and a hash map counting how many times each prefix sum has occurred. For each new prefix sum cur, the number of subarrays ending here with sum k is the count of prefix sums equal to cur - k.',
+        code: `class Solution:
+    def subarraySum(self, nums: list[int], k: int) -> int:
+        seen = {0: 1}
+        cur = 0
+        count = 0
+        for v in nums:
+            cur += v
+            count += seen.get(cur - k, 0)
+            seen[cur] = seen.get(cur, 0) + 1
+        return count`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Longest Consecutive Sequence (LC #128) ────────────────────────────────
@@ -621,5 +928,49 @@ of a run). For every start, walk forward counting how long the run extends.`,
       { label: 'Single value', inputJson: '{"nums":[42]}',                  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sorting)',
+        intuition: 'Sort the array. Then consecutive sequences become adjacent runs. Walk through and track the longest run.',
+        code: `class Solution:
+    def longestConsecutive(self, nums: list[int]) -> int:
+        if not nums:
+            return 0
+        nums.sort()
+        best = 1
+        cur = 1
+        for i in range(1, len(nums)):
+            if nums[i] == nums[i - 1]:
+                continue
+            if nums[i] == nums[i - 1] + 1:
+                cur += 1
+                best = max(best, cur)
+            else:
+                cur = 1
+        return best`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Hash Set',
+        intuition: 'Put all values in a set. For each value v, only start counting if v-1 is NOT in the set (so v is the start of a sequence). Then count forward v+1, v+2, ... while they exist. Each element is visited at most twice.',
+        code: `class Solution:
+    def longestConsecutive(self, nums: list[int]) -> int:
+        s = set(nums)
+        best = 0
+        for v in s:
+            if v - 1 in s:
+                continue
+            length = 1
+            cur = v + 1
+            while cur in s:
+                length += 1
+                cur += 1
+            best = max(best, length)
+        return best`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 ];

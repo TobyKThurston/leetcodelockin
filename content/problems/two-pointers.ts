@@ -48,6 +48,37 @@ character that is not alphanumeric and compare the rest case-insensitively.`,
       { label: 'Empty after strip',inputJson: '{"s":".,;"}',              expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Clean and Compare',
+        intuition: 'Filter out non-alphanumeric characters, lowercase everything, then compare the cleaned string with its reverse.',
+        code: `class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        cleaned = ''.join(ch.lower() for ch in s if ch.isalnum())
+        return cleaned == cleaned[::-1]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Two Pointers',
+        intuition: 'Use two pointers from each end, skipping non-alphanumeric characters. Compare characters in place without creating a new string.',
+        code: `class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        i, j = 0, len(s) - 1
+        while i < j:
+            while i < j and not s[i].isalnum():
+                i += 1
+            while i < j and not s[j].isalnum():
+                j -= 1
+            if s[i].lower() != s[j].lower():
+                return False
+            i += 1
+            j -= 1
+        return True`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Reverse String (LC #344) ───────────────────────────────────────────────
@@ -95,6 +126,22 @@ as they move toward each other. You should aim for **O(1)** extra memory beyond 
       { label: 'Single char',  inputJson: '{"s":["x"]}',                      expectedJson: '["x"]'                     },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers (Swap)',
+        intuition: 'Use two pointers that walk toward each other. At each step, swap the characters at the two pointers, then move both inward.',
+        code: `class Solution:
+    def reverseString(self, s: list[str]) -> list[str]:
+        i, j = 0, len(s) - 1
+        while i < j:
+            s[i], s[j] = s[j], s[i]
+            i += 1
+            j -= 1
+        return s`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Move Zeroes (LC #283) ──────────────────────────────────────────────────
@@ -143,6 +190,22 @@ with zeros.
       { label: 'No zeros',      inputJson: '{"nums":[1,2,3]}',         expectedJson: '[1,2,3]'         },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers (Swap)',
+        intuition: 'Use a write pointer w that tracks where the next non-zero should go. Scan with a read pointer r — whenever we find a non-zero, swap it to position w and advance w.',
+        code: `class Solution:
+    def moveZeroes(self, nums: list[int]) -> list[int]:
+        w = 0
+        for r in range(len(nums)):
+            if nums[r] != 0:
+                nums[w], nums[r] = nums[r], nums[w]
+                w += 1
+        return nums`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Squares of a Sorted Array (LC #977) ────────────────────────────────────
@@ -190,6 +253,38 @@ largest square always lives at one of the two ends.`,
       { label: 'All positive',inputJson: '{"nums":[1,2,3]}',       expectedJson: '[1,4,9]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sort After Squaring)',
+        intuition: 'Square every element and then sort the resulting array.',
+        code: `class Solution:
+    def sortedSquares(self, nums: list[int]) -> list[int]:
+        return sorted(x * x for x in nums)`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Two Pointers',
+        intuition: 'The largest square is always at one of the two ends (most negative or most positive). Use two pointers from each end, placing the larger square at the back of the result array and working inward.',
+        code: `class Solution:
+    def sortedSquares(self, nums: list[int]) -> list[int]:
+        n = len(nums)
+        out = [0] * n
+        i, j, k = 0, n - 1, n - 1
+        while i <= j:
+            a, b = nums[i] * nums[i], nums[j] * nums[j]
+            if a > b:
+                out[k] = a
+                i += 1
+            else:
+                out[k] = b
+                j -= 1
+            k -= 1
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Two Sum II — Input Array Is Sorted (LC #167) ──────────────────────────
@@ -237,6 +332,26 @@ sweep from both ends takes \`O(n)\` time and \`O(1)\` extra memory.`,
       { label: 'Negatives', inputJson: '{"numbers":[-3,-1,2,5],"target":1}',    expectedJson: '[2,3]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers',
+        intuition: 'Since the array is sorted, use two pointers at each end. If the sum is too small, move the left pointer right to increase it. If too large, move the right pointer left. Stop when you find the target.',
+        code: `class Solution:
+    def twoSum(self, numbers: list[int], target: int) -> list[int]:
+        i, j = 0, len(numbers) - 1
+        while i < j:
+            s = numbers[i] + numbers[j]
+            if s == target:
+                return [i + 1, j + 1]
+            if s < target:
+                i += 1
+            else:
+                j -= 1
+        return []`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Container With Most Water (LC #11) ────────────────────────────────────
@@ -286,6 +401,41 @@ because moving the taller side inward can only shrink the area.`,
       { label: 'Tall edges',    inputJson: '{"height":[5,1,1,1,5]}',     expectedJson: '20' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'Try every pair of lines and compute the area. Return the maximum.',
+        code: `class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        best = 0
+        for i in range(len(height)):
+            for j in range(i + 1, len(height)):
+                area = min(height[i], height[j]) * (j - i)
+                best = max(best, area)
+        return best`,
+        timeComplexity: 'O(n²)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Two Pointers',
+        intuition: 'Start with pointers at both ends for maximum width. Always move the shorter side inward — moving the taller side can only shrink or maintain the area, never increase it.',
+        code: `class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        i, j = 0, len(height) - 1
+        best = 0
+        while i < j:
+            h = min(height[i], height[j])
+            area = h * (j - i)
+            best = max(best, area)
+            if height[i] < height[j]:
+                i += 1
+            else:
+                j -= 1
+        return best`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Remove Duplicates from Sorted Array (LC #26) ──────────────────────────
@@ -336,6 +486,24 @@ only advances when the read pointer finds a value different from the previous un
       { label: 'Already unique', inputJson: '{"nums":[1,2,3]}',      expectedJson: '[1,2,3]'   },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers',
+        intuition: 'Since the array is sorted, use a write pointer w. Walk a read pointer r through the array — whenever nums[r] differs from nums[r-1], copy it to position w and advance w. Return the first w elements.',
+        code: `class Solution:
+    def removeDuplicates(self, nums: list[int]) -> list[int]:
+        if not nums:
+            return []
+        w = 1
+        for r in range(1, len(nums)):
+            if nums[r] != nums[r - 1]:
+                nums[w] = nums[r]
+                w += 1
+        return nums[:w]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── 3Sum (LC #15) ─────────────────────────────────────────────────────────
@@ -386,6 +554,39 @@ the suffix looking for pairs summing to \`-nums[i]\`, skipping duplicates at eve
       { label: 'All zeros',    inputJson: '{"nums":[0,0,0,0]}',         expectedJson: '[[0,0,0]]'             },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort + Two Pointers',
+        intuition: 'Sort the array. Fix one element at index i, then use two pointers (lo, hi) on the remaining suffix to find pairs that sum to -nums[i]. Skip duplicates at every level to avoid repeated triplets.',
+        code: `class Solution:
+    def threeSum(self, nums: list[int]) -> list[list[int]]:
+        nums = sorted(nums)
+        out = []
+        n = len(nums)
+        for i in range(n - 2):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+            lo, hi = i + 1, n - 1
+            while lo < hi:
+                s = nums[i] + nums[lo] + nums[hi]
+                if s == 0:
+                    out.append([nums[i], nums[lo], nums[hi]])
+                    lo += 1
+                    hi -= 1
+                    while lo < hi and nums[lo] == nums[lo - 1]:
+                        lo += 1
+                    while lo < hi and nums[hi] == nums[hi + 1]:
+                        hi -= 1
+                elif s < 0:
+                    lo += 1
+                else:
+                    hi -= 1
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n²)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── 4Sum (LC #18) ─────────────────────────────────────────────────────────
@@ -437,6 +638,42 @@ run a two-pointer sweep on the remaining suffix, skipping duplicates at every le
       { label: 'No hit',        inputJson: '{"nums":[1,2,3,4],"target":100}',  expectedJson: '[]'          },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort + Two Pointers',
+        intuition: 'Generalize 3Sum: sort, fix the first two elements with nested loops, then use two pointers on the remaining suffix. Skip duplicates at all levels.',
+        code: `class Solution:
+    def fourSum(self, nums: list[int], target: int) -> list[list[int]]:
+        nums = sorted(nums)
+        n = len(nums)
+        out = []
+        for i in range(n - 3):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+            for j in range(i + 1, n - 2):
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+                lo, hi = j + 1, n - 1
+                while lo < hi:
+                    s = nums[i] + nums[j] + nums[lo] + nums[hi]
+                    if s == target:
+                        out.append([nums[i], nums[j], nums[lo], nums[hi]])
+                        lo += 1
+                        hi -= 1
+                        while lo < hi and nums[lo] == nums[lo - 1]:
+                            lo += 1
+                        while lo < hi and nums[hi] == nums[hi + 1]:
+                            hi -= 1
+                    elif s < target:
+                        lo += 1
+                    else:
+                        hi -= 1
+        out.sort()
+        return out`,
+        timeComplexity: 'O(n³)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Sort Colors (LC #75) ──────────────────────────────────────────────────
@@ -486,6 +723,45 @@ should aim for **O(1)** extra memory beyond the input.
       { label: 'All same',  inputJson: '{"nums":[1,1,1]}',         expectedJson: '[1,1,1]'         },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Counting Sort',
+        intuition: 'Count occurrences of 0, 1, and 2, then overwrite the array with the right number of each value.',
+        code: `class Solution:
+    def sortColors(self, nums: list[int]) -> list[int]:
+        counts = [0, 0, 0]
+        for v in nums:
+            counts[v] += 1
+        i = 0
+        for color in range(3):
+            for _ in range(counts[color]):
+                nums[i] = color
+                i += 1
+        return nums`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Dutch National Flag',
+        intuition: 'Use three pointers: lo (boundary of 0s), mid (current), hi (boundary of 2s). Swap 0s to the front and 2s to the back in a single pass.',
+        code: `class Solution:
+    def sortColors(self, nums: list[int]) -> list[int]:
+        lo, mid, hi = 0, 0, len(nums) - 1
+        while mid <= hi:
+            if nums[mid] == 0:
+                nums[lo], nums[mid] = nums[mid], nums[lo]
+                lo += 1
+                mid += 1
+            elif nums[mid] == 2:
+                nums[mid], nums[hi] = nums[hi], nums[mid]
+                hi -= 1
+            else:
+                mid += 1
+        return nums`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Trapping Rain Water (LC #42) ──────────────────────────────────────────
@@ -534,6 +810,58 @@ shorter side and accumulating water based on the running maximum on that side.`,
       { label: 'Single bar',    inputJson: '{"height":[4]}',         expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Prefix Max Arrays',
+        intuition: 'Precompute the maximum height to the left and right of each position. Water at position i is min(leftMax[i], rightMax[i]) - height[i].',
+        code: `class Solution:
+    def trap(self, height: list[int]) -> int:
+        n = len(height)
+        if n == 0:
+            return 0
+        left_max = [0] * n
+        right_max = [0] * n
+        left_max[0] = height[0]
+        for i in range(1, n):
+            left_max[i] = max(left_max[i - 1], height[i])
+        right_max[n - 1] = height[n - 1]
+        for i in range(n - 2, -1, -1):
+            right_max[i] = max(right_max[i + 1], height[i])
+        total = 0
+        for i in range(n):
+            total += min(left_max[i], right_max[i]) - height[i]
+        return total`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Two Pointers',
+        intuition: 'Walk from both ends, always advancing the shorter side. Track the running max on each side. Water at any position is determined by the running max on its side minus the height.',
+        code: `class Solution:
+    def trap(self, height: list[int]) -> int:
+        if not height:
+            return 0
+        i, j = 0, len(height) - 1
+        lmax = rmax = 0
+        total = 0
+        while i < j:
+            if height[i] < height[j]:
+                if height[i] >= lmax:
+                    lmax = height[i]
+                else:
+                    total += lmax - height[i]
+                i += 1
+            else:
+                if height[j] >= rmax:
+                    rmax = height[j]
+                else:
+                    total += rmax - height[j]
+                j -= 1
+        return total`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Boats to Save People (LC #881) ────────────────────────────────────────
@@ -586,5 +914,24 @@ otherwise the heavy person goes alone. Advance pointers and repeat.`,
       { label: 'Tight fit',     inputJson: '{"people":[1,2],"limit":3}',      expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy Two Pointers',
+        intuition: 'Sort by weight. Pair the lightest with the heaviest person. If they fit together, both go; otherwise the heavy person goes alone. This greedy approach is optimal because pairing the lightest with the heaviest maximizes the chance of sharing boats.',
+        code: `class Solution:
+    def numRescueBoats(self, people: list[int], limit: int) -> int:
+        people = sorted(people)
+        i, j = 0, len(people) - 1
+        boats = 0
+        while i <= j:
+            if people[i] + people[j] <= limit:
+                i += 1
+            j -= 1
+            boats += 1
+        return boats`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 ];

@@ -49,6 +49,39 @@ far, and at each day compute today's price minus that minimum. Keep the largest 
       { label: 'Single day',      inputJson: '{"prices":[5]}',           expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'Check every pair of days (i, j) where j > i, compute prices[j] - prices[i], and track the maximum. This considers all possible trades.',
+        code: `class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        best = 0
+        for i in range(len(prices)):
+            for j in range(i + 1, len(prices)):
+                best = max(best, prices[j] - prices[i])
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'One Pass (Track Minimum)',
+        intuition: 'Walk through prices once, keeping track of the lowest price seen so far. At each day, compute the profit if you sold today and update the best profit. This works because the best buy must come before the best sell.',
+        code: `class Solution:
+    def maxProfit(self, prices: list[int]) -> int:
+        best = 0
+        lo = prices[0]
+        for p in prices:
+            if p < lo:
+                lo = p
+            elif p - lo > best:
+                best = p - lo
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Longest Substring Without Repeating Characters (LC #3) ────────────────
@@ -100,6 +133,45 @@ the duplicate is gone.`,
       { label: 'No dups',inputJson: '{"s":"abcdef"}',    expectedJson: '6' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each starting index, check all possible substrings by expanding rightward and using a set to detect duplicates. Reset whenever a duplicate is found.',
+        code: `class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        best = 0
+        for i in range(len(s)):
+            seen = set()
+            for j in range(i, len(s)):
+                if s[j] in seen:
+                    break
+                seen.add(s[j])
+                best = max(best, j - i + 1)
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(min(n, m)) where m is the character set size',
+      },
+      {
+        approach: 'Sliding Window with Last-Seen Map',
+        intuition: 'Maintain a map of each character to its most recent index. When you encounter a character already in the window, jump the left pointer past its previous occurrence. This lets you process each character at most once.',
+        code: `class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        last = {}
+        best = 0
+        left = 0
+        for i, ch in enumerate(s):
+            if ch in last and last[ch] >= left:
+                left = last[ch] + 1
+            last[ch] = i
+            if i - left + 1 > best:
+                best = i - left + 1
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(min(n, m)) where m is the character set size',
+      },
+    ],
   },
 
   // ─── Maximum Average Subarray I (LC #643) ──────────────────────────────────
@@ -147,6 +219,37 @@ element. Divide the best sum by \`k\` at the end.`,
       { label: 'Whole array',   inputJson: '{"nums":[5,5,5,5],"k":4}',       expectedJson: '5.0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'Compute the sum of every contiguous subarray of length k, divide by k, and track the maximum. This recomputes the sum from scratch for each window.',
+        code: `class Solution:
+    def findMaxAverage(self, nums: list[int], k: int) -> float:
+        best = float('-inf')
+        for i in range(len(nums) - k + 1):
+            best = max(best, sum(nums[i:i+k]))
+        return best / k
+`,
+        timeComplexity: 'O(n * k)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Fixed Sliding Window',
+        intuition: 'Compute the sum of the first window, then slide one step at a time by adding the new element and subtracting the departing element. Divide the best sum by k at the end.',
+        code: `class Solution:
+    def findMaxAverage(self, nums: list[int], k: int) -> float:
+        cur = sum(nums[:k])
+        best = cur
+        for i in range(k, len(nums)):
+            cur += nums[i] - nums[i - k]
+            if cur > best:
+                best = cur
+        return best / k
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Contains Duplicate II (LC #219) ───────────────────────────────────────
@@ -193,6 +296,37 @@ previous occurrence of each value is within distance \`k\` as you scan.`,
       { label: 'No dups',   inputJson: '{"nums":[1,2,3,4],"k":3}', expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For every pair of indices, check if nums[i] == nums[j] and abs(i - j) <= k. This directly checks the condition but is slow for large inputs.',
+        code: `class Solution:
+    def containsNearbyDuplicate(self, nums: list[int], k: int) -> bool:
+        for i in range(len(nums)):
+            for j in range(i + 1, min(i + k + 1, len(nums))):
+                if nums[i] == nums[j]:
+                    return True
+        return False
+`,
+        timeComplexity: 'O(n * k)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Hash Map (Last-Seen Index)',
+        intuition: 'Keep a hash map from each value to its most recent index. For each element, check if we have seen it before within distance k. This gives a single-pass O(n) solution.',
+        code: `class Solution:
+    def containsNearbyDuplicate(self, nums: list[int], k: int) -> bool:
+        last = {}
+        for i, v in enumerate(nums):
+            if v in last and i - last[v] <= k:
+                return True
+            last[v] = i
+        return False
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Minimum Size Subarray Sum (LC #209) ───────────────────────────────────
@@ -241,6 +375,49 @@ the sum reaches \`target\` shrink from the left while the sum stays large enough
       { label: 'Exact fit',   inputJson: '{"target":11,"nums":[5,6]}',         expectedJson: '2' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'Check every possible subarray starting at each index, accumulating the sum and recording the shortest one that reaches the target.',
+        code: `class Solution:
+    def minSubArrayLen(self, target: int, nums: list[int]) -> int:
+        best = 0
+        for i in range(len(nums)):
+            cur = 0
+            for j in range(i, len(nums)):
+                cur += nums[j]
+                if cur >= target:
+                    window = j - i + 1
+                    if best == 0 or window < best:
+                        best = window
+                    break
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Variable Sliding Window',
+        intuition: 'Since all values are positive, growing the window only increases the sum. Expand the right edge, and whenever the sum reaches the target, shrink from the left while the sum stays large enough, tracking the minimum window size.',
+        code: `class Solution:
+    def minSubArrayLen(self, target: int, nums: list[int]) -> int:
+        best = 0
+        cur = 0
+        left = 0
+        for right in range(len(nums)):
+            cur += nums[right]
+            while cur >= target:
+                window = right - left + 1
+                if best == 0 or window < best:
+                    best = window
+                cur -= nums[left]
+                left += 1
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Maximum Number of Vowels in a Substring of Given Length (LC #1456) ────
@@ -289,6 +466,43 @@ what enters and leaves the window.`,
       { label: 'All vowels', inputJson: '{"s":"aeiou","k":5}',   expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each window of size k, count how many characters are vowels by scanning the entire window. Track the maximum count across all windows.',
+        code: `class Solution:
+    def maxVowels(self, s: str, k: int) -> int:
+        vowels = set('aeiou')
+        best = 0
+        for i in range(len(s) - k + 1):
+            count = sum(1 for c in s[i:i+k] if c in vowels)
+            best = max(best, count)
+        return best
+`,
+        timeComplexity: 'O(n * k)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Fixed Sliding Window',
+        intuition: 'Compute the vowel count of the first k characters, then slide one character at a time: add 1 if the entering character is a vowel, subtract 1 if the leaving character is a vowel.',
+        code: `class Solution:
+    def maxVowels(self, s: str, k: int) -> int:
+        vowels = set('aeiou')
+        cur = sum(1 for c in s[:k] if c in vowels)
+        best = cur
+        for i in range(k, len(s)):
+            if s[i] in vowels:
+                cur += 1
+            if s[i - k] in vowels:
+                cur -= 1
+            if cur > best:
+                best = cur
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Permutation in String (LC #567) ───────────────────────────────────────
@@ -341,6 +555,48 @@ match those of \`s1\`? The usual solution maintains two length-26 frequency arra
       { label: 'No match',      inputJson: '{"s1":"abc","s2":"aabbcc"}',    expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sort Each Window)',
+        intuition: 'For every window of length len(s1) in s2, sort both the window and s1 and compare. If sorted forms match, the window is a permutation.',
+        code: `class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        k = len(s1)
+        target = sorted(s1)
+        for i in range(len(s2) - k + 1):
+            if sorted(s2[i:i+k]) == target:
+                return True
+        return False
+`,
+        timeComplexity: 'O(n * k log k) where n = len(s2), k = len(s1)',
+        spaceComplexity: 'O(k)',
+      },
+      {
+        approach: 'Sliding Window with Frequency Arrays',
+        intuition: 'Maintain two length-26 frequency arrays: one for s1 and one for the current window in s2. Slide the window one character at a time, comparing the arrays at each step.',
+        code: `class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        if len(s1) > len(s2):
+            return False
+        need = [0] * 26
+        have = [0] * 26
+        for ch in s1:
+            need[ord(ch) - 97] += 1
+        for i in range(len(s1)):
+            have[ord(s2[i]) - 97] += 1
+        if have == need:
+            return True
+        for i in range(len(s1), len(s2)):
+            have[ord(s2[i]) - 97] += 1
+            have[ord(s2[i - len(s1)]) - 97] -= 1
+            if have == need:
+                return True
+        return False
+`,
+        timeComplexity: 'O(n) where n = len(s2)',
+        spaceComplexity: 'O(1) (fixed 26-element arrays)',
+      },
+    ],
   },
 
   // ─── Find All Anagrams in a String (LC #438) ───────────────────────────────
@@ -387,6 +643,47 @@ ascending order.`,
       { label: 'No match',      inputJson: '{"s":"abc","p":"de"}',  expectedJson: '[]'      },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Sort Each Window)',
+        intuition: 'For every window of length len(p) in s, sort the window and compare it with sorted p. Collect all starting indices where they match.',
+        code: `class Solution:
+    def findAnagrams(self, s: str, p: str) -> list[int]:
+        k = len(p)
+        target = sorted(p)
+        out = []
+        for i in range(len(s) - k + 1):
+            if sorted(s[i:i+k]) == target:
+                out.append(i)
+        return out
+`,
+        timeComplexity: 'O(n * k log k) where n = len(s), k = len(p)',
+        spaceComplexity: 'O(k)',
+      },
+      {
+        approach: 'Sliding Window with Frequency Arrays',
+        intuition: 'Maintain two length-26 frequency arrays and slide a window of size len(p) across s. When the arrays match, the current window start is an anagram position.',
+        code: `class Solution:
+    def findAnagrams(self, s: str, p: str) -> list[int]:
+        if len(p) > len(s):
+            return []
+        need = [0] * 26
+        have = [0] * 26
+        for ch in p:
+            need[ord(ch) - 97] += 1
+        out = []
+        for i in range(len(s)):
+            have[ord(s[i]) - 97] += 1
+            if i >= len(p):
+                have[ord(s[i - len(p)]) - 97] -= 1
+            if i >= len(p) - 1 and have == need:
+                out.append(i - len(p) + 1)
+        return out
+`,
+        timeComplexity: 'O(n) where n = len(s)',
+        spaceComplexity: 'O(1) (fixed 26-element arrays)',
+      },
+    ],
   },
 
   // ─── Longest Repeating Character Replacement (LC #424) ─────────────────────
@@ -435,6 +732,54 @@ answer is the maximum window length seen at any point.`,
       { label: 'Already same',inputJson: '{"s":"AAAA","k":0}',   expectedJson: '4' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each starting index, try every possible window length. Track the most frequent character in each window and check if the rest can be replaced within k swaps.',
+        code: `class Solution:
+    def characterReplacement(self, s: str, k: int) -> int:
+        best = 0
+        for i in range(len(s)):
+            counts = {}
+            max_freq = 0
+            for j in range(i, len(s)):
+                counts[s[j]] = counts.get(s[j], 0) + 1
+                max_freq = max(max_freq, counts[s[j]])
+                if (j - i + 1) - max_freq <= k:
+                    best = max(best, j - i + 1)
+                else:
+                    break
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1) (at most 26 keys)',
+      },
+      {
+        approach: 'Variable Sliding Window',
+        intuition: 'Expand the right edge freely, tracking the highest character frequency in the window. When window_length minus that max frequency exceeds k, shrink from the left. The answer is the largest valid window seen.',
+        code: `class Solution:
+    def characterReplacement(self, s: str, k: int) -> int:
+        counts = {}
+        left = 0
+        best = 0
+        max_freq = 0
+        for right in range(len(s)):
+            ch = s[right]
+            counts[ch] = counts.get(ch, 0) + 1
+            if counts[ch] > max_freq:
+                max_freq = counts[ch]
+            while (right - left + 1) - max_freq > k:
+                counts[s[left]] -= 1
+                left += 1
+                max_freq = max(counts.values()) if counts else 0
+            if right - left + 1 > best:
+                best = right - left + 1
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1) (at most 26 keys)',
+      },
+    ],
   },
 
   // ─── Subarray Product Less Than K (LC #713) ────────────────────────────────
@@ -484,6 +829,50 @@ the product hits \`k\` or more, shrink from the left (dividing out) until it dro
       { label: 'Ones easy',   inputJson: '{"nums":[1,1,1],"k":2}',   expectedJson: '6' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each starting index, expand rightward computing the running product. Count every subarray whose product stays below k.',
+        code: `class Solution:
+    def numSubarrayProductLessThanK(self, nums: list[int], k: int) -> int:
+        if k <= 1:
+            return 0
+        count = 0
+        for i in range(len(nums)):
+            prod = 1
+            for j in range(i, len(nums)):
+                prod *= nums[j]
+                if prod < k:
+                    count += 1
+                else:
+                    break
+        return count
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Variable Sliding Window',
+        intuition: 'Since all elements are positive, the product is monotonic in window size. Grow the right edge multiplying as you go. When the product reaches k or more, shrink from the left by dividing. The number of valid subarrays ending at right is right - left + 1.',
+        code: `class Solution:
+    def numSubarrayProductLessThanK(self, nums: list[int], k: int) -> int:
+        if k <= 1:
+            return 0
+        prod = 1
+        left = 0
+        count = 0
+        for right in range(len(nums)):
+            prod *= nums[right]
+            while prod >= k:
+                prod //= nums[left]
+                left += 1
+            count += right - left + 1
+        return count
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Fruit Into Baskets (LC #904) ──────────────────────────────────────────
@@ -535,6 +924,50 @@ third distinct value appears, shrink from the left until one type's count drops 
       { label: 'Single tree',   inputJson: '{"fruits":[5]}',             expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each starting index, expand rightward and track distinct fruit types with a set. Stop when a third type appears. Track the longest valid window.',
+        code: `class Solution:
+    def totalFruit(self, fruits: list[int]) -> int:
+        best = 0
+        for i in range(len(fruits)):
+            types = set()
+            j = i
+            while j < len(fruits) and (fruits[j] in types or len(types) < 2):
+                types.add(fruits[j])
+                j += 1
+            best = max(best, j - i)
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Variable Sliding Window',
+        intuition: 'Maintain a window with a count map of fruit types. When a third distinct type appears, shrink from the left until one type is fully removed. Track the maximum window length.',
+        code: `class Solution:
+    def totalFruit(self, fruits: list[int]) -> int:
+        counts = {}
+        left = 0
+        best = 0
+        for right in range(len(fruits)):
+            f = fruits[right]
+            counts[f] = counts.get(f, 0) + 1
+            while len(counts) > 2:
+                out = fruits[left]
+                counts[out] -= 1
+                if counts[out] == 0:
+                    del counts[out]
+                left += 1
+            if right - left + 1 > best:
+                best = right - left + 1
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1) (at most 3 keys in the map)',
+      },
+    ],
   },
 
   // ─── Minimum Window Substring (LC #76) ─────────────────────────────────────
@@ -582,5 +1015,60 @@ left edge as far as possible while still covered, recording the smallest window 
       { label: 'Whole string',  inputJson: '{"s":"abc","t":"ac"}',     expectedJson: '"abc"' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'Check every possible substring of s and verify whether it contains all characters of t with the right counts. Track the shortest valid one.',
+        code: `class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        from collections import Counter
+        need = Counter(t)
+        best = ""
+        for i in range(len(s)):
+            for j in range(i + len(t), len(s) + 1):
+                window = Counter(s[i:j])
+                if all(window.get(c, 0) >= need[c] for c in need):
+                    if not best or j - i < len(best):
+                        best = s[i:j]
+                    break
+        return best
+`,
+        timeComplexity: 'O(n^2 * m) where m = len(t)',
+        spaceComplexity: 'O(n + m)',
+      },
+      {
+        approach: 'Sliding Window with Frequency Map',
+        intuition: 'Expand the right edge until all required characters are covered, then shrink from the left as far as possible while still valid, recording the smallest window. A "formed" counter tracks how many distinct required characters have reached their needed count.',
+        code: `class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        if not t or not s:
+            return ""
+        need = {}
+        for ch in t:
+            need[ch] = need.get(ch, 0) + 1
+        required = len(need)
+        have_counts = {}
+        formed = 0
+        left = 0
+        best = None  # (length, left, right)
+        for right in range(len(s)):
+            ch = s[right]
+            have_counts[ch] = have_counts.get(ch, 0) + 1
+            if ch in need and have_counts[ch] == need[ch]:
+                formed += 1
+            while formed == required:
+                if best is None or right - left + 1 < best[0]:
+                    best = (right - left + 1, left, right)
+                lch = s[left]
+                have_counts[lch] -= 1
+                if lch in need and have_counts[lch] < need[lch]:
+                    formed -= 1
+                left += 1
+        return "" if best is None else s[best[1]:best[2] + 1]
+`,
+        timeComplexity: 'O(n + m) where m = len(t)',
+        spaceComplexity: 'O(n + m)',
+      },
+    ],
   },
 ];

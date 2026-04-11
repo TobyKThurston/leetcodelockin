@@ -69,6 +69,40 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Min Heap of Size K',
+        intuition: 'Maintain a min-heap of size k. On each add, push the value; if the heap exceeds size k, pop the smallest. The heap top is always the k-th largest.',
+        code: `import heapq
+
+
+class KthLargest:
+    def __init__(self, k: int, nums: list[int]):
+        self.k = k
+        self.heap = []
+        for v in nums:
+            heapq.heappush(self.heap, v)
+            if len(self.heap) > self.k:
+                heapq.heappop(self.heap)
+
+    def add(self, val: int) -> int:
+        heapq.heappush(self.heap, val)
+        if len(self.heap) > self.k:
+            heapq.heappop(self.heap)
+        return self.heap[0]
+
+
+class Solution:
+    def runKthLargestOps(self, k: int, nums: list[int], ops: list[str], vals: list[list[int]]) -> list[int]:
+        kl = KthLargest(k, nums)
+        out = []
+        for op, args in zip(ops, vals):
+            out.append(getattr(kl, op)(*args))
+        return out`,
+        timeComplexity: 'O(n log k)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── Last Stone Weight (LC #1046) ─────────────────────────────────────────
@@ -119,6 +153,27 @@ class Solution:
       { label: 'Equal pair',  inputJson: '{"stones":[2,2]}',    expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Max Heap',
+        intuition: 'Python only has a min-heap, so negate all values to simulate a max-heap. Repeatedly pop the two largest, and if they differ, push the difference back. Return whatever remains.',
+        code: `import heapq
+
+
+class Solution:
+    def lastStoneWeight(self, stones: list[int]) -> int:
+        heap = [-s for s in stones]
+        heapq.heapify(heap)
+        while len(heap) > 1:
+            a = -heapq.heappop(heap)
+            b = -heapq.heappop(heap)
+            if a != b:
+                heapq.heappush(heap, -(a - b))
+        return -heap[0] if heap else 0`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Kth Largest Element in an Array (LC #215) ────────────────────────────
@@ -167,6 +222,35 @@ class Solution:
       { label: 'All equal', inputJson: '{"nums":[10,10,10],"k":2}',    expectedJson: '10' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sorting',
+        intuition: 'Sort the array in descending order and return the k-th element. Simple but not optimal.',
+        code: `class Solution:
+    def findKthLargest(self, nums: list[int], k: int) -> int:
+        nums.sort(reverse=True)
+        return nums[k - 1]`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Min Heap of Size K',
+        intuition: 'Maintain a min-heap of size k. Push each element; if the heap exceeds size k, pop the smallest. After processing all elements, the heap top is the k-th largest.',
+        code: `import heapq
+
+
+class Solution:
+    def findKthLargest(self, nums: list[int], k: int) -> int:
+        heap = []
+        for v in nums:
+            heapq.heappush(heap, v)
+            if len(heap) > k:
+                heapq.heappop(heap)
+        return heap[0]`,
+        timeComplexity: 'O(n log k)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── K Closest Points to Origin (LC #973) ─────────────────────────────────
@@ -216,6 +300,36 @@ class Solution:
     ],
     // set: order is unspecified; this comparator normalises nested arrays too.
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'Sort by Distance',
+        intuition: 'Compute the squared distance for each point and sort by it. Return the first k points.',
+        code: `class Solution:
+    def kClosest(self, points: list[list[int]], k: int) -> list[list[int]]:
+        points.sort(key=lambda p: p[0] * p[0] + p[1] * p[1])
+        return points[:k]`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Max Heap of Size K',
+        intuition: 'Use a max-heap of size k (negate distances). For each point, push it; if the heap exceeds size k, pop the farthest. This avoids sorting the entire array.',
+        code: `import heapq
+
+
+class Solution:
+    def kClosest(self, points: list[list[int]], k: int) -> list[list[int]]:
+        heap = []
+        for x, y in points:
+            d = x * x + y * y
+            heapq.heappush(heap, (-d, x, y))
+            if len(heap) > k:
+                heapq.heappop(heap)
+        return [[x, y] for _, x, y in heap]`,
+        timeComplexity: 'O(n log k)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── Top K Frequent Words (LC #692) ───────────────────────────────────────
@@ -275,6 +389,21 @@ A hash map of counts plus sorting runs in \`O(n log n)\`; a size-\`k\` heap keye
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort by (-count, word)',
+        intuition: 'Count word frequencies with a hash map. Sort by frequency descending, breaking ties alphabetically. Return the first k.',
+        code: `class Solution:
+    def topKFrequent(self, words: list[str], k: int) -> list[str]:
+        counts = {}
+        for w in words:
+            counts[w] = counts.get(w, 0) + 1
+        ordered = sorted(counts.keys(), key=lambda w: (-counts[w], w))
+        return ordered[:k]`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Kth Smallest Element in a Sorted Matrix (LC #378) ────────────────────
@@ -325,6 +454,27 @@ class Solution:
       { label: 'Three by three',inputJson: '{"matrix":[[1,2,3],[4,5,6],[7,8,9]],"k":5}', expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Min Heap (Row Merge)',
+        intuition: 'Seed the heap with the first element of each column. Pop the smallest, then push the element below it from the same column. After k pops, we have the answer.',
+        code: `import heapq
+
+
+class Solution:
+    def kthSmallest(self, matrix: list[list[int]], k: int) -> int:
+        n = len(matrix)
+        heap = [(matrix[0][c], 0, c) for c in range(n)]
+        heapq.heapify(heap)
+        for _ in range(k - 1):
+            val, r, c = heapq.heappop(heap)
+            if r + 1 < n:
+                heapq.heappush(heap, (matrix[r + 1][c], r + 1, c))
+        return heap[0][0]`,
+        timeComplexity: 'O(k log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Task Scheduler (LC #621) ─────────────────────────────────────────────
@@ -377,6 +527,23 @@ class Solution:
       { label: 'Single task',  inputJson: '{"tasks":["A"],"n":5}',                  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy Formula',
+        intuition: 'The answer is determined by the most frequent task. Create (maxCount - 1) groups of size (n + 1), then add the tasks that have maxCount. The total is at least len(tasks).',
+        code: `class Solution:
+    def leastInterval(self, tasks: list[str], n: int) -> int:
+        counts = {}
+        for t in tasks:
+            counts[t] = counts.get(t, 0) + 1
+        max_count = max(counts.values())
+        count_of_max = sum(1 for c in counts.values() if c == max_count)
+        formula = (max_count - 1) * (n + 1) + count_of_max
+        return max(len(tasks), formula)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Reorganize String (LC #767) ──────────────────────────────────────────
@@ -431,6 +598,40 @@ class Solution:
       { label: 'Single char', inputJson: '{"s":"a"}',    expectedJson: '"a"'   },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy Max Heap',
+        intuition: 'Check if it is possible (most frequent char count <= (n+1)//2). Then greedily pop the two most frequent characters from a max-heap, append both, decrement counts, and push back. This guarantees no two adjacent characters are the same.',
+        code: `import heapq
+
+
+class Solution:
+    def reorganizeString(self, s: str) -> str:
+        counts = {}
+        for ch in s:
+            counts[ch] = counts.get(ch, 0) + 1
+        n = len(s)
+        if max(counts.values()) > (n + 1) // 2:
+            return ""
+        heap = [(-c, ch) for ch, c in counts.items()]
+        heapq.heapify(heap)
+        out = []
+        while len(heap) >= 2:
+            c1, ch1 = heapq.heappop(heap)
+            c2, ch2 = heapq.heappop(heap)
+            out.append(ch1)
+            out.append(ch2)
+            if c1 + 1 < 0:
+                heapq.heappush(heap, (c1 + 1, ch1))
+            if c2 + 1 < 0:
+                heapq.heappush(heap, (c2 + 1, ch2))
+        if heap:
+            out.append(heap[0][1])
+        return ''.join(out)`,
+        timeComplexity: 'O(n log k)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── Find Median from Data Stream (LC #295) ───────────────────────────────
@@ -503,6 +704,42 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Heaps',
+        intuition: 'Keep a max-heap for the lower half and a min-heap for the upper half. On each add, push to lower first, then rebalance so the heaps stay within 1 element of each other. The median is either the top of the larger heap (odd count) or the average of both tops (even count).',
+        code: `import heapq
+
+
+class MedianFinder:
+    def __init__(self):
+        self.lower = []  # max-heap (store negated)
+        self.upper = []  # min-heap
+
+    def addNum(self, num: int) -> None:
+        heapq.heappush(self.lower, -num)
+        heapq.heappush(self.upper, -heapq.heappop(self.lower))
+        if len(self.upper) > len(self.lower):
+            heapq.heappush(self.lower, -heapq.heappop(self.upper))
+
+    def findMedian(self) -> float:
+        if len(self.lower) > len(self.upper):
+            return float(-self.lower[0])
+        return (-self.lower[0] + self.upper[0]) / 2
+
+
+class Solution:
+    def runMedianOps(self, ops: list[str], vals: list[list[int]]) -> list:
+        mf = MedianFinder()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(mf, op)(*args)
+            out.append(result)
+        return out`,
+        timeComplexity: 'O(log n) per add',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Find K Pairs with Smallest Sums (LC #373) ────────────────────────────
@@ -553,6 +790,31 @@ class Solution:
       { label: 'More wanted',inputJson: '{"nums1":[1,7],"nums2":[2,4],"k":3}', expectedJson: '[[1,2],[1,4],[7,2]]' },
     ],
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'Min Heap',
+        intuition: 'Seed the heap with pairs (nums1[i] + nums2[0], i, 0) for the first min(k, len(nums1)) indices. On each pop, push the next pair from the same row (i, j+1). After k pops we have the answer.',
+        code: `import heapq
+
+
+class Solution:
+    def kSmallestPairs(self, nums1: list[int], nums2: list[int], k: int) -> list[list[int]]:
+        if not nums1 or not nums2 or k == 0:
+            return []
+        heap = []
+        for i in range(min(k, len(nums1))):
+            heapq.heappush(heap, (nums1[i] + nums2[0], i, 0))
+        out = []
+        while heap and len(out) < k:
+            s, i, j = heapq.heappop(heap)
+            out.append([nums1[i], nums2[j]])
+            if j + 1 < len(nums2):
+                heapq.heappush(heap, (nums1[i] + nums2[j + 1], i, j + 1))
+        return out`,
+        timeComplexity: 'O(k log k)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── IPO (LC #502) ─────────────────────────────────────────────────────────
@@ -607,5 +869,30 @@ class Solution:
       { label: 'Too poor',       inputJson: '{"k":1,"w":0,"profits":[100],"capital":[5]}',       expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy + Two Heaps',
+        intuition: 'Sort projects by required capital. Use a min-heap of projects sorted by capital cost and a max-heap of profits for affordable projects. Each round, move all newly-affordable projects to the profit heap, then greedily pick the most profitable one.',
+        code: `import heapq
+
+
+class Solution:
+    def findMaximizedCapital(self, k: int, w: int, profits: list[int], capital: list[int]) -> int:
+        projects = sorted(zip(capital, profits))
+        available = []
+        i = 0
+        n = len(projects)
+        for _ in range(k):
+            while i < n and projects[i][0] <= w:
+                heapq.heappush(available, -projects[i][1])
+                i += 1
+            if not available:
+                break
+            w += -heapq.heappop(available)
+        return w`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 ];

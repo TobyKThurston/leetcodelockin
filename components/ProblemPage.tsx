@@ -473,7 +473,71 @@ function HintsTab({ code, problem }: { code: string; problem: ProblemContent }) 
   );
 }
 
-type LeftTab = 'question' | 'hints' | 'tutor';
+// ─── Solution Tab (tab content) ──────────────────────────────────────────────
+
+function SolutionTab({ problem }: { problem: ProblemContent }) {
+  const approaches = problem.solutions ?? [];
+  const [expandedIdx, setExpandedIdx] = useState<number>(0);
+
+  if (approaches.length === 0) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-8">
+        <p className="text-[13px] text-zinc-600" style={SG}>Solutions coming soon.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto px-5 py-5 space-y-3">
+      {approaches.map((sol, i) => {
+        const isOpen = expandedIdx === i;
+        return (
+          <div key={i} className="rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.015)' }}>
+            <button
+              onClick={() => setExpandedIdx(isOpen ? -1 : i)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left"
+              style={{ borderBottom: isOpen ? `1px solid ${BORDER}` : 'none' }}
+            >
+              <span className="text-[13px] font-semibold text-zinc-200" style={SG}>
+                {i + 1}. {sol.approach}
+              </span>
+              <ChevronUp size={14} className={`text-zinc-500 transition-transform ${isOpen ? '' : 'rotate-180'}`} />
+            </button>
+
+            {isOpen && (
+              <div className="px-4 py-4 space-y-4">
+                {/* Intuition */}
+                <div className="text-[13px] text-zinc-400 leading-relaxed" style={SG}>
+                  {sol.intuition}
+                </div>
+
+                {/* Code block */}
+                <div className="rounded-lg overflow-hidden" style={{ border: `1px solid ${BORDER_MED}`, background: 'rgba(0,0,0,0.3)' }}>
+                  <div className="flex items-center px-4 py-2" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <span className="text-[11px] text-zinc-600" style={MONO}>python</span>
+                  </div>
+                  <pre className="px-4 py-3 text-[13px] text-zinc-300 overflow-x-auto leading-relaxed" style={MONO}>{sol.code}</pre>
+                </div>
+
+                {/* Complexity badges */}
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2.5 py-1" style={{ background: 'rgba(96,165,250,0.1)', color: 'rgba(96,165,250,0.8)', ...SG }}>
+                    Time: {sol.timeComplexity}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] rounded-full px-2.5 py-1" style={{ background: 'rgba(168,85,247,0.1)', color: 'rgba(168,85,247,0.8)', ...SG }}>
+                    Space: {sol.spaceComplexity}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+type LeftTab = 'question' | 'hints' | 'solution' | 'tutor';
 
 interface ProblemPanelProps {
   problem: ProblemContent;
@@ -491,6 +555,7 @@ function ProblemPanel({
   const TABS: { id: LeftTab; label: string; icon?: React.ReactNode }[] = [
     { id: 'question', label: 'Question', icon: <FileText size={12} /> },
     { id: 'hints',    label: 'Hints' },
+    ...(problem.solutions && problem.solutions.length > 0 ? [{ id: 'solution' as LeftTab, label: 'Solution' }] : []),
     { id: 'tutor',    label: 'Tutor' },
   ];
 
@@ -551,6 +616,7 @@ function ProblemPanel({
       <div className="flex-1 flex flex-col overflow-hidden">
         {activeTab === 'question' && <QuestionTab problem={problem} />}
         {activeTab === 'hints'    && <HintsTab code={code} problem={problem} />}
+        {activeTab === 'solution' && <SolutionTab problem={problem} />}
         {activeTab === 'tutor'    && <TutorChat code={code} problem={problem} />}
       </div>
     </div>

@@ -49,6 +49,42 @@ some string runs out.`,
       { label: 'Empty list',   inputJson: '{"strs":[]}',                              expectedJson: '""'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Vertical Scan',
+        intuition: 'Compare characters column by column across all strings. At each index i, check if every string has the same character. Stop at the first mismatch or when the shortest string runs out.',
+        code: `class Solution:
+    def longestCommonPrefix(self, strs: list[str]) -> str:
+        if not strs:
+            return ""
+        shortest = min(strs, key=len)
+        for i, ch in enumerate(shortest):
+            for s in strs:
+                if s[i] != ch:
+                    return shortest[:i]
+        return shortest
+`,
+        timeComplexity: 'O(S) where S is the sum of all string lengths',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Sorting',
+        intuition: 'Sort the array lexicographically. The common prefix of the entire array must be the common prefix of just the first and last strings after sorting, since they are the most different pair.',
+        code: `class Solution:
+    def longestCommonPrefix(self, strs: list[str]) -> str:
+        if not strs:
+            return ""
+        strs.sort()
+        first, last = strs[0], strs[-1]
+        i = 0
+        while i < len(first) and i < len(last) and first[i] == last[i]:
+            i += 1
+        return first[:i]
+`,
+        timeComplexity: 'O(S log n) where S is total characters and n is number of strings',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Implement Trie (Prefix Tree) (LC #208) ────────────────────────────────
@@ -124,6 +160,51 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Map Trie',
+        intuition: 'Use nested dictionaries as trie nodes, with each key being a character and a special "$" key marking end-of-word. Insert walks down creating nodes; search walks down checking existence; startsWith is the same but does not require the end marker.',
+        code: `class Trie:
+    def __init__(self):
+        self.root = {}
+
+    def insert(self, word: str) -> None:
+        node = self.root
+        for ch in word:
+            if ch not in node:
+                node[ch] = {}
+            node = node[ch]
+        node['$'] = True
+
+    def _walk(self, s: str):
+        node = self.root
+        for ch in s:
+            if ch not in node:
+                return None
+            node = node[ch]
+        return node
+
+    def search(self, word: str) -> bool:
+        node = self._walk(word)
+        return node is not None and node.get('$', False)
+
+    def startsWith(self, prefix: str) -> bool:
+        return self._walk(prefix) is not None
+
+
+class Solution:
+    def runTrieOps(self, ops: list[str], vals: list[list[str]]) -> list:
+        tr = Trie()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(tr, op)(*args)
+            out.append(result)
+        return out
+`,
+        timeComplexity: 'O(m) per operation where m is the word/prefix length',
+        spaceComplexity: 'O(total characters inserted)',
+      },
+    ],
   },
 
   // ─── Design Add and Search Words Data Structure (LC #211) ─────────────────
@@ -190,6 +271,51 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Trie with DFS for Wildcards',
+        intuition: 'Build a trie from inserted words. For search, walk the trie character by character. When a "." wildcard is encountered, branch into all children using DFS. Return True if any branch leads to a complete word at the end.',
+        code: `class WordDictionary:
+    def __init__(self):
+        self.root = {}
+
+    def addWord(self, word: str) -> None:
+        node = self.root
+        for ch in word:
+            if ch not in node:
+                node[ch] = {}
+            node = node[ch]
+        node['$'] = True
+
+    def search(self, word: str) -> bool:
+        def dfs(node, i):
+            if i == len(word):
+                return node.get('$', False)
+            ch = word[i]
+            if ch == '.':
+                for k, child in node.items():
+                    if k == '$':
+                        continue
+                    if dfs(child, i + 1):
+                        return True
+                return False
+            return ch in node and dfs(node[ch], i + 1)
+        return dfs(self.root, 0)
+
+
+class Solution:
+    def runWordDictOps(self, ops: list[str], vals: list[list[str]]) -> list:
+        wd = WordDictionary()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(wd, op)(*args)
+            out.append(result)
+        return out
+`,
+        timeComplexity: 'O(m) for addWord, O(26^m) worst case for search with all dots',
+        spaceComplexity: 'O(total characters inserted)',
+      },
+    ],
   },
 
   // ─── Replace Words (LC #648) ───────────────────────────────────────────────
@@ -238,6 +364,57 @@ word). Total time is \`O(total_input_letters)\`.`,
       { label: 'All match', inputJson: '{"dictionary":["a","b"],"sentence":"aaa bbb"}',              expectedJson: '"a b"'          },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Trie-based Lookup',
+        intuition: 'Build a trie from dictionary roots. For each word in the sentence, walk the trie letter by letter. If you hit a node marked as end-of-word, return that prefix as the replacement. If you fall off the trie, keep the original word.',
+        code: `class Solution:
+    def replaceWords(self, dictionary: list[str], sentence: str) -> str:
+        root = {}
+        for w in dictionary:
+            node = root
+            for ch in w:
+                if ch not in node:
+                    node[ch] = {}
+                node = node[ch]
+            node['$'] = True
+
+        def shortest(word):
+            node = root
+            prefix = []
+            for ch in word:
+                if ch not in node:
+                    return word
+                node = node[ch]
+                prefix.append(ch)
+                if node.get('$', False):
+                    return ''.join(prefix)
+            return word
+
+        return ' '.join(shortest(w) for w in sentence.split())
+`,
+        timeComplexity: 'O(n) where n is the total characters in dictionary + sentence',
+        spaceComplexity: 'O(d) where d is total characters in dictionary',
+      },
+      {
+        approach: 'Set-based Prefix Check',
+        intuition: 'Put all dictionary words in a set. For each word in the sentence, check every prefix from shortest to longest. Return the first prefix found in the set, or the original word if none matches.',
+        code: `class Solution:
+    def replaceWords(self, dictionary: list[str], sentence: str) -> str:
+        roots = set(dictionary)
+
+        def shortest(word):
+            for i in range(1, len(word) + 1):
+                if word[:i] in roots:
+                    return word[:i]
+            return word
+
+        return ' '.join(shortest(w) for w in sentence.split())
+`,
+        timeComplexity: 'O(n * k) where k is max root length',
+        spaceComplexity: 'O(d)',
+      },
+    ],
   },
 
   // ─── Map Sum Pairs (LC #677) ───────────────────────────────────────────────
@@ -305,6 +482,38 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Map Store',
+        intuition: 'Store key-value pairs in a dictionary. For sum, iterate over all stored keys and sum up values whose key starts with the given prefix. Overwriting is handled naturally by dict assignment.',
+        code: `class MapSum:
+    def __init__(self):
+        self.store = {}
+
+    def insert(self, key: str, val: int) -> None:
+        self.store[key] = val
+
+    def sum(self, prefix: str) -> int:
+        total = 0
+        for k, v in self.store.items():
+            if k.startswith(prefix):
+                total += v
+        return total
+
+
+class Solution:
+    def runMapSumOps(self, ops: list[str], vals: list) -> list:
+        ms = MapSum()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(ms, op)(*args)
+            out.append(result)
+        return out
+`,
+        timeComplexity: 'O(1) insert, O(n * m) sum where n is number of keys',
+        spaceComplexity: 'O(n * m) for stored keys',
+      },
+    ],
   },
 
   // ─── Longest Word in Dictionary (LC #720) ─────────────────────────────────
@@ -356,6 +565,24 @@ answer in one sweep. Alternatively, sort \`words\` and track built words in a se
       { label: 'Empty',       inputJson: '{"words":[]}',                                       expectedJson: '""'      },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort and Set Check',
+        intuition: 'A word qualifies if every prefix w[0..i] for i from 1 to len(w) is also in the word set. Put all words in a set, iterate, and track the longest qualifying word (tie-break lexicographically).',
+        code: `class Solution:
+    def longestWord(self, words: list[str]) -> str:
+        word_set = set(words)
+        best = ""
+        for w in words:
+            if all(w[:i] in word_set for i in range(1, len(w) + 1)):
+                if len(w) > len(best) or (len(w) == len(best) and w < best):
+                    best = w
+        return best
+`,
+        timeComplexity: 'O(n * m^2) where m is max word length',
+        spaceComplexity: 'O(n * m)',
+      },
+    ],
   },
 
   // ─── Short Encoding of Words (LC #820) ─────────────────────────────────────
@@ -409,6 +636,51 @@ leaves of \`(depth + 1)\` (the \`+1\` is the trailing \`'#'\`).`,
       { label: 'Single word',   inputJson: '{"words":["a"]}',         expectedJson: '2' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Reversed Trie',
+        intuition: 'Insert every word reversed into a trie. Words that are suffixes of other words become interior nodes. Only leaf nodes need their own encoding. The answer is the sum of (depth + 1) across all leaf nodes, where +1 accounts for the trailing "#".',
+        code: `class Solution:
+    def minimumLengthEncoding(self, words: list[str]) -> int:
+        root = {}
+        for w in set(words):
+            node = root
+            for ch in reversed(w):
+                if ch not in node:
+                    node[ch] = {}
+                node = node[ch]
+
+        total = 0
+
+        def dfs(node, depth):
+            nonlocal total
+            if not node:
+                total += depth + 1
+                return
+            for child in node.values():
+                dfs(child, depth + 1)
+
+        dfs(root, 0)
+        return total
+`,
+        timeComplexity: 'O(n * m) where m is max word length',
+        spaceComplexity: 'O(n * m)',
+      },
+      {
+        approach: 'Suffix Set Elimination',
+        intuition: 'A word is redundant if it is a suffix of another word. Start with all unique words in a set, then remove any word that is a suffix of another. The answer is the sum of (len(w) + 1) for remaining words.',
+        code: `class Solution:
+    def minimumLengthEncoding(self, words: list[str]) -> int:
+        good = set(words)
+        for w in words:
+            for k in range(1, len(w)):
+                good.discard(w[k:])
+        return sum(len(w) + 1 for w in good)
+`,
+        timeComplexity: 'O(n * m^2)',
+        spaceComplexity: 'O(n * m)',
+      },
+    ],
   },
 
   // ─── Search Suggestions System (LC #1268) ──────────────────────────────────
@@ -471,6 +743,68 @@ implement.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort + Binary Search',
+        intuition: 'Sort products. For each prefix of searchWord, use the sorted order to find matching products. Since the list is sorted, products starting with the prefix are contiguous. Filter and take up to 3.',
+        code: `class Solution:
+    def suggestedProducts(self, products: list[str], searchWord: str) -> list[list[str]]:
+        products = sorted(products)
+        out = []
+        prefix = ""
+        for ch in searchWord:
+            prefix += ch
+            matches = [p for p in products if p.startswith(prefix)]
+            out.append(matches[:3])
+        return out
+`,
+        timeComplexity: 'O(n log n + n * m * k) where k is searchWord length',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Trie with DFS Collection',
+        intuition: 'Build a trie from products. For each prefix of searchWord, walk the trie to that prefix node, then DFS to collect up to 3 lexicographically smallest words reachable from that node.',
+        code: `class Solution:
+    def suggestedProducts(self, products: list[str], searchWord: str) -> list[list[str]]:
+        root = {}
+        for p in products:
+            node = root
+            for ch in p:
+                if ch not in node:
+                    node[ch] = {}
+                node = node[ch]
+            node['$'] = p
+
+        def collect(node, results):
+            if len(results) >= 3:
+                return
+            if '$' in node:
+                results.append(node['$'])
+            for ch in sorted(node):
+                if ch == '$':
+                    continue
+                collect(node[ch], results)
+                if len(results) >= 3:
+                    return
+
+        out = []
+        cur = root
+        fallen = False
+        for ch in searchWord:
+            if fallen or ch not in cur:
+                fallen = True
+                out.append([])
+            else:
+                cur = cur[ch]
+                results = []
+                collect(cur, results)
+                out.append(results)
+        return out
+`,
+        timeComplexity: 'O(n * m) for trie build + O(k * 3) for queries',
+        spaceComplexity: 'O(n * m)',
+      },
+    ],
   },
 
   // ─── Maximum XOR of Two Numbers in an Array (LC #421) ─────────────────────
@@ -518,6 +852,63 @@ XOR pairing for that number.`,
       { label: 'Mixed',     inputJson: '{"nums":[8,10,2]}',  expectedJson: '10' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bitwise Greedy with Prefix Set',
+        intuition: 'Process bits from the most significant to least significant. At each bit position, try setting that bit in the result. Check if any pair of number prefixes can produce this candidate XOR by using a set: for each prefix p, check if (candidate XOR p) exists in the set.',
+        code: `class Solution:
+    def findMaximumXOR(self, nums: list[int]) -> int:
+        best = 0
+        mask = 0
+        for bit in range(31, -1, -1):
+            mask |= (1 << bit)
+            prefixes = {n & mask for n in nums}
+            candidate = best | (1 << bit)
+            found = False
+            for p in prefixes:
+                if (candidate ^ p) in prefixes:
+                    found = True
+                    break
+            if found:
+                best = candidate
+        return best
+`,
+        timeComplexity: 'O(32 * n) = O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Binary Trie',
+        intuition: 'Build a binary trie of all numbers (one node per bit, MSB first). For each number, greedily walk the trie choosing the opposite bit at each level to maximize XOR. The accumulated value is the best XOR for that number.',
+        code: `class Solution:
+    def findMaximumXOR(self, nums: list[int]) -> int:
+        root = {}
+        for n in nums:
+            node = root
+            for i in range(31, -1, -1):
+                bit = (n >> i) & 1
+                if bit not in node:
+                    node[bit] = {}
+                node = node[bit]
+
+        best = 0
+        for n in nums:
+            node = root
+            cur_xor = 0
+            for i in range(31, -1, -1):
+                bit = (n >> i) & 1
+                toggled = 1 - bit
+                if toggled in node:
+                    cur_xor |= (1 << i)
+                    node = node[toggled]
+                else:
+                    node = node[bit]
+            best = max(best, cur_xor)
+        return best
+`,
+        timeComplexity: 'O(32 * n) = O(n)',
+        spaceComplexity: 'O(32 * n) = O(n)',
+      },
+    ],
   },
 
   // ─── Word Search II (LC #212) ──────────────────────────────────────────────
@@ -580,5 +971,48 @@ be a per-word board scan into a single global sweep.`,
     ],
     // sorted_array: order of returned words is not specified.
     resultCompare: 'sorted_array',
+    solutions: [
+      {
+        approach: 'Trie + Backtracking',
+        intuition: 'Build a trie from all target words. DFS from every cell on the board, descending into the trie one letter at a time. When a trie node has an end-of-word marker, record that word. The trie prunes dead branches early, avoiding redundant per-word board scans.',
+        code: `class Solution:
+    def findWords(self, board: list[list[str]], words: list[str]) -> list[str]:
+        root = {}
+        for w in words:
+            node = root
+            for ch in w:
+                if ch not in node:
+                    node[ch] = {}
+                node = node[ch]
+            node['$'] = w
+
+        m = len(board)
+        n = len(board[0]) if m else 0
+        found = set()
+
+        def dfs(r, c, node):
+            ch = board[r][c]
+            if ch not in node:
+                return
+            nxt = node[ch]
+            if '$' in nxt:
+                found.add(nxt['$'])
+            board[r][c] = '#'
+            for dr, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and board[nr][nc] != '#':
+                    dfs(nr, nc, nxt)
+            board[r][c] = ch
+
+        for r in range(m):
+            for c in range(n):
+                dfs(r, c, root)
+
+        return list(found)
+`,
+        timeComplexity: 'O(m * n * 4^L) where L is max word length',
+        spaceComplexity: 'O(total characters in words)',
+      },
+    ],
   },
 ];

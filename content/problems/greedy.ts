@@ -48,6 +48,38 @@ at \`nums[i]\`.`,
       { label: 'Single',      inputJson: '{"nums":[6]}',                expectedJson: '6'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Check All Subarrays)',
+        intuition: 'Enumerate every possible subarray, compute each sum, and track the maximum. Correct but slow at O(n^2).',
+        code: `class Solution:
+    def maxSubArray(self, nums: list[int]) -> int:
+        best = nums[0]
+        for i in range(len(nums)):
+            cur = 0
+            for j in range(i, len(nums)):
+                cur += nums[j]
+                if cur > best:
+                    best = cur
+        return best`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: "Kadane's Algorithm",
+        intuition: 'Walk the array once keeping a running sum. At each element, decide whether to extend the current subarray or start fresh. Track the overall best.',
+        code: `class Solution:
+    def maxSubArray(self, nums: list[int]) -> int:
+        best = cur = nums[0]
+        for x in nums[1:]:
+            cur = max(x, cur + x)
+            if cur > best:
+                best = cur
+        return best`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Assign Cookies (LC #455) ──────────────────────────────────────────────
@@ -95,6 +127,24 @@ the greediest-still-unsatisfied child.`,
       { label: 'No cookies',     inputJson: '{"g":[1,2],"s":[]}',          expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Sort + Two Pointers)',
+        intuition: 'Sort both arrays. Use two pointers: give the smallest available cookie that satisfies the least greedy unsatisfied child. If a cookie is too small, skip it.',
+        code: `class Solution:
+    def findContentChildren(self, g: list[int], s: list[int]) -> int:
+        g = sorted(g)
+        s = sorted(s)
+        i = j = 0
+        while i < len(g) and j < len(s):
+            if s[j] >= g[i]:
+                i += 1
+            j += 1
+        return i`,
+        timeComplexity: 'O(n log n + m log m)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Can Place Flowers (LC #605) ───────────────────────────────────────────
@@ -142,6 +192,28 @@ plant a flower and skip the next cell.`,
       { label: 'Zero ask',   inputJson: '{"flowerbed":[1],"n":0}',         expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy Scan',
+        intuition: 'Walk left to right. At each empty cell whose neighbors are also empty (or at the edge), plant a flower and skip ahead. If you plant enough, return True.',
+        code: `class Solution:
+    def canPlaceFlowers(self, flowerbed: list[int], n: int) -> bool:
+        bed = flowerbed[:]
+        count = 0
+        for i in range(len(bed)):
+            if bed[i] == 0:
+                left = i == 0 or bed[i - 1] == 0
+                right = i == len(bed) - 1 or bed[i + 1] == 0
+                if left and right:
+                    bed[i] = 1
+                    count += 1
+                    if count >= n:
+                        return True
+        return count >= n`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Jump Game (LC #55) ────────────────────────────────────────────────────
@@ -187,6 +259,23 @@ far. If you ever reach an index beyond that bound, return \`False\`.`,
       { label: 'Single',       inputJson: '{"nums":[0]}',          expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Max Reach)',
+        intuition: 'Track the furthest reachable index as you walk left to right. If you ever land on an index beyond your reach, it is impossible.',
+        code: `class Solution:
+    def canJump(self, nums: list[int]) -> bool:
+        reach = 0
+        for i, v in enumerate(nums):
+            if i > reach:
+                return False
+            if i + v > reach:
+                reach = i + v
+        return True`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Jump Game II (LC #45) ─────────────────────────────────────────────────
@@ -234,6 +323,26 @@ jump and widen to the new range.`,
       { label: 'Single',  inputJson: '{"nums":[0]}',          expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (BFS-like Level Sweep)',
+        intuition: 'Sweep across "levels" defined by the current jump range. Track the farthest index reachable within each level. When you exhaust the current level, jump to the next.',
+        code: `class Solution:
+    def jump(self, nums: list[int]) -> int:
+        jumps = 0
+        cur_end = 0
+        farthest = 0
+        for i in range(len(nums) - 1):
+            if i + nums[i] > farthest:
+                farthest = i + nums[i]
+            if i == cur_end:
+                jumps += 1
+                cur_end = farthest
+        return jumps`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Gas Station (LC #134) ─────────────────────────────────────────────────
@@ -280,6 +389,26 @@ start is the index immediately **after** the point where the running tank dips l
       { label: 'Single station', inputJson: '{"gas":[5],"cost":[4]}',              expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Running Tank)',
+        intuition: 'If total gas < total cost, no solution exists. Otherwise, walk the stations tracking a running tank. Whenever it dips negative, reset and try starting from the next station.',
+        code: `class Solution:
+    def canCompleteCircuit(self, gas: list[int], cost: list[int]) -> int:
+        if sum(gas) < sum(cost):
+            return -1
+        total = 0
+        start = 0
+        for i in range(len(gas)):
+            total += gas[i] - cost[i]
+            if total < 0:
+                start = i + 1
+                total = 0
+        return start`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Hand of Straights (LC #846) ───────────────────────────────────────────
@@ -328,6 +457,31 @@ values. If any drop below zero, return \`False\`.`,
       { label: 'Single card',   inputJson: '{"hand":[7],"groupSize":1}',                  expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Count + Sort)',
+        intuition: 'Count occurrences of each card. Sort the unique values and greedily build consecutive groups starting from the smallest remaining card. If any card count falls short, return False.',
+        code: `class Solution:
+    def isNStraightHand(self, hand: list[int], groupSize: int) -> bool:
+        if len(hand) % groupSize != 0:
+            return False
+        counts: dict[int, int] = {}
+        for v in hand:
+            counts[v] = counts.get(v, 0) + 1
+        for key in sorted(counts.keys()):
+            k = counts[key]
+            if k == 0:
+                continue
+            for i in range(groupSize):
+                v = key + i
+                if counts.get(v, 0) < k:
+                    return False
+                counts[v] -= k
+        return True`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Valid Parenthesis String (LC #678) ────────────────────────────────────
@@ -381,6 +535,32 @@ invalid; if \`lo\` ever dips below 0 clamp it back. At the end the string is val
       { label: 'Empty',       inputJson: '{"s":"*"}',    expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Lo-Hi Range)',
+        intuition: 'Track the range of possible open-paren counts: lo (min) and hi (max). On ( both increase, on ) both decrease, on * lo decreases and hi increases. If hi < 0, invalid; clamp lo to 0. Valid iff lo == 0 at the end.',
+        code: `class Solution:
+    def checkValidString(self, s: str) -> bool:
+        lo = hi = 0
+        for ch in s:
+            if ch == '(':
+                lo += 1
+                hi += 1
+            elif ch == ')':
+                lo -= 1
+                hi -= 1
+            else:
+                lo -= 1
+                hi += 1
+            if hi < 0:
+                return False
+            if lo < 0:
+                lo = 0
+        return lo == 0`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Partition Labels (LC #763) ────────────────────────────────────────────
@@ -426,6 +606,27 @@ seen so far, and closes a partition whenever the sweep reaches that end.`,
       { label: 'All same', inputJson: '{"s":"aaaa"}',                      expectedJson: '[4]'     },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Two-Pass)',
+        intuition: 'First pass records the last index each letter appears at. Second pass walks the string, extending the current partition end to the max last-index seen. When the index reaches the end, close the partition.',
+        code: `class Solution:
+    def partitionLabels(self, s: str) -> list[int]:
+        last = {ch: i for i, ch in enumerate(s)}
+        out: list[int] = []
+        start = 0
+        end = 0
+        for i, ch in enumerate(s):
+            if last[ch] > end:
+                end = last[ch]
+            if i == end:
+                out.append(end - start + 1)
+                start = i + 1
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Non-overlapping Intervals (LC #435) ───────────────────────────────────
@@ -472,6 +673,24 @@ any subsequent interval whose start is before the currently-kept interval's end.
       { label: 'Already clean', inputJson: '{"intervals":[[1,2],[2,3]]}',              expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Sort by End)',
+        intuition: 'Sort intervals by end time. Greedily keep each interval that does not overlap the previously kept one. The number of removals is total minus kept.',
+        code: `class Solution:
+    def eraseOverlapIntervals(self, intervals: list[list[int]]) -> int:
+        intervals = sorted(intervals, key=lambda x: x[1])
+        kept_end = float('-inf')
+        kept = 0
+        for a, b in intervals:
+            if a >= kept_end:
+                kept += 1
+                kept_end = b
+        return len(intervals) - kept`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Minimum Number of Arrows to Burst Balloons (LC #452) ─────────────────
@@ -518,5 +737,25 @@ another arrow at the next interval's right edge.`,
       { label: 'Stacked',    inputJson: '{"points":[[1,3],[2,4],[3,5]]}',          expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy (Sort by Right Endpoint)',
+        intuition: 'Sort balloons by their right endpoint. Shoot at the first balloon\'s right edge and skip all balloons that start before or at that point. Each time you find a balloon not yet burst, shoot a new arrow at its right edge.',
+        code: `class Solution:
+    def findMinArrowShots(self, points: list[list[int]]) -> int:
+        if not points:
+            return 0
+        points = sorted(points, key=lambda p: p[1])
+        arrows = 1
+        shot = points[0][1]
+        for a, b in points[1:]:
+            if a > shot:
+                arrows += 1
+                shot = b
+        return arrows`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 ];

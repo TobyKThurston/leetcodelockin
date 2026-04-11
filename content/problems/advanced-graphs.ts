@@ -49,6 +49,61 @@ cycle in linear time.`,
       { label: 'Empty prereqs', inputJson: '{"numCourses":1,"prerequisites":[]}',          expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Cycle Detection',
+        intuition: 'Build an adjacency list and run DFS from each node, tracking three states (unvisited, visiting, visited). If we revisit a node still in the "visiting" state, we found a cycle and return False.',
+        code: `class Solution:
+    def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+        graph = [[] for _ in range(numCourses)]
+        for a, b in prerequisites:
+            graph[b].append(a)
+        # 0 = unvisited, 1 = visiting, 2 = visited
+        state = [0] * numCourses
+        def dfs(node):
+            if state[node] == 1:
+                return False
+            if state[node] == 2:
+                return True
+            state[node] = 1
+            for nb in graph[node]:
+                if not dfs(nb):
+                    return False
+            state[node] = 2
+            return True
+        return all(dfs(i) for i in range(numCourses))
+`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V + E)',
+      },
+      {
+        approach: "Kahn's BFS Topological Sort",
+        intuition: "Track in-degrees for every node, push all zero-in-degree nodes into a queue, and peel them off layer by layer. If all nodes are processed, there is no cycle.",
+        code: `from collections import deque
+
+
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+        graph = [[] for _ in range(numCourses)]
+        indeg = [0] * numCourses
+        for a, b in prerequisites:
+            graph[b].append(a)
+            indeg[a] += 1
+        queue = deque([i for i in range(numCourses) if indeg[i] == 0])
+        taken = 0
+        while queue:
+            cur = queue.popleft()
+            taken += 1
+            for nb in graph[cur]:
+                indeg[nb] -= 1
+                if indeg[nb] == 0:
+                    queue.append(nb)
+        return taken == numCourses
+`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V + E)',
+      },
+    ],
   },
 
   // ─── Course Schedule II (LC #210) ──────────────────────────────────────────
@@ -97,6 +152,66 @@ the empty list.
       { label: 'Two courses', inputJson: '{"numCourses":2,"prerequisites":[[1,0]]}',  expectedJson: '[0,1]'   },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Topological Sort',
+        intuition: 'Run a DFS-based topological sort, appending nodes in post-order and reversing at the end. If a cycle is detected (revisiting a node in the current path), return an empty list.',
+        code: `class Solution:
+    def findOrder(self, numCourses: int, prerequisites: list[list[int]]) -> list[int]:
+        graph = [[] for _ in range(numCourses)]
+        for a, b in prerequisites:
+            graph[b].append(a)
+        # 0 = unvisited, 1 = visiting, 2 = visited
+        state = [0] * numCourses
+        order = []
+        def dfs(node):
+            if state[node] == 1:
+                return False
+            if state[node] == 2:
+                return True
+            state[node] = 1
+            for nb in graph[node]:
+                if not dfs(nb):
+                    return False
+            state[node] = 2
+            order.append(node)
+            return True
+        for i in range(numCourses):
+            if not dfs(i):
+                return []
+        return order[::-1]
+`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V + E)',
+      },
+      {
+        approach: "Kahn's BFS Topological Sort",
+        intuition: "Use BFS with in-degree tracking. Process nodes with zero in-degree first, collecting them into the result order. If all nodes are collected, it is a valid ordering.",
+        code: `from collections import deque
+
+
+class Solution:
+    def findOrder(self, numCourses: int, prerequisites: list[list[int]]) -> list[int]:
+        graph = [[] for _ in range(numCourses)]
+        indeg = [0] * numCourses
+        for a, b in prerequisites:
+            graph[b].append(a)
+            indeg[a] += 1
+        queue = deque([i for i in range(numCourses) if indeg[i] == 0])
+        order = []
+        while queue:
+            cur = queue.popleft()
+            order.append(cur)
+            for nb in graph[cur]:
+                indeg[nb] -= 1
+                if indeg[nb] == 0:
+                    queue.append(nb)
+        return order if len(order) == numCourses else []
+`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V + E)',
+      },
+    ],
   },
 
   // ─── Redundant Connection (LC #684) ────────────────────────────────────────
@@ -144,6 +259,57 @@ the first edge whose endpoints are already in the same component is the redundan
       { label: 'Ring tail', inputJson: '{"edges":[[1,2],[2,3],[3,4],[1,4],[1,5]]}',      expectedJson: '[1,4]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS Cycle Detection',
+        intuition: 'Build an adjacency list and for each edge, check if both endpoints are already reachable via DFS. If so, that edge creates the cycle and is the answer.',
+        code: `class Solution:
+    def findRedundantConnection(self, edges: list[list[int]]) -> list[int]:
+        n = len(edges)
+        graph = [[] for _ in range(n + 1)]
+        def has_path(src, dst, visited):
+            if src == dst:
+                return True
+            visited.add(src)
+            for nb in graph[src]:
+                if nb not in visited and has_path(nb, dst, visited):
+                    return True
+            return False
+        for a, b in edges:
+            if graph[a] and graph[b] and has_path(a, b, set()):
+                return [a, b]
+            graph[a].append(b)
+            graph[b].append(a)
+        return []
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Union-Find',
+        intuition: 'Walk edges left to right and union each pair. The first edge whose endpoints already share the same root is the redundant one that creates the cycle.',
+        code: `class Solution:
+    def findRedundantConnection(self, edges: list[list[int]]) -> list[int]:
+        n = len(edges)
+        parent = list(range(n + 1))
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for a, b in edges:
+            ra, rb = find(a), find(b)
+            if ra == rb:
+                return [a, b]
+            parent[ra] = rb
+        return []
+`,
+        timeComplexity: 'O(n * alpha(n))',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Number of Connected Components in an Undirected Graph (LC #323) ──────
@@ -187,6 +353,55 @@ Union-find runs in near-linear time. A plain DFS/BFS from every unvisited node a
       { label: 'No edges',       inputJson: '{"n":4,"edges":[]}',                          expectedJson: '4' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'Build an adjacency list and run DFS from every unvisited node, counting each DFS launch as a new connected component.',
+        code: `class Solution:
+    def countComponents(self, n: int, edges: list[list[int]]) -> int:
+        graph = [[] for _ in range(n)]
+        for a, b in edges:
+            graph[a].append(b)
+            graph[b].append(a)
+        visited = [False] * n
+        count = 0
+        def dfs(node):
+            visited[node] = True
+            for nb in graph[node]:
+                if not visited[nb]:
+                    dfs(nb)
+        for i in range(n):
+            if not visited[i]:
+                dfs(i)
+                count += 1
+        return count
+`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V + E)',
+      },
+      {
+        approach: 'Union-Find',
+        intuition: 'Initialize each node as its own component. For each edge, union the two endpoints. The answer is the number of distinct roots remaining.',
+        code: `class Solution:
+    def countComponents(self, n: int, edges: list[list[int]]) -> int:
+        parent = list(range(n))
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for a, b in edges:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+        return len({find(i) for i in range(n)})
+`,
+        timeComplexity: 'O(n * alpha(n))',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Connecting Cities With Minimum Cost (LC #1135) ───────────────────────
@@ -235,6 +450,35 @@ Classic MST problem — Kruskal's with union-find is the short solution.`,
       { label: 'Single city', inputJson: '{"n":1,"connections":[]}',                         expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: "Kruskal's MST with Union-Find",
+        intuition: "Sort all connections by cost, then greedily add the cheapest edge that connects two previously disconnected components using union-find. Stop when n-1 edges are used, or return -1 if that never happens.",
+        code: `class Solution:
+    def minimumCost(self, n: int, connections: list[list[int]]) -> int:
+        parent = list(range(n + 1))
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        connections = sorted(connections, key=lambda e: e[2])
+        total = 0
+        edges_used = 0
+        for a, b, cost in connections:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+                total += cost
+                edges_used += 1
+        return total if edges_used == n - 1 else -1
+`,
+        timeComplexity: 'O(E log E)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Min Cost to Connect All Points (LC #1584) ────────────────────────────
@@ -285,6 +529,44 @@ class Solution:
       { label: 'Two',          inputJson: '{"points":[[0,0],[1,1]]}',        expectedJson: '2'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: "Prim's MST with Min-Heap",
+        intuition: "Start from any point and greedily add the nearest unvisited point to the MST using a min-heap keyed by Manhattan distance. This avoids materializing all O(n^2) edges at once.",
+        code: `import heapq
+
+
+class Solution:
+    def minCostConnectPoints(self, points: list[list[int]]) -> int:
+        n = len(points)
+        if n <= 1:
+            return 0
+        in_mst = [False] * n
+        min_edge = [float('inf')] * n
+        min_edge[0] = 0
+        total = 0
+        heap = [(0, 0)]
+        while heap:
+            cost, u = heapq.heappop(heap)
+            if in_mst[u]:
+                continue
+            in_mst[u] = True
+            total += cost
+            xu, yu = points[u]
+            for v in range(n):
+                if in_mst[v]:
+                    continue
+                xv, yv = points[v]
+                d = abs(xu - xv) + abs(yu - yv)
+                if d < min_edge[v]:
+                    min_edge[v] = d
+                    heapq.heappush(heap, (d, v))
+        return total
+`,
+        timeComplexity: 'O(n^2 log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Network Delay Time (LC #743) ──────────────────────────────────────────
@@ -335,6 +617,38 @@ class Solution:
       { label: 'Unreachable',inputJson: '{"times":[[1,2,1]],"n":2,"k":2}',                  expectedJson: '-1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: "Dijkstra's Algorithm",
+        intuition: "Build an adjacency list and run Dijkstra from node k using a min-heap. The answer is the maximum shortest-path distance among all nodes, or -1 if any node is unreachable.",
+        code: `import heapq
+
+
+class Solution:
+    def networkDelayTime(self, times: list[list[int]], n: int, k: int) -> int:
+        graph = [[] for _ in range(n + 1)]
+        for u, v, w in times:
+            graph[u].append((v, w))
+        INF = float('inf')
+        dist = [INF] * (n + 1)
+        dist[k] = 0
+        heap = [(0, k)]
+        while heap:
+            d, u = heapq.heappop(heap)
+            if d > dist[u]:
+                continue
+            for v, w in graph[u]:
+                nd = d + w
+                if nd < dist[v]:
+                    dist[v] = nd
+                    heapq.heappush(heap, (nd, v))
+        result = max(dist[1:])
+        return -1 if result == INF else result
+`,
+        timeComplexity: 'O((V + E) log V)',
+        spaceComplexity: 'O(V + E)',
+      },
+    ],
   },
 
   // ─── Cheapest Flights Within K Stops (LC #787) ────────────────────────────
@@ -395,6 +709,26 @@ within the same round.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Bellman-Ford (Bounded Relaxation)',
+        intuition: 'Run k+1 rounds of edge relaxation, but use a snapshot of distances each round so newly-relaxed values do not propagate within the same round. This correctly limits the path to at most k+1 edges (k stops).',
+        code: `class Solution:
+    def findCheapestPrice(self, n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int:
+        INF = float('inf')
+        dist = [INF] * n
+        dist[src] = 0
+        for _ in range(k + 1):
+            snapshot = dist[:]
+            for u, v, w in flights:
+                if snapshot[u] != INF and snapshot[u] + w < dist[v]:
+                    dist[v] = snapshot[u] + w
+        return -1 if dist[dst] == INF else dist[dst]
+`,
+        timeComplexity: 'O(k * E)',
+        spaceComplexity: 'O(V)',
+      },
+    ],
   },
 
   // ─── Path with Maximum Probability (LC #1514) ─────────────────────────────
@@ -458,6 +792,40 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Modified Dijkstra (Max-Heap)',
+        intuition: 'Use a max-heap (negate probabilities to simulate max-heap with Python min-heap) and greedily expand the highest-probability path. When we pop the destination node, that is the answer.',
+        code: `import heapq
+
+
+class Solution:
+    def maxProbability(self, n: int, edges: list[list[int]], succProb: list[float], start: int, end: int) -> float:
+        graph = [[] for _ in range(n)]
+        for (u, v), p in zip(edges, succProb):
+            graph[u].append((v, p))
+            graph[v].append((u, p))
+        best = [0.0] * n
+        best[start] = 1.0
+        heap = [(-1.0, start)]
+        while heap:
+            neg_p, u = heapq.heappop(heap)
+            p = -neg_p
+            if u == end:
+                return p
+            if p < best[u]:
+                continue
+            for v, pw in graph[u]:
+                np = p * pw
+                if np > best[v]:
+                    best[v] = np
+                    heapq.heappush(heap, (-np, v))
+        return 0.0
+`,
+        timeComplexity: 'O((V + E) log V)',
+        spaceComplexity: 'O(V + E)',
+      },
+    ],
   },
 
   // ─── Alien Dictionary (LC #269) ────────────────────────────────────────────
@@ -509,6 +877,48 @@ run a topological sort (either Kahn's or DFS).
       { label: 'Single',       inputJson: '{"words":["z"]}',          expectedJson: '"z"'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: "Kahn's BFS Topological Sort",
+        intuition: "Compare adjacent words to extract letter-ordering constraints as directed edges. Then run Kahn's algorithm to produce a topological order. If a prefix violation or cycle is found, return empty string.",
+        code: `from collections import deque
+
+
+class Solution:
+    def alienOrder(self, words: list[str]) -> str:
+        letters = set()
+        for w in words:
+            for ch in w:
+                letters.add(ch)
+        graph = {c: set() for c in letters}
+        indeg = {c: 0 for c in letters}
+        for i in range(len(words) - 1):
+            a, b = words[i], words[i + 1]
+            if len(a) > len(b) and a.startswith(b):
+                return ""
+            for x, y in zip(a, b):
+                if x != y:
+                    if y not in graph[x]:
+                        graph[x].add(y)
+                        indeg[y] += 1
+                    break
+        queue = deque([c for c in letters if indeg[c] == 0])
+        out = []
+        while queue:
+            cur = queue.popleft()
+            out.append(cur)
+            for nb in graph[cur]:
+                indeg[nb] -= 1
+                if indeg[nb] == 0:
+                    queue.append(nb)
+        if len(out) != len(letters):
+            return ""
+        return ''.join(out)
+`,
+        timeComplexity: 'O(C) where C is total characters across all words',
+        spaceComplexity: 'O(U) where U is the number of unique letters',
+      },
+    ],
   },
 
   // ─── Satisfiability of Equality Equations (LC #990) ────────────────────────
@@ -556,6 +966,37 @@ walk the \`!=\` equations and check that no pair is already in the same componen
       { label: 'Independent',  inputJson: '{"equations":["a==b","c!=d"]}',        expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Union-Find',
+        intuition: 'First union all variables in equality equations into the same group. Then check each inequality equation: if both variables share the same root, the constraints are contradictory.',
+        code: `class Solution:
+    def equationsPossible(self, equations: list[str]) -> bool:
+        parent = {ch: ch for ch in 'abcdefghijklmnopqrstuvwxyz'}
+
+        def find(x: str) -> str:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for eq in equations:
+            if eq[1] == '=':
+                a, b = eq[0], eq[3]
+                ra, rb = find(a), find(b)
+                if ra != rb:
+                    parent[ra] = rb
+        for eq in equations:
+            if eq[1] == '!':
+                a, b = eq[0], eq[3]
+                if find(a) == find(b):
+                    return False
+        return True
+`,
+        timeComplexity: 'O(n * alpha(26))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Path With Minimum Effort (LC #1631) ──────────────────────────────────
@@ -606,5 +1047,39 @@ class Solution:
       { label: 'Single cell', inputJson: '{"heights":[[1]]}',           expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Dijkstra (Modified)',
+        intuition: 'Treat the grid as a graph where each cell is a node and each step has a cost equal to the absolute height difference. Use Dijkstra with a min-heap where the "distance" is the maximum step cost along the path so far.',
+        code: `import heapq
+
+
+class Solution:
+    def minimumEffortPath(self, heights: list[list[int]]) -> int:
+        m = len(heights)
+        n = len(heights[0]) if m else 0
+        INF = float('inf')
+        effort = [[INF] * n for _ in range(m)]
+        effort[0][0] = 0
+        heap = [(0, 0, 0)]
+        while heap:
+            e, r, c = heapq.heappop(heap)
+            if r == m - 1 and c == n - 1:
+                return e
+            if e > effort[r][c]:
+                continue
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n:
+                    ne = max(e, abs(heights[nr][nc] - heights[r][c]))
+                    if ne < effort[nr][nc]:
+                        effort[nr][nc] = ne
+                        heapq.heappush(heap, (ne, nr, nc))
+        return 0
+`,
+        timeComplexity: 'O(m * n * log(m * n))',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 ];

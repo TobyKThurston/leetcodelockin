@@ -48,6 +48,40 @@ Your solution should run in \`O(log n)\` time. The classic implementation mainta
       { label: 'Last',      inputJson: '{"nums":[1,2,3,4,5],"target":5}',       expectedJson: '4'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Walk through the array and check each element. Simple but does not meet the O(log n) requirement.',
+        code: `class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        for i, v in enumerate(nums):
+            if v == target:
+                return i
+        return -1
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search',
+        intuition: 'Maintain lo and hi bounds. Compute mid and compare nums[mid] to target, shrinking the range by half each step.',
+        code: `class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        lo, hi = 0, len(nums) - 1
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if nums[mid] == target:
+                return mid
+            if nums[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return -1
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Search Insert Position (LC #35) ───────────────────────────────────────
@@ -96,6 +130,38 @@ at each step shrink the range based on whether \`nums[mid]\` is below or not bel
       { label: 'Prepend',    inputJson: '{"nums":[2,4,6,8],"target":1}',  expectedJson: '0' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Check each position from 0 to n until you find where target would go. Simple but O(n).',
+        code: `class Solution:
+    def searchInsert(self, nums: list[int], target: int) -> int:
+        for i, v in enumerate(nums):
+            if v >= target:
+                return i
+        return len(nums)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search (Lower Bound)',
+        intuition: 'Binary search for the leftmost position where nums[mid] >= target. This is the standard lower-bound search with lo inclusive and hi exclusive.',
+        code: `class Solution:
+    def searchInsert(self, nums: list[int], target: int) -> int:
+        lo, hi = 0, len(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid
+        return lo
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── First Bad Version (LC #278) ───────────────────────────────────────────
@@ -142,6 +208,38 @@ to return the smallest version number \`v\` with \`v >= bad\`, using a **binary 
       { label: 'Last',  inputJson: '{"n":100,"bad":100}', expectedJson: '100' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Check each version from 1 to n until you find the first one that is bad. Works but is O(n).',
+        code: `class Solution:
+    def firstBadVersion(self, n: int, bad: int) -> int:
+        for v in range(1, n + 1):
+            if v >= bad:
+                return v
+        return n
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search',
+        intuition: 'Binary search over [1, n] for the smallest version >= bad. If mid >= bad, the answer is at mid or to the left; otherwise search right.',
+        code: `class Solution:
+    def firstBadVersion(self, n: int, bad: int) -> int:
+        lo, hi = 1, n
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if mid >= bad:
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Sqrt(x) (LC #69) ──────────────────────────────────────────────────────
@@ -188,6 +286,42 @@ over the range \`[0, x]\` looking for the largest \`mid\` whose square does not 
       { label: 'Larger',           inputJson: '{"x":100}', expectedJson: '10' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Try each integer from 0 upward until r*r exceeds x, then return r-1. Simple but O(sqrt(x)).',
+        code: `class Solution:
+    def mySqrt(self, x: int) -> int:
+        r = 0
+        while (r + 1) * (r + 1) <= x:
+            r += 1
+        return r
+`,
+        timeComplexity: 'O(sqrt(x))',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search',
+        intuition: 'Binary search over [0, x] for the largest mid where mid*mid <= x. Track the best answer seen so far and narrow the range.',
+        code: `class Solution:
+    def mySqrt(self, x: int) -> int:
+        if x < 2:
+            return x
+        lo, hi = 1, x
+        ans = 0
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if mid * mid <= x:
+                ans = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return ans
+`,
+        timeComplexity: 'O(log x)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Guess Number Higher or Lower (LC #374) ────────────────────────────────
@@ -232,6 +366,40 @@ directly. You must still use a **binary search** rather than a linear scan.`,
       { label: 'Top',  inputJson: '{"n":20,"pick":20}',  expectedJson: '20' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Check every number from 1 to n until you find the pick. Works but O(n).',
+        code: `class Solution:
+    def guessNumber(self, n: int, pick: int) -> int:
+        for i in range(1, n + 1):
+            if i == pick:
+                return i
+        return n
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search',
+        intuition: 'Binary search over [1, n]. Compare mid to pick and shrink the range accordingly until found.',
+        code: `class Solution:
+    def guessNumber(self, n: int, pick: int) -> int:
+        lo, hi = 1, n
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if mid == pick:
+                return mid
+            if mid < pick:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return lo
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Find First and Last Position of Element in Sorted Array (LC #34) ─────
@@ -278,6 +446,58 @@ one for the left bound (lower bound) and one for the right bound (upper bound mi
       { label: 'Single',   inputJson: '{"nums":[5],"target":5}',           expectedJson: '[0,0]'   },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Walk through the array tracking the first and last occurrence of target. O(n) but straightforward.',
+        code: `class Solution:
+    def searchRange(self, nums: list[int], target: int) -> list[int]:
+        first, last = -1, -1
+        for i, v in enumerate(nums):
+            if v == target:
+                if first == -1:
+                    first = i
+                last = i
+        return [first, last]
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Two Binary Searches',
+        intuition: 'Run a lower-bound binary search to find the first occurrence and an upper-bound search to find one past the last. If they are equal, target is absent.',
+        code: `class Solution:
+    def searchRange(self, nums: list[int], target: int) -> list[int]:
+        def lower():
+            lo, hi = 0, len(nums)
+            while lo < hi:
+                m = (lo + hi) // 2
+                if nums[m] < target:
+                    lo = m + 1
+                else:
+                    hi = m
+            return lo
+
+        def upper():
+            lo, hi = 0, len(nums)
+            while lo < hi:
+                m = (lo + hi) // 2
+                if nums[m] <= target:
+                    lo = m + 1
+                else:
+                    hi = m
+            return lo
+
+        lb = lower()
+        ub = upper()
+        if lb == ub:
+            return [-1, -1]
+        return [lb, ub - 1]
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Search in Rotated Sorted Array (LC #33) ───────────────────────────────
@@ -326,6 +546,46 @@ and recurse into that half or the other.`,
       { label: 'Single',       inputJson: '{"nums":[3],"target":3}',                expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Check every element for a match. Works but is O(n) instead of the required O(log n).',
+        code: `class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        for i, v in enumerate(nums):
+            if v == target:
+                return i
+        return -1
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Modified Binary Search',
+        intuition: 'At each step, one half around mid is guaranteed to be sorted. Check if target falls in the sorted half; if so, search there, otherwise search the other half.',
+        code: `class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        lo, hi = 0, len(nums) - 1
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if nums[mid] == target:
+                return mid
+            if nums[lo] <= nums[mid]:
+                if nums[lo] <= target < nums[mid]:
+                    hi = mid - 1
+                else:
+                    lo = mid + 1
+            else:
+                if nums[mid] < target <= nums[hi]:
+                    lo = mid + 1
+                else:
+                    hi = mid - 1
+        return -1
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Find Minimum in Rotated Sorted Array (LC #153) ────────────────────────
@@ -373,6 +633,35 @@ otherwise it is at \`mid\` or to the left.`,
       { label: 'Small rotate',inputJson: '{"nums":[2,1]}',          expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan (min)',
+        intuition: 'Simply return the minimum of the array. Correct but O(n) instead of the required O(log n).',
+        code: `class Solution:
+    def findMin(self, nums: list[int]) -> int:
+        return min(nums)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search',
+        intuition: 'Compare nums[mid] to nums[hi]. If nums[mid] > nums[hi], the minimum must be strictly to the right of mid; otherwise it is at mid or to the left.',
+        code: `class Solution:
+    def findMin(self, nums: list[int]) -> int:
+        lo, hi = 0, len(nums) - 1
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] > nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid
+        return nums[lo]
+`,
+        timeComplexity: 'O(log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Koko Eating Bananas (LC #875) ─────────────────────────────────────────
@@ -422,6 +711,47 @@ search \`k\` over \`[1, max(piles)]\`.`,
       { label: 'Plenty of time', inputJson: '{"piles":[1,2,3],"h":10}', expectedJson: '1'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Linear Search on Answer)',
+        intuition: 'Try every possible speed k from 1 upward and return the first one that lets Koko finish in h hours. Correct but very slow.',
+        code: `class Solution:
+    def minEatingSpeed(self, piles: list[int], h: int) -> int:
+        for k in range(1, max(piles) + 1):
+            total = 0
+            for p in piles:
+                total += (p + k - 1) // k
+            if total <= h:
+                return k
+        return max(piles)
+`,
+        timeComplexity: 'O(max(piles) * n)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search on Answer',
+        intuition: 'The eating speed is monotone: if speed k works, every larger speed also works. Binary search k over [1, max(piles)] and check whether the total hours at speed mid fit within h.',
+        code: `class Solution:
+    def minEatingSpeed(self, piles: list[int], h: int) -> int:
+        def hours_at(k: int) -> int:
+            total = 0
+            for p in piles:
+                total += (p + k - 1) // k
+            return total
+
+        lo, hi = 1, max(piles)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if hours_at(mid) <= h:
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+`,
+        timeComplexity: 'O(n * log(max(piles)))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Capacity To Ship Packages Within D Days (LC #1011) ────────────────────
@@ -470,6 +800,58 @@ loading.`,
       { label: 'Per day',     inputJson: '{"weights":[2,5,3],"days":3}',       expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Linear Search on Answer)',
+        intuition: 'Try every possible capacity from max(weights) upward. The first capacity that ships everything within the day limit is the answer.',
+        code: `class Solution:
+    def shipWithinDays(self, weights: list[int], days: int) -> int:
+        def can_ship(cap: int) -> bool:
+            used = 1
+            cur = 0
+            for w in weights:
+                if cur + w > cap:
+                    used += 1
+                    cur = 0
+                cur += w
+            return used <= days
+
+        for cap in range(max(weights), sum(weights) + 1):
+            if can_ship(cap):
+                return cap
+        return sum(weights)
+`,
+        timeComplexity: 'O(n * sum(weights))',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search on Answer',
+        intuition: 'The capacity is monotone: if capacity c works, every larger capacity also works. Binary search over [max(weights), sum(weights)] with a greedy simulation predicate.',
+        code: `class Solution:
+    def shipWithinDays(self, weights: list[int], days: int) -> int:
+        def can_ship(cap: int) -> bool:
+            used = 1
+            cur = 0
+            for w in weights:
+                if cur + w > cap:
+                    used += 1
+                    cur = 0
+                cur += w
+            return used <= days
+
+        lo, hi = max(weights), sum(weights)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if can_ship(mid):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+`,
+        timeComplexity: 'O(n * log(sum(weights)))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Split Array Largest Sum (LC #410) ─────────────────────────────────────
@@ -517,6 +899,58 @@ scan, which makes the whole algorithm \`O(n log(sum))\`.`,
       { label: 'Single split', inputJson: '{"nums":[5],"k":1}',         expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Linear Search on Answer)',
+        intuition: 'Try every possible limit from max(nums) upward. The first limit that allows splitting into at most k subarrays is the answer.',
+        code: `class Solution:
+    def splitArray(self, nums: list[int], k: int) -> int:
+        def can_split(limit: int) -> bool:
+            parts = 1
+            cur = 0
+            for v in nums:
+                if cur + v > limit:
+                    parts += 1
+                    cur = 0
+                cur += v
+            return parts <= k
+
+        for limit in range(max(nums), sum(nums) + 1):
+            if can_split(limit):
+                return limit
+        return sum(nums)
+`,
+        timeComplexity: 'O(n * sum(nums))',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Binary Search on Answer',
+        intuition: 'Binary search the answer over [max(nums), sum(nums)]. The predicate checks greedily whether we can split into at most k subarrays each with sum <= mid.',
+        code: `class Solution:
+    def splitArray(self, nums: list[int], k: int) -> int:
+        def can_split(limit: int) -> bool:
+            parts = 1
+            cur = 0
+            for v in nums:
+                if cur + v > limit:
+                    parts += 1
+                    cur = 0
+                cur += v
+            return parts <= k
+
+        lo, hi = max(nums), sum(nums)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if can_split(mid):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
+`,
+        timeComplexity: 'O(n * log(sum(nums)))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Median of Two Sorted Arrays (LC #4) ───────────────────────────────────
@@ -565,5 +999,50 @@ and the \`max(left)\` is \`<= min(right)\`.`,
       { label: 'Even, bigger', inputJson: '{"nums1":[1,2,3],"nums2":[4,5,6]}',expectedJson: '3.5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Merge and Find Middle',
+        intuition: 'Merge both sorted arrays into one sorted array and return the middle element(s). Simple but O(m + n) time and space.',
+        code: `class Solution:
+    def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:
+        merged = sorted(nums1 + nums2)
+        n = len(merged)
+        if n % 2 == 1:
+            return float(merged[n // 2])
+        return (merged[n // 2 - 1] + merged[n // 2]) / 2
+`,
+        timeComplexity: 'O((m + n) log(m + n))',
+        spaceComplexity: 'O(m + n)',
+      },
+      {
+        approach: 'Binary Search on Partition',
+        intuition: 'Binary search on a partition of the shorter array so the combined left half has the right size and max(left) <= min(right). This achieves O(log(min(m,n))).',
+        code: `class Solution:
+    def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+        m, n = len(nums1), len(nums2)
+        lo, hi = 0, m
+        while lo <= hi:
+            i = (lo + hi) // 2
+            j = (m + n + 1) // 2 - i
+            left1 = nums1[i - 1] if i > 0 else float('-inf')
+            right1 = nums1[i] if i < m else float('inf')
+            left2 = nums2[j - 1] if j > 0 else float('-inf')
+            right2 = nums2[j] if j < n else float('inf')
+            if left1 <= right2 and left2 <= right1:
+                if (m + n) % 2 == 1:
+                    return float(max(left1, left2))
+                return (max(left1, left2) + min(right1, right2)) / 2
+            elif left1 > right2:
+                hi = i - 1
+            else:
+                lo = i + 1
+        return 0.0
+`,
+        timeComplexity: 'O(log(min(m, n)))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 ];

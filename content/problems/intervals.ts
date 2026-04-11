@@ -46,6 +46,21 @@ answer is \`False\`.`,
       { label: 'Empty',           inputJson: '{"intervals":[]}',             expectedJson: 'true'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort and Scan',
+        intuition: 'Sort meetings by start time and check each consecutive pair. If any meeting starts before the previous one ends, there is a conflict.',
+        code: `class Solution:
+    def canAttendMeetings(self, intervals: list[list[int]]) -> bool:
+        intervals = sorted(intervals, key=lambda x: x[0])
+        for i in range(1, len(intervals)):
+            if intervals[i][0] < intervals[i - 1][1]:
+                return False
+        return True`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Meeting Rooms II (LC #253) ────────────────────────────────────────────
@@ -95,6 +110,26 @@ class Solution:
       { label: 'Single',         inputJson: '{"intervals":[[1,2]]}',                  expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Min-Heap',
+        intuition: 'Sort by start time and use a min-heap of room end-times. For each meeting, if it starts after the earliest-ending room, reuse that room (pop). Always push the new end-time. The heap size is the answer.',
+        code: `import heapq
+
+
+class Solution:
+    def minMeetingRooms(self, intervals: list[list[int]]) -> int:
+        intervals = sorted(intervals, key=lambda x: x[0])
+        heap: list[int] = []
+        for start, end in intervals:
+            if heap and heap[0] <= start:
+                heapq.heappop(heap)
+            heapq.heappush(heap, end)
+        return len(heap)`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Merge Intervals (LC #56) ──────────────────────────────────────────────
@@ -144,6 +179,24 @@ new interval.`,
       { label: 'Single',     inputJson: '{"intervals":[[1,2]]}',        expectedJson: '[[1,2]]' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort and Merge',
+        intuition: 'Sort intervals by start. Walk through and either extend the last merged interval\'s end or append a new one. Two overlapping intervals merge by taking the max end.',
+        code: `class Solution:
+    def merge(self, intervals: list[list[int]]) -> list[list[int]]:
+        intervals = sorted(intervals, key=lambda x: x[0])
+        out: list[list[int]] = []
+        for a, b in intervals:
+            if out and a <= out[-1][1]:
+                out[-1][1] = max(out[-1][1], b)
+            else:
+                out.append([a, b])
+        return out`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Insert Interval (LC #57) ──────────────────────────────────────────────
@@ -202,6 +255,30 @@ new interval ends.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Sweep',
+        intuition: 'Walk through the sorted list with an index. Copy intervals that end before the new one starts, merge any that overlap the new interval by extending its endpoints, then copy the rest.',
+        code: `class Solution:
+    def insert(self, intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
+        out: list[list[int]] = []
+        i = 0
+        n = len(intervals)
+        while i < n and intervals[i][1] < newInterval[0]:
+            out.append(intervals[i])
+            i += 1
+        while i < n and intervals[i][0] <= newInterval[1]:
+            newInterval = [min(newInterval[0], intervals[i][0]), max(newInterval[1], intervals[i][1])]
+            i += 1
+        out.append(newInterval)
+        while i < n:
+            out.append(intervals[i])
+            i += 1
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Remove Covered Intervals (LC #1288) ───────────────────────────────────
@@ -248,6 +325,24 @@ largest \`end\` seen so far: any interval whose end is \`<=\` that running max i
       { label: 'None covered', inputJson: '{"intervals":[[1,2],[3,4]]}',       expectedJson: '2' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort and Track Max End',
+        intuition: 'Sort by start ascending, breaking ties by end descending. Walk through tracking the largest end seen. Any interval whose end is within the running max is covered.',
+        code: `class Solution:
+    def removeCoveredIntervals(self, intervals: list[list[int]]) -> int:
+        intervals = sorted(intervals, key=lambda x: (x[0], -x[1]))
+        kept = 0
+        best_end = 0
+        for a, b in intervals:
+            if b > best_end:
+                kept += 1
+                best_end = b
+        return kept`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Interval List Intersections (LC #986) ────────────────────────────────
@@ -305,6 +400,28 @@ If it's non-empty, add it. Advance the pointer whose interval ends first.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers',
+        intuition: 'Use two pointers to walk both sorted lists. At each step compute the overlap (max of starts, min of ends). If non-empty, add it. Advance the pointer whose interval ends first.',
+        code: `class Solution:
+    def intervalIntersection(self, firstList: list[list[int]], secondList: list[list[int]]) -> list[list[int]]:
+        i = j = 0
+        out: list[list[int]] = []
+        while i < len(firstList) and j < len(secondList):
+            lo = max(firstList[i][0], secondList[j][0])
+            hi = min(firstList[i][1], secondList[j][1])
+            if lo <= hi:
+                out.append([lo, hi])
+            if firstList[i][1] < secondList[j][1]:
+                i += 1
+            else:
+                j += 1
+        return out`,
+        timeComplexity: 'O(m + n)',
+        spaceComplexity: 'O(m + n)',
+      },
+    ],
   },
 
   // ─── My Calendar I (LC #729) ───────────────────────────────────────────────
@@ -364,6 +481,33 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force (Linear Scan)',
+        intuition: 'Store all booked intervals in a list. For each new booking, check against every existing event for overlap. Simple but O(n) per booking.',
+        code: `class MyCalendar:
+    def __init__(self):
+        self.events: list[tuple[int, int]] = []
+
+    def book(self, start: int, end: int) -> bool:
+        for s, e in self.events:
+            if start < e and s < end:
+                return False
+        self.events.append((start, end))
+        return True
+
+
+class Solution:
+    def runCalendarOps(self, ops: list[str], vals: list[list[int]]) -> list[bool]:
+        cal = MyCalendar()
+        out: list[bool] = []
+        for op, args in zip(ops, vals):
+            out.append(getattr(cal, op)(*args))
+        return out`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Meeting Scheduler (LC #1229) ──────────────────────────────────────────
@@ -418,6 +562,29 @@ Otherwise advance the pointer whose interval ends first.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort + Two Pointers',
+        intuition: 'Sort both slot lists by start time. Use two pointers: compute the overlap of the current pair. If the overlap is >= duration, return it. Otherwise advance the pointer whose slot ends first.',
+        code: `class Solution:
+    def minAvailableDuration(self, slots1: list[list[int]], slots2: list[list[int]], duration: int) -> list[int]:
+        slots1 = sorted(slots1, key=lambda x: x[0])
+        slots2 = sorted(slots2, key=lambda x: x[0])
+        i = j = 0
+        while i < len(slots1) and j < len(slots2):
+            lo = max(slots1[i][0], slots2[j][0])
+            hi = min(slots1[i][1], slots2[j][1])
+            if hi - lo >= duration:
+                return [lo, lo + duration]
+            if slots1[i][1] < slots2[j][1]:
+                i += 1
+            else:
+                j += 1
+        return []`,
+        timeComplexity: 'O(n log n + m log m)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Employee Free Time (LC #759) ──────────────────────────────────────────

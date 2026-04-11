@@ -46,6 +46,35 @@ sequence shifted by one.`,
       { label: 'n = 10', inputJson: '{"n":10}', expectedJson: '89' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive (Brute Force)',
+        intuition: 'At each step we can take 1 or 2 stairs, so the number of ways is the sum of ways(n-1) and ways(n-2). This has overlapping subproblems, leading to exponential time without memoization.',
+        code: `class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n <= 2:
+            return n
+        return self.climbStairs(n - 1) + self.climbStairs(n - 2)
+`,
+        timeComplexity: 'O(2^n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP (Iterative)',
+        intuition: 'Since ways(n) = ways(n-1) + ways(n-2), iterate from the base cases upward, keeping only the last two values for O(1) space.',
+        code: `class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n <= 2:
+            return n
+        a, b = 1, 2
+        for _ in range(3, n + 1):
+            a, b = b, a + b
+        return b
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Min Cost Climbing Stairs (LC #746) ────────────────────────────────────
@@ -94,6 +123,40 @@ memory is enough.`,
       { label: 'Zeros',     inputJson: '{"cost":[0,0]}',        expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive (Brute Force)',
+        intuition: 'At each stair, the minimum cost is the stair cost plus the cheaper of the two preceding costs. Recursion with memoization avoids recomputation.',
+        code: `class Solution:
+    def minCostClimbingStairs(self, cost: list[int]) -> int:
+        memo = {}
+        def dp(i):
+            if i < 2:
+                return cost[i] if i < len(cost) else 0
+            if i in memo:
+                return memo[i]
+            memo[i] = cost[i] + min(dp(i - 1), dp(i - 2)) if i < len(cost) else min(dp(i - 1), dp(i - 2))
+            return memo[i]
+        return min(dp(len(cost) - 1), dp(len(cost) - 2))
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP (Iterative)',
+        intuition: 'Build the answer iteratively: dp[i] = min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]). Only the last two values are needed, so use two variables.',
+        code: `class Solution:
+    def minCostClimbingStairs(self, cost: list[int]) -> int:
+        a = b = 0
+        for i in range(2, len(cost) + 1):
+            cur = min(a + cost[i - 2], b + cost[i - 1])
+            a, b = b, cur
+        return b
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── House Robber (LC #198) ────────────────────────────────────────────────
@@ -141,6 +204,39 @@ two values.`,
       { label: 'Single',       inputJson: '{"nums":[5]}',         expectedJson: '5'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive (Brute Force)',
+        intuition: 'For each house, either rob it (add its value and skip the previous) or skip it. This gives the recurrence rob(i) = max(rob(i-1), rob(i-2) + nums[i]).',
+        code: `class Solution:
+    def rob(self, nums: list[int]) -> int:
+        memo = {}
+        def dp(i):
+            if i < 0:
+                return 0
+            if i in memo:
+                return memo[i]
+            memo[i] = max(dp(i - 1), dp(i - 2) + nums[i])
+            return memo[i]
+        return dp(len(nums) - 1)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP (Iterative)',
+        intuition: 'Iterate through houses, tracking the best loot with and without the current house using two rolling variables.',
+        code: `class Solution:
+    def rob(self, nums: list[int]) -> int:
+        prev = prev2 = 0
+        for v in nums:
+            prev, prev2 = max(prev, prev2 + v), prev
+        return prev
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── House Robber II (LC #213) ─────────────────────────────────────────────
@@ -187,6 +283,27 @@ house) and once on \`nums[1..n-1]\` (exclude the first), and take the larger ans
       { label: 'Single',         inputJson: '{"nums":[1]}',       expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Reduce to Linear House Robber',
+        intuition: 'Since the houses form a circle, the first and last houses are adjacent. Run the linear House Robber twice: once excluding the last house and once excluding the first, then take the maximum.',
+        code: `class Solution:
+    def rob(self, nums: list[int]) -> int:
+        if len(nums) == 1:
+            return nums[0]
+
+        def rob_line(arr):
+            prev = prev2 = 0
+            for v in arr:
+                prev, prev2 = max(prev, prev2 + v), prev
+            return prev
+
+        return max(rob_line(nums[:-1]), rob_line(nums[1:]))
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Fibonacci Number (LC #509) ────────────────────────────────────────────
@@ -230,6 +347,35 @@ The iterative \`O(n)\` loop using two rolling variables is the standard solution
       { label: 'n = 30', inputJson: '{"n":30}', expectedJson: '832040' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Recursive (Brute Force)',
+        intuition: 'The naive recursive definition F(n) = F(n-1) + F(n-2) directly mirrors the problem statement but has exponential time due to repeated subproblems.',
+        code: `class Solution:
+    def fib(self, n: int) -> int:
+        if n < 2:
+            return n
+        return self.fib(n - 1) + self.fib(n - 2)
+`,
+        timeComplexity: 'O(2^n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Bottom-Up DP (Iterative)',
+        intuition: 'Iterate from the base cases upward, maintaining only the two most recent values. This computes F(n) in linear time with constant space.',
+        code: `class Solution:
+    def fib(self, n: int) -> int:
+        if n < 2:
+            return n
+        a, b = 0, 1
+        for _ in range(n - 1):
+            a, b = b, a + b
+        return b
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Delete and Earn (LC #740) ─────────────────────────────────────────────
@@ -277,6 +423,27 @@ max subset sum where no two chosen indices are adjacent. Use the standard
       { label: 'Single value', inputJson: '{"nums":[5]}',                expectedJson: '5' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Reduce to House Robber',
+        intuition: 'Build an array pts where pts[v] = v * count(v). Now the problem becomes House Robber on pts: picking value v means you cannot pick v-1 or v+1, which maps to no adjacent indices.',
+        code: `class Solution:
+    def deleteAndEarn(self, nums: list[int]) -> int:
+        if not nums:
+            return 0
+        max_v = max(nums)
+        points = [0] * (max_v + 1)
+        for v in nums:
+            points[v] += v
+        prev = prev2 = 0
+        for v in range(len(points)):
+            prev, prev2 = max(prev, prev2 + points[v]), prev
+        return prev
+`,
+        timeComplexity: 'O(n + k) where k is max(nums)',
+        spaceComplexity: 'O(k)',
+      },
+    ],
   },
 
   // ─── Maximum Product Subarray (LC #152) ────────────────────────────────────

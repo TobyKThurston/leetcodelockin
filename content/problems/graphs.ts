@@ -61,6 +61,33 @@ original colour with the new \`color\`. Return the updated image.
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'Start from (sr, sc) and recursively visit all 4-connected cells that share the original color, recoloring each to the new color. If the starting pixel already matches the target color, return immediately to avoid infinite recursion.',
+        code: `class Solution:
+    def floodFill(self, image: list[list[int]], sr: int, sc: int, color: int) -> list[list[int]]:
+        original = image[sr][sc]
+        if original == color:
+            return image
+        m = len(image)
+        n = len(image[0]) if m else 0
+
+        def dfs(r: int, c: int):
+            if r < 0 or r >= m or c < 0 or c >= n or image[r][c] != original:
+                return
+            image[r][c] = color
+            dfs(r + 1, c)
+            dfs(r - 1, c)
+            dfs(r, c + 1)
+            dfs(r, c - 1)
+
+        dfs(sr, sc)
+        return image`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Number of Islands (LC #200) ───────────────────────────────────────────
@@ -117,6 +144,41 @@ horizontal/vertical pairs of land cells.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'Scan the grid for unvisited land cells. When you find one, run a DFS/BFS to mark all connected land as visited, incrementing the island count. Use a seen matrix or mutate the grid to track visits.',
+        code: `class Solution:
+    def numIslands(self, grid: list[list[str]]) -> int:
+        m = len(grid)
+        n = len(grid[0]) if m else 0
+        seen = [[False] * n for _ in range(m)]
+
+        def dfs(r: int, c: int):
+            stack = [(r, c)]
+            while stack:
+                cr, cc = stack.pop()
+                if cr < 0 or cr >= m or cc < 0 or cc >= n:
+                    continue
+                if seen[cr][cc] or grid[cr][cc] == '0':
+                    continue
+                seen[cr][cc] = True
+                stack.append((cr + 1, cc))
+                stack.append((cr - 1, cc))
+                stack.append((cr, cc + 1))
+                stack.append((cr, cc - 1))
+
+        count = 0
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == '1' and not seen[r][c]:
+                    dfs(r, c)
+                    count += 1
+        return count`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Max Area of Island (LC #695) ──────────────────────────────────────────
@@ -159,6 +221,31 @@ land.`,
       { label: 'Single cell', inputJson: '{"grid":[[1]]}',                       expectedJson: '1' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS',
+        intuition: 'For each land cell, run a recursive DFS that marks the cell as visited (e.g. set to -1), counts it as 1, and adds the area of all 4-connected land neighbors. Track the maximum area across all DFS calls.',
+        code: `class Solution:
+    def maxAreaOfIsland(self, grid: list[list[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0]) if m else 0
+
+        def dfs(r: int, c: int) -> int:
+            if r < 0 or r >= m or c < 0 or c >= n or grid[r][c] != 1:
+                return 0
+            grid[r][c] = -1
+            return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)
+
+        best = 0
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == 1:
+                    best = max(best, dfs(r, c))
+        return best`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Island Perimeter (LC #463) ────────────────────────────────────────────
@@ -206,6 +293,29 @@ The direct scan: for each land cell, add \`4\` minus twice the number of land ne
       { label: 'Corner',      inputJson: '{"grid":[[1,0],[0,0]]}',               expectedJson: '4'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Direct Counting',
+        intuition: 'For each land cell, start with 4 edges of perimeter. Subtract 2 for every neighbor above or to the left that is also land, since each shared edge removes one perimeter unit from each cell.',
+        code: `class Solution:
+    def islandPerimeter(self, grid: list[list[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0]) if m else 0
+        total = 0
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] != 1:
+                    continue
+                total += 4
+                if r > 0 and grid[r - 1][c] == 1:
+                    total -= 2
+                if c > 0 and grid[r][c - 1] == 1:
+                    total -= 2
+        return total`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Rotting Oranges (LC #994) ─────────────────────────────────────────────
@@ -253,6 +363,42 @@ levels as minutes.`,
       { label: 'Empty grid',    inputJson: '{"grid":[[0]]}',          expectedJson: '0'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Multi-Source BFS',
+        intuition: 'Enqueue all initially rotten oranges with time 0. BFS level by level -- each level is one minute. When a rotten orange is dequeued, rot its fresh neighbors and enqueue them. If any fresh oranges remain unreached, return -1.',
+        code: `from collections import deque
+
+
+class Solution:
+    def orangesRotting(self, grid: list[list[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0]) if m else 0
+        queue = deque()
+        fresh = 0
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == 2:
+                    queue.append((r, c, 0))
+                elif grid[r][c] == 1:
+                    fresh += 1
+        last_minute = 0
+        while queue:
+            r, c, t = queue.popleft()
+            last_minute = max(last_minute, t)
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and grid[nr][nc] == 1:
+                    grid[nr][nc] = 2
+                    fresh -= 1
+                    queue.append((nr, nc, t + 1))
+        if fresh > 0:
+            return -1
+        return last_minute`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Clone Graph (LC #133) ─────────────────────────────────────────────────
@@ -344,6 +490,32 @@ class Solution:
       { label: 'Empty',      inputJson: '{"adjList":[]}',                       expectedJson: '[]'                      },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with Hash Map',
+        intuition: 'Traverse the original graph with DFS. For each node, create a clone and store the original-to-clone mapping. When visiting neighbors, return the existing clone if already mapped, otherwise recurse.',
+        code: `class Solution:
+    def cloneGraph(self, adjList: list[list[int]]) -> list[list[int]]:
+        head = _to_graph(adjList)
+        if head is None:
+            return []
+        mapping = {}
+
+        def dfs(node):
+            if node.val in mapping:
+                return mapping[node.val]
+            cloned = Node(node.val)
+            mapping[node.val] = cloned
+            for nb in node.neighbors:
+                cloned.neighbors.append(dfs(nb))
+            return cloned
+
+        new_head = dfs(head)
+        return _from_graph(new_head)`,
+        timeComplexity: 'O(V + E)',
+        spaceComplexity: 'O(V)',
+      },
+    ],
   },
 
   // ─── Pacific Atlantic Water Flow (LC #417) ─────────────────────────────────
@@ -393,6 +565,42 @@ is the intersection of the two reachable sets.`,
     ],
     // set: order of returned cells is unspecified.
     resultCompare: 'set',
+    solutions: [
+      {
+        approach: 'Reverse DFS from Edges',
+        intuition: 'Instead of checking each cell, reverse the flow: DFS from every Pacific-edge cell and every Atlantic-edge cell, stepping only to neighbors with greater-or-equal height. The answer is the intersection of cells reachable from both oceans.',
+        code: `class Solution:
+    def pacificAtlantic(self, heights: list[list[int]]) -> list[list[int]]:
+        m = len(heights)
+        n = len(heights[0]) if m else 0
+        pacific = [[False] * n for _ in range(m)]
+        atlantic = [[False] * n for _ in range(m)]
+
+        def dfs(r: int, c: int, visited):
+            visited[r][c] = True
+            for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and not visited[nr][nc]:
+                    if heights[nr][nc] >= heights[r][c]:
+                        dfs(nr, nc, visited)
+
+        for r in range(m):
+            dfs(r, 0, pacific)
+            dfs(r, n - 1, atlantic)
+        for c in range(n):
+            dfs(0, c, pacific)
+            dfs(m - 1, c, atlantic)
+
+        out = []
+        for r in range(m):
+            for c in range(n):
+                if pacific[r][c] and atlantic[r][c]:
+                    out.append([r, c])
+        return out`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Surrounded Regions (LC #130) ──────────────────────────────────────────
@@ -449,6 +657,45 @@ remaining \`'O'\`s to \`'X'\` and the \`'#'\`s back to \`'O'\`.`,
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Border DFS (Complement Trick)',
+        intuition: 'DFS from every border "O" cell, marking reachable O cells as "#" (safe). Then scan the whole grid: remaining "O" cells are surrounded so flip to "X", and "#" cells revert to "O".',
+        code: `class Solution:
+    def solve(self, board: list[list[str]]) -> list[list[str]]:
+        m = len(board)
+        n = len(board[0]) if m else 0
+
+        def mark_safe(r: int, c: int):
+            stack = [(r, c)]
+            while stack:
+                cr, cc = stack.pop()
+                if cr < 0 or cr >= m or cc < 0 or cc >= n or board[cr][cc] != 'O':
+                    continue
+                board[cr][cc] = '#'
+                stack.append((cr + 1, cc))
+                stack.append((cr - 1, cc))
+                stack.append((cr, cc + 1))
+                stack.append((cr, cc - 1))
+
+        for r in range(m):
+            mark_safe(r, 0)
+            mark_safe(r, n - 1)
+        for c in range(n):
+            mark_safe(0, c)
+            mark_safe(m - 1, c)
+
+        for r in range(m):
+            for c in range(n):
+                if board[r][c] == 'O':
+                    board[r][c] = 'X'
+                elif board[r][c] == '#':
+                    board[r][c] = 'O'
+        return board`,
+        timeComplexity: 'O(m * n)',
+        spaceComplexity: 'O(m * n)',
+      },
+    ],
   },
 
   // ─── Keys and Rooms (LC #841) ──────────────────────────────────────────────

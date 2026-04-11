@@ -51,6 +51,26 @@ closing bracket, checking that the popped opener matches.`,
       { label: 'Empty stack',  inputJson: '{"s":")"}',      expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'Push each opening bracket onto a stack. When you see a closing bracket, pop from the stack and check that it matches. If the stack is empty at the end with no mismatches, the string is valid.',
+        code: `class Solution:
+    def isValid(self, s: str) -> bool:
+        pairs = {')': '(', ']': '[', '}': '{'}
+        stack = []
+        for ch in s:
+            if ch in '([{':
+                stack.append(ch)
+            else:
+                if not stack or stack.pop() != pairs[ch]:
+                    return False
+        return not stack
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Remove All Adjacent Duplicates In String (LC #1047) ───────────────────
@@ -96,6 +116,24 @@ top; otherwise push it. At the end the stack is the answer, in order.`,
       { label: 'Single',     inputJson: '{"s":"a"}',      expectedJson: '"a"'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'For each character, if it matches the top of the stack, pop (they cancel as adjacent duplicates). Otherwise push it. At the end, join the stack to get the result.',
+        code: `class Solution:
+    def removeDuplicates(self, s: str) -> str:
+        st = []
+        for ch in s:
+            if st and st[-1] == ch:
+                st.pop()
+            else:
+                st.append(ch)
+        return ''.join(st)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Baseball Game (LC #682) ───────────────────────────────────────────────
@@ -148,6 +186,28 @@ A stack of previously-recorded scores lets you implement each operation in const
       { label: 'Double then cancel', inputJson: '{"operations":["5","D","C"]}',    expectedJson: '5'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack Simulation',
+        intuition: 'Use a stack to keep recorded scores. For each operation: push an integer, push the sum of the top two, push double the top, or pop the top. Sum the stack at the end.',
+        code: `class Solution:
+    def calPoints(self, operations: list[str]) -> int:
+        st = []
+        for op in operations:
+            if op == '+':
+                st.append(st[-1] + st[-2])
+            elif op == 'D':
+                st.append(2 * st[-1])
+            elif op == 'C':
+                st.pop()
+            else:
+                st.append(int(op))
+        return sum(st)
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Implement Queue using Stacks (LC #232) ────────────────────────────────
@@ -237,6 +297,48 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Stacks (Amortized O(1))',
+        intuition: 'Use an "in" stack for pushes and an "out" stack for pops. When the out stack is empty, transfer all elements from the in stack (reversing order). This gives FIFO behavior with amortized O(1) per operation.',
+        code: `class MyQueue:
+    def __init__(self):
+        self.in_stack = []
+        self.out_stack = []
+
+    def push(self, x: int) -> None:
+        self.in_stack.append(x)
+
+    def _shift(self):
+        if not self.out_stack:
+            while self.in_stack:
+                self.out_stack.append(self.in_stack.pop())
+
+    def pop(self) -> int:
+        self._shift()
+        return self.out_stack.pop()
+
+    def peek(self) -> int:
+        self._shift()
+        return self.out_stack[-1]
+
+    def empty(self) -> bool:
+        return not self.in_stack and not self.out_stack
+
+
+class Solution:
+    def runQueueOps(self, ops: list[str], vals: list[list[int]]) -> list:
+        q = MyQueue()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(q, op)(*args)
+            out.append(result)
+        return out
+`,
+        timeComplexity: 'O(1) amortized per operation',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Backspace String Compare (LC #844) ────────────────────────────────────
@@ -289,6 +391,64 @@ reverse pointers, but either approach is fine.`,
       { label: 'Not equal',      inputJson: '{"s":"a#b","t":"c"}',    expectedJson: 'false' },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'Build each string by pushing characters onto a stack and popping on "#". Compare the two resulting stacks. This is the simplest approach.',
+        code: `class Solution:
+    def backspaceCompare(self, s: str, t: str) -> bool:
+        def reduce(string: str) -> list:
+            st = []
+            for ch in string:
+                if ch == '#':
+                    if st:
+                        st.pop()
+                else:
+                    st.append(ch)
+            return st
+        return reduce(s) == reduce(t)
+`,
+        timeComplexity: 'O(n + m)',
+        spaceComplexity: 'O(n + m)',
+      },
+      {
+        approach: 'Two Pointers (O(1) Space)',
+        intuition: 'Walk both strings from right to left, counting backspaces. Skip characters that are "erased" by backspaces, then compare the next surviving characters. This avoids building intermediate strings.',
+        code: `class Solution:
+    def backspaceCompare(self, s: str, t: str) -> bool:
+        i, j = len(s) - 1, len(t) - 1
+        skip_s = skip_t = 0
+        while i >= 0 or j >= 0:
+            while i >= 0:
+                if s[i] == '#':
+                    skip_s += 1
+                    i -= 1
+                elif skip_s > 0:
+                    skip_s -= 1
+                    i -= 1
+                else:
+                    break
+            while j >= 0:
+                if t[j] == '#':
+                    skip_t += 1
+                    j -= 1
+                elif skip_t > 0:
+                    skip_t -= 1
+                    j -= 1
+                else:
+                    break
+            if i >= 0 and j >= 0 and s[i] != t[j]:
+                return False
+            if (i >= 0) != (j >= 0):
+                return False
+            i -= 1
+            j -= 1
+        return True
+`,
+        timeComplexity: 'O(n + m)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
   },
 
   // ─── Evaluate Reverse Polish Notation (LC #150) ────────────────────────────
@@ -338,6 +498,34 @@ operator pop the top two operands, apply the operator, and push the result back.
       { label: 'Subtract',       inputJson: '{"tokens":["10","6","-"]}',         expectedJson: '4'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'Walk through tokens with a stack. Push integers. When you encounter an operator, pop the top two operands, apply the operation, and push the result. Division truncates toward zero.',
+        code: `class Solution:
+    def evalRPN(self, tokens: list[str]) -> int:
+        st = []
+        for tok in tokens:
+            if tok in '+-*/' and len(tok) == 1:
+                b = st.pop()
+                a = st.pop()
+                if tok == '+':
+                    st.append(a + b)
+                elif tok == '-':
+                    st.append(a - b)
+                elif tok == '*':
+                    st.append(a * b)
+                else:
+                    # Truncate toward zero, not toward negative infinity.
+                    st.append(int(a / b))
+            else:
+                st.append(int(tok))
+        return st[0]
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Min Stack (LC #155) ───────────────────────────────────────────────────
@@ -417,6 +605,46 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Stacks (Data + Minimums)',
+        intuition: 'Keep a parallel "minimum so far" stack alongside the data stack. On every push, record the new minimum (min of pushed value and current minimum). Pop both stacks together. getMin just returns the top of the minimums stack.',
+        code: `class MinStack:
+    def __init__(self):
+        self.data = []
+        self.mins = []
+
+    def push(self, val: int) -> None:
+        self.data.append(val)
+        if not self.mins or val <= self.mins[-1]:
+            self.mins.append(val)
+        else:
+            self.mins.append(self.mins[-1])
+
+    def pop(self) -> None:
+        self.data.pop()
+        self.mins.pop()
+
+    def top(self) -> int:
+        return self.data[-1]
+
+    def getMin(self) -> int:
+        return self.mins[-1]
+
+
+class Solution:
+    def runMinStackOps(self, ops: list[str], vals: list[list[int]]) -> list:
+        st = MinStack()
+        out = []
+        for op, args in zip(ops, vals):
+            result = getattr(st, op)(*args)
+            out.append(result)
+        return out
+`,
+        timeComplexity: 'O(1) per operation',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Daily Temperatures (LC #739) ──────────────────────────────────────────
@@ -464,6 +692,43 @@ from that popped index to \`i\`.`,
       { label: 'Single day',  inputJson: '{"temperatures":[42]}',          expectedJson: '[0]'       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each day, scan backward through all previous days to find the first warmer day. Simple but slow for large inputs.',
+        code: `class Solution:
+    def dailyTemperatures(self, temperatures: list[int]) -> list[int]:
+        n = len(temperatures)
+        out = [0] * n
+        for i in range(n):
+            for j in range(i + 1, n):
+                if temperatures[j] > temperatures[i]:
+                    out[i] = j - i
+                    break
+        return out
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1) (excluding output)',
+      },
+      {
+        approach: 'Monotonic Decreasing Stack',
+        intuition: 'Maintain a stack of indices with strictly decreasing temperatures. For each new temperature, pop every index whose temperature is smaller and record the distance. Each index is pushed and popped at most once.',
+        code: `class Solution:
+    def dailyTemperatures(self, temperatures: list[int]) -> list[int]:
+        n = len(temperatures)
+        out = [0] * n
+        st = []  # stack of indices with strictly decreasing temperatures
+        for i in range(n):
+            while st and temperatures[st[-1]] < temperatures[i]:
+                j = st.pop()
+                out[j] = i - j
+            st.append(i)
+        return out
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Online Stock Span (LC #901) ───────────────────────────────────────────
@@ -533,6 +798,34 @@ class Solution:
       },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Monotonic Stack',
+        intuition: 'Keep a stack of (price, span) pairs. When a new price arrives, pop all entries with price <= the new one, summing their spans into the current span. This collapses consecutive days efficiently.',
+        code: `class StockSpanner:
+    def __init__(self):
+        self.stack = []  # (price, span)
+
+    def next(self, price: int) -> int:
+        span = 1
+        while self.stack and self.stack[-1][0] <= price:
+            span += self.stack.pop()[1]
+        self.stack.append((price, span))
+        return span
+
+
+class Solution:
+    def runStockSpanOps(self, ops: list[str], vals: list[list[int]]) -> list[int]:
+        ss = StockSpanner()
+        out = []
+        for op, args in zip(ops, vals):
+            out.append(ss.next(*args))
+        return out
+`,
+        timeComplexity: 'O(1) amortized per call',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Remove K Digits (LC #402) ─────────────────────────────────────────────
@@ -581,6 +874,31 @@ end remove any remaining from the right, strip leading zeros, and return \`"0"\`
       { label: 'Two digit all', inputJson: '{"num":"10","k":2}',    expectedJson: '"0"'   },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Monotonic Stack (Greedy)',
+        intuition: 'Walk digits left to right. While the top of the stack is greater than the current digit and removals remain, pop the top (greedily removing larger digits early makes the number smaller). After the loop, remove any remaining from the right, strip leading zeros.',
+        code: `class Solution:
+    def removeKdigits(self, num: str, k: int) -> str:
+        st = []
+        remaining = k
+        for ch in num:
+            while st and remaining > 0 and st[-1] > ch:
+                st.pop()
+                remaining -= 1
+            st.append(ch)
+        # Still need to remove trailing digits.
+        while remaining > 0 and st:
+            st.pop()
+            remaining -= 1
+        # Strip leading zeros.
+        out = ''.join(st).lstrip('0')
+        return out if out else '0'
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Decode String (LC #394) ───────────────────────────────────────────────
@@ -633,6 +951,36 @@ result and the current multiplier; on \`']'\` pop them and expand.`,
       { label: 'No repeat', inputJson: '{"s":"a"}',        expectedJson: '"a"'         },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Stacks (Counts + Strings)',
+        intuition: 'Use two stacks: one for multipliers, one for accumulated strings. On "[", push the current state. On "]", pop and expand. Digits build the current multiplier, and letters accumulate into the current string.',
+        code: `class Solution:
+    def decodeString(self, s: str) -> str:
+        count_stack = []
+        string_stack = []
+        cur_string = ''
+        cur_count = 0
+        for ch in s:
+            if ch.isdigit():
+                cur_count = cur_count * 10 + int(ch)
+            elif ch == '[':
+                count_stack.append(cur_count)
+                string_stack.append(cur_string)
+                cur_count = 0
+                cur_string = ''
+            elif ch == ']':
+                k = count_stack.pop()
+                prev = string_stack.pop()
+                cur_string = prev + cur_string * k
+            else:
+                cur_string += ch
+        return cur_string
+`,
+        timeComplexity: 'O(n * max_k) where max_k is the largest expansion factor',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 
   // ─── Largest Rectangle in Histogram (LC #84) ───────────────────────────────
@@ -681,5 +1029,50 @@ that popped bar as the shortest bar inside it. A common trick is to append a sen
       { label: 'Flat',      inputJson: '{"heights":[2,2,2]}',      expectedJson: '6'  },
     ],
     resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Brute Force',
+        intuition: 'For each bar, expand left and right while the neighboring bars are at least as tall. The width times the current bar height gives the area. Track the maximum.',
+        code: `class Solution:
+    def largestRectangleArea(self, heights: list[int]) -> int:
+        best = 0
+        n = len(heights)
+        for i in range(n):
+            h = heights[i]
+            left = i
+            right = i
+            while left > 0 and heights[left - 1] >= h:
+                left -= 1
+            while right < n - 1 and heights[right + 1] >= h:
+                right += 1
+            best = max(best, h * (right - left + 1))
+        return best
+`,
+        timeComplexity: 'O(n^2)',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Monotonic Increasing Stack',
+        intuition: 'Maintain a stack of indices with increasing heights. When a shorter bar appears, pop the stack and compute the area using the popped bar as the height. A sentinel 0 at the end flushes the stack cleanly.',
+        code: `class Solution:
+    def largestRectangleArea(self, heights: list[int]) -> int:
+        st = []  # indices with increasing heights
+        best = 0
+        extended = heights + [0]
+        for i, h in enumerate(extended):
+            while st and extended[st[-1]] > h:
+                top = st.pop()
+                left = st[-1] if st else -1
+                width = i - left - 1
+                area = extended[top] * width
+                if area > best:
+                    best = area
+            st.append(i)
+        return best
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
   },
 ];
