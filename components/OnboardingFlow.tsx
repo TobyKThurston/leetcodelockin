@@ -3,28 +3,16 @@
 import { useState, useTransition, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion';
-import {
-  ArrowRight,
-  ArrowLeft,
-  Sparkles,
-  MessageCircle,
-  Zap,
-  Check,
-  ChevronRight,
-} from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, ChevronRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { completeOnboarding } from '@/lib/onboarding';
 import { computeSkippedBlocks, type OnboardingAnswers } from '@/lib/onboarding-logic';
 import { CURRICULUM } from '@/lib/curriculum';
 
-// ─── Constants ─────────────────────────────────────────────────────────────────
-
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
-
 const EASE = [0.22, 1, 0.36, 1] as const;
-const TOTAL_STEPS = 6; // 0-5
+const TOTAL_STEPS = 6;
 
 const QUESTIONS: {
   title: string;
@@ -33,38 +21,36 @@ const QUESTIONS: {
   {
     title: 'How comfortable are you with Python?',
     options: [
-      { label: 'Brand new', subtitle: "I've never written Python or I'm just starting" },
-      { label: 'I know the basics', subtitle: 'Variables, loops, functions, lists — I\'ve used them' },
-      { label: 'Comfortable', subtitle: 'I can write functions, use dicts/sets, and solve simple problems' },
+      { label: 'Brand new', subtitle: 'Never written Python, or just getting started' },
+      { label: 'Know the basics', subtitle: 'Variables, loops, functions, lists' },
+      { label: 'Comfortable', subtitle: 'Functions, dicts, sets, simple problem solving' },
     ],
   },
   {
-    title: 'Have you worked with data structures before?',
+    title: 'Have you worked with data structures?',
     options: [
       { label: 'Not really', subtitle: 'Arrays are about it' },
-      { label: 'Some exposure', subtitle: "I've seen stacks, linked lists, or trees in a class or tutorial" },
-      { label: 'Solid foundation', subtitle: 'I can implement and use stacks, trees, hash maps, and graphs' },
+      { label: 'Some exposure', subtitle: 'Seen stacks, linked lists, or trees before' },
+      { label: 'Solid foundation', subtitle: 'Can implement stacks, trees, hash maps, graphs' },
     ],
   },
   {
-    title: 'Do you recognize common algorithm patterns?',
+    title: 'Do you know common algorithm patterns?',
     options: [
-      { label: 'What patterns?', subtitle: 'I solve problems from scratch each time' },
-      { label: 'A few', subtitle: 'I know two pointers or sliding window but not many others' },
-      { label: 'Most of them', subtitle: 'Two pointers, binary search, BFS/DFS, backtracking, DP — I\'ve used them' },
+      { label: 'Not yet', subtitle: 'I solve problems from scratch each time' },
+      { label: 'A few', subtitle: 'Two pointers, sliding window, maybe binary search' },
+      { label: 'Most of them', subtitle: 'Two pointers, BFS/DFS, backtracking, DP' },
     ],
   },
 ];
 
-// ─── Component ─────────────────────────────────────────────────────────────────
-
 export default function OnboardingFlow() {
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
-  const dur = prefersReducedMotion ? 0 : 0.3;
+  const dur = prefersReducedMotion ? 0 : 0.25;
 
   const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
+  const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState<(0 | 1 | 2 | null)[]>([null, null, null]);
   const [saving, startTransition] = useTransition();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
@@ -80,11 +66,10 @@ export default function OnboardingFlow() {
       next[questionIdx] = value;
       return next;
     });
-    // Auto-advance after a short delay
     setTimeout(() => {
       setDirection(1);
       setStep(s => s + 1);
-    }, 250);
+    }, 200);
   }, []);
 
   const getOnboardingAnswers = useCallback((): OnboardingAnswers => ({
@@ -120,97 +105,90 @@ export default function OnboardingFlow() {
     }
   }, []);
 
-  // ─── Animation variants ────────────────────────────────────────────────
-
-  const stepVariants = {
-    enter: (d: number) => ({ opacity: 0, x: d * 24 }),
+  const stepVariants: Variants = {
+    enter: (d: number) => ({ opacity: 0, x: d * 20 }),
     center: { opacity: 1, x: 0 },
-    exit: (d: number) => ({ opacity: 0, x: d * -24 }),
+    exit: (d: number) => ({ opacity: 0, x: d * -20 }),
   };
 
-  const staggerContainer = {
-    show: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.06 } },
+  const stagger: Variants = {
+    show: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.05 } },
   };
 
-  const staggerItem = {
-    hidden: { opacity: 0, y: 10 },
+  const fadeUp: Variants = {
+    hidden: { opacity: 0, y: 8 },
     show: { opacity: 1, y: 0, transition: { duration: dur, ease: EASE } },
   };
 
-  // ─── Progress bar ──────────────────────────────────────────────────────
-
   const progressPct = `${(step / (TOTAL_STEPS - 1)) * 100}%`;
-
-  // ─── Render ────────────────────────────────────────────────────────────
 
   return (
     <div className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-4 py-12">
-      {/* Progress bar */}
       {step > 0 && (
-        <div className="fixed top-0 inset-x-0 h-1 bg-white/[0.06] z-50">
+        <div className="fixed top-0 inset-x-0 h-0.5 bg-white/[0.06] z-50">
           <div
-            className="h-full bg-blue-500 rounded-r-full"
+            className="h-full bg-blue-500"
             style={{
               width: progressPct,
-              transition: `width 0.4s cubic-bezier(${EASE.join(',')})`,
+              transition: `width 0.35s cubic-bezier(${EASE.join(',')})`,
             }}
           />
         </div>
       )}
 
-      {/* Back button */}
       {step > 0 && step < 5 && (
         <button
           onClick={() => go(step - 1)}
-          className="fixed top-6 left-6 flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors z-50"
+          className="fixed top-5 left-5 flex items-center gap-1 text-[13px] text-slate-500 hover:text-white transition-colors z-50"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={14} />
           Back
         </button>
       )}
 
       <AnimatePresence mode="wait" custom={direction}>
         {step === 0 && (
-          <Step key="welcome" direction={direction} variants={stepVariants} dur={dur}>
+          <StepWrap key="welcome" direction={direction} variants={stepVariants} dur={dur}>
             <WelcomeStep onContinue={() => go(1)} />
-          </Step>
+          </StepWrap>
         )}
 
         {step >= 1 && step <= 3 && (
-          <Step key={`q-${step}`} direction={direction} variants={stepVariants} dur={dur}>
-            <AssessmentStep
+          <StepWrap key={`q-${step}`} direction={direction} variants={stepVariants} dur={dur}>
+            <QuestionStep
               question={QUESTIONS[step - 1]}
+              questionIndex={step}
               selected={answers[step - 1]}
               onSelect={(val) => selectAnswer(step - 1, val)}
-              staggerContainer={staggerContainer}
-              staggerItem={staggerItem}
+              stagger={stagger}
+              fadeUp={fadeUp}
             />
-          </Step>
+          </StepWrap>
         )}
 
         {step === 4 && (
-          <Step key="results" direction={direction} variants={stepVariants} dur={dur}>
+          <StepWrap key="results" direction={direction} variants={stepVariants} dur={dur}>
             <ResultsStep
               answers={getOnboardingAnswers()}
               onContinue={handleContinueFromResults}
               onAdjust={() => go(1)}
               saving={saving}
-              staggerContainer={staggerContainer}
-              staggerItem={staggerItem}
+              stagger={stagger}
+              fadeUp={fadeUp}
             />
-          </Step>
+          </StepWrap>
         )}
 
         {step === 5 && (
-          <Step key="upsell" direction={direction} variants={stepVariants} dur={dur}>
-            <ProUpsellStep
+          <StepWrap key="pro" direction={direction} variants={stepVariants} dur={dur}>
+            <ProStep
               onStartFree={() => router.push('/dashboard')}
               onCheckout={handleCheckout}
               checkoutLoading={checkoutLoading}
-              staggerContainer={staggerContainer}
-              staggerItem={staggerItem}
+              stagger={stagger}
+              fadeUp={fadeUp}
             />
-          </Step>
+          </StepWrap>
         )}
       </AnimatePresence>
     </div>
@@ -219,7 +197,7 @@ export default function OnboardingFlow() {
 
 // ─── Step wrapper ──────────────────────────────────────────────────────────────
 
-function Step({
+function StepWrap({
   children,
   direction,
   variants,
@@ -238,62 +216,73 @@ function Step({
       animate="center"
       exit="exit"
       transition={{ duration: dur, ease: EASE }}
-      className="w-full max-w-lg"
+      className="w-full max-w-md"
     >
       {children}
     </motion.div>
   );
 }
 
-// ─── Step 0: Welcome ───────────────────────────────────────────────────────────
+// ─── Welcome ───────────────────────────────────────────────────────────────────
 
 function WelcomeStep({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="text-center">
-      <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/10 ring-1 ring-blue-500/20">
-        <Sparkles size={24} className="text-blue-400" />
-      </div>
-      <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl" style={SG}>
-        Welcome to LeetLockin
-      </h1>
-      <p className="mt-3 text-base text-slate-400 leading-relaxed max-w-sm mx-auto">
-        Let&apos;s personalize your path so you can skip what you already know and focus on what matters.
+      <p
+        className="text-[11px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-5"
+        style={SG}
+      >
+        LeetLockin
       </p>
-      <p className="mt-1.5 text-xs text-slate-500">Takes about 60 seconds</p>
+      <h1
+        className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-white leading-tight"
+        style={SG}
+      >
+        Let&apos;s build your plan
+      </h1>
+      <p className="mt-3 text-[15px] text-slate-400 leading-relaxed max-w-xs mx-auto">
+        3 quick questions so we can skip what you already know.
+      </p>
       <Button
         onClick={onContinue}
-        className="mt-8 h-11 px-6 text-sm font-medium gap-2"
+        className="mt-10 h-11 w-full max-w-[240px] text-[13px] font-semibold gap-2"
       >
-        Let&apos;s go
-        <ArrowRight size={16} />
+        Get started
+        <ArrowRight size={15} />
       </Button>
+      <p className="mt-3 text-[11px] text-slate-600">Takes under 60 seconds</p>
     </div>
   );
 }
 
-// ─── Steps 1-3: Assessment ─────────────────────────────────────────────────────
+// ─── Question ──────────────────────────────────────────────────────────────────
 
-function AssessmentStep({
+function QuestionStep({
   question,
+  questionIndex,
   selected,
   onSelect,
-  staggerContainer,
-  staggerItem,
+  stagger,
+  fadeUp,
 }: {
   question: (typeof QUESTIONS)[number];
+  questionIndex: number;
   selected: 0 | 1 | 2 | null;
   onSelect: (val: 0 | 1 | 2) => void;
-  staggerContainer: Variants;
-  staggerItem: Variants;
+  stagger: Variants;
+  fadeUp: Variants;
 }) {
   return (
     <div>
-      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl" style={SG}>
+      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
+        Question {questionIndex} of 3
+      </p>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
         {question.title}
       </h2>
       <motion.div
-        className="mt-6 flex flex-col gap-3"
-        variants={staggerContainer}
+        className="mt-5 flex flex-col gap-2.5"
+        variants={stagger}
         initial="hidden"
         animate="show"
       >
@@ -303,24 +292,28 @@ function AssessmentStep({
           return (
             <motion.button
               key={i}
-              variants={staggerItem}
+              variants={fadeUp}
               onClick={() => onSelect(val)}
-              className={`group relative w-full rounded-xl border px-5 py-4 text-left transition-colors duration-150 ${
+              className={`w-full rounded-lg border px-4 py-3.5 text-left transition-colors duration-150 ${
                 isSelected
-                  ? 'border-blue-500 bg-blue-500/[0.08]'
-                  : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.15] hover:bg-white/[0.04]'
+                  ? 'border-blue-500/60 bg-blue-500/[0.07]'
+                  : 'border-white/[0.07] bg-white/[0.015] hover:border-white/[0.14] hover:bg-white/[0.03]'
               }`}
             >
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-medium text-white">{opt.label}</p>
-                  <p className="mt-0.5 text-sm text-slate-400 leading-snug">{opt.subtitle}</p>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-medium text-white">{opt.label}</p>
+                  <p className="mt-0.5 text-[12px] text-slate-500 leading-snug">{opt.subtitle}</p>
                 </div>
-                {isSelected && (
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500">
-                    <Check size={12} className="text-white" strokeWidth={3} />
-                  </div>
-                )}
+                <div
+                  className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border transition-colors duration-150 ${
+                    isSelected
+                      ? 'border-blue-500 bg-blue-500'
+                      : 'border-white/[0.15] bg-transparent'
+                  }`}
+                >
+                  {isSelected && <Check size={10} className="text-white" strokeWidth={3} />}
+                </div>
               </div>
             </motion.button>
           );
@@ -330,40 +323,45 @@ function AssessmentStep({
   );
 }
 
-// ─── Step 4: Results ───────────────────────────────────────────────────────────
+// ─── Results ───────────────────────────────────────────────────────────────────
 
 function ResultsStep({
   answers,
   onContinue,
   onAdjust,
   saving,
-  staggerContainer,
-  staggerItem,
+  stagger,
+  fadeUp,
 }: {
   answers: OnboardingAnswers;
   onContinue: () => void;
   onAdjust: () => void;
   saving: boolean;
-  staggerContainer: Variants;
-  staggerItem: Variants;
+  stagger: Variants;
+  fadeUp: Variants;
 }) {
   const skippedIds = new Set(computeSkippedBlocks(answers));
   const totalSkipped = skippedIds.size;
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl" style={SG}>
-        Your personalized plan
-      </h2>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
+        Your plan
+      </p>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
         {totalSkipped > 0
-          ? `We'll skip ${totalSkipped} block${totalSkipped === 1 ? '' : 's'} you already know.`
-          : "Starting from the beginning — we'll build up step by step."}
+          ? `Skipping ${totalSkipped} blocks you already know`
+          : 'Starting from the beginning'}
+      </h2>
+      <p className="mt-2 text-[13px] text-slate-500">
+        {totalSkipped > 0
+          ? 'Your path is tailored to what you need to learn.'
+          : "We'll build up your skills step by step."}
       </p>
 
       <motion.div
-        className="mt-6 flex flex-col gap-3"
-        variants={staggerContainer}
+        className="mt-5 flex flex-col gap-2"
+        variants={stagger}
         initial="hidden"
         animate="show"
       >
@@ -371,165 +369,182 @@ function ResultsStep({
           const pathSkipped = path.blocks.filter(b => skippedIds.has(b.id)).length;
           const total = path.blocks.length;
           const pct = total > 0 ? (pathSkipped / total) * 100 : 0;
-          // Find first non-skipped block
           const startBlock = path.blocks.find(b => !skippedIds.has(b.id));
 
           return (
             <motion.div
               key={path.id}
-              variants={staggerItem}
-              className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-4"
+              variants={fadeUp}
+              className="rounded-lg border border-white/[0.07] bg-white/[0.015] px-4 py-3.5"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{path.title}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    {total} block{total === 1 ? '' : 's'}
+                  <p className="text-[13px] font-medium text-white truncate">{path.title}</p>
+                  <p className="mt-0.5 text-[11px] text-slate-600">
+                    {total} blocks{pathSkipped > 0 && (
+                      <span className="text-emerald-500 ml-1.5">
+                        {pathSkipped} skipped
+                      </span>
+                    )}
                   </p>
                 </div>
                 {pathSkipped > 0 && (
-                  <Badge
-                    className="shrink-0 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-xs font-medium"
-                  >
-                    {pathSkipped} skipped
-                  </Badge>
+                  <span className="text-[11px] font-medium text-emerald-500 shrink-0">
+                    {Math.round(pct)}%
+                  </span>
                 )}
               </div>
 
-              {/* Mini progress bar */}
-              <div className="mt-3 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+              <div className="mt-2.5 h-1 rounded-full bg-white/[0.06] overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-emerald-500/70 transition-all duration-500"
+                  className="h-full rounded-full bg-emerald-500/60 transition-all duration-500"
                   style={{ width: `${pct}%` }}
                 />
               </div>
 
-              {/* Starting point */}
               {startBlock && pathSkipped > 0 && (
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-400">
-                  <ChevronRight size={12} />
-                  <span>Start at: {startBlock.title}</span>
-                </div>
+                <p className="mt-2 flex items-center gap-1 text-[11px] text-blue-400">
+                  <ChevronRight size={10} />
+                  Starting at {startBlock.title}
+                </p>
               )}
             </motion.div>
           );
         })}
       </motion.div>
 
-      <div className="mt-8 flex flex-col items-center gap-3">
+      <div className="mt-8 flex flex-col items-center gap-2.5">
         <Button
           onClick={onContinue}
           disabled={saving}
-          className="h-11 px-8 text-sm font-medium gap-2"
+          className="h-11 w-full text-[13px] font-semibold gap-2"
         >
           {saving ? 'Saving...' : 'Continue'}
-          {!saving && <ArrowRight size={16} />}
+          {!saving && <ArrowRight size={15} />}
         </Button>
         <button
           onClick={onAdjust}
-          className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          className="text-[11px] text-slate-600 hover:text-slate-400 transition-colors"
         >
-          Adjust answers
+          Change answers
         </button>
       </div>
     </div>
   );
 }
 
-// ─── Step 5: Pro Upsell ────────────────────────────────────────────────────────
+// ─── Pro ───────────────────────────────────────────────────────────────────────
 
 const PRO_FEATURES = [
   {
-    icon: Sparkles,
-    title: 'Socratic AI Tutor',
-    desc: 'Stuck on a problem? Get hints that teach, not spoilers.',
+    title: 'Unlimited AI tutor',
+    desc: 'Get unstuck with guided hints, not answers. The tutor walks you through each problem step by step.',
   },
   {
-    icon: MessageCircle,
-    title: 'Unlimited AI Chat',
-    desc: 'Ask follow-up questions without daily limits.',
+    title: 'Unlimited follow-up questions',
+    desc: 'Ask as many questions as you need. No daily caps on the conversation.',
   },
   {
-    icon: Zap,
-    title: 'Priority Access',
-    desc: 'Skip the queue when things get busy.',
+    title: 'Priority access',
+    desc: 'Your requests go first, even during peak hours.',
   },
 ];
 
-function ProUpsellStep({
+function ProStep({
   onStartFree,
   onCheckout,
   checkoutLoading,
-  staggerContainer,
-  staggerItem,
+  stagger,
+  fadeUp,
 }: {
   onStartFree: () => void;
   onCheckout: (priceId: string) => void;
   checkoutLoading: string | null;
-  staggerContainer: Variants;
-  staggerItem: Variants;
+  stagger: Variants;
+  fadeUp: Variants;
 }) {
   const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
   const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl" style={SG}>
-        One more thing — meet your AI&nbsp;tutor
+      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
+        One more thing
+      </p>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
+        Learn faster with Pro
       </h2>
-      <p className="mt-2 text-sm text-slate-400">
-        Free users get 3 AI requests per day. Pro unlocks everything.
+      <p className="mt-2 text-[13px] text-slate-500">
+        Everything you just set up is free. Pro adds an AI tutor that actually helps you think.
       </p>
 
+      {/* Pro card */}
       <motion.div
-        className="mt-6 flex flex-col gap-3"
-        variants={staggerContainer}
+        className="mt-6 rounded-xl border border-blue-500/20 bg-gradient-to-b from-blue-500/[0.06] to-transparent overflow-hidden"
+        variants={stagger}
         initial="hidden"
         animate="show"
       >
-        {PRO_FEATURES.map((feat) => (
-          <motion.div
-            key={feat.title}
-            variants={staggerItem}
-            className="flex items-start gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-4"
-          >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 ring-1 ring-blue-500/20">
-              <feat.icon size={18} className="text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-white">{feat.title}</p>
-              <p className="mt-0.5 text-sm text-slate-400 leading-snug">{feat.desc}</p>
-            </div>
-          </motion.div>
-        ))}
+        {/* Price header */}
+        <div className="px-5 pt-5 pb-4 border-b border-white/[0.06]">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-3xl font-bold text-white" style={SG}>$9</span>
+            <span className="text-[13px] text-slate-500">/month</span>
+          </div>
+          {yearlyPriceId && (
+            <p className="mt-1 text-[11px] text-slate-600">
+              or $90/year ($7.50/mo)
+            </p>
+          )}
+        </div>
+
+        {/* Features */}
+        <div className="px-5 py-4 space-y-3.5">
+          {PRO_FEATURES.map((feat) => (
+            <motion.div key={feat.title} variants={fadeUp}>
+              <div className="flex items-start gap-2.5">
+                <Check size={14} className="text-blue-400 shrink-0 mt-0.5" strokeWidth={2.5} />
+                <div>
+                  <p className="text-[13px] font-medium text-white">{feat.title}</p>
+                  <p className="text-[12px] text-slate-500 leading-snug mt-0.5">{feat.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Free comparison */}
+        <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.06]">
+          <p className="text-[11px] text-slate-600">
+            Free includes 3 AI requests per day. All content and problems are free forever.
+          </p>
+        </div>
       </motion.div>
 
-      <div className="mt-8 flex flex-col items-center gap-3">
-        <div className="flex items-center gap-3">
-          <Button
+      {/* CTAs */}
+      <div className="mt-6 flex flex-col gap-2.5">
+        <Button
+          onClick={() => onCheckout(yearlyPriceId || monthlyPriceId)}
+          disabled={!!checkoutLoading}
+          className="h-12 w-full text-[13px] font-semibold bg-white text-zinc-900 hover:bg-zinc-100 rounded-lg"
+        >
+          {checkoutLoading ? 'Loading...' : yearlyPriceId ? 'Start Pro yearly ($7.50/mo)' : 'Start Pro ($9/mo)'}
+        </Button>
+        {yearlyPriceId && monthlyPriceId && (
+          <button
             onClick={() => onCheckout(monthlyPriceId)}
             disabled={!!checkoutLoading}
-            className="h-11 px-6 text-sm font-medium bg-white text-slate-900 hover:bg-slate-100"
+            className="h-10 w-full rounded-lg border border-white/[0.1] bg-white/[0.02] text-[12px] font-medium text-slate-400 hover:text-white hover:border-white/[0.2] transition-colors"
           >
-            {checkoutLoading === monthlyPriceId ? 'Loading...' : 'Try Pro — $9/mo'}
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={onStartFree}
-            className="h-11 px-6 text-sm font-medium text-slate-400 hover:text-white"
-          >
-            Start free
-          </Button>
-        </div>
-        {yearlyPriceId && (
-          <button
-            onClick={() => onCheckout(yearlyPriceId)}
-            disabled={!!checkoutLoading}
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
-          >
-            {checkoutLoading === yearlyPriceId ? 'Loading...' : 'or $90/year (save $18)'}
+            {checkoutLoading === monthlyPriceId ? 'Loading...' : 'Start Pro monthly ($9/mo)'}
           </button>
         )}
+        <button
+          onClick={onStartFree}
+          className="mt-1 text-[12px] text-slate-600 hover:text-slate-400 transition-colors py-1"
+        >
+          Continue with free plan
+        </button>
       </div>
     </div>
   );
