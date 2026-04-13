@@ -739,21 +739,23 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: 'b392f0' },
     ],
     colors: {
+      // Monaco theme colors must be hex (#RRGGBB or #RRGGBBAA) — rgba()
+      // strings silently fall back to pure red, painting the selection red.
       'editor.background':                '#0f1729',
       'editor.foreground':                '#e5e7eb',
       'editor.lineHighlightBackground':   '#131b30',
-      'editor.selectionBackground':       'rgba(59,130,246,0.25)',
+      'editor.selectionBackground':       '#3b82f640',
       'editorLineNumber.foreground':      '#334155',
       'editorLineNumber.activeForeground':'#94a3b8',
       'editorCursor.foreground':          '#60a5fa',
-      'editor.inactiveSelectionBackground': 'rgba(255,255,255,0.05)',
+      'editor.inactiveSelectionBackground': '#ffffff0d',
       'editorIndentGuide.background1':    '#1e293b',
       'editorWidget.background':          '#0f1729',
       'editorSuggestWidget.background':   '#0f1729',
       'editorSuggestWidget.border':       '#1e293b',
-      'scrollbarSlider.background':       'rgba(255,255,255,0.03)',
-      'scrollbarSlider.hoverBackground':  'rgba(255,255,255,0.06)',
-      'scrollbarSlider.activeBackground': 'rgba(255,255,255,0.08)',
+      'scrollbarSlider.background':       '#ffffff08',
+      'scrollbarSlider.hoverBackground':  '#ffffff0f',
+      'scrollbarSlider.activeBackground': '#ffffff14',
     },
   });
 };
