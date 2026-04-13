@@ -5,36 +5,17 @@ import { useRouter } from 'next/navigation';
 import { CheckCircle2, ExternalLink, Circle, Shuffle } from 'lucide-react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { LIBRARY, type CategoryDef, type Difficulty } from '@/lib/library';
-import AppNav from '@/components/AppNav';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import AppShell from '@/components/shell/AppShell';
+import ShellSidebar from '@/components/shell/ShellSidebar';
+import ShellRail from '@/components/shell/ShellRail';
+import PageHeader from '@/components/shell/PageHeader';
+import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
+import { C, SG, MONO_FONT, SHELL } from '@/lib/ui-tokens';
 import { cn } from '@/lib/utils';
 
-const NAV_HEIGHT = 48;
+const NAV_HEIGHT = SHELL.navHeight;
 const SCROLL_OFFSET = NAV_HEIGHT + 16;
 const categoryAnchor = (id: string) => `cat-${id}`;
-
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
-const MONO_FONT = 'var(--font-geist-mono), ui-monospace, monospace';
-
-// ─── Palette — identical to DashboardPage ────────────────────────────────────
-const C = {
-  appBg:      '#0b1220',
-  panelBg:    '#070c17',
-  cardBg:     '#0f1729',
-  cardBgDark: '#070c17',
-  border:     'rgba(255,255,255,0.06)',
-  borderMid:  'rgba(255,255,255,0.1)',
-  text:       '#e5e7eb',
-  textSub:    '#cbd5e1',
-  textMuted:  '#94a3b8',
-  textDim:    '#64748b',
-  blue:       '#3b82f6',
-  blueDim:    'rgba(59,130,246,0.12)',
-  blueBorder: 'rgba(96,165,250,0.4)',
-  emerald:    '#10b981',
-  emeraldDim: 'rgba(16,185,129,0.1)',
-  emeraldBorder: 'rgba(16,185,129,0.32)',
-};
 
 // Matches ProblemPage.tsx DIFF_STYLE — Easy green / Medium amber / Hard red.
 const DIFF_STYLE: Record<Difficulty, React.CSSProperties> = {
@@ -147,37 +128,8 @@ function LibrarySidebar({
   const masteryPct = totalProblems === 0 ? 0 : Math.round((totalSolved / totalProblems) * 100);
 
   return (
-    <aside
-      className="fixed left-0 bottom-0 flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderRight: `1px solid ${C.border}`,
-      }}
-    >
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-        <div className="px-4 pt-5 pb-3 space-y-2">
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-            Categories
-          </p>
-          {LIBRARY.map(category => (
-            <SidebarCategoryCard
-              key={category.id}
-              category={category}
-              solvedCount={solvedByCategory[category.id] ?? 0}
-              isViewing={category.id === viewingCategoryId}
-              onClick={() => onSelectCategory(category.id)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Stats subpanel */}
-      <div
-        className="px-4 py-4 space-y-4"
-        style={{ borderTop: `1px solid ${C.border}`, background: C.cardBgDark }}
-      >
+    <ShellSidebar
+      footer={
         <div className="space-y-2.5">
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
@@ -198,8 +150,21 @@ function LibrarySidebar({
             </span>
           </div>
         </div>
-      </div>
-    </aside>
+      }
+    >
+      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+        Categories
+      </p>
+      {LIBRARY.map(category => (
+        <SidebarCategoryCard
+          key={category.id}
+          category={category}
+          solvedCount={solvedByCategory[category.id] ?? 0}
+          isViewing={category.id === viewingCategoryId}
+          onClick={() => onSelectCategory(category.id)}
+        />
+      ))}
+    </ShellSidebar>
   );
 }
 
@@ -328,10 +293,10 @@ function CategorySection({
       className="scroll-mt-20 pt-10 pb-12 border-b last:border-b-0"
       style={{ borderColor: C.border }}
     >
-      <h2 className="text-[24px] font-semibold text-white tracking-[-0.015em] mb-2" style={SG}>
+      <h2 className="text-[16px] font-semibold text-white tracking-[-0.01em] mb-1.5" style={SG}>
         {category.title}
       </h2>
-      <p className="text-[13px] text-slate-400 mb-5">{category.description}</p>
+      <p className="text-[12.5px] text-slate-400 mb-5">{category.description}</p>
 
       {total === 0 ? (
         <div
@@ -395,42 +360,7 @@ function CategorySection({
   );
 }
 
-// ─── LibraryRightRail — matches DashboardPage RightRail exactly ──────────────
-
-// Section header — matches the sidebar "Categories" label and dashboard rail.
-function RailHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-      {children}
-    </p>
-  );
-}
-
-// Row with label on the left and value on the right — dashboard MetricRow.
-function MetricRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between text-[11.5px]">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-slate-300 font-medium tabular-nums">{value}</span>
-    </div>
-  );
-}
-
-// Big number stacked over small label — dashboard Metric.
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="text-[18px] leading-none font-semibold text-slate-100 tabular-nums">
-        {value}
-      </div>
-      <div className="text-[10px] text-slate-500 mt-1.5">{label}</div>
-    </div>
-  );
-}
-
-// Shared box style: matches an inactive SidebarCategoryCard (and dashboard RAIL_BOX).
-const RAIL_BOX =
-  'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
+// ─── LibraryRightRail — uses shared rail primitives ──────────────────────────
 
 function LibraryRightRail({
   category, solvedInCategory, totalSolved, totalProblems, onRandomProblem,
@@ -455,19 +385,7 @@ function LibraryRightRail({
   const n = String(category.order).padStart(2, '0');
 
   return (
-    <aside
-      className="hidden lg:flex fixed right-0 flex-col"
-      style={{
-        top: 48,
-        bottom: 0,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-5 space-y-5">
-
+    <ShellRail>
           {/* 1 — Category Progress (dominant, mirrors sidebar "viewing" card) */}
           <section>
             <RailHeader>Category Progress</RailHeader>
@@ -552,10 +470,7 @@ function LibraryRightRail({
               </span>
             </button>
           </section>
-
-        </div>
-      </ScrollArea>
-    </aside>
+    </ShellRail>
   );
 }
 
@@ -725,49 +640,58 @@ export default function LibraryPage() {
     window.scrollTo({ top, behavior: 'smooth' });
   }, []);
 
+  const overallPct = totalProblems === 0 ? 0 : Math.round((totalSolved / totalProblems) * 100);
+
   return (
-    <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
-      <AppNav activeTab="Library" />
-      <LibrarySidebar
-        viewingCategoryId={viewingCategoryId}
-        solvedByCategory={solvedByCategory}
-        totalSolved={totalSolved}
-        totalProblems={totalProblems}
-        onSelectCategory={handleSelectCategory}
-      />
-      <LibraryRightRail
-        category={viewingCategory}
-        solvedInCategory={solvedByCategory[viewingCategory.id] ?? 0}
-        totalSolved={totalSolved}
-        totalProblems={totalProblems}
-        onRandomProblem={handleRandomProblem}
-      />
-      <main
-        className="min-h-screen"
-        style={{
-          paddingTop: 48,
-          paddingLeft: 304,
-          paddingRight: 0,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      >
-        <div className="lg:pr-[304px]">
-          <div className="max-w-3xl mx-auto px-8">
-            {LIBRARY.map(category => (
-              <CategorySection
-                key={category.id}
-                category={category}
-                solvedIds={solvedIds}
-                publishedSlugs={publishedSlugs}
-                onToggleSolved={toggleSolved}
-                onOpenProblem={openProblem}
+    <AppShell
+      activeTab="Library"
+      sidebar={
+        <LibrarySidebar
+          viewingCategoryId={viewingCategoryId}
+          solvedByCategory={solvedByCategory}
+          totalSolved={totalSolved}
+          totalProblems={totalProblems}
+          onSelectCategory={handleSelectCategory}
+        />
+      }
+      rail={
+        <LibraryRightRail
+          category={viewingCategory}
+          solvedInCategory={solvedByCategory[viewingCategory.id] ?? 0}
+          totalSolved={totalSolved}
+          totalProblems={totalProblems}
+          onRandomProblem={handleRandomProblem}
+        />
+      }
+    >
+      <PageHeader
+        eyebrow="Library"
+        title="Problem Library"
+        subtitle={`${LIBRARY.length} curated categories · ${totalProblems} problems`}
+        right={
+          <div className="text-right">
+            <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${overallPct}%`, background: C.blue }}
               />
-            ))}
+            </div>
+            <p className="text-[11.5px] font-medium tabular-nums" style={{ color: C.textMuted }}>
+              {totalSolved} / {totalProblems} solved
+            </p>
           </div>
-        </div>
-      </main>
-    </div>
+        }
+      />
+      {LIBRARY.map(category => (
+        <CategorySection
+          key={category.id}
+          category={category}
+          solvedIds={solvedIds}
+          publishedSlugs={publishedSlugs}
+          onToggleSolved={toggleSolved}
+          onOpenProblem={openProblem}
+        />
+      ))}
+    </AppShell>
   );
 }

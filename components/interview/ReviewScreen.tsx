@@ -41,14 +41,35 @@ export default function ReviewScreen({
   const feedback = session.feedback;
 
   if (!feedback) {
+    const hasCode = Boolean(session.problem1Code?.trim() || session.problem2Code?.trim());
+    const { headline, detail } = !hasCode
+      ? {
+          headline: 'No code to review.',
+          detail: 'This session ended without any code written for either problem, so there\u2019s nothing to give feedback on. Start a new interview and take a crack at it.',
+        }
+      : session.status === 'abandoned'
+      ? {
+          headline: 'Session was abandoned.',
+          detail: 'This interview was ended early before feedback could be generated. You can still view your code from history, or start a fresh interview.',
+        }
+      : session.status === 'in_progress'
+      ? {
+          headline: 'Interview still in progress.',
+          detail: 'Feedback is generated once the session is submitted. Resume it from your history to finish up.',
+        }
+      : {
+          headline: 'Feedback generation failed.',
+          detail: 'Something went wrong while grading this session. Head back to your history \u2014 you can retry generation from the card.',
+        };
+
     return (
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-sm text-center space-y-4">
           <p className="text-[15px] text-zinc-300" style={SG}>
-            Feedback unavailable for this session.
+            {headline}
           </p>
           <p className="text-[12px] text-zinc-500 leading-relaxed">
-            Head back to your history — if generation failed, you can retry from the card.
+            {detail}
           </p>
           <button
             onClick={onBack}

@@ -4,42 +4,35 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap } from 'lucide-react';
 import AppNav from '@/components/AppNav';
+import AppShell from '@/components/shell/AppShell';
+import ShellSidebar from '@/components/shell/ShellSidebar';
+import ShellRail from '@/components/shell/ShellRail';
+import PageHeader from '@/components/shell/PageHeader';
+import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
+import { C, SG } from '@/lib/ui-tokens';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent, CardFooter } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { ReviewCard, KeyLinesContent, ApproachContent, ComplexityContent } from '@/lib/review';
 import { QUICK_CARDS } from '@/lib/quick-review-cards';
 import type { QuickCard } from '@/lib/quick-review-cards';
 
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO = 'var(--font-geist-mono), ui-monospace, monospace';
 
 const BATCH_SIZE = 10;
 const FREE_LIMIT = 10;
 const FREE_USED_KEY = 'zl-free-review-used';
 
-// ─── Palette — identical to Library / Dashboard ──────────────────────────────
-const C = {
-  appBg:      '#0b1220',
-  panelBg:    '#070c17',
-  cardBg:     '#0f1729',
-  cardBgDark: '#070c17',
-  border:     'rgba(255,255,255,0.06)',
-  text:       '#e5e7eb',
-  textSub:    '#cbd5e1',
-  textMuted:  '#94a3b8',
-  textDim:    '#64748b',
-  blue:       '#3b82f6',
-  emerald:    '#10b981',
-  amber:      '#f59e0b',
-  red:        '#ef4444',
+// Local color aliases — keep Review's extra accents out of ui-tokens.
+const REVIEW_COLORS = {
+  amber: '#f59e0b',
+  red:   '#ef4444',
 };
 
 const CARD_TYPE_META = {
   key_lines:  { icon: Code2,  label: 'Key Lines',  color: C.blue },
   approach:   { icon: Brain,  label: 'Approach',    color: C.emerald },
-  complexity: { icon: Timer,  label: 'Complexity',  color: C.amber },
+  complexity: { icon: Timer,  label: 'Complexity',  color: REVIEW_COLORS.amber },
 } as const;
 
 const DIFFICULTY_COLOR: Record<string, string> = {
@@ -49,43 +42,12 @@ const DIFFICULTY_COLOR: Record<string, string> = {
 };
 
 const QUICK_TYPE_META = {
-  big_o:        { icon: Timer,        label: 'Big-O',        color: C.amber },
+  big_o:        { icon: Timer,        label: 'Big-O',        color: REVIEW_COLORS.amber },
   pattern:      { icon: Brain,        label: 'Pattern',      color: C.emerald },
   code_reading: { icon: Code2,        label: 'Code Reading', color: C.blue },
 } as const;
 
-// ─── Shared rail primitives ────────────────────────────────────────────────
-
-function RailHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-      {children}
-    </p>
-  );
-}
-
-function MetricRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between text-[11.5px]">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-slate-300 font-medium tabular-nums">{value}</span>
-    </div>
-  );
-}
-
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="text-[18px] leading-none font-semibold text-slate-100 tabular-nums">
-        {value}
-      </div>
-      <div className="text-[10px] text-slate-500 mt-1.5">{label}</div>
-    </div>
-  );
-}
-
-const RAIL_BOX =
-  'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
+// Rail primitives (RailHeader, MetricRow, Metric, RAIL_BOX) live in @/components/shell/RailPrimitives
 
 // ─── Code display with optional blanks ───────────────────────────────────────
 
@@ -539,37 +501,9 @@ function ReviewSidebar({
   const pct = totalCards === 0 ? 0 : Math.round((reviewedCount / totalCards) * 100);
 
   return (
-    <aside
-      className="fixed left-0 bottom-0 hidden md:flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderRight: `1px solid ${C.border}`,
-      }}
-    >
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-        <div className="px-4 pt-5 pb-3 space-y-2">
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-            Due for Review
-          </p>
-          {cards.map((card, idx) => (
-            <SidebarCardRow
-              key={card.id}
-              card={card}
-              isActive={idx === currentIdx}
-              isReviewed={reviewedSet.has(idx)}
-              onClick={() => onSelectCard(idx)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Stats subpanel */}
-      <div
-        className="px-4 py-4 space-y-4"
-        style={{ borderTop: `1px solid ${C.border}`, background: C.cardBgDark }}
-      >
+    <ShellSidebar
+      className="hidden md:flex"
+      footer={
         <div className="space-y-2.5">
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
@@ -590,8 +524,21 @@ function ReviewSidebar({
             </span>
           </div>
         </div>
-      </div>
-    </aside>
+      }
+    >
+      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+        Due for Review
+      </p>
+      {cards.map((card, idx) => (
+        <SidebarCardRow
+          key={card.id}
+          card={card}
+          isActive={idx === currentIdx}
+          isReviewed={reviewedSet.has(idx)}
+          onClick={() => onSelectCard(idx)}
+        />
+      ))}
+    </ShellSidebar>
   );
 }
 
@@ -617,19 +564,7 @@ function ReviewRightRail({
   }, [cards]);
 
   return (
-    <aside
-      className="hidden lg:flex fixed right-0 flex-col"
-      style={{
-        top: 48,
-        bottom: 0,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-5 space-y-5">
-
+    <ShellRail>
           {/* Current Card */}
           {card && (
             <section>
@@ -719,10 +654,7 @@ function ReviewRightRail({
               })}
             </div>
           </section>
-
-        </div>
-      </ScrollArea>
-    </aside>
+    </ShellRail>
   );
 }
 
@@ -967,19 +899,7 @@ function QuickReviewRightRail({
   const remaining = totalCards - reviewedCount;
 
   return (
-    <aside
-      className="hidden lg:flex fixed right-0 flex-col"
-      style={{
-        top: 48,
-        bottom: 0,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-5 space-y-5">
-
+    <ShellRail>
           {/* Session Score */}
           <section>
             <RailHeader>Session Score</RailHeader>
@@ -1082,10 +1002,7 @@ function QuickReviewRightRail({
               </div>
             </div>
           </section>
-
-        </div>
-      </ScrollArea>
-    </aside>
+    </ShellRail>
   );
 }
 
@@ -1122,48 +1039,9 @@ function QuickReviewSidebar({
   const pct = totalCards === 0 ? 0 : Math.round((reviewedCount / totalCards) * 100);
 
   return (
-    <aside
-      className="fixed left-0 bottom-0 hidden md:flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderRight: `1px solid ${C.border}`,
-      }}
-    >
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-        <div className="px-4 pt-5 pb-3 space-y-2">
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-1 px-1">
-            {mode === 'sr' ? 'Due for Review' : 'Quick Review'}
-          </p>
-
-          {/* Context message */}
-          <div className="px-1 pb-2">
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              {isPro
-                ? 'These are random fundamentals. As you solve more problems, your review cards will be based on your actual solutions.'
-                : 'Random fundamentals to sharpen your foundations. Upgrade to Pro to get personalized cards from problems you solve.'}
-            </p>
-          </div>
-
-          {cards.map((card, idx) => (
-            <QuickSidebarRow
-              key={card.id}
-              card={card}
-              isActive={idx === currentIdx}
-              isReviewed={reviewedSet.has(idx)}
-              result={results.get(idx)}
-              onClick={() => onSelectCard(idx)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Stats subpanel */}
-      <div
-        className="px-4 py-4 space-y-4"
-        style={{ borderTop: `1px solid ${C.border}`, background: C.cardBgDark }}
-      >
+    <ShellSidebar
+      className="hidden md:flex"
+      footer={
         <div className="space-y-2.5">
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
@@ -1190,8 +1068,29 @@ function QuickReviewSidebar({
             </div>
           )}
         </div>
+      }
+    >
+      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-1 px-1">
+        {mode === 'sr' ? 'Due for Review' : 'Quick Review'}
+      </p>
+      <div className="px-1 pb-2">
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          {isPro
+            ? 'These are random fundamentals. As you solve more problems, your review cards will be based on your actual solutions.'
+            : 'Random fundamentals to sharpen your foundations. Upgrade to Pro to get personalized cards from problems you solve.'}
+        </p>
       </div>
-    </aside>
+      {cards.map((card, idx) => (
+        <QuickSidebarRow
+          key={card.id}
+          card={card}
+          isActive={idx === currentIdx}
+          isReviewed={reviewedSet.has(idx)}
+          result={results.get(idx)}
+          onClick={() => onSelectCard(idx)}
+        />
+      ))}
+    </ShellSidebar>
   );
 }
 
@@ -1412,35 +1311,37 @@ export default function ReviewPageClient({
     const Icon = meta?.icon ?? Brain;
 
     return (
-      <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
-        <AppNav activeTab="Review" />
-        <ReviewSidebar
-          cards={srCards}
-          currentIdx={srCurrentIdx}
-          reviewedSet={srReviewedSet}
-          onSelectCard={(idx) => { setSrCurrentIdx(idx); setSrRevealed(false); }}
+      <AppShell
+        activeTab="Review"
+        sidebar={
+          <ReviewSidebar
+            cards={srCards}
+            currentIdx={srCurrentIdx}
+            reviewedSet={srReviewedSet}
+            onSelectCard={(idx) => { setSrCurrentIdx(idx); setSrRevealed(false); }}
+          />
+        }
+        rail={
+          <ReviewRightRail
+            card={card}
+            cards={srCards}
+            reviewedCount={srReviewed}
+            totalDue={totalDue}
+            forgotCount={srForgot}
+            gotItCount={srGotIt}
+          />
+        }
+      >
+        <PageHeader
+          eyebrow="Review"
+          title="Spaced Repetition"
+          subtitle={
+            srCards.length > 0
+              ? `Card ${srCurrentIdx + 1} of ${srCards.length} due now.`
+              : 'No cards due right now.'
+          }
         />
-        <ReviewRightRail
-          card={card}
-          cards={srCards}
-          reviewedCount={srReviewed}
-          totalDue={totalDue}
-          forgotCount={srForgot}
-          gotItCount={srGotIt}
-        />
-        <main
-          className="min-h-screen"
-          style={{
-            paddingTop: 48,
-            paddingLeft: 304,
-            paddingRight: 0,
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        >
-          <div className="lg:pr-[304px]">
-            <div className="max-w-3xl mx-auto px-8 pt-10">
+        <div>
               {card && meta ? (
                 <>
                   {/* Progress bar */}
@@ -1564,10 +1465,8 @@ export default function ReviewPageClient({
                   </div>
                 </>
               ) : null}
-            </div>
-          </div>
-        </main>
-      </div>
+        </div>
+      </AppShell>
     );
   }
 
@@ -1579,40 +1478,32 @@ export default function ReviewPageClient({
   const isCurrentAnswered = quickReviewedSet.has(quickIdx);
 
   return (
-    <div className="min-h-screen text-slate-200" style={{ background: C.appBg }}>
-      <AppNav activeTab="Review" />
-      <QuickReviewSidebar
-        cards={currentBatch}
-        currentIdx={quickIdx}
-        reviewedSet={quickReviewedSet}
-        results={quickResults}
-        onSelectCard={handleQuickSelectCard}
-        srDueCount={totalDue}
-        mode="quick"
-        isPro={isPro}
-      />
-      <QuickReviewRightRail
-        reviewedCount={quickReviewedSet.size}
-        totalCards={currentBatch.length}
-        correctCount={Array.from(quickResults.values()).filter(r => r === 'correct').length}
-        isPro={isPro}
-        srDueCount={totalDue}
-        srReviewed={srReviewed}
-      />
-      <main
-        className="min-h-screen"
-        style={{
-          paddingTop: 48,
-          paddingLeft: 304,
-          paddingRight: 0,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      >
-        <div className="lg:pr-[304px]">
-        <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
-
+    <>
+    <AppShell
+      activeTab="Review"
+      sidebar={
+        <QuickReviewSidebar
+          cards={currentBatch}
+          currentIdx={quickIdx}
+          reviewedSet={quickReviewedSet}
+          results={quickResults}
+          onSelectCard={handleQuickSelectCard}
+          srDueCount={totalDue}
+          mode="quick"
+          isPro={isPro}
+        />
+      }
+      rail={
+        <QuickReviewRightRail
+          reviewedCount={quickReviewedSet.size}
+          totalCards={currentBatch.length}
+          correctCount={Array.from(quickResults.values()).filter(r => r === 'correct').length}
+          isPro={isPro}
+          srDueCount={totalDue}
+          srReviewed={srReviewed}
+        />
+      }
+    >
           {/* Session complete banner */}
           {isPro && srReviewed > 0 && srCards.length === 0 && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 mb-6 flex items-center gap-3">
@@ -1627,15 +1518,11 @@ export default function ReviewPageClient({
           )}
 
           {/* Quick Review heading */}
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-[20px] font-bold text-white" style={SG}>Quick Review</h1>
-            <span className="text-[12px] text-slate-500 font-medium tabular-nums bg-slate-800/60 px-2 py-0.5 rounded">
-              Round {currentBatchNum} of {totalBatches}
-            </span>
-          </div>
-          <p className="text-[13px] text-slate-500 mb-6">
-            {BATCH_SIZE} questions per round. Answer them all to unlock the next round.
-          </p>
+          <PageHeader
+            eyebrow={`Round ${currentBatchNum} of ${totalBatches}`}
+            title="Quick Review"
+            subtitle={`${BATCH_SIZE} questions per round. Answer them all to unlock the next round.`}
+          />
 
           {/* Progress bar */}
           <div className="flex items-center gap-3 mb-8">
@@ -1815,11 +1702,8 @@ export default function ReviewPageClient({
               )}
             </div>
           ) : null}
-
-        </div>
-        </div>
-      </main>
-      <ProUpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
-    </div>
+    </AppShell>
+    <ProUpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
+    </>
   );
 }

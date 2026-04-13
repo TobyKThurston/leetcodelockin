@@ -3,15 +3,10 @@
 import { Loader2, AlertCircle, BarChart3 } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { cn } from '@/lib/utils';
+import ShellSidebar from '@/components/shell/ShellSidebar';
+import { SG } from '@/lib/ui-tokens';
 
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
-
-const C = {
-  panelBg: '#070c17',
-  cardBgDark: '#070c17',
-  border: 'rgba(255,255,255,0.06)',
-};
 
 function scoreColor(score: number): string {
   if (score >= 8) return 'rgba(52,211,153,0.9)';
@@ -118,17 +113,40 @@ export default function InterviewSidebar({
     completed.length > 0 ? Math.max(...completed.map(s => s.overallScore ?? 0)) : 0;
 
   return (
-    <aside
-      className="fixed left-0 bottom-0 hidden md:flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderRight: `1px solid ${C.border}`,
-      }}
+    <ShellSidebar
+      className="hidden md:flex"
+      footer={
+        <div className="space-y-2.5">
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-slate-500 font-medium">Completed</span>
+            <span className="text-slate-300 font-semibold tabular-nums">{completed.length}</span>
+          </div>
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-slate-500 font-medium">Avg score</span>
+            <span
+              className="font-semibold tabular-nums"
+              style={{
+                color: completed.length > 0 ? scoreColor(avgScore) : 'rgba(148,163,184,0.6)',
+              }}
+            >
+              {completed.length > 0 ? avgScore.toFixed(1) : '—'}
+            </span>
+          </div>
+          <div className="flex justify-between text-[11.5px]">
+            <span className="text-slate-500 font-medium">Best</span>
+            <span
+              className="font-semibold tabular-nums"
+              style={{
+                color: completed.length > 0 ? scoreColor(bestScore) : 'rgba(148,163,184,0.6)',
+              }}
+            >
+              {completed.length > 0 ? `${bestScore}/10` : '—'}
+            </span>
+          </div>
+        </div>
+      }
     >
-      {/* Header */}
-      <div className="px-4 pt-5 pb-3 flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-3 px-1">
         <BarChart3 size={11} className="text-slate-600" strokeWidth={2.5} />
         <p
           className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase"
@@ -137,69 +155,29 @@ export default function InterviewSidebar({
           Debriefs
         </p>
       </div>
-
-      {/* Session list */}
-      <div
-        className="flex-1 min-h-0 overflow-y-auto overscroll-contain"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: `${C.border} transparent` }}
-      >
-        <div className="px-4 pb-3 space-y-1.5">
-          {sessions.length === 0 ? (
-            <p
-              className="text-[11.5px] text-slate-600 leading-relaxed px-1 py-6 text-center"
-              style={SG}
-            >
-              No mock interviews yet.
-              <br />
-              Start your first one.
-            </p>
-          ) : (
-            sessions.map(s => (
-              <SessionRow
-                key={s.id}
-                session={s}
-                isActive={s.id === selectedSessionId}
-                isPending={s.id === pendingFeedbackId}
-                hasError={s.id === feedbackErrorId}
-                onClick={() => onSelectSession(s)}
-              />
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Stats subpanel */}
-      <div
-        className="px-4 py-4 space-y-2.5"
-        style={{ borderTop: `1px solid ${C.border}`, background: C.cardBgDark }}
-      >
-        <div className="flex justify-between text-[11.5px]">
-          <span className="text-slate-500 font-medium">Completed</span>
-          <span className="text-slate-300 font-semibold tabular-nums">{completed.length}</span>
-        </div>
-        <div className="flex justify-between text-[11.5px]">
-          <span className="text-slate-500 font-medium">Avg score</span>
-          <span
-            className="font-semibold tabular-nums"
-            style={{
-              color: completed.length > 0 ? scoreColor(avgScore) : 'rgba(148,163,184,0.6)',
-            }}
+      <div className="space-y-1.5">
+        {sessions.length === 0 ? (
+          <p
+            className="text-[11.5px] text-slate-600 leading-relaxed px-1 py-6 text-center"
+            style={SG}
           >
-            {completed.length > 0 ? avgScore.toFixed(1) : '—'}
-          </span>
-        </div>
-        <div className="flex justify-between text-[11.5px]">
-          <span className="text-slate-500 font-medium">Best</span>
-          <span
-            className="font-semibold tabular-nums"
-            style={{
-              color: completed.length > 0 ? scoreColor(bestScore) : 'rgba(148,163,184,0.6)',
-            }}
-          >
-            {completed.length > 0 ? `${bestScore}/10` : '—'}
-          </span>
-        </div>
+            No mock interviews yet.
+            <br />
+            Start your first one.
+          </p>
+        ) : (
+          sessions.map(s => (
+            <SessionRow
+              key={s.id}
+              session={s}
+              isActive={s.id === selectedSessionId}
+              isPending={s.id === pendingFeedbackId}
+              hasError={s.id === feedbackErrorId}
+              onClick={() => onSelectSession(s)}
+            />
+          ))
+        )}
       </div>
-    </aside>
+    </ShellSidebar>
   );
 }

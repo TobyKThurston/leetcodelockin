@@ -3,16 +3,11 @@
 import { Trophy, Clock, Target } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { cn } from '@/lib/utils';
+import ShellRail from '@/components/shell/ShellRail';
+import { RailHeader, RAIL_BOX } from '@/components/shell/RailPrimitives';
+import { SG } from '@/lib/ui-tokens';
 
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
-
-const C = {
-  panelBg: '#070c17',
-  border: 'rgba(255,255,255,0.06)',
-};
-
-const RAIL_BOX = 'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
 
 function scoreColor(score: number): string {
   if (score >= 8) return 'rgba(52,211,153,0.9)';
@@ -28,17 +23,6 @@ function formatTime(ms: number): string {
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-function RailHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <p
-      className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1"
-      style={SG}
-    >
-      {children}
-    </p>
-  );
 }
 
 function Metric({
@@ -97,20 +81,7 @@ export default function InterviewRightRail({
       : 0;
 
   return (
-    <aside
-      className="fixed right-0 bottom-0 hidden lg:flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <div
-        className="flex-1 min-h-0 overflow-y-auto"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: `${C.border} transparent` }}
-      >
-        <div className="px-4 pt-5 pb-5 space-y-5">
+    <ShellRail>
           {/* Current Session */}
           {currentSession && (
             <section>
@@ -242,8 +213,6 @@ export default function InterviewRightRail({
               </div>
             </section>
           )}
-        </div>
-      </div>
-    </aside>
+    </ShellRail>
   );
 }

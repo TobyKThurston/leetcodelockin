@@ -758,4 +758,81 @@ another arrow at the next interval's right edge.`,
       },
     ],
   },
+
+  // ─── Lemonade Change (LC #860) ──────────────────────────────────────────────
+  {
+    slug: 'lemonade-change',
+    lcNumber: 860,
+    title: 'Lemonade Change',
+    difficulty: 'Easy',
+    pattern: 'Greedy',
+    tags: ['array', 'greedy'],
+    descriptionMd: `At a lemonade stand, each cup of lemonade costs \`$5\`. Customers queue
+up and pay with a \`$5\`, \`$10\`, or \`$20\` bill (in the order given by \`bills\`). You
+start with **no change** and must give each customer the correct net change of \`$0\`,
+\`$5\`, or \`$15\` immediately after the sale. Return \`True\` if you can serve every
+customer, otherwise \`False\`.
+
+Because you only ever need to make change in units of \`$5\`, \`$10\`, and \`$20\`, the
+greedy rule is: when handing out \`$15\` of change, always prefer giving back a \`$10\` +
+\`$5\` pair before resorting to three \`$5\` bills — \`$10\` bills are otherwise useless.`,
+    examples: [
+      {
+        input: 'bills = [5, 5, 5, 10, 20]',
+        output: 'True',
+      },
+      {
+        input: 'bills = [5, 5, 10, 10, 20]',
+        output: 'False',
+        explanation: 'When the $20 arrives we only have one $5 and two $10 — cannot give $15.',
+      },
+    ],
+    constraints: [
+      '`1 <= len(bills) <= 10^5`',
+      '`bills[i]` is one of `5`, `10`, or `20`.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def lemonadeChange(self, bills: list[int]) -> bool:
+        # Return True if every customer can be given correct change.
+        pass
+`,
+    },
+    methodName: 'lemonadeChange',
+    argKeys: ['bills'],
+    defaultTests: [
+      { label: 'All good',    inputJson: '{"bills":[5,5,5,10,20]}',  expectedJson: 'true'  },
+      { label: 'Cannot pay',  inputJson: '{"bills":[5,5,10,10,20]}', expectedJson: 'false' },
+      { label: 'Twenty first',inputJson: '{"bills":[20,5,5,10]}',    expectedJson: 'false' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Greedy Change',
+        intuition: 'Track the number of $5 and $10 bills in the till. For a $5, accept it. For a $10, hand back a $5. For a $20, prefer a $10 + $5 combo first, otherwise three $5 bills. If neither is possible, return False.',
+        code: `class Solution:
+    def lemonadeChange(self, bills: list[int]) -> bool:
+        fives = tens = 0
+        for bill in bills:
+            if bill == 5:
+                fives += 1
+            elif bill == 10:
+                if fives == 0:
+                    return False
+                fives -= 1
+                tens += 1
+            else:  # bill == 20
+                if tens > 0 and fives > 0:
+                    tens -= 1
+                    fives -= 1
+                elif fives >= 3:
+                    fives -= 3
+                else:
+                    return False
+        return True`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
 ];

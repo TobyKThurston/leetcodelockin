@@ -9,39 +9,20 @@ import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap, Fla
 import type { WeaknessSpotlight } from '@/lib/weaknesses';
 import { CURRICULUM, type PathDef, type BlockDef, type CurriculumStep, type PracticeStepDef, isLesson, isPractice } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
-import AppNav from '@/components/AppNav';
 import ReviewDueWidget from '@/components/ReviewDueWidget';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useStreakFreeze, type StreakData, type HeatmapDay } from '@/lib/streaks';
 import ActivityHeatmap from '@/components/ActivityHeatmap';
-
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
-const MONO_FONT = 'var(--font-geist-mono), ui-monospace, monospace';
-
-// ─── Palette ─── matches landing page (#0b1220 main, #070c17 deep) ───────────
-const C = {
-  appBg:      '#0b1220',
-  panelBg:    '#070c17',
-  cardBg:     '#0f1729',
-  cardBgDark: '#070c17',
-  border:     'rgba(255,255,255,0.06)',
-  borderMid:  'rgba(255,255,255,0.1)',
-  text:       '#e5e7eb',
-  textSub:    '#cbd5e1',
-  textMuted:  '#94a3b8',
-  textDim:    '#64748b',
-  blue:       '#3b82f6',
-  blueDim:    'rgba(59,130,246,0.12)',
-  blueBorder: 'rgba(96,165,250,0.4)',
-  emerald:    '#10b981',
-  emeraldDim: 'rgba(16,185,129,0.1)',
-  emeraldBorder: 'rgba(16,185,129,0.32)',
-};
+import AppShell from '@/components/shell/AppShell';
+import ShellSidebar from '@/components/shell/ShellSidebar';
+import ShellRail from '@/components/shell/ShellRail';
+import PageHeader from '@/components/shell/PageHeader';
+import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
+import { C, SG, MONO_FONT } from '@/lib/ui-tokens';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1308,38 +1289,8 @@ function Sidebar({
   const workingPath   = CURRICULUM.find(p => pathStatuses[p.id] === 'unlocked') ?? CURRICULUM[0];
 
   return (
-    <aside
-      className="fixed left-0 bottom-0 flex flex-col"
-      style={{
-        top: 48,
-        width: 304,
-        background: C.panelBg,
-        borderRight: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-3 space-y-2">
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-            Learning Paths
-          </p>
-          {CURRICULUM.map(path => (
-            <SidebarPathCard
-              key={path.id}
-              path={path}
-              pathStatus={pathStatuses[path.id] ?? 'locked'}
-              blocksComplete={path.blocks.filter(b => completedIds.has(b.id)).length}
-              isViewing={path.id === viewingPathId}
-              onClick={() => onSelectPath(path.id)}
-            />
-          ))}
-        </div>
-      </ScrollArea>
-
-      {/* Stats subpanel */}
-      <div
-        className="px-4 py-4 space-y-4"
-        style={{ borderTop: `1px solid ${C.border}`, background: C.cardBgDark }}
-      >
+    <ShellSidebar
+      footer={
         <div className="space-y-2.5">
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
@@ -1369,47 +1320,27 @@ function Sidebar({
             <span className="text-slate-400 font-medium tabular-nums">{totalComplete} done</span>
           </div>
         </div>
-      </div>
-    </aside>
+      }
+    >
+      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+        Learning Paths
+      </p>
+      {CURRICULUM.map(path => (
+        <SidebarPathCard
+          key={path.id}
+          path={path}
+          pathStatus={pathStatuses[path.id] ?? 'locked'}
+          blocksComplete={path.blocks.filter(b => completedIds.has(b.id)).length}
+          isViewing={path.id === viewingPathId}
+          onClick={() => onSelectPath(path.id)}
+        />
+      ))}
+    </ShellSidebar>
   );
 }
 
 // ─── RightRail — performance dashboard ────────────────────────────────────────
-
-// Section header — matches the left sidebar's "Learning Paths" label exactly.
-function RailHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
-      {children}
-    </p>
-  );
-}
-
-// Row with label on the left and a value on the right — matches sidebar stats.
-function MetricRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between text-[11.5px]">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-slate-300 font-medium tabular-nums">{value}</span>
-    </div>
-  );
-}
-
-// Big number + small label, stacked. Used in Performance Overview.
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="text-[18px] leading-none font-semibold text-slate-100 tabular-nums">
-        {value}
-      </div>
-      <div className="text-[10px] text-slate-500 mt-1.5">{label}</div>
-    </div>
-  );
-}
-
-// Shared box style: matches an inactive `SidebarPathCard`.
-const RAIL_BOX =
-  'rounded-lg px-3 py-2.5 bg-slate-800/40 border border-slate-700/60';
+// Rail primitives (RailHeader, MetricRow, Metric, RAIL_BOX) live in @/components/shell/RailPrimitives
 
 // ─── Recommendation algorithm ─────────────────────────────────────────────────
 // Picks the single best block to work on next, factoring in:
@@ -1490,19 +1421,7 @@ function RightRail({
   const n = String(path.order).padStart(2, '0');
 
   return (
-    <aside
-      className="hidden lg:flex fixed right-0 flex-col"
-      style={{
-        top: 48,
-        bottom: 0,
-        width: 304,
-        background: C.panelBg,
-        borderLeft: `1px solid ${C.border}`,
-      }}
-    >
-      <ScrollArea className="flex-1">
-        <div className="px-4 pt-5 pb-[96px] space-y-5">
-
+    <ShellRail>
           {/* 1 — Path Progress (dominant, mirrors sidebar "viewing" card) */}
           <section>
             <RailHeader>Path Progress</RailHeader>
@@ -1713,10 +1632,7 @@ function RightRail({
 
           {/* 5 — Spaced Repetition Review (Pro only, shows when cards due) */}
           <ReviewDueWidget />
-
-        </div>
-      </ScrollArea>
-    </aside>
+    </ShellRail>
   );
 }
 
@@ -2005,29 +1921,24 @@ function PathView({
 
   return (
     <div className="w-full max-w-[720px] lg:max-w-none py-8 px-8 lg:px-12">
-      {/* Path header */}
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: C.textMuted }}>
-            Path {path.order} of {CURRICULUM.length}
-          </p>
-          <h2 className="text-[22px] font-semibold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
-            {path.title}
-          </h2>
-          <p className="text-[12.5px] mt-1.5" style={{ color: C.textMuted }}>{path.description}</p>
-        </div>
-        <div className="text-right pb-0.5 shrink-0 ml-8">
-          <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
-            <div
-              className="h-full rounded-full transition-all"
-              style={{ width: `${pct}%`, background: pathStatus === 'complete' ? C.emerald : C.blue }}
-            />
+      <PageHeader
+        eyebrow={`Path ${path.order} of ${CURRICULUM.length}`}
+        title={path.title}
+        subtitle={path.description}
+        right={
+          <div className="text-right">
+            <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${pct}%`, background: pathStatus === 'complete' ? C.emerald : C.blue }}
+              />
+            </div>
+            <p className="text-[11.5px] font-medium tabular-nums" style={{ color: C.textMuted }}>
+              {blocksComplete} / {blocks.length} complete
+            </p>
           </div>
-          <p className="text-[11.5px] font-medium tabular-nums" style={{ color: C.textMuted }}>
-            {blocksComplete} / {blocks.length} complete
-          </p>
-        </div>
-      </div>
+        }
+      />
 
       {/* Zigzag roadmap */}
       <div className="flex justify-center">
@@ -2649,23 +2560,17 @@ export function ProgressView({
 
   return (
     <div className="w-full max-w-[720px] mx-auto py-8 px-8 lg:px-12">
-      {/* Header — matches PathView header */}
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: C.textMuted }}>
-            Progress
-          </p>
-          <h2 className="text-[22px] font-semibold" style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}>
-            Your Progress
-          </h2>
-          <p className="text-[12.5px] mt-1.5" style={{ color: C.textMuted }}>
-            {totalComplete === 0
-              ? "You haven't started yet. Pick a block from the Path tab and begin."
-              : `${totalComplete} of ${totalBlocks} blocks complete across ${CURRICULUM.length} paths.`}
-          </p>
-        </div>
-        <div className="relative shrink-0 ml-8 flex items-center justify-center"
-             style={{ width: 110, height: 110 }}>
+      <PageHeader
+        eyebrow="Progress"
+        title="Your Progress"
+        subtitle={
+          totalComplete === 0
+            ? "You haven't started yet. Pick a block from the Path tab and begin."
+            : `${totalComplete} of ${totalBlocks} blocks complete across ${CURRICULUM.length} paths.`
+        }
+        right={
+          <div className="relative flex items-center justify-center"
+               style={{ width: 110, height: 110 }}>
           {/* Circular track */}
           <svg className="absolute inset-0" width="110" height="110" viewBox="0 0 110 110">
             <circle cx="55" cy="55" r="48" fill="none" stroke="#1e293b" strokeWidth="8" />
@@ -2720,8 +2625,9 @@ export function ProgressView({
               mastery
             </p>
           </div>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       {/* Overview */}
       <section className="mb-8">
@@ -2986,50 +2892,42 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
   };
 
   return (
-    <div className="min-h-screen" style={{ background: C.appBg }}>
-      <AppNav activeTab="Path" />
-      <Sidebar
-        pathStatuses={pathStatuses}
-        viewingPathId={viewingPathId}
-        completedIds={completedIds}
-        onSelectPath={handleSelectPath}
-        streakData={streakData}
-      />
-      <RightRail
-        path={viewingPath}
-        pathStatus={viewingStatus}
-        completedIds={completedIds}
-        pathStatuses={pathStatuses}
-        onSelectBlock={(id) => setSelectedBlockId(id)}
-        onSelectPath={handleSelectPath}
-        streakData={streakData}
-        heatmapData={heatmapData}
-        weaknessSpotlight={weaknessSpotlight}
-      />
-      <main
-        style={{
-          paddingLeft: 304,
-          paddingTop: 48,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-        className={cn(
-          'min-h-screen overflow-x-auto pb-24',
-          'lg:pr-[296px]',
-        )}
-      >
-        <CenterPanel
+    <AppShell
+      activeTab="Path"
+      unconstrained
+      sidebar={
+        <Sidebar
+          pathStatuses={pathStatuses}
+          viewingPathId={viewingPathId}
+          completedIds={completedIds}
+          onSelectPath={handleSelectPath}
+          streakData={streakData}
+        />
+      }
+      rail={
+        <RightRail
           path={viewingPath}
           pathStatus={viewingStatus}
           completedIds={completedIds}
-          selectedBlockId={selectedBlockId}
-          onSelectBlock={setSelectedBlockId}
-          onClearBlock={() => setSelectedBlockId(null)}
-          onCompleteAndAdvance={completeAndAdvance}
-          onOpenPractice={(slug) => router.push(`/solve/${slug}?from=dashboard`)}
+          pathStatuses={pathStatuses}
+          onSelectBlock={(id) => setSelectedBlockId(id)}
+          onSelectPath={handleSelectPath}
+          streakData={streakData}
+          heatmapData={heatmapData}
+          weaknessSpotlight={weaknessSpotlight}
         />
-      </main>
+      }
+    >
+      <CenterPanel
+        path={viewingPath}
+        pathStatus={viewingStatus}
+        completedIds={completedIds}
+        selectedBlockId={selectedBlockId}
+        onSelectBlock={setSelectedBlockId}
+        onClearBlock={() => setSelectedBlockId(null)}
+        onCompleteAndAdvance={completeAndAdvance}
+        onOpenPractice={(slug) => router.push(`/solve/${slug}?from=dashboard`)}
+      />
       {nextBlock && viewingStatus !== 'complete' && (
         <button
           type="button"
@@ -3110,6 +3008,6 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </AppShell>
   );
 }

@@ -1075,4 +1075,134 @@ that popped bar as the shortest bar inside it. A common trick is to append a sen
       },
     ],
   },
+
+  // ─── Make The String Great (LC #1544) ───────────────────────────────────────
+  {
+    slug: 'make-the-string-great',
+    lcNumber: 1544,
+    title: 'Make The String Great',
+    difficulty: 'Easy',
+    pattern: 'Stack',
+    tags: ['string', 'stack'],
+    descriptionMd: `A string \`s\` is **good** if it contains no two adjacent characters that
+differ **only** in case — that is, the same letter with one lowercase and one uppercase.
+For example \`"aA"\` is bad, but \`"aa"\` and \`"aB"\` are fine.
+
+Repeatedly remove any such bad pair from \`s\` until it becomes good and return the result.
+The stack approach is the canonical one-pass solution: push each character onto a stack
+unless it would form a bad pair with the top of the stack, in which case pop instead.`,
+    examples: [
+      {
+        input: 's = "leEeetcode"',
+        output: '"leetcode"',
+        explanation: 'Remove "eE", leaving "leetcode".',
+      },
+      {
+        input: 's = "abBAcC"',
+        output: '""',
+        explanation: 'All pairs cancel in sequence.',
+      },
+    ],
+    constraints: [
+      '`1 <= len(s) <= 100`',
+      '`s` contains only lowercase and uppercase English letters.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def makeGood(self, s: str) -> str:
+        # Repeatedly remove adjacent pairs like "aA" and return the result.
+        pass
+`,
+    },
+    methodName: 'makeGood',
+    argKeys: ['s'],
+    defaultTests: [
+      { label: 'Cascade',  inputJson: '{"s":"leEeetcode"}', expectedJson: '"leetcode"' },
+      { label: 'Wipes out', inputJson: '{"s":"abBAcC"}',    expectedJson: '""'         },
+      { label: 'Already good', inputJson: '{"s":"s"}',      expectedJson: '"s"'        },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'Push each character onto a stack. Before pushing, check if the top of the stack and the current character are the same letter in opposite cases — if so, pop instead. The final stack, joined, is the answer.',
+        code: `class Solution:
+    def makeGood(self, s: str) -> str:
+        stack = []
+        for ch in s:
+            if stack and stack[-1] != ch and stack[-1].lower() == ch.lower():
+                stack.pop()
+            else:
+                stack.append(ch)
+        return "".join(stack)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
+
+  // ─── Removing Stars From a String (LC #2390) ────────────────────────────────
+  {
+    slug: 'removing-stars-from-a-string',
+    lcNumber: 2390,
+    title: 'Removing Stars From a String',
+    difficulty: 'Easy',
+    pattern: 'Stack',
+    tags: ['string', 'stack'],
+    descriptionMd: `You are given a string \`s\` that contains lowercase letters and the
+special character \`*\`. In one operation, you can choose any star and remove both the star
+**and** the closest non-star character to its left.
+
+Return the resulting string after every star has been removed. You may assume the
+operations always succeed (there is always a non-star character to the left of each star).
+
+A stack makes this trivial: push each letter, and pop whenever you see a \`*\`.`,
+    examples: [
+      {
+        input: 's = "leet**cod*e"',
+        output: '"lecoe"',
+      },
+      {
+        input: 's = "erase*****"',
+        output: '""',
+      },
+    ],
+    constraints: [
+      '`1 <= len(s) <= 10^5`',
+      '`s` consists of lowercase English letters and stars `*`.',
+      'The operation can always be performed when a star is encountered.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def removeStars(self, s: str) -> str:
+        # Remove every '*' along with the closest non-star character to its left.
+        pass
+`,
+    },
+    methodName: 'removeStars',
+    argKeys: ['s'],
+    defaultTests: [
+      { label: 'Mixed',     inputJson: '{"s":"leet**cod*e"}', expectedJson: '"lecoe"' },
+      { label: 'All erased', inputJson: '{"s":"erase*****"}', expectedJson: '""'      },
+      { label: 'No stars',  inputJson: '{"s":"abc"}',         expectedJson: '"abc"'   },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Stack',
+        intuition: 'Iterate through the string. Push every non-star character onto a stack; for every star, pop the top of the stack. The remaining stack, joined, is the answer.',
+        code: `class Solution:
+    def removeStars(self, s: str) -> str:
+        stack = []
+        for ch in s:
+            if ch == '*':
+                stack.pop()
+            else:
+                stack.append(ch)
+        return "".join(stack)`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
 ];

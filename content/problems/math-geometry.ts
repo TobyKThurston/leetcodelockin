@@ -806,4 +806,145 @@ the total distance from every friend to the median row and median column.`,
       },
     ],
   },
+
+  // ─── Fizz Buzz (LC #412) ────────────────────────────────────────────────────
+  {
+    slug: 'fizz-buzz',
+    lcNumber: 412,
+    title: 'Fizz Buzz',
+    difficulty: 'Easy',
+    pattern: 'Simulation',
+    tags: ['math', 'string'],
+    descriptionMd: `Given an integer \`n\`, return a string array \`answer\` of length
+\`n\` (1-indexed) where for every \`i\` from \`1\` to \`n\`:
+
+- \`answer[i - 1] == "FizzBuzz"\` if \`i\` is divisible by **both** \`3\` and \`5\`.
+- \`answer[i - 1] == "Fizz"\` if \`i\` is divisible only by \`3\`.
+- \`answer[i - 1] == "Buzz"\` if \`i\` is divisible only by \`5\`.
+- \`answer[i - 1] == str(i)\` otherwise.`,
+    examples: [
+      {
+        input: 'n = 3',
+        output: '["1", "2", "Fizz"]',
+      },
+      {
+        input: 'n = 15',
+        output: '["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"]',
+      },
+    ],
+    constraints: [
+      '`1 <= n <= 10^4`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def fizzBuzz(self, n: int) -> list[str]:
+        # Return the FizzBuzz sequence from 1..n.
+        pass
+`,
+    },
+    methodName: 'fizzBuzz',
+    argKeys: ['n'],
+    defaultTests: [
+      { label: 'Small',  inputJson: '{"n":3}',  expectedJson: '["1","2","Fizz"]' },
+      { label: 'Medium', inputJson: '{"n":5}',  expectedJson: '["1","2","Fizz","4","Buzz"]' },
+      { label: 'Full',   inputJson: '{"n":15}', expectedJson: '["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Simulation',
+        intuition: 'Loop from 1 to n. For each value, check divisibility by 15, 3, and 5 in that order and append the matching label or the stringified integer.',
+        code: `class Solution:
+    def fizzBuzz(self, n: int) -> list[str]:
+        out = []
+        for i in range(1, n + 1):
+            if i % 15 == 0:
+                out.append("FizzBuzz")
+            elif i % 3 == 0:
+                out.append("Fizz")
+            elif i % 5 == 0:
+                out.append("Buzz")
+            else:
+                out.append(str(i))
+        return out`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
+
+  // ─── Add Digits (LC #258) ───────────────────────────────────────────────────
+  {
+    slug: 'add-digits',
+    lcNumber: 258,
+    title: 'Add Digits',
+    difficulty: 'Easy',
+    pattern: 'Math',
+    tags: ['math'],
+    descriptionMd: `Given a non-negative integer \`num\`, repeatedly add **all of its
+digits** until the result has only **one digit**, and return that final digit (the
+**digital root**).
+
+For example, \`num = 38\` → \`3 + 8 = 11\` → \`1 + 1 = 2\`, so the answer is \`2\`.
+
+The obvious solution is a loop, but there is a closed-form "digital root" identity:
+\`dr(num) = 0\` if \`num == 0\`, otherwise \`1 + (num - 1) % 9\`.`,
+    examples: [
+      {
+        input: 'num = 38',
+        output: '2',
+      },
+      {
+        input: 'num = 0',
+        output: '0',
+      },
+    ],
+    constraints: [
+      '`0 <= num <= 2^31 - 1`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def addDigits(self, num: int) -> int:
+        # Return the digital root of num.
+        pass
+`,
+    },
+    methodName: 'addDigits',
+    argKeys: ['num'],
+    defaultTests: [
+      { label: 'Two digits',  inputJson: '{"num":38}',    expectedJson: '2' },
+      { label: 'Zero',        inputJson: '{"num":0}',     expectedJson: '0' },
+      { label: 'Single digit',inputJson: '{"num":9}',     expectedJson: '9' },
+      { label: 'Bigger',      inputJson: '{"num":1234}',  expectedJson: '1' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Iterative Digit Sum',
+        intuition: 'While num has more than one digit, replace it with the sum of its digits. Repeat until num < 10.',
+        code: `class Solution:
+    def addDigits(self, num: int) -> int:
+        while num >= 10:
+            total = 0
+            while num > 0:
+                total += num % 10
+                num //= 10
+            num = total
+        return num`,
+        timeComplexity: 'O(log num) per pass, constant number of passes',
+        spaceComplexity: 'O(1)',
+      },
+      {
+        approach: 'Digital Root Formula',
+        intuition: 'The digital root of a positive integer is 1 + (num - 1) mod 9. This is a well-known identity that falls out of the fact that 10 ≡ 1 (mod 9).',
+        code: `class Solution:
+    def addDigits(self, num: int) -> int:
+        if num == 0:
+            return 0
+        return 1 + (num - 1) % 9`,
+        timeComplexity: 'O(1)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
 ];

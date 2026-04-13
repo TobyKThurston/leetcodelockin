@@ -738,4 +738,79 @@ answer.`,
       },
     ],
   },
+
+  // ─── Summary Ranges (LC #228) ───────────────────────────────────────────────
+  {
+    slug: 'summary-ranges',
+    lcNumber: 228,
+    title: 'Summary Ranges',
+    difficulty: 'Easy',
+    pattern: 'Array Scan',
+    tags: ['array', 'intervals'],
+    descriptionMd: `You are given a **sorted** array \`nums\` of **unique** integers.
+Return the smallest sorted list of ranges that **exactly covers** every value in the
+array, formatted as strings:
+
+- Use \`"a->b"\` when the range has more than one element (\`a\` and \`b\` are the
+  endpoints inclusive).
+- Use \`"a"\` when the range is a single element.
+
+A single linear scan works: grow the current run while consecutive values keep
+appearing, then emit a range string whenever the run breaks.`,
+    examples: [
+      {
+        input: 'nums = [0, 1, 2, 4, 5, 7]',
+        output: '["0->2", "4->5", "7"]',
+      },
+      {
+        input: 'nums = [0, 2, 3, 4, 6, 8, 9]',
+        output: '["0", "2->4", "6", "8->9"]',
+      },
+    ],
+    constraints: [
+      '`0 <= len(nums) <= 20`',
+      '`-2^31 <= nums[i] <= 2^31 - 1`',
+      '`nums` is sorted and all values are unique.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def summaryRanges(self, nums: list[int]) -> list[str]:
+        # Return the minimal list of inclusive ranges covering nums.
+        pass
+`,
+    },
+    methodName: 'summaryRanges',
+    argKeys: ['nums'],
+    defaultTests: [
+      { label: 'Mixed',       inputJson: '{"nums":[0,1,2,4,5,7]}',      expectedJson: '["0->2","4->5","7"]'       },
+      { label: 'Four ranges', inputJson: '{"nums":[0,2,3,4,6,8,9]}',    expectedJson: '["0","2->4","6","8->9"]'   },
+      { label: 'Empty',       inputJson: '{"nums":[]}',                 expectedJson: '[]'                         },
+      { label: 'Single run',  inputJson: '{"nums":[1,2,3,4]}',          expectedJson: '["1->4"]'                   },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Linear Scan',
+        intuition: 'Walk the array keeping track of the current run start. When the next number is not exactly one more than the current, emit a range for the run and start a new one.',
+        code: `class Solution:
+    def summaryRanges(self, nums: list[int]) -> list[str]:
+        if not nums:
+            return []
+        ranges = []
+        start = nums[0]
+        prev = nums[0]
+        for v in nums[1:]:
+            if v == prev + 1:
+                prev = v
+                continue
+            ranges.append(str(start) if start == prev else f"{start}->{prev}")
+            start = v
+            prev = v
+        ranges.append(str(start) if start == prev else f"{start}->{prev}")
+        return ranges`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
 ];

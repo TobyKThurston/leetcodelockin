@@ -973,4 +973,153 @@ of a run). For every start, walk forward counting how long the run extends.`,
       },
     ],
   },
+
+  // ─── Majority Element (LC #169) ─────────────────────────────────────────────
+  {
+    slug: 'majority-element',
+    lcNumber: 169,
+    title: 'Majority Element',
+    difficulty: 'Easy',
+    pattern: 'Boyer–Moore Voting',
+    tags: ['array', 'hash-map'],
+    descriptionMd: `Given an integer array \`nums\`, return the **majority element** — the value
+that appears **strictly more than \`len(nums) // 2\`** times. You may assume the majority
+element always exists in the array.
+
+The textbook approach is a frequency hash map, but there is also a famously elegant
+single-pass, constant-space trick — the Boyer–Moore voting algorithm — that maintains a
+candidate and a count, flipping the candidate whenever the count drops to zero.`,
+    examples: [
+      {
+        input: 'nums = [3, 2, 3]',
+        output: '3',
+      },
+      {
+        input: 'nums = [2, 2, 1, 1, 1, 2, 2]',
+        output: '2',
+      },
+    ],
+    constraints: [
+      '`1 <= len(nums) <= 5 * 10^4`',
+      '`-10^9 <= nums[i] <= 10^9`',
+      'The majority element always exists.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def majorityElement(self, nums: list[int]) -> int:
+        # Return the value appearing more than len(nums) // 2 times.
+        pass
+`,
+    },
+    methodName: 'majorityElement',
+    argKeys: ['nums'],
+    defaultTests: [
+      { label: 'Simple',       inputJson: '{"nums":[3,2,3]}',           expectedJson: '3' },
+      { label: 'Alternating',  inputJson: '{"nums":[2,2,1,1,1,2,2]}',   expectedJson: '2' },
+      { label: 'Single',       inputJson: '{"nums":[7]}',               expectedJson: '7' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Hash Map',
+        intuition: 'Count the occurrences of each value in a hash map. Any value whose count exceeds n // 2 is the majority element.',
+        code: `class Solution:
+    def majorityElement(self, nums: list[int]) -> int:
+        counts = {}
+        half = len(nums) // 2
+        for v in nums:
+            counts[v] = counts.get(v, 0) + 1
+            if counts[v] > half:
+                return v
+        return -1`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Boyer–Moore Voting',
+        intuition: 'Keep a candidate and a running count. When the count is zero, adopt the current element. Increment the count if it matches the candidate; otherwise decrement. A majority element always survives.',
+        code: `class Solution:
+    def majorityElement(self, nums: list[int]) -> int:
+        candidate = None
+        count = 0
+        for v in nums:
+            if count == 0:
+                candidate = v
+            count += 1 if v == candidate else -1
+        return candidate`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
+
+  // ─── Concatenation of Array (LC #1929) ──────────────────────────────────────
+  {
+    slug: 'concatenation-of-array',
+    lcNumber: 1929,
+    title: 'Concatenation of Array',
+    difficulty: 'Easy',
+    pattern: 'Array',
+    tags: ['array'],
+    descriptionMd: `Given an integer array \`nums\` of length \`n\`, build and return an array
+\`ans\` of length \`2 * n\` such that \`ans[i] == nums[i]\` and \`ans[i + n] == nums[i]\`
+for every \`0 <= i < n\`.
+
+In other words: return \`nums\` concatenated with itself. The one-liner in Python is
+\`nums + nums\`, but it is worth practising the explicit index-based build too.`,
+    examples: [
+      {
+        input: 'nums = [1, 2, 1]',
+        output: '[1, 2, 1, 1, 2, 1]',
+      },
+      {
+        input: 'nums = [1, 3, 2, 1]',
+        output: '[1, 3, 2, 1, 1, 3, 2, 1]',
+      },
+    ],
+    constraints: [
+      '`1 <= len(nums) <= 1000`',
+      '`1 <= nums[i] <= 1000`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def getConcatenation(self, nums: list[int]) -> list[int]:
+        # Return nums concatenated with itself (length 2n).
+        pass
+`,
+    },
+    methodName: 'getConcatenation',
+    argKeys: ['nums'],
+    defaultTests: [
+      { label: 'Three',  inputJson: '{"nums":[1,2,1]}',     expectedJson: '[1,2,1,1,2,1]'     },
+      { label: 'Four',   inputJson: '{"nums":[1,3,2,1]}',   expectedJson: '[1,3,2,1,1,3,2,1]' },
+      { label: 'Single', inputJson: '{"nums":[5]}',         expectedJson: '[5,5]'             },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'List Concatenation',
+        intuition: 'Python lists support the + operator which creates a new list containing both halves. This is the simplest one-liner.',
+        code: `class Solution:
+    def getConcatenation(self, nums: list[int]) -> list[int]:
+        return nums + nums`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+      {
+        approach: 'Index Build',
+        intuition: 'Preallocate a list of length 2n and fill it with two index passes. This avoids relying on list concatenation semantics.',
+        code: `class Solution:
+    def getConcatenation(self, nums: list[int]) -> list[int]:
+        n = len(nums)
+        ans = [0] * (2 * n)
+        for i in range(n):
+            ans[i] = nums[i]
+            ans[i + n] = nums[i]
+        return ans`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
 ];

@@ -578,168 +578,143 @@ export const CURRICULUM: PathDef[] = [
     order: 5,
     title: 'The 100 Lock In',
     description:
-      "A curated grind of 100+ problems. No lessons, no hand-holding, just the essential set of LeetCode problems every serious candidate should solve, ordered to build pattern recognition fastest. Unlocks when you finish Interview Ready.",
+      "A curated grind of exactly 100 problems. No lessons, no hand-holding, just the essential set of LeetCode problems every serious candidate should solve, ordered to build pattern recognition fastest. Unlocks when you finish Interview Ready.",
     blocks: [
-      // Arrays & Hashing
+      // Arrays & Hashing (4)
       practice('p5-arrays-hashing', 1, 'majority-element',                   'Majority Element',                   'Easy',    1),
-      practice('p5-arrays-hashing', 2, 'concatenation-of-array',             'Concatenation of Array',             'Easy',    2),
-      practice('p5-arrays-hashing', 3, 'top-k-frequent-elements',            'Top K Frequent Elements',            'Medium',  3),
-      practice('p5-arrays-hashing', 4, 'valid-sudoku',                       'Valid Sudoku',                       'Medium',  4),
-      practice('p5-arrays-hashing', 5, 'longest-consecutive-sequence',       'Longest Consecutive Sequence',       'Medium',  5),
+      practice('p5-arrays-hashing', 2, 'top-k-frequent-elements',            'Top K Frequent Elements',            'Medium',  2),
+      practice('p5-arrays-hashing', 3, 'valid-sudoku',                       'Valid Sudoku',                       'Medium',  3),
+      practice('p5-arrays-hashing', 4, 'longest-consecutive-sequence',       'Longest Consecutive Sequence',       'Medium',  4),
 
-      // Two Pointers
-      practice('p5-two-pointers',   1, 'merge-sorted-array',                 'Merge Sorted Array',                 'Easy',    6),
-      practice('p5-two-pointers',   2, 'remove-element',                     'Remove Element',                     'Easy',    7),
-      practice('p5-two-pointers',   3, 'two-sum-ii-input-array-is-sorted',   'Two Sum II',                         'Medium',  8),
-      practice('p5-two-pointers',   4, '3sum',                               '3Sum',                               'Medium',  9),
-      practice('p5-two-pointers',   5, 'sort-colors',                        'Sort Colors',                        'Medium', 10),
-      practice('p5-two-pointers',   6, '4sum',                               '4Sum',                               'Medium', 11),
-      practice('p5-two-pointers',   7, 'trapping-rain-water',                'Trapping Rain Water',                'Hard',   12),
+      // Two Pointers (5)
+      practice('p5-two-pointers',   1, 'merge-sorted-array',                 'Merge Sorted Array',                 'Easy',    5),
+      practice('p5-two-pointers',   2, 'two-sum-ii-input-array-is-sorted',   'Two Sum II',                         'Medium',  6),
+      practice('p5-two-pointers',   3, '3sum',                               '3Sum',                               'Medium',  7),
+      practice('p5-two-pointers',   4, 'sort-colors',                        'Sort Colors',                        'Medium',  8),
+      practice('p5-two-pointers',   5, 'trapping-rain-water',                'Trapping Rain Water',                'Hard',    9),
 
-      // Sliding Window
-      practice('p5-sliding-window', 1, 'contains-duplicate-ii',              'Contains Duplicate II',              'Easy',   13),
-      practice('p5-sliding-window', 2, 'longest-repeating-character-replacement', 'Longest Repeating Character Replacement', 'Medium', 14),
-      practice('p5-sliding-window', 3, 'permutation-in-string',              'Permutation in String',              'Medium', 15),
-      practice('p5-sliding-window', 4, 'find-all-anagrams-in-a-string',      'Find All Anagrams in a String',      'Medium', 16),
-      practice('p5-sliding-window', 5, 'minimum-size-subarray-sum',          'Minimum Size Subarray Sum',          'Medium', 17),
-      practice('p5-sliding-window', 6, 'fruit-into-baskets',                 'Fruit Into Baskets',                 'Medium', 18),
-      practice('p5-sliding-window', 7, 'minimum-window-substring',           'Minimum Window Substring',           'Hard',   19),
+      // Sliding Window (6)
+      practice('p5-sliding-window', 1, 'longest-repeating-character-replacement', 'Longest Repeating Character Replacement', 'Medium', 10),
+      practice('p5-sliding-window', 2, 'permutation-in-string',              'Permutation in String',              'Medium', 11),
+      practice('p5-sliding-window', 3, 'find-all-anagrams-in-a-string',      'Find All Anagrams in a String',      'Medium', 12),
+      practice('p5-sliding-window', 4, 'minimum-size-subarray-sum',          'Minimum Size Subarray Sum',          'Medium', 13),
+      practice('p5-sliding-window', 5, 'fruit-into-baskets',                 'Fruit Into Baskets',                 'Medium', 14),
+      practice('p5-sliding-window', 6, 'minimum-window-substring',           'Minimum Window Substring',           'Hard',   15),
 
-      // Stack
-      practice('p5-stack',          1, 'make-the-string-great',              'Make The String Great',              'Easy',   20),
-      practice('p5-stack',          2, 'removing-stars-from-a-string',       'Removing Stars From a String',       'Easy',   21),
-      practice('p5-stack',          3, 'min-stack',                          'Min Stack',                          'Medium', 22),
-      practice('p5-stack',          4, 'evaluate-reverse-polish-notation',   'Evaluate Reverse Polish Notation',   'Medium', 23),
-      practice('p5-stack',          5, 'daily-temperatures',                 'Daily Temperatures',                 'Medium', 24),
-      practice('p5-stack',          6, 'decode-string',                      'Decode String',                      'Medium', 25),
-      practice('p5-stack',          7, 'online-stock-span',                  'Online Stock Span',                  'Medium', 26),
-      practice('p5-stack',          8, 'largest-rectangle-in-histogram',     'Largest Rectangle in Histogram',     'Hard',   27),
+      // Stack (5)
+      practice('p5-stack',          1, 'min-stack',                          'Min Stack',                          'Medium', 16),
+      practice('p5-stack',          2, 'evaluate-reverse-polish-notation',   'Evaluate Reverse Polish Notation',   'Medium', 17),
+      practice('p5-stack',          3, 'daily-temperatures',                 'Daily Temperatures',                 'Medium', 18),
+      practice('p5-stack',          4, 'decode-string',                      'Decode String',                      'Medium', 19),
+      practice('p5-stack',          5, 'largest-rectangle-in-histogram',     'Largest Rectangle in Histogram',     'Hard',   20),
 
-      // Binary Search
-      practice('p5-binary-search',  1, 'guess-number-higher-or-lower',                          'Guess Number Higher or Lower',         'Easy',   28),
-      practice('p5-binary-search',  2, 'sqrtx',                                                 'Sqrt(x)',                              'Easy',   29),
-      practice('p5-binary-search',  3, 'find-minimum-in-rotated-sorted-array',                  'Find Minimum in Rotated Sorted Array', 'Medium', 30),
-      practice('p5-binary-search',  4, 'search-in-rotated-sorted-array',                        'Search in Rotated Sorted Array',       'Medium', 31),
-      practice('p5-binary-search',  5, 'find-first-and-last-position-of-element-in-sorted-array','Find First and Last Position',        'Medium', 32),
-      practice('p5-binary-search',  6, 'koko-eating-bananas',                                   'Koko Eating Bananas',                  'Medium', 33),
-      practice('p5-binary-search',  7, 'capacity-to-ship-packages-within-d-days',               'Capacity to Ship Packages',            'Medium', 34),
-      practice('p5-binary-search',  8, 'median-of-two-sorted-arrays',                           'Median of Two Sorted Arrays',          'Hard',   35),
+      // Binary Search (6)
+      practice('p5-binary-search',  1, 'sqrtx',                                                 'Sqrt(x)',                              'Easy',   21),
+      practice('p5-binary-search',  2, 'find-minimum-in-rotated-sorted-array',                  'Find Minimum in Rotated Sorted Array', 'Medium', 22),
+      practice('p5-binary-search',  3, 'search-in-rotated-sorted-array',                        'Search in Rotated Sorted Array',       'Medium', 23),
+      practice('p5-binary-search',  4, 'find-first-and-last-position-of-element-in-sorted-array','Find First and Last Position',        'Medium', 24),
+      practice('p5-binary-search',  5, 'koko-eating-bananas',                                   'Koko Eating Bananas',                  'Medium', 25),
+      practice('p5-binary-search',  6, 'median-of-two-sorted-arrays',                           'Median of Two Sorted Arrays',          'Hard',   26),
 
-      // Linked List
-      practice('p5-linked-list',    1, 'palindrome-linked-list',             'Palindrome Linked List',             'Easy',   36),
-      practice('p5-linked-list',    2, 'remove-linked-list-elements',        'Remove Linked List Elements',        'Easy',   37),
-      practice('p5-linked-list',    3, 'remove-duplicates-from-sorted-list', 'Remove Duplicates from Sorted List', 'Easy',   38),
-      practice('p5-linked-list',    4, 'remove-nth-node-from-end-of-list',   'Remove Nth Node From End of List',   'Medium', 39),
-      practice('p5-linked-list',    5, 'reorder-list',                       'Reorder List',                       'Medium', 40),
-      practice('p5-linked-list',    6, 'add-two-numbers',                    'Add Two Numbers',                    'Medium', 41),
-      practice('p5-linked-list',    7, 'copy-list-with-random-pointer',      'Copy List with Random Pointer',      'Medium', 42),
-      practice('p5-linked-list',    8, 'reverse-nodes-in-k-group',           'Reverse Nodes in K-Group',           'Hard',   43),
+      // Linked List (6)
+      practice('p5-linked-list',    1, 'palindrome-linked-list',             'Palindrome Linked List',             'Easy',   27),
+      practice('p5-linked-list',    2, 'remove-nth-node-from-end-of-list',   'Remove Nth Node From End of List',   'Medium', 28),
+      practice('p5-linked-list',    3, 'reorder-list',                       'Reorder List',                       'Medium', 29),
+      practice('p5-linked-list',    4, 'add-two-numbers',                    'Add Two Numbers',                    'Medium', 30),
+      practice('p5-linked-list',    5, 'copy-list-with-random-pointer',      'Copy List with Random Pointer',      'Medium', 31),
+      practice('p5-linked-list',    6, 'reverse-nodes-in-k-group',           'Reverse Nodes in K-Group',           'Hard',   32),
 
-      // Trees
-      practice('p5-trees',          1, 'range-sum-of-bst',                                         'Range Sum of BST',                    'Easy',   44),
-      practice('p5-trees',          2, 'binary-tree-paths',                                        'Binary Tree Paths',                   'Easy',   45),
-      practice('p5-trees',          3, 'subtree-of-another-tree',                                  'Subtree of Another Tree',             'Easy',   46),
-      practice('p5-trees',          4, 'lowest-common-ancestor-of-a-binary-search-tree',           'LCA of a BST',                        'Medium', 47),
-      practice('p5-trees',          5, 'binary-tree-level-order-traversal',                        'Binary Tree Level Order Traversal',   'Medium', 48),
-      practice('p5-trees',          6, 'construct-binary-tree-from-preorder-and-inorder-traversal','Construct Tree from Preorder/Inorder','Medium', 49),
-      practice('p5-trees',          7, 'binary-tree-maximum-path-sum',                             'Binary Tree Maximum Path Sum',        'Hard',   50),
+      // Trees (5)
+      practice('p5-trees',          1, 'subtree-of-another-tree',                                  'Subtree of Another Tree',             'Easy',   33),
+      practice('p5-trees',          2, 'lowest-common-ancestor-of-a-binary-search-tree',           'LCA of a BST',                        'Medium', 34),
+      practice('p5-trees',          3, 'binary-tree-level-order-traversal',                        'Binary Tree Level Order Traversal',   'Medium', 35),
+      practice('p5-trees',          4, 'construct-binary-tree-from-preorder-and-inorder-traversal','Construct Tree from Preorder/Inorder','Medium', 36),
+      practice('p5-trees',          5, 'binary-tree-maximum-path-sum',                             'Binary Tree Maximum Path Sum',        'Hard',   37),
 
-      // Tries
-      practice('p5-tries',          1, 'implement-trie-prefix-tree',                 'Implement Trie (Prefix Tree)',  'Medium', 51),
-      practice('p5-tries',          2, 'design-add-and-search-words-data-structure', 'Design Add and Search Words',   'Medium', 52),
-      practice('p5-tries',          3, 'search-suggestions-system',                  'Search Suggestions System',     'Medium', 53),
-      practice('p5-tries',          4, 'word-search-ii',                             'Word Search II',                'Hard',   54),
+      // Tries (4)
+      practice('p5-tries',          1, 'implement-trie-prefix-tree',                 'Implement Trie (Prefix Tree)',  'Medium', 38),
+      practice('p5-tries',          2, 'design-add-and-search-words-data-structure', 'Design Add and Search Words',   'Medium', 39),
+      practice('p5-tries',          3, 'search-suggestions-system',                  'Search Suggestions System',     'Medium', 40),
+      practice('p5-tries',          4, 'word-search-ii',                             'Word Search II',                'Hard',   41),
 
-      // Heap / Priority Queue
-      practice('p5-heap',           1, 'relative-ranks',                              'Relative Ranks',                  'Easy',   55),
-      practice('p5-heap',           2, 'kth-largest-element-in-an-array',             'Kth Largest Element in an Array', 'Medium', 56),
-      practice('p5-heap',           3, 'top-k-frequent-words',                        'Top K Frequent Words',            'Medium', 57),
-      practice('p5-heap',           4, 'task-scheduler',                              'Task Scheduler',                  'Medium', 58),
-      practice('p5-heap',           5, 'reorganize-string',                           'Reorganize String',               'Medium', 59),
-      practice('p5-heap',           6, 'kth-smallest-element-in-a-sorted-matrix',     'Kth Smallest in a Sorted Matrix', 'Medium', 60),
-      practice('p5-heap',           7, 'find-median-from-data-stream',                'Find Median from Data Stream',    'Hard',   61),
+      // Heap / Priority Queue (5)
+      practice('p5-heap',           1, 'kth-largest-element-in-an-array',             'Kth Largest Element in an Array', 'Medium', 42),
+      practice('p5-heap',           2, 'task-scheduler',                              'Task Scheduler',                  'Medium', 43),
+      practice('p5-heap',           3, 'reorganize-string',                           'Reorganize String',               'Medium', 44),
+      practice('p5-heap',           4, 'kth-smallest-element-in-a-sorted-matrix',     'Kth Smallest in a Sorted Matrix', 'Medium', 45),
+      practice('p5-heap',           5, 'find-median-from-data-stream',                'Find Median from Data Stream',    'Hard',   46),
 
-      // Backtracking
-      practice('p5-backtracking',   1, 'subsets',                               'Subsets',                                'Medium', 62),
-      practice('p5-backtracking',   2, 'combination-sum',                       'Combination Sum',                        'Medium', 63),
-      practice('p5-backtracking',   3, 'permutations',                          'Permutations',                           'Medium', 64),
-      practice('p5-backtracking',   4, 'subsets-ii',                            'Subsets II',                             'Medium', 65),
-      practice('p5-backtracking',   5, 'combination-sum-ii',                    'Combination Sum II',                     'Medium', 66),
-      practice('p5-backtracking',   6, 'letter-combinations-of-a-phone-number', 'Letter Combinations of a Phone Number',  'Medium', 67),
-      practice('p5-backtracking',   7, 'word-search',                           'Word Search',                            'Medium', 68),
+      // Backtracking (7)
+      practice('p5-backtracking',   1, 'subsets',                               'Subsets',                                'Medium', 47),
+      practice('p5-backtracking',   2, 'combination-sum',                       'Combination Sum',                        'Medium', 48),
+      practice('p5-backtracking',   3, 'permutations',                          'Permutations',                           'Medium', 49),
+      practice('p5-backtracking',   4, 'subsets-ii',                            'Subsets II',                             'Medium', 50),
+      practice('p5-backtracking',   5, 'combination-sum-ii',                    'Combination Sum II',                     'Medium', 51),
+      practice('p5-backtracking',   6, 'letter-combinations-of-a-phone-number', 'Letter Combinations of a Phone Number',  'Medium', 52),
+      practice('p5-backtracking',   7, 'word-search',                           'Word Search',                            'Medium', 53),
 
-      // Graphs
-      practice('p5-graphs',         1, 'find-if-path-exists-in-graph',          'Find if Path Exists in Graph',    'Easy',   69),
-      practice('p5-graphs',         2, 'find-the-town-judge',                   'Find the Town Judge',             'Easy',   70),
-      practice('p5-graphs',         3, 'max-area-of-island',                    'Max Area of Island',              'Medium', 71),
-      practice('p5-graphs',         4, 'clone-graph',                           'Clone Graph',                     'Medium', 72),
-      practice('p5-graphs',         5, 'number-of-provinces',                   'Number of Provinces',             'Medium', 73),
-      practice('p5-graphs',         6, 'pacific-atlantic-water-flow',           'Pacific Atlantic Water Flow',     'Medium', 74),
-      practice('p5-graphs',         7, 'surrounded-regions',                    'Surrounded Regions',              'Medium', 75),
-      practice('p5-graphs',         8, 'shortest-path-in-binary-matrix',        'Shortest Path in Binary Matrix',  'Medium', 76),
+      // Graphs (6)
+      practice('p5-graphs',         1, 'max-area-of-island',                    'Max Area of Island',              'Medium', 54),
+      practice('p5-graphs',         2, 'clone-graph',                           'Clone Graph',                     'Medium', 55),
+      practice('p5-graphs',         3, 'number-of-provinces',                   'Number of Provinces',             'Medium', 56),
+      practice('p5-graphs',         4, 'pacific-atlantic-water-flow',           'Pacific Atlantic Water Flow',     'Medium', 57),
+      practice('p5-graphs',         5, 'surrounded-regions',                    'Surrounded Regions',              'Medium', 58),
+      practice('p5-graphs',         6, 'shortest-path-in-binary-matrix',        'Shortest Path in Binary Matrix',  'Medium', 59),
 
-      // Advanced Graphs
-      practice('p5-advanced-graphs',1, 'course-schedule',                                         'Course Schedule',              'Medium', 77),
-      practice('p5-advanced-graphs',2, 'course-schedule-ii',                                      'Course Schedule II',           'Medium', 78),
-      practice('p5-advanced-graphs',3, 'number-of-connected-components-in-an-undirected-graph',   'Connected Components',         'Medium', 79),
-      practice('p5-advanced-graphs',4, 'min-cost-to-connect-all-points',                          'Min Cost to Connect Points',   'Medium', 80),
-      practice('p5-advanced-graphs',5, 'network-delay-time',                                      'Network Delay Time',           'Medium', 81),
-      practice('p5-advanced-graphs',6, 'alien-dictionary',                                        'Alien Dictionary',             'Hard',   82),
+      // Advanced Graphs (6)
+      practice('p5-advanced-graphs',1, 'course-schedule',                                         'Course Schedule',              'Medium', 60),
+      practice('p5-advanced-graphs',2, 'course-schedule-ii',                                      'Course Schedule II',           'Medium', 61),
+      practice('p5-advanced-graphs',3, 'number-of-connected-components-in-an-undirected-graph',   'Connected Components',         'Medium', 62),
+      practice('p5-advanced-graphs',4, 'min-cost-to-connect-all-points',                          'Min Cost to Connect Points',   'Medium', 63),
+      practice('p5-advanced-graphs',5, 'network-delay-time',                                      'Network Delay Time',           'Medium', 64),
+      practice('p5-advanced-graphs',6, 'alien-dictionary',                                        'Alien Dictionary',             'Hard',   65),
 
-      // 1-D DP
-      practice('p5-dp-1d',          1, 'n-th-tribonacci-number',         'N-th Tribonacci Number',        'Easy',   83),
-      practice('p5-dp-1d',          2, 'pascals-triangle',               "Pascal's Triangle",             'Easy',   84),
-      practice('p5-dp-1d',          3, 'house-robber-ii',                'House Robber II',               'Medium', 85),
-      practice('p5-dp-1d',          4, 'decode-ways',                    'Decode Ways',                   'Medium', 86),
-      practice('p5-dp-1d',          5, 'coin-change',                    'Coin Change',                   'Medium', 87),
-      practice('p5-dp-1d',          6, 'maximum-product-subarray',       'Maximum Product Subarray',      'Medium', 88),
-      practice('p5-dp-1d',          7, 'word-break',                     'Word Break',                    'Medium', 89),
-      practice('p5-dp-1d',          8, 'longest-increasing-subsequence', 'Longest Increasing Subsequence','Medium', 90),
-      practice('p5-dp-1d',          9, 'perfect-squares',                'Perfect Squares',               'Medium', 91),
+      // 1-D DP (7)
+      practice('p5-dp-1d',          1, 'house-robber-ii',                'House Robber II',               'Medium', 66),
+      practice('p5-dp-1d',          2, 'decode-ways',                    'Decode Ways',                   'Medium', 67),
+      practice('p5-dp-1d',          3, 'coin-change',                    'Coin Change',                   'Medium', 68),
+      practice('p5-dp-1d',          4, 'maximum-product-subarray',       'Maximum Product Subarray',      'Medium', 69),
+      practice('p5-dp-1d',          5, 'word-break',                     'Word Break',                    'Medium', 70),
+      practice('p5-dp-1d',          6, 'longest-increasing-subsequence', 'Longest Increasing Subsequence','Medium', 71),
+      practice('p5-dp-1d',          7, 'perfect-squares',                'Perfect Squares',               'Medium', 72),
 
-      // 2-D DP
-      practice('p5-dp-2d',          1, 'is-subsequence',               'Is Subsequence',               'Easy',   92),
-      practice('p5-dp-2d',          2, 'unique-paths',                 'Unique Paths',                 'Medium', 93),
-      practice('p5-dp-2d',          3, 'longest-common-subsequence',   'Longest Common Subsequence',   'Medium', 94),
-      practice('p5-dp-2d',          4, 'target-sum',                   'Target Sum',                   'Medium', 95),
-      practice('p5-dp-2d',          5, 'coin-change-ii',               'Coin Change II',               'Medium', 96),
-      practice('p5-dp-2d',          6, 'partition-equal-subset-sum',   'Partition Equal Subset Sum',   'Medium', 97),
-      practice('p5-dp-2d',          7, 'edit-distance',                'Edit Distance',                'Medium', 98),
-      practice('p5-dp-2d',          8, 'regular-expression-matching',  'Regular Expression Matching',  'Hard',   99),
+      // 2-D DP (7)
+      practice('p5-dp-2d',          1, 'unique-paths',                 'Unique Paths',                 'Medium', 73),
+      practice('p5-dp-2d',          2, 'longest-common-subsequence',   'Longest Common Subsequence',   'Medium', 74),
+      practice('p5-dp-2d',          3, 'target-sum',                   'Target Sum',                   'Medium', 75),
+      practice('p5-dp-2d',          4, 'coin-change-ii',               'Coin Change II',               'Medium', 76),
+      practice('p5-dp-2d',          5, 'partition-equal-subset-sum',   'Partition Equal Subset Sum',   'Medium', 77),
+      practice('p5-dp-2d',          6, 'edit-distance',                'Edit Distance',                'Medium', 78),
+      practice('p5-dp-2d',          7, 'regular-expression-matching',  'Regular Expression Matching',  'Hard',   79),
 
-      // Greedy
-      practice('p5-greedy',         1, 'assign-cookies',           'Assign Cookies',           'Easy',   100),
-      practice('p5-greedy',         2, 'lemonade-change',          'Lemonade Change',          'Easy',   101),
-      practice('p5-greedy',         3, 'can-place-flowers',        'Can Place Flowers',        'Easy',   102),
-      practice('p5-greedy',         4, 'jump-game',                'Jump Game',                'Medium', 103),
-      practice('p5-greedy',         5, 'jump-game-ii',             'Jump Game II',             'Medium', 104),
-      practice('p5-greedy',         6, 'gas-station',              'Gas Station',              'Medium', 105),
-      practice('p5-greedy',         7, 'partition-labels',         'Partition Labels',         'Medium', 106),
-      practice('p5-greedy',         8, 'valid-parenthesis-string', 'Valid Parenthesis String', 'Medium', 107),
+      // Greedy (7)
+      practice('p5-greedy',         1, 'assign-cookies',           'Assign Cookies',           'Easy',   80),
+      practice('p5-greedy',         2, 'can-place-flowers',        'Can Place Flowers',        'Easy',   81),
+      practice('p5-greedy',         3, 'jump-game',                'Jump Game',                'Medium', 82),
+      practice('p5-greedy',         4, 'jump-game-ii',             'Jump Game II',             'Medium', 83),
+      practice('p5-greedy',         5, 'gas-station',              'Gas Station',              'Medium', 84),
+      practice('p5-greedy',         6, 'partition-labels',         'Partition Labels',         'Medium', 85),
+      practice('p5-greedy',         7, 'valid-parenthesis-string', 'Valid Parenthesis String', 'Medium', 86),
 
-      // Intervals
-      practice('p5-intervals',      1, 'meeting-rooms',             'Meeting Rooms',             'Easy',   108),
-      practice('p5-intervals',      2, 'summary-ranges',            'Summary Ranges',            'Easy',   109),
-      practice('p5-intervals',      3, 'insert-interval',           'Insert Interval',           'Medium', 110),
-      practice('p5-intervals',      4, 'merge-intervals',           'Merge Intervals',           'Medium', 111),
-      practice('p5-intervals',      5, 'non-overlapping-intervals', 'Non-overlapping Intervals', 'Medium', 112),
-      practice('p5-intervals',      6, 'meeting-rooms-ii',          'Meeting Rooms II',          'Medium', 113),
+      // Intervals (5)
+      practice('p5-intervals',      1, 'meeting-rooms',             'Meeting Rooms',             'Easy',   87),
+      practice('p5-intervals',      2, 'insert-interval',           'Insert Interval',           'Medium', 88),
+      practice('p5-intervals',      3, 'merge-intervals',           'Merge Intervals',           'Medium', 89),
+      practice('p5-intervals',      4, 'non-overlapping-intervals', 'Non-overlapping Intervals', 'Medium', 90),
+      practice('p5-intervals',      5, 'meeting-rooms-ii',          'Meeting Rooms II',          'Medium', 91),
 
-      // Math & Geometry
-      practice('p5-math',           1, 'fizz-buzz',         'Fizz Buzz',         'Easy',   114),
-      practice('p5-math',           2, 'add-digits',        'Add Digits',        'Easy',   115),
-      practice('p5-math',           3, 'ugly-number',       'Ugly Number',       'Easy',   116),
-      practice('p5-math',           4, 'rotate-image',      'Rotate Image',      'Medium', 117),
-      practice('p5-math',           5, 'spiral-matrix',     'Spiral Matrix',     'Medium', 118),
-      practice('p5-math',           6, 'set-matrix-zeroes', 'Set Matrix Zeroes', 'Medium', 119),
-      practice('p5-math',           7, 'multiply-strings',  'Multiply Strings',  'Medium', 120),
+      // Math & Geometry (5)
+      practice('p5-math',           1, 'ugly-number',       'Ugly Number',       'Easy',   92),
+      practice('p5-math',           2, 'rotate-image',      'Rotate Image',      'Medium', 93),
+      practice('p5-math',           3, 'spiral-matrix',     'Spiral Matrix',     'Medium', 94),
+      practice('p5-math',           4, 'set-matrix-zeroes', 'Set Matrix Zeroes', 'Medium', 95),
+      practice('p5-math',           5, 'multiply-strings',  'Multiply Strings',  'Medium', 96),
 
-      // Bit Manipulation
-      practice('p5-bit',            1, 'hamming-distance',    'Hamming Distance',    'Easy',   121),
-      practice('p5-bit',            2, 'number-of-1-bits',    'Number of 1 Bits',    'Easy',   122),
-      practice('p5-bit',            3, 'counting-bits',       'Counting Bits',       'Easy',   123),
-      practice('p5-bit',            4, 'reverse-bits',        'Reverse Bits',        'Easy',   124),
-      practice('p5-bit',            5, 'sum-of-two-integers', 'Sum of Two Integers', 'Medium', 125),
+      // Bit Manipulation (4)
+      practice('p5-bit',            1, 'number-of-1-bits',    'Number of 1 Bits',    'Easy',   97),
+      practice('p5-bit',            2, 'counting-bits',       'Counting Bits',       'Easy',   98),
+      practice('p5-bit',            3, 'reverse-bits',        'Reverse Bits',        'Easy',   99),
+      practice('p5-bit',            4, 'sum-of-two-integers', 'Sum of Two Integers', 'Medium', 100),
     ],
   },
 ];

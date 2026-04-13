@@ -1109,4 +1109,162 @@ class Solution:
       },
     ],
   },
+
+  // ─── Range Sum of BST (LC #938) ─────────────────────────────────────────────
+  {
+    slug: 'range-sum-of-bst',
+    lcNumber: 938,
+    title: 'Range Sum of BST',
+    difficulty: 'Easy',
+    pattern: 'DFS',
+    tags: ['binary-search-tree', 'dfs'],
+    descriptionMd: `Given the \`root\` of a **binary search tree** (serialised as a
+level-order array with \`null\` for missing children) and two integers \`low\` and
+\`high\`, return the **sum of values** of every node whose value lies in the inclusive
+range \`[low, high]\`.
+
+A straight DFS works, but the BST property lets you **prune** entire subtrees: if the
+current node's value is below \`low\`, you only need to recurse right; if it is above
+\`high\`, you only need to recurse left.`,
+    examples: [
+      {
+        input: 'root = [10, 5, 15, 3, 7, null, 18], low = 7, high = 15',
+        output: '32',
+        explanation: '7 + 10 + 15 = 32.',
+      },
+      {
+        input: 'root = [10, 5, 15, 3, 7, 13, 18, 1, null, 6], low = 6, high = 10',
+        output: '23',
+        explanation: '6 + 7 + 10 = 23.',
+      },
+    ],
+    constraints: [
+      '`1 <= number of nodes <= 2 * 10^4`',
+      '`1 <= node.val <= 10^5`',
+      '`1 <= low <= high <= 10^5`',
+      'All values are unique.',
+    ],
+    starterCode: {
+      python: `${TREE_NODE_HELPERS}
+class Solution:
+    def rangeSumBST(self, root: list, low: int, high: int) -> int:
+        tree = _to_tree(root)
+
+        # ─── Sum values in [low, high] below ───────────────────────
+        # Hint: use the BST property to prune subtrees.
+        pass
+        # ───────────────────────────────────────────────────────────
+`,
+    },
+    methodName: 'rangeSumBST',
+    argKeys: ['root', 'low', 'high'],
+    defaultTests: [
+      { label: 'Small tree',  inputJson: '{"root":[10,5,15,3,7,null,18],"low":7,"high":15}',         expectedJson: '32' },
+      { label: 'Deeper tree', inputJson: '{"root":[10,5,15,3,7,13,18,1,null,6],"low":6,"high":10}',  expectedJson: '23' },
+      { label: 'Single node', inputJson: '{"root":[5],"low":1,"high":10}',                            expectedJson: '5'  },
+      { label: 'Out of range',inputJson: '{"root":[5],"low":6,"high":10}',                            expectedJson: '0'  },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with BST Pruning',
+        intuition: 'Recurse into the tree. At each node, if node.val is less than low, only the right subtree can contribute. If node.val is greater than high, only the left subtree can. Otherwise, include node.val and recurse both sides.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def rangeSumBST(self, root: list, low: int, high: int) -> int:
+        tree = _to_tree(root)
+
+        def dfs(node):
+            if node is None:
+                return 0
+            if node.val < low:
+                return dfs(node.right)
+            if node.val > high:
+                return dfs(node.left)
+            return node.val + dfs(node.left) + dfs(node.right)
+
+        return dfs(tree)
+`,
+        timeComplexity: 'O(n) worst case, O(h + k) with pruning',
+        spaceComplexity: 'O(h)',
+      },
+    ],
+  },
+
+  // ─── Binary Tree Paths (LC #257) ────────────────────────────────────────────
+  {
+    slug: 'binary-tree-paths',
+    lcNumber: 257,
+    title: 'Binary Tree Paths',
+    difficulty: 'Easy',
+    pattern: 'DFS / Backtracking',
+    tags: ['binary-tree', 'dfs', 'backtracking'],
+    descriptionMd: `Given the \`root\` of a binary tree (serialised as a level-order array
+with \`null\` for missing children), return **all** root-to-leaf paths, each formatted as a
+string of node values separated by \`"->"\`.
+
+A leaf is a node with no children. Return the paths in **pre-order** DFS order
+(left before right).`,
+    examples: [
+      {
+        input: 'root = [1, 2, 3, null, 5]',
+        output: '["1->2->5", "1->3"]',
+      },
+      {
+        input: 'root = [1]',
+        output: '["1"]',
+      },
+    ],
+    constraints: [
+      '`1 <= number of nodes <= 100`',
+      '`-100 <= node.val <= 100`',
+    ],
+    starterCode: {
+      python: `${TREE_NODE_HELPERS}
+class Solution:
+    def binaryTreePaths(self, root: list) -> list[str]:
+        tree = _to_tree(root)
+
+        # ─── Return every root-to-leaf path as a "a->b->c" string ──
+        pass
+        # ───────────────────────────────────────────────────────────
+`,
+    },
+    methodName: 'binaryTreePaths',
+    argKeys: ['root'],
+    defaultTests: [
+      { label: 'Two paths',   inputJson: '{"root":[1,2,3,null,5]}', expectedJson: '["1->2->5","1->3"]' },
+      { label: 'Single node', inputJson: '{"root":[1]}',            expectedJson: '["1"]'              },
+      { label: 'Left chain',  inputJson: '{"root":[1,2,null,3]}',   expectedJson: '["1->2->3"]'        },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'DFS with Path Accumulator',
+        intuition: 'Carry the current list of ancestor values down the recursion. When we reach a leaf (no children), join the list with "->" and record the path.',
+        code: `${TREE_NODE_HELPERS}
+class Solution:
+    def binaryTreePaths(self, root: list) -> list[str]:
+        tree = _to_tree(root)
+        paths = []
+
+        def dfs(node, trail):
+            if node is None:
+                return
+            trail.append(str(node.val))
+            if node.left is None and node.right is None:
+                paths.append("->".join(trail))
+            else:
+                dfs(node.left, trail)
+                dfs(node.right, trail)
+            trail.pop()
+
+        dfs(tree, [])
+        return paths
+`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(h)',
+      },
+    ],
+  },
 ];

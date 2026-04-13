@@ -1024,4 +1024,69 @@ either skip the \`x*\` (\`dp[i][j] = dp[i][j - 2]\`) or consume one character
       },
     ],
   },
+
+  // ─── Is Subsequence (LC #392) ───────────────────────────────────────────────
+  {
+    slug: 'is-subsequence',
+    lcNumber: 392,
+    title: 'Is Subsequence',
+    difficulty: 'Easy',
+    pattern: 'Two Pointers',
+    tags: ['string', 'two-pointers', 'dp'],
+    descriptionMd: `Given two strings \`s\` and \`t\`, return \`True\` if \`s\` is a
+**subsequence** of \`t\`, and \`False\` otherwise.
+
+A **subsequence** of a string is formed by deleting zero or more characters from the
+string **without changing the relative order** of the remaining characters. For example,
+\`"ace"\` is a subsequence of \`"abcde"\`.
+
+The simplest solution is a two-pointer scan that advances through \`t\` and matches off
+characters of \`s\` one at a time — no DP table required for a single query.`,
+    examples: [
+      {
+        input: 's = "abc", t = "ahbgdc"',
+        output: 'True',
+      },
+      {
+        input: 's = "axc", t = "ahbgdc"',
+        output: 'False',
+      },
+    ],
+    constraints: [
+      '`0 <= len(s) <= 100`',
+      '`0 <= len(t) <= 10^4`',
+      '`s` and `t` consist of lowercase English letters.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        # Return True if s is a subsequence of t.
+        pass
+`,
+    },
+    methodName: 'isSubsequence',
+    argKeys: ['s', 't'],
+    defaultTests: [
+      { label: 'Simple match',    inputJson: '{"s":"abc","t":"ahbgdc"}', expectedJson: 'true'  },
+      { label: 'Wrong order',     inputJson: '{"s":"axc","t":"ahbgdc"}', expectedJson: 'false' },
+      { label: 'Empty s',         inputJson: '{"s":"","t":"abc"}',       expectedJson: 'true'  },
+      { label: 'Empty t',         inputJson: '{"s":"a","t":""}',         expectedJson: 'false' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers',
+        intuition: 'Walk a pointer j through t. Every time t[j] equals the current character of s (tracked by pointer i), advance i. If i reaches the end of s, we matched every character in order.',
+        code: `class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        i = 0
+        for ch in t:
+            if i < len(s) and s[i] == ch:
+                i += 1
+        return i == len(s)`,
+        timeComplexity: 'O(len(t))',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
 ];

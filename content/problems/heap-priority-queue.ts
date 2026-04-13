@@ -895,4 +895,72 @@ class Solution:
       },
     ],
   },
+
+  // ─── Relative Ranks (LC #506) ───────────────────────────────────────────────
+  {
+    slug: 'relative-ranks',
+    lcNumber: 506,
+    title: 'Relative Ranks',
+    difficulty: 'Easy',
+    pattern: 'Heap / Sorting',
+    tags: ['array', 'heap', 'sorting'],
+    descriptionMd: `You are given \`score\` — an array of unique integers representing the
+scores of \`n\` athletes. Return an array \`answer\` where \`answer[i]\` is the **rank
+label** for the \`i\`-th athlete, formatted as follows:
+
+- The athlete with the **highest** score gets \`"Gold Medal"\`.
+- The athlete with the **second highest** score gets \`"Silver Medal"\`.
+- The athlete with the **third highest** score gets \`"Bronze Medal"\`.
+- Every other athlete gets the string form of their placement (\`"4"\`, \`"5"\`, …).
+
+A max-heap of \`(score, original_index)\` pairs makes popping the top-three podium
+finishers extremely natural, but a straight sort works too.`,
+    examples: [
+      {
+        input: 'score = [5, 4, 3, 2, 1]',
+        output: '["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]',
+      },
+      {
+        input: 'score = [10, 3, 8, 9, 4]',
+        output: '["Gold Medal", "5", "Bronze Medal", "Silver Medal", "4"]',
+      },
+    ],
+    constraints: [
+      '`1 <= n <= 10^4`',
+      '`0 <= score[i] <= 10^6`',
+      'All values in `score` are unique.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def findRelativeRanks(self, score: list[int]) -> list[str]:
+        # Return the placement label for each athlete in original order.
+        pass
+`,
+    },
+    methodName: 'findRelativeRanks',
+    argKeys: ['score'],
+    defaultTests: [
+      { label: 'Descending',   inputJson: '{"score":[5,4,3,2,1]}',    expectedJson: '["Gold Medal","Silver Medal","Bronze Medal","4","5"]' },
+      { label: 'Shuffled',     inputJson: '{"score":[10,3,8,9,4]}',   expectedJson: '["Gold Medal","5","Bronze Medal","Silver Medal","4"]' },
+      { label: 'Single',       inputJson: '{"score":[42]}',           expectedJson: '["Gold Medal"]'                                        },
+      { label: 'Two athletes', inputJson: '{"score":[1,2]}',          expectedJson: '["Silver Medal","Gold Medal"]'                         },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Sort by Score Descending',
+        intuition: 'Pair each score with its original index, sort in descending order of score, then walk the sorted list assigning labels "Gold Medal", "Silver Medal", "Bronze Medal", "4", "5", ... back into the answer at the original index.',
+        code: `class Solution:
+    def findRelativeRanks(self, score: list[int]) -> list[str]:
+        labels = ["Gold Medal", "Silver Medal", "Bronze Medal"]
+        order = sorted(range(len(score)), key=lambda i: -score[i])
+        ans = [""] * len(score)
+        for place, idx in enumerate(order):
+            ans[idx] = labels[place] if place < 3 else str(place + 1)
+        return ans`,
+        timeComplexity: 'O(n log n)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
 ];

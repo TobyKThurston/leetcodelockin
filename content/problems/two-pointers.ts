@@ -934,4 +934,142 @@ otherwise the heavy person goes alone. Advance pointers and repeat.`,
       },
     ],
   },
+
+  // ─── Merge Sorted Array (LC #88) ────────────────────────────────────────────
+  {
+    slug: 'merge-sorted-array',
+    lcNumber: 88,
+    title: 'Merge Sorted Array',
+    difficulty: 'Easy',
+    pattern: 'Two Pointers',
+    tags: ['array', 'two-pointers'],
+    descriptionMd: `You are given two sorted integer arrays \`nums1\` and \`nums2\`, with
+\`nums1\` padded out to hold \`m + n\` elements (the first \`m\` are the real values, the
+trailing \`n\` slots are zero-filled placeholders). \`nums2\` has length \`n\`. Merge the
+two arrays so the result is sorted in non-decreasing order.
+
+On LeetCode this problem asks you to mutate \`nums1\` in place. To make the grader happy,
+please return the merged list of length \`m + n\`.
+
+The classic trick is to fill from the **back** of \`nums1\` using three pointers — the
+tail of the real portion of \`nums1\`, the tail of \`nums2\`, and the write pointer at the
+very end of \`nums1\`.`,
+    examples: [
+      {
+        input: 'nums1 = [1, 2, 3, 0, 0, 0], m = 3, nums2 = [2, 5, 6], n = 3',
+        output: '[1, 2, 2, 3, 5, 6]',
+      },
+      {
+        input: 'nums1 = [1], m = 1, nums2 = [], n = 0',
+        output: '[1]',
+      },
+    ],
+    constraints: [
+      '`0 <= m, n <= 200`',
+      '`1 <= m + n <= 200`',
+      '`-10^9 <= nums1[i], nums2[i] <= 10^9`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def merge(self, nums1: list[int], m: int, nums2: list[int], n: int) -> list[int]:
+        # Merge nums2 into the first m slots of nums1 and return the full merged list.
+        pass
+`,
+    },
+    methodName: 'merge',
+    argKeys: ['nums1', 'm', 'nums2', 'n'],
+    defaultTests: [
+      { label: 'Interleaved', inputJson: '{"nums1":[1,2,3,0,0,0],"m":3,"nums2":[2,5,6],"n":3}', expectedJson: '[1,2,2,3,5,6]' },
+      { label: 'Empty nums2', inputJson: '{"nums1":[1],"m":1,"nums2":[],"n":0}',                 expectedJson: '[1]'           },
+      { label: 'Empty nums1', inputJson: '{"nums1":[0],"m":0,"nums2":[1],"n":1}',                expectedJson: '[1]'           },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers from the End',
+        intuition: 'Walk from the tails of both real arrays and write the larger value into the very end of nums1. Because we fill from the back, we never overwrite a value we still need.',
+        code: `class Solution:
+    def merge(self, nums1: list[int], m: int, nums2: list[int], n: int) -> list[int]:
+        i, j, k = m - 1, n - 1, m + n - 1
+        while j >= 0:
+            if i >= 0 and nums1[i] > nums2[j]:
+                nums1[k] = nums1[i]
+                i -= 1
+            else:
+                nums1[k] = nums2[j]
+                j -= 1
+            k -= 1
+        return nums1[:m + n]`,
+        timeComplexity: 'O(m + n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
+
+  // ─── Remove Element (LC #27) ────────────────────────────────────────────────
+  {
+    slug: 'remove-element',
+    lcNumber: 27,
+    title: 'Remove Element',
+    difficulty: 'Easy',
+    pattern: 'Two Pointers',
+    tags: ['array', 'two-pointers'],
+    descriptionMd: `You are given an integer array \`nums\` and a target integer \`val\`.
+Remove **every occurrence** of \`val\` from \`nums\` and return the resulting list, with
+the relative order of the remaining elements preserved.
+
+On LeetCode this problem asks you to mutate \`nums\` in place and return the new length
+\`k\`. Our grader instead checks the list you return, so please return the filtered list
+directly.
+
+The two-pointer trick: a write pointer \`w\` tracks where the next kept element goes, and
+a read pointer scans every element.`,
+    examples: [
+      {
+        input: 'nums = [3, 2, 2, 3], val = 3',
+        output: '[2, 2]',
+      },
+      {
+        input: 'nums = [0, 1, 2, 2, 3, 0, 4, 2], val = 2',
+        output: '[0, 1, 3, 0, 4]',
+      },
+    ],
+    constraints: [
+      '`0 <= len(nums) <= 100`',
+      '`0 <= nums[i] <= 50`',
+      '`0 <= val <= 100`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def removeElement(self, nums: list[int], val: int) -> list[int]:
+        # Return nums with every occurrence of val removed (preserving order).
+        pass
+`,
+    },
+    methodName: 'removeElement',
+    argKeys: ['nums', 'val'],
+    defaultTests: [
+      { label: 'Two removals',   inputJson: '{"nums":[3,2,2,3],"val":3}',           expectedJson: '[2,2]'       },
+      { label: 'Multiple',       inputJson: '{"nums":[0,1,2,2,3,0,4,2],"val":2}',   expectedJson: '[0,1,3,0,4]' },
+      { label: 'Not present',    inputJson: '{"nums":[1,2,3],"val":9}',             expectedJson: '[1,2,3]'     },
+      { label: 'All removed',    inputJson: '{"nums":[4,4,4],"val":4}',             expectedJson: '[]'          },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Two Pointers',
+        intuition: 'Use a write pointer w that tracks the position of the next kept value. Scan through the array — every value that is not equal to val gets copied to nums[w] and w advances.',
+        code: `class Solution:
+    def removeElement(self, nums: list[int], val: int) -> list[int]:
+        w = 0
+        for v in nums:
+            if v != val:
+                nums[w] = v
+                w += 1
+        return nums[:w]`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
 ];

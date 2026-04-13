@@ -963,4 +963,136 @@ useful for sanity checks.)`,
       },
     ],
   },
+
+  // ─── N-th Tribonacci Number (LC #1137) ──────────────────────────────────────
+  {
+    slug: 'n-th-tribonacci-number',
+    lcNumber: 1137,
+    title: 'N-th Tribonacci Number',
+    difficulty: 'Easy',
+    pattern: '1-D DP',
+    tags: ['dp', 'math'],
+    descriptionMd: `The **Tribonacci sequence** \`T_n\` is defined by:
+
+- \`T_0 = 0\`
+- \`T_1 = 1\`
+- \`T_2 = 1\`
+- For \`n >= 0\`: \`T_{n+3} = T_n + T_{n+1} + T_{n+2}\`
+
+Given a non-negative integer \`n\`, return \`T_n\`. The naive recursion is exponential —
+use a rolling window of the last three values for a constant-space \`O(n)\` solution.`,
+    examples: [
+      {
+        input: 'n = 4',
+        output: '4',
+        explanation: 'T_3 = 0+1+1 = 2, T_4 = 1+1+2 = 4.',
+      },
+      {
+        input: 'n = 25',
+        output: '1389537',
+      },
+    ],
+    constraints: [
+      '`0 <= n <= 37`',
+      'The answer always fits in a signed 32-bit integer.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def tribonacci(self, n: int) -> int:
+        # Return the n-th Tribonacci number.
+        pass
+`,
+    },
+    methodName: 'tribonacci',
+    argKeys: ['n'],
+    defaultTests: [
+      { label: 'Zero',  inputJson: '{"n":0}',  expectedJson: '0'       },
+      { label: 'One',   inputJson: '{"n":1}',  expectedJson: '1'       },
+      { label: 'Four',  inputJson: '{"n":4}',  expectedJson: '4'       },
+      { label: 'Large', inputJson: '{"n":25}', expectedJson: '1389537' },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Iterative Rolling Window',
+        intuition: 'Only the previous three Tribonacci values are needed to compute the next one. Keep them in three variables and walk forward in O(n) time with O(1) extra space.',
+        code: `class Solution:
+    def tribonacci(self, n: int) -> int:
+        if n == 0:
+            return 0
+        if n <= 2:
+            return 1
+        a, b, c = 0, 1, 1
+        for _ in range(n - 2):
+            a, b, c = b, c, a + b + c
+        return c`,
+        timeComplexity: 'O(n)',
+        spaceComplexity: 'O(1)',
+      },
+    ],
+  },
+
+  // ─── Pascal's Triangle (LC #118) ────────────────────────────────────────────
+  {
+    slug: 'pascals-triangle',
+    lcNumber: 118,
+    title: "Pascal's Triangle",
+    difficulty: 'Easy',
+    pattern: '1-D DP',
+    tags: ['dp', 'array'],
+    descriptionMd: `Given an integer \`numRows\`, return the first \`numRows\` rows of
+**Pascal's Triangle**. In Pascal's Triangle, each number is the sum of the two directly
+above it, with the outermost entries of every row equal to \`1\`.
+
+Row 0 is \`[1]\`, row 1 is \`[1, 1]\`, row 2 is \`[1, 2, 1]\`, and so on. The classic build
+is bottom-up: start from the previous row, slide a window of width two, and sandwich the
+result between two ones.`,
+    examples: [
+      {
+        input: 'numRows = 5',
+        output: '[[1], [1, 1], [1, 2, 1], [1, 3, 3, 1], [1, 4, 6, 4, 1]]',
+      },
+      {
+        input: 'numRows = 1',
+        output: '[[1]]',
+      },
+    ],
+    constraints: [
+      '`1 <= numRows <= 30`',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def generate(self, numRows: int) -> list[list[int]]:
+        # Return the first numRows rows of Pascal's Triangle.
+        pass
+`,
+    },
+    methodName: 'generate',
+    argKeys: ['numRows'],
+    defaultTests: [
+      { label: 'Five rows', inputJson: '{"numRows":5}', expectedJson: '[[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]' },
+      { label: 'One row',   inputJson: '{"numRows":1}', expectedJson: '[[1]]'                                        },
+      { label: 'Three rows',inputJson: '{"numRows":3}', expectedJson: '[[1],[1,1],[1,2,1]]'                          },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Row by Row',
+        intuition: 'Build each row from the previous one. The interior of row i is formed by summing adjacent pairs of row i - 1, then sandwiched between 1s at the ends.',
+        code: `class Solution:
+    def generate(self, numRows: int) -> list[list[int]]:
+        rows = [[1]]
+        for i in range(1, numRows):
+            prev = rows[-1]
+            row = [1]
+            for j in range(1, i):
+                row.append(prev[j - 1] + prev[j])
+            row.append(1)
+            rows.append(row)
+        return rows`,
+        timeComplexity: 'O(numRows^2)',
+        spaceComplexity: 'O(numRows^2)',
+      },
+    ],
+  },
 ];

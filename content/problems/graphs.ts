@@ -1029,4 +1029,159 @@ class Solution:
       },
     ],
   },
+
+  // ─── Find if Path Exists in Graph (LC #1971) ────────────────────────────────
+  {
+    slug: 'find-if-path-exists-in-graph',
+    lcNumber: 1971,
+    title: 'Find if Path Exists in Graph',
+    difficulty: 'Easy',
+    pattern: 'BFS / Union-Find',
+    tags: ['graph', 'bfs', 'union-find'],
+    descriptionMd: `You are given an undirected graph with \`n\` vertices numbered from
+\`0\` to \`n - 1\` and an edge list \`edges\` where each \`edges[i] = [u, v]\` represents
+an undirected edge between \`u\` and \`v\`. There are no self-loops or parallel edges.
+
+Return \`True\` if there exists a **valid path** from \`source\` to \`destination\`, and
+\`False\` otherwise. A BFS (or DFS) from \`source\` that stops when it reaches
+\`destination\` is the classic solution.`,
+    examples: [
+      {
+        input: 'n = 3, edges = [[0,1],[1,2],[2,0]], source = 0, destination = 2',
+        output: 'True',
+      },
+      {
+        input: 'n = 6, edges = [[0,1],[0,2],[3,5],[5,4],[4,3]], source = 0, destination = 5',
+        output: 'False',
+      },
+    ],
+    constraints: [
+      '`1 <= n <= 2 * 10^5`',
+      '`0 <= len(edges) <= 2 * 10^5`',
+      '`0 <= source, destination < n`',
+      'No self-loops or parallel edges.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def validPath(self, n: int, edges: list[list[int]], source: int, destination: int) -> bool:
+        # Return True if source and destination are connected.
+        pass
+`,
+    },
+    methodName: 'validPath',
+    argKeys: ['n', 'edges', 'source', 'destination'],
+    defaultTests: [
+      { label: 'Connected',      inputJson: '{"n":3,"edges":[[0,1],[1,2],[2,0]],"source":0,"destination":2}',            expectedJson: 'true'  },
+      { label: 'Disconnected',   inputJson: '{"n":6,"edges":[[0,1],[0,2],[3,5],[5,4],[4,3]],"source":0,"destination":5}', expectedJson: 'false' },
+      { label: 'Same node',      inputJson: '{"n":1,"edges":[],"source":0,"destination":0}',                              expectedJson: 'true'  },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'BFS',
+        intuition: 'Build an adjacency list, then do a BFS from the source. If destination is ever dequeued (or if source == destination), return True. Otherwise the queue drains and the answer is False.',
+        code: `from collections import deque
+
+class Solution:
+    def validPath(self, n: int, edges: list[list[int]], source: int, destination: int) -> bool:
+        if source == destination:
+            return True
+        graph = [[] for _ in range(n)]
+        for u, v in edges:
+            graph[u].append(v)
+            graph[v].append(u)
+        seen = {source}
+        queue = deque([source])
+        while queue:
+            node = queue.popleft()
+            for nb in graph[node]:
+                if nb == destination:
+                    return True
+                if nb not in seen:
+                    seen.add(nb)
+                    queue.append(nb)
+        return False`,
+        timeComplexity: 'O(n + m)',
+        spaceComplexity: 'O(n + m)',
+      },
+    ],
+  },
+
+  // ─── Find the Town Judge (LC #997) ──────────────────────────────────────────
+  {
+    slug: 'find-the-town-judge',
+    lcNumber: 997,
+    title: 'Find the Town Judge',
+    difficulty: 'Easy',
+    pattern: 'Graph / Degree Counting',
+    tags: ['graph', 'hash-map'],
+    descriptionMd: `In a town of \`n\` people labelled \`1\` through \`n\`, rumour has it
+that one person is secretly the **town judge**. The judge is characterised by two
+properties:
+
+1. The judge **trusts nobody**.
+2. **Everybody (except the judge)** trusts the judge.
+
+You are given an array \`trust\` where \`trust[i] = [a, b]\` means person \`a\` trusts
+person \`b\`. Exactly one person can satisfy both properties — return that person, or
+return \`-1\` if no such person exists.
+
+The trick: compute \`indegree[p] - outdegree[p]\` for each person. The judge is the unique
+person with a net score of \`n - 1\`.`,
+    examples: [
+      {
+        input: 'n = 2, trust = [[1, 2]]',
+        output: '2',
+      },
+      {
+        input: 'n = 3, trust = [[1, 3], [2, 3]]',
+        output: '3',
+      },
+      {
+        input: 'n = 3, trust = [[1, 3], [2, 3], [3, 1]]',
+        output: '-1',
+        explanation: 'Person 3 trusts somebody, so cannot be the judge.',
+      },
+    ],
+    constraints: [
+      '`1 <= n <= 1000`',
+      '`0 <= len(trust) <= 10^4`',
+      '`1 <= a, b <= n, a != b`',
+      'Each trust pair is unique.',
+    ],
+    starterCode: {
+      python: `class Solution:
+    def findJudge(self, n: int, trust: list[list[int]]) -> int:
+        # Return the label of the town judge, or -1 if none exists.
+        pass
+`,
+    },
+    methodName: 'findJudge',
+    argKeys: ['n', 'trust'],
+    defaultTests: [
+      { label: 'Simple',       inputJson: '{"n":2,"trust":[[1,2]]}',              expectedJson: '2'  },
+      { label: 'Two trust one',inputJson: '{"n":3,"trust":[[1,3],[2,3]]}',        expectedJson: '3'  },
+      { label: 'Cycle',        inputJson: '{"n":3,"trust":[[1,3],[2,3],[3,1]]}',  expectedJson: '-1' },
+      { label: 'Single person',inputJson: '{"n":1,"trust":[]}',                    expectedJson: '1'  },
+    ],
+    resultCompare: 'exact',
+    solutions: [
+      {
+        approach: 'Net Degree',
+        intuition: 'For each person compute net_degree = trusted_by_count - trusts_count. The judge is trusted by n - 1 people and trusts nobody, so their net degree must equal n - 1. Any other person has a smaller net degree.',
+        code: `class Solution:
+    def findJudge(self, n: int, trust: list[list[int]]) -> int:
+        net = [0] * (n + 1)
+        for a, b in trust:
+            net[a] -= 1
+            net[b] += 1
+        for p in range(1, n + 1):
+            if net[p] == n - 1:
+                return p
+        return -1`,
+        timeComplexity: 'O(n + m)',
+        spaceComplexity: 'O(n)',
+      },
+    ],
+  },
 ];

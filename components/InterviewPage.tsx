@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle } from 'lucide-react';
 import AppNav from '@/components/AppNav';
+import AppShell from '@/components/shell/AppShell';
+import PageHeader from '@/components/shell/PageHeader';
 import LockedScreen from '@/components/interview/LockedScreen';
 import SetupScreen from '@/components/interview/SetupScreen';
 import HistoryScreen from '@/components/interview/HistoryScreen';
@@ -19,14 +21,9 @@ import {
 import { getProblemBySlug } from '@/app/interview/client-helpers';
 import type { InterviewSession, InterviewDifficulty, InterviewFeedback } from '@/lib/interview';
 import type { ProblemContent } from '@/lib/problem-types';
+import { C, SG } from '@/lib/ui-tokens';
 
-const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
-
-const C = {
-  appBg: '#0b1220',
-  border: 'rgba(255,255,255,0.06)',
-};
 
 type Phase = 'history' | 'setup' | 'active' | 'review';
 
@@ -118,23 +115,12 @@ function HistoryWelcome({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
-      {/* Headline */}
-      <div className="space-y-2 mb-8">
-        <p
-          className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase"
-          style={SG}
-        >
-          Mock Interviews
-        </p>
-        <h1 className="text-[28px] font-bold text-white tracking-tight" style={SG}>
-          Next mock interview?
-        </h1>
-        <p className="text-[14px] text-slate-400 leading-relaxed max-w-md" style={SG}>
-          45 minutes. Two problems. AI debrief after. Click any past session to redo it at the
-          same difficulty, or start a fresh one.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        eyebrow="Mock Interviews"
+        title="Next mock interview?"
+        subtitle="45 minutes. Two problems. AI debrief after. Click any past session to redo it at the same difficulty, or start a fresh one."
+      />
 
       {/* Primary CTA card */}
       <div
@@ -297,7 +283,7 @@ function HistoryWelcome({
           })}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -622,72 +608,62 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
 
   // Pro: dashboard-style layout with left sidebar + right rail.
   return (
-    <div className="min-h-screen" style={{ background: C.appBg }}>
-      <AppNav activeTab="Interview" />
-
-      <InterviewSidebar
-        sessions={history}
-        selectedSessionId={selectedSessionId}
-        pendingFeedbackId={pendingFeedbackId}
-        feedbackErrorId={feedbackErrorId}
-        onSelectSession={handleViewSession}
-      />
-
-      <InterviewRightRail sessions={history} currentSession={reviewSession} />
-
-      <main
-        className="min-h-screen md:pl-[304px] lg:pr-[304px]"
-        style={{
-          paddingTop: 48,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      >
-        {phase === 'setup' ? (
-          <div className="flex flex-col min-h-[calc(100vh-48px)]">
-            <SetupScreen onStart={handleStart} loading={loading} />
-            {error && (
-              <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
-                {error}
-              </p>
-            )}
-          </div>
-        ) : phase === 'review' && reviewSession ? (
-          <div className="flex flex-col min-h-[calc(100vh-48px)]">
-            <ReviewScreen
-              session={reviewSession}
-              onBack={goToHistory}
+    <AppShell
+      activeTab="Interview"
+      sidebar={
+        <InterviewSidebar
+          sessions={history}
+          selectedSessionId={selectedSessionId}
+          pendingFeedbackId={pendingFeedbackId}
+          feedbackErrorId={feedbackErrorId}
+          onSelectSession={handleViewSession}
+        />
+      }
+      rail={<InterviewRightRail sessions={history} currentSession={reviewSession} />}
+    >
+      {phase === 'setup' ? (
+        <div className="flex flex-col">
+          <SetupScreen onStart={handleStart} loading={loading} />
+          {error && (
+            <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
+              {error}
+            </p>
+          )}
+        </div>
+      ) : phase === 'review' && reviewSession ? (
+        <div className="flex flex-col">
+          <ReviewScreen
+            session={reviewSession}
+            onBack={goToHistory}
+            onNewInterview={goToSetup}
+          />
+        </div>
+      ) : (
+        <>
+          {/* Desktop: history + redo panel (sidebar is for analysis) */}
+          <div className="hidden md:block">
+            <HistoryWelcome
+              sessions={history}
+              pendingFeedbackId={pendingFeedbackId}
+              feedbackErrorId={feedbackErrorId}
               onNewInterview={goToSetup}
+              onRedo={handleRedo}
+              redoLoadingId={redoLoadingId}
             />
           </div>
-        ) : (
-          <>
-            {/* Desktop: history + redo panel (sidebar is for analysis) */}
-            <div className="hidden md:block">
-              <HistoryWelcome
-                sessions={history}
-                pendingFeedbackId={pendingFeedbackId}
-                feedbackErrorId={feedbackErrorId}
-                onNewInterview={goToSetup}
-                onRedo={handleRedo}
-                redoLoadingId={redoLoadingId}
-              />
-            </div>
-            {/* Mobile: full history list fallback (sidebar is hidden) */}
-            <div className="md:hidden flex flex-col min-h-[calc(100vh-48px)]">
-              <HistoryScreen
-                sessions={history}
-                pendingFeedbackId={pendingFeedbackId}
-                feedbackError={feedbackError}
-                onNewInterview={goToSetup}
-                onViewSession={handleViewSession}
-                onRetryFeedback={handleRetryFeedback}
-              />
-            </div>
-          </>
-        )}
-      </main>
-    </div>
+          {/* Mobile: full history list fallback (sidebar is hidden) */}
+          <div className="md:hidden flex flex-col">
+            <HistoryScreen
+              sessions={history}
+              pendingFeedbackId={pendingFeedbackId}
+              feedbackError={feedbackError}
+              onNewInterview={goToSetup}
+              onViewSession={handleViewSession}
+              onRetryFeedback={handleRetryFeedback}
+            />
+          </div>
+        </>
+      )}
+    </AppShell>
   );
 }
