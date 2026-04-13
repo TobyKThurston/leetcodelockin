@@ -26,11 +26,30 @@ type UserSummary = { name?: string; image?: string };
 // the center tabs sideways as the user avatar/name popped in.
 let cachedUser: UserSummary | null = null;
 let inflight: Promise<UserSummary | null> | null = null;
+let cachedIsPro: boolean | null = null;
+let proInflight: Promise<boolean | null> | null = null;
 
 /** Clear the module-level user cache (call on sign-out). */
 export function clearUserCache() {
   cachedUser = null;
   inflight = null;
+  cachedIsPro = null;
+  proInflight = null;
+}
+
+function fetchIsPro(): Promise<boolean | null> {
+  if (proInflight) return proInflight;
+  proInflight = fetch('/api/ai-usage')
+    .then(r => r.ok ? r.json() : null)
+    .then(d => {
+      if (d && typeof d.isPro === 'boolean') {
+        cachedIsPro = d.isPro;
+        return d.isPro;
+      }
+      return null;
+    })
+    .catch(() => null);
+  return proInflight;
 }
 
 function fetchCurrentUser(): Promise<UserSummary | null> {
@@ -64,7 +83,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSummary | null>(cachedUser);
   const [checked, setChecked] = useState(cachedUser !== null);
-  const [isPro, setIsPro] = useState<boolean | null>(null);
+  const [isPro, setIsPro] = useState<boolean | null>(cachedIsPro);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,10 +93,9 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
         setChecked(true);
       }
     });
-    fetch('/api/ai-usage')
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (!cancelled && d) setIsPro(d.isPro); })
-      .catch(() => {});
+    fetchIsPro().then(v => {
+      if (!cancelled && v !== null) setIsPro(v);
+    });
     return () => { cancelled = true; };
   }, []);
 

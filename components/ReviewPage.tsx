@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, Zap, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap, Sparkles } from 'lucide-react';
+import { X, Eye, Check, RotateCcw, Brain, Code2, Timer, CheckCircle2, BookOpen, Lock, ArrowRight, GraduationCap } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardAction, CardContent, CardFooter } from '@/components/ui/card';
@@ -724,16 +724,23 @@ function ReviewRightRail({
   );
 }
 
-// ─── Pro upgrade modal ──────────────────────────────────────────────────────
+// ─── Pro upgrade bottom sheet ───────────────────────────────────────────────
+
+const PRO_FEATURES = [
+  'Spaced repetition from your solutions',
+  'Unlimited AI Socratic tutor',
+  'Unlimited AI chat follow-ups',
+  'Priority when things get busy',
+];
 
 function ProGateBanner() {
-  const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(true);
+  const [loading, setLoading] = useState<string | null>(null);
 
-  async function handleUpgrade() {
-    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-    if (!priceId) return;
-    setLoading(true);
+  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
+  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
+
+  async function handleCheckout(priceId: string) {
+    setLoading(priceId);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -742,89 +749,156 @@ function ProGateBanner() {
       });
       const { url } = await res.json();
       if (url) window.location.href = url;
-      else setLoading(false);
+      else setLoading(null);
     } catch {
-      setLoading(false);
+      setLoading(null);
     }
   }
 
-  if (!show) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div
+      aria-label="Upgrade to Pro"
+      className="fixed inset-x-0 md:left-[304px] lg:right-[304px] bottom-0 z-40 pointer-events-none"
+      style={{ top: '50vh' }}
+    >
+      {/* Top fade — lets the content above stay partially visible */}
       <div
-        className="relative w-full max-w-sm mx-4 rounded-2xl border border-white/10 bg-[#111827] p-6 shadow-2xl"
-        style={{ boxShadow: '0 25px 60px -15px rgba(0,0,0,0.5), 0 0 40px -10px rgba(59,130,246,0.15)' }}
+        className="absolute inset-x-0 top-0 h-24 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(11,18,32,0) 0%, rgba(11,18,32,0.85) 60%, #0b1220 100%)',
+        }}
+      />
+
+      {/* Sheet body */}
+      <div
+        className="absolute inset-x-0 bottom-0 pointer-events-auto overflow-y-auto"
+        style={{
+          top: 72,
+          background: '#0b1220',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 -24px 60px -30px rgba(59,130,246,0.15)',
+        }}
       >
-        {/* Close button */}
-        <button
-          onClick={() => setShow(false)}
-          className="absolute top-4 right-4 text-zinc-500 hover:text-zinc-300 transition-colors"
-        >
-          <X size={16} />
-        </button>
-
-        {/* Header */}
-        <div className="mb-5">
-          <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 border border-blue-500/20 px-3 py-1 mb-4">
-            <Sparkles size={12} className="text-blue-400" />
-            <span className="text-[11px] font-semibold text-blue-400 uppercase tracking-wider" style={SG}>Pro Feature</span>
+        <div className="max-w-3xl mx-auto px-6 pt-10 pb-12">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <p
+              className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-600 mb-3"
+              style={SG}
+            >
+              Upgrade to Pro
+            </p>
+            <h2
+              className="text-[22px] sm:text-[26px] font-bold text-white tracking-tight"
+              style={SG}
+            >
+              Unlock spaced repetition review
+            </h2>
+            <p className="mt-2.5 text-slate-500 text-[13px] max-w-md mx-auto leading-relaxed">
+              Pro generates personalized flashcards from the problems you solve, and
+              schedules them at optimized intervals so you review right before you forget.
+            </p>
           </div>
-          <h3 className="text-lg font-bold text-white" style={SG}>
-            Unlock spaced repetition
-          </h3>
-          <p className="text-[13px] text-zinc-400 mt-1">
-            Never forget what you&apos;ve learned.
-          </p>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
+            {/* Pro Monthly */}
+            <Card className="bg-white/[0.02] ring-white/[0.06] rounded-2xl py-0 gap-0">
+              <CardHeader className="px-6 pt-6 pb-0">
+                <span
+                  className="text-[12px] font-semibold tracking-wider uppercase text-slate-400"
+                  style={SG}
+                >
+                  Pro Monthly
+                </span>
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <span className="text-[40px] font-bold text-white leading-none" style={SG}>
+                    $9
+                  </span>
+                  <span className="text-[15px] text-slate-500">/month</span>
+                </div>
+                <p className="text-[12px] text-slate-600 mt-1.5">Cancel anytime</p>
+              </CardHeader>
+              <CardContent className="px-6 pt-5 flex-1">
+                <ul className="space-y-2.5">
+                  {PRO_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check
+                        className="size-3.5 shrink-0 mt-0.5 text-slate-500"
+                        strokeWidth={2.5}
+                      />
+                      <span className="text-[12.5px] text-slate-300 leading-relaxed">
+                        {f}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter className="px-6 pb-6 pt-6 bg-transparent border-0">
+                <Button
+                  className="w-full h-11 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  variant="outline"
+                  onClick={() => handleCheckout(monthlyPriceId)}
+                  disabled={loading !== null || !monthlyPriceId}
+                >
+                  {loading === monthlyPriceId ? 'Loading...' : 'Start monthly'}
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Pro Yearly */}
+            <Card className="relative bg-gradient-to-b from-blue-500/[0.05] to-blue-500/[0.01] ring-blue-500/20 rounded-2xl py-0 gap-0 shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)]">
+              <CardHeader className="px-6 pt-6 pb-0">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="text-[12px] font-semibold tracking-wider uppercase text-blue-400"
+                    style={SG}
+                  >
+                    Pro Yearly
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                    Save $18
+                  </span>
+                </div>
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <span className="text-[40px] font-bold text-white leading-none" style={SG}>
+                    $90
+                  </span>
+                  <span className="text-[15px] text-slate-500">/year</span>
+                </div>
+                <p className="text-[12px] text-slate-500 mt-1.5">
+                  That&apos;s <span className="text-slate-300">$7.50/mo</span>
+                </p>
+              </CardHeader>
+              <CardContent className="px-6 pt-5 flex-1">
+                <ul className="space-y-2.5">
+                  {PRO_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <Check
+                        className="size-3.5 shrink-0 mt-0.5 text-blue-400"
+                        strokeWidth={2.5}
+                      />
+                      <span className="text-[12.5px] text-slate-300 leading-relaxed">
+                        {f}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter className="px-6 pb-6 pt-6 bg-transparent border-0">
+                <Button
+                  className="w-full h-11 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  variant="outline"
+                  onClick={() => handleCheckout(yearlyPriceId)}
+                  disabled={loading !== null || !yearlyPriceId}
+                >
+                  {loading === yearlyPriceId ? 'Loading...' : 'Start yearly'}
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
-
-        {/* Features */}
-        <div className="space-y-3 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <Brain size={14} className="text-blue-400" />
-            </div>
-            <div>
-              <p className="text-[13px] font-medium text-white">Auto-generated cards</p>
-              <p className="text-xs text-zinc-500">Built from your accepted solutions</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <Zap size={14} className="text-blue-400" />
-            </div>
-            <div>
-              <p className="text-[13px] font-medium text-white">Adapts to weak spots</p>
-              <p className="text-xs text-zinc-500">Focus on what you actually forget</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <Timer size={14} className="text-blue-400" />
-            </div>
-            <div>
-              <p className="text-[13px] font-medium text-white">Optimal timing</p>
-              <p className="text-xs text-zinc-500">Review right before you&apos;d forget</p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <Button
-          className="w-full text-[13px] font-semibold h-10 text-white gap-1.5"
-          style={{
-            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-            border: '1px solid rgba(147,197,253,0.4)',
-            boxShadow: '0 1px 0 rgba(255,255,255,0.2) inset, 0 -1px 0 rgba(0,0,0,0.15) inset, 0 12px 30px -10px rgba(59,130,246,0.5)',
-            ...SG,
-          }}
-          onClick={handleUpgrade}
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : 'Upgrade to Pro'}
-        </Button>
-
-        <p className="text-[11px] text-zinc-600 text-center mt-3">$9/mo · Cancel anytime</p>
       </div>
     </div>
   );

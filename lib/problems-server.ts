@@ -9,7 +9,15 @@ import {
   dbRowToProblemContent,
   type ProblemContent,
   type ProblemRow,
+  type SolutionApproach,
 } from '@/lib/problem-types';
+import { ALL_PROBLEMS } from '@/content/problems';
+
+const SOLUTIONS_BY_SLUG: Map<string, SolutionApproach[]> = new Map(
+  ALL_PROBLEMS
+    .filter(p => p.solutions && p.solutions.length > 0)
+    .map(p => [p.slug, p.solutions as SolutionApproach[]]),
+);
 
 export async function getProblemBySlug(slug: string): Promise<ProblemContent | null> {
   const supabase = getSupabase();
@@ -23,7 +31,10 @@ export async function getProblemBySlug(slug: string): Promise<ProblemContent | n
     .maybeSingle();
 
   if (error || !data) return null;
-  return dbRowToProblemContent(data as ProblemRow);
+  const problem = dbRowToProblemContent(data as ProblemRow);
+  const solutions = SOLUTIONS_BY_SLUG.get(slug);
+  if (solutions) problem.solutions = solutions;
+  return problem;
 }
 
 export async function getPublishedSlugs(): Promise<Set<string>> {

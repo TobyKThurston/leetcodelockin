@@ -537,7 +537,7 @@ function SolutionTab({ problem }: { problem: ProblemContent }) {
   );
 }
 
-type LeftTab = 'question' | 'hints' | 'solution' | 'tutor';
+type LeftTab = 'question' | 'solution' | 'tutor';
 
 interface ProblemPanelProps {
   problem: ProblemContent;
@@ -554,7 +554,6 @@ function ProblemPanel({
 }: ProblemPanelProps) {
   const TABS: { id: LeftTab; label: string; icon?: React.ReactNode }[] = [
     { id: 'question', label: 'Question', icon: <FileText size={12} /> },
-    { id: 'hints',    label: 'Hints' },
     ...(problem.solutions && problem.solutions.length > 0 ? [{ id: 'solution' as LeftTab, label: 'Solution' }] : []),
     { id: 'tutor',    label: 'Tutor' },
   ];
@@ -615,9 +614,8 @@ function ProblemPanel({
       {/* Tab content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {activeTab === 'question' && <QuestionTab problem={problem} />}
-        {activeTab === 'hints'    && <HintsTab code={code} problem={problem} />}
         {activeTab === 'solution' && <SolutionTab problem={problem} />}
-        {activeTab === 'tutor'    && <TutorChat code={code} problem={problem} />}
+        {activeTab === 'tutor'    && <TutorTab code={code} problem={problem} />}
       </div>
     </div>
   );
@@ -1377,6 +1375,24 @@ function TutorChat({ code, problem }: { code: string; problem: ProblemContent })
             <Send size={12} />
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tutor Tab wrapper — chat on top (2/3), hints on bottom (1/3) ────────────
+
+function TutorTab({ code, problem }: { code: string; problem: ProblemContent }) {
+  return (
+    <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col min-h-0" style={{ flex: '2 1 0%' }}>
+        <TutorChat code={code} problem={problem} />
+      </div>
+      <div
+        className="flex flex-col min-h-0"
+        style={{ flex: '1 1 0%', borderTop: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.015)' }}
+      >
+        <HintsTab code={code} problem={problem} />
       </div>
     </div>
   );

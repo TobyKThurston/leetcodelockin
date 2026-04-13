@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   ChevronLeft, ChevronRight, ChevronUp,
-  Plus, X, Play, RotateCcw, Send, Maximize2, Minimize2,
+  Plus, X, Play, RotateCcw, Send, Maximize2, Minimize2, Home, AlertTriangle,
 } from 'lucide-react';
 import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
@@ -169,7 +170,15 @@ interface ActiveInterviewProps {
 }
 
 export default function ActiveInterview({ problems, startedAt, onSubmit }: ActiveInterviewProps) {
+  const router = useRouter();
   const deadlineMs = startedAt + INTERVIEW_DURATION_MS;
+
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  const handleExitHome = useCallback(() => {
+    try { localStorage.removeItem('zl-interview-active'); } catch {}
+    router.push('/');
+  }, [router]);
 
   // Current problem index
   const [currentIdx, setCurrentIdx] = useState<0 | 1>(0);
@@ -392,8 +401,22 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         className="flex items-center justify-between px-5 shrink-0"
         style={{ height: 48, background: BG_PANEL, borderBottom: `1px solid ${BORDER}` }}
       >
-        {/* Problem tabs */}
-        <div className="flex items-center gap-1">
+        {/* Left: Home + Problem tabs */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowExitConfirm(true)}
+            className="flex items-center justify-center w-8 h-8 rounded-lg transition-all hover:brightness-125"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: `1px solid ${BORDER_MED}`,
+              color: '#8ea0b7',
+            }}
+            title="Return home"
+            aria-label="Return home"
+          >
+            <Home size={14} />
+          </button>
+          <div className="w-px h-5" style={{ background: BORDER }} />
           {problems.map((p, i) => {
             const active = i === currentIdx;
             return (
@@ -427,7 +450,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         </div>
 
         {/* Timer */}
-        <InterviewTimer deadlineMs={deadlineMs} onExpired={handleSubmit} />
+        <InterviewTimer deadlineMs={deadlineMs} />
 
         {/* Submit button */}
         <button
@@ -711,6 +734,61 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
           </div>
         )}
       </div>
+
+      {showExitConfirm && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowExitConfirm(false)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="w-full max-w-sm mx-4 rounded-xl p-6"
+            style={{ background: BG_PANEL, border: `1px solid ${BORDER_MED}` }}
+          >
+            <div className="flex items-start gap-3 mb-4">
+              <div
+                className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
+                style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}
+              >
+                <AlertTriangle size={16} style={{ color: 'rgba(248,113,113,0.9)' }} />
+              </div>
+              <div>
+                <h3 className="text-[15px] font-semibold text-white mb-1" style={SG}>
+                  Leave interview?
+                </h3>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#8ea0b7', ...SG }}>
+                  Your progress on both problems will be lost. This can&apos;t be undone.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                onClick={() => setShowExitConfirm(false)}
+                className="px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${BORDER_MED}`,
+                  color: '#a8b3c7',
+                  ...SG,
+                }}
+              >
+                Keep going
+              </button>
+              <button
+                onClick={handleExitHome}
+                className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(248,113,113,0.9) 0%, rgba(239,68,68,0.9) 100%)',
+                  border: '1px solid rgba(248,113,113,0.5)',
+                  ...SG,
+                }}
+              >
+                Leave and lose progress
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
