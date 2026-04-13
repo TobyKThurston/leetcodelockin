@@ -90,6 +90,10 @@ const EDITOR_OPTIONS = {
   fontFamily: "'Geist Mono', 'Cascadia Code', 'Fira Code', ui-monospace, monospace",
   fontLigatures: true,
   lineHeight: 20,
+  // Opt out of Monaco's experimental EditContext input path — it breaks
+  // keyboard input/cursor movement on some Chromium builds. Falls back to
+  // the classic hidden-textarea input which is stable everywhere.
+  editContext:          false,
   minimap:              { enabled: false },
   stickyScroll:         { enabled: false },
   scrollBeyondLastLine: false,
