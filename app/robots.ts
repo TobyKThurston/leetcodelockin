@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
           '/review',
           '/settings',
           '/sign-in',
-          '/solve/',
+          '/solve',
         ],
       },
     ],
