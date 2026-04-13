@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import { Check, Zap, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  MONTHLY_PRICE_LABEL,
+  YEARLY_PRICE_LABEL,
+  YEARLY_SAVINGS_LABEL,
+  YEARLY_PER_MONTH_LABEL,
+} from '@/lib/pricing';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -59,12 +65,12 @@ export default function MobileUpgradeCards({
         </div>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className="text-[44px] leading-none font-bold text-white tracking-tight" style={SG}>
-            $59
+            {YEARLY_PRICE_LABEL}
           </span>
           <span className="text-[15px] text-slate-500">/year</span>
         </div>
         <p className="text-[12px] text-slate-500 mt-1">
-          That&apos;s <span className="text-slate-300">$4.92/mo</span> — save $49
+          That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span> — save {YEARLY_SAVINGS_LABEL}
         </p>
 
         <ul className="mt-5 space-y-2.5">
@@ -106,7 +112,7 @@ export default function MobileUpgradeCards({
         </span>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className="text-[36px] leading-none font-bold text-white tracking-tight" style={SG}>
-            $9
+            {MONTHLY_PRICE_LABEL}
           </span>
           <span className="text-[15px] text-slate-500">/month</span>
         </div>

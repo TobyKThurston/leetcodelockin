@@ -3,6 +3,11 @@
 import { useState } from 'react';
 import { Zap, MessageSquare, Code2, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  MONTHLY_PRICE_LABEL,
+  YEARLY_PRICE_LABEL,
+  YEARLY_SAVINGS_LABEL,
+} from '@/lib/pricing';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -94,7 +99,7 @@ export default function UpgradePrompt({
           onClick={() => handleUpgrade(monthlyPriceId)}
           disabled={loading || !monthlyPriceId}
         >
-          {loading ? 'Loading...' : '$9/month'}
+          {loading ? 'Loading...' : `${MONTHLY_PRICE_LABEL}/month`}
         </Button>
         <Button
           size="sm"
@@ -103,7 +108,7 @@ export default function UpgradePrompt({
           onClick={() => handleUpgrade(yearlyPriceId)}
           disabled={loading || !yearlyPriceId}
         >
-          $59/year (save $49)
+          {YEARLY_PRICE_LABEL}/year (save {YEARLY_SAVINGS_LABEL})
         </Button>
       </div>
     </div>

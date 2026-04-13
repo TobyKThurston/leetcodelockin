@@ -16,6 +16,12 @@ import { cn } from '@/lib/utils';
 import type { ReviewCard, KeyLinesContent, ApproachContent, ComplexityContent } from '@/lib/review';
 import { QUICK_CARDS } from '@/lib/quick-review-cards';
 import type { QuickCard } from '@/lib/quick-review-cards';
+import {
+  MONTHLY_PRICE_LABEL,
+  YEARLY_PRICE_LABEL,
+  YEARLY_SAVINGS_LABEL,
+  YEARLY_PER_MONTH_LABEL,
+} from '@/lib/pricing';
 
 const MONO = 'var(--font-geist-mono), ui-monospace, monospace';
 
@@ -758,7 +764,7 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                   Pro Monthly
                 </span>
                 <div className="mt-2.5 flex items-baseline gap-1">
-                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>$9</span>
+                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>{MONTHLY_PRICE_LABEL}</span>
                   <span className="text-[13px] text-slate-500">/month</span>
                 </div>
                 <p className="text-[11px] text-slate-600 mt-1">Cancel anytime</p>
@@ -792,15 +798,15 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                     Pro Yearly
                   </span>
                   <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
-                    Save $49
+                    Save {YEARLY_SAVINGS_LABEL}
                   </span>
                 </div>
                 <div className="mt-2.5 flex items-baseline gap-1">
-                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>$59</span>
+                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>{YEARLY_PRICE_LABEL}</span>
                   <span className="text-[13px] text-slate-500">/year</span>
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
-                  That&apos;s <span className="text-slate-300">$4.92/mo</span>
+                  That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span>
                 </p>
               </CardHeader>
               <CardContent className="px-5 pt-4 flex-1">
