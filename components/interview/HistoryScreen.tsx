@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2 } from 'lucide-react';
+import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2, CheckCircle2 } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -179,6 +179,11 @@ export default function HistoryScreen({
           {sessions.map(s => {
             const isPending = s.id === pendingFeedbackId;
             const hasError = feedbackError?.sessionId === s.id;
+            const r1 = s.problem1Results;
+            const r2 = s.problem2Results;
+            const passedAll =
+              !!r1 && !!r2 && r1.total > 0 && r2.total > 0 &&
+              r1.passed === r1.total && r2.passed === r2.total;
 
             const handleClick = () => {
               if (isPending) return;
@@ -207,7 +212,11 @@ export default function HistoryScreen({
                       </span>
                     ) : hasError ? (
                       <span className="flex items-center justify-center w-10">
-                        <AlertCircle size={18} style={{ color: 'rgba(248,113,113,0.85)' }} />
+                        {passedAll ? (
+                          <CheckCircle2 size={18} style={{ color: 'rgba(52,211,153,0.9)' }} />
+                        ) : (
+                          <AlertCircle size={18} style={{ color: 'rgba(248,113,113,0.85)' }} />
+                        )}
                       </span>
                     ) : s.overallScore != null ? (
                       <span
@@ -243,7 +252,15 @@ export default function HistoryScreen({
                             Analyzing
                           </Badge>
                         )}
-                        {hasError && (
+                        {hasError && passedAll && (
+                          <Badge
+                            className="bg-emerald-500/10 text-emerald-300 border-emerald-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            style={SG}
+                          >
+                            All tests passed
+                          </Badge>
+                        )}
+                        {hasError && !passedAll && (
                           <Badge
                             className="bg-red-500/10 text-red-300 border-red-500/25 text-[10px] font-semibold tracking-wide uppercase"
                             style={SG}

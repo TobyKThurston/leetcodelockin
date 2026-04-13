@@ -32,7 +32,7 @@ const requestSchema = z.object({
     )
     .length(2),
   totalTimeMs: z.number().min(0).max(1000 * 60 * 60 * 6),
-  difficulty: z.enum(['easy', 'medium', 'hard']),
+  difficulty: z.enum(['easy-medium', 'medium-hard']),
 });
 
 export const maxDuration = 60;
