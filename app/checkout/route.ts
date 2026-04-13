@@ -5,20 +5,53 @@ import { getOrCreateStripeCustomer } from '@/lib/subscription';
 
 type Plan = 'monthly' | 'yearly';
 
+// Only accept same-origin relative paths so `from` can't be turned into an
+// open-redirect. Strip any leading '//' (protocol-relative) defensively.
+function safeReturnPath(value: string | null): string | null {
+  if (!value) return null;
+  if (!value.startsWith('/') || value.startsWith('//')) return null;
+  return value;
+}
+
+// Resolve "where to send the user if anything goes wrong or they cancel".
+// Prefer the explicit `from` query param (set by the client), fall back to the
+// Referer header, then /settings as a last resort.
+function resolveReturnPath(req: NextRequest): string {
+  const fromParam = safeReturnPath(req.nextUrl.searchParams.get('from'));
+  if (fromParam) return fromParam;
+
+  const referer = req.headers.get('referer');
+  if (referer) {
+    try {
+      const url = new URL(referer);
+      if (url.origin === req.nextUrl.origin && url.pathname !== '/checkout') {
+        return url.pathname + url.search;
+      }
+    } catch {
+      // fall through
+    }
+  }
+
+  return '/settings';
+}
+
 export async function GET(req: NextRequest) {
   const planParam = req.nextUrl.searchParams.get('plan');
   const plan: Plan = planParam === 'yearly' ? 'yearly' : 'monthly';
+  const returnPath = resolveReturnPath(req);
 
   const user = await getSupabaseUser();
   if (!user) {
-    const next = `/checkout?plan=${plan}`;
+    // Preserve the return path across the sign-in bounce so we still know
+    // where to send them after auth + checkout.
+    const next = `/checkout?plan=${plan}&from=${encodeURIComponent(returnPath)}`;
     const url = new URL('/sign-in', req.url);
     url.searchParams.set('next', next);
     return NextResponse.redirect(url);
   }
 
   if (!user.email) {
-    const url = new URL('/settings', req.url);
+    const url = new URL(returnPath, req.url);
     url.searchParams.set('error', 'Your account has no email on file');
     return NextResponse.redirect(url);
   }
@@ -30,7 +63,7 @@ export async function GET(req: NextRequest) {
 
   if (!priceId) {
     const envName = plan === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID_MONTHLY';
-    const url = new URL('/settings', req.url);
+    const url = new URL(returnPath, req.url);
     url.searchParams.set('error', `${envName} is not configured on the server`);
     return NextResponse.redirect(url);
   }
@@ -47,14 +80,14 @@ export async function GET(req: NextRequest) {
       client_reference_id: user.id,
       allow_promotion_codes: true,
       success_url: `${origin}/settings?checkout=success`,
-      cancel_url: `${origin}/settings`,
+      cancel_url: `${origin}${returnPath}`,
       subscription_data: {
         metadata: { supabase_user_id: user.id },
       },
     });
 
     if (!session.url) {
-      const url = new URL('/settings', req.url);
+      const url = new URL(returnPath, req.url);
       url.searchParams.set('error', 'Stripe did not return a checkout URL');
       return NextResponse.redirect(url);
     }
@@ -63,7 +96,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown Stripe error';
     console.error('GET /checkout error:', message);
-    const url = new URL('/settings', req.url);
+    const url = new URL(returnPath, req.url);
     url.searchParams.set('error', message);
     return NextResponse.redirect(url);
   }

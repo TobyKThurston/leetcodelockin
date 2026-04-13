@@ -37,8 +37,11 @@ export default function Pricing() {
     setLoading(plan);
     // /checkout handles auth itself: signed-in users go straight to Stripe,
     // signed-out users bounce through /sign-in?next=/checkout?plan=X and skip
-    // the onboarding questionnaire on return.
-    window.location.href = `/checkout?plan=${plan}`;
+    // the onboarding questionnaire on return. `from` is echoed into Stripe's
+    // cancel_url so "Back" returns here instead of /settings.
+    const from = window.location.pathname + window.location.search + window.location.hash;
+    const qs = new URLSearchParams({ plan, from });
+    window.location.href = `/checkout?${qs.toString()}`;
   }
 
   return (
