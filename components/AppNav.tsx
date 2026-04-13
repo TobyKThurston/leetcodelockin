@@ -73,9 +73,9 @@ export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Interview' | 'Review'
 const TABS: { label: AppNavTab; href: string }[] = [
   { label: 'Path',      href: '/dashboard'  },
   { label: 'Library',   href: '/library'    },
-  { label: 'Progress',  href: '/progress'   },
   { label: 'Interview', href: '/interview'  },
   { label: 'Review',    href: '/review'     },
+  { label: 'Progress',  href: '/progress'   },
   { label: 'Settings',  href: '/settings'   },
 ];
 
