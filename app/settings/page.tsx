@@ -1,6 +1,5 @@
 import { getSupabaseUser } from '@/lib/supabase';
 import { getUserSubscription } from '@/lib/subscription';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -82,29 +81,6 @@ export default async function SettingsPage() {
             currentPeriodEnd={sub?.currentPeriodEnd?.toISOString() ?? null}
             cancelAtPeriodEnd={sub?.cancelAtPeriodEnd ?? false}
           />
-
-          {/* Preferences */}
-          <Card className="bg-white/[0.025] border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white" style={SG}>
-                Preferences
-              </CardTitle>
-              <CardDescription style={SG}>
-                Appearance and study preferences.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[13.5px] text-white" style={SG}>Theme</p>
-                  <p className="text-[12px] text-slate-500" style={SG}>Dark mode is currently the only option.</p>
-                </div>
-                <Button variant="outline" size="sm" disabled className="text-[12px]">
-                  Dark
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Account */}
           <Card className="bg-white/[0.025] border-white/10">

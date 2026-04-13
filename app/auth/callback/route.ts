@@ -1,7 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { hasCompletedOnboarding } from '@/lib/onboarding';
+import { hasCompletedOnboarding, markOnboardedMobile } from '@/lib/onboarding';
+
+function detectMobile(ua: string): boolean {
+  return /android|iphone|ipod|webos|blackberry|iemobile|opera mini/i.test(ua);
+}
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');
@@ -26,11 +30,32 @@ export async function GET(req: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // Route new users to onboarding before they see the dashboard.
+  const isMobile = detectMobile(req.headers.get('user-agent') ?? '');
+
+  if (isMobile) {
+    // Skip the desktop onboarding questionnaire for mobile signups so
+    // downstream gates don't bounce them back to /onboarding.
+    await markOnboardedMobile();
+
+    // First-time mobile signups land on the handoff screen; returning
+    // sessions skip straight to /m. A persistent cookie gates "first time."
+    const hasSeenHandoff = req.cookies.get('ll_seen_handoff')?.value === '1';
+    const target = hasSeenHandoff ? '/m' : '/welcome-mobile';
+    const res = NextResponse.redirect(new URL(target, req.url));
+    if (!hasSeenHandoff) {
+      res.cookies.set('ll_seen_handoff', '1', {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      });
+    }
+    return res;
+  }
+
+  // Desktop flow unchanged.
   const onboarded = await hasCompletedOnboarding();
   if (!onboarded) {
     return NextResponse.redirect(new URL('/onboarding', req.url));
   }
-
   return NextResponse.redirect(new URL(next, req.url));
 }

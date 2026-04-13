@@ -30,7 +30,22 @@ export async function POST(req: Request) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('Webhook signature verification failed:', message);
-    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
+  // Idempotency: Stripe retries on 5xx. Short-circuit duplicates by inserting the
+  // event id with a unique constraint. Requires:
+  //   create table stripe_webhook_events (id text primary key, received_at timestamptz default now());
+  const { error: insertErr } = await sb
+    .from('stripe_webhook_events')
+    .insert({ id: event.id });
+  if (insertErr) {
+    // 23505 = unique_violation → already processed, return 200 so Stripe stops retrying.
+    if ('code' in insertErr && insertErr.code === '23505') {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+    console.error('stripe_webhook_events insert error:', insertErr);
+    // Any other error: fall through and process anyway so legitimate events aren't lost.
   }
 
   switch (event.type) {

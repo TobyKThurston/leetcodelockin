@@ -40,6 +40,27 @@ export async function hasCompletedOnboarding(): Promise<boolean> {
   return false;
 }
 
+// Mark onboarding as done without running the skip-block computation.
+// Used for mobile signups that bypass the desktop onboarding questionnaire.
+export async function markOnboardedMobile(): Promise<void> {
+  const db = getSupabase();
+  if (!db) return;
+  const user = await getSupabaseUser();
+  if (!user) return;
+
+  await db.from('progress').upsert(
+    {
+      user_id: user.id,
+      module_id: ONBOARDING_MODULE_ID,
+      current_lesson: '',
+      completed: ['done'],
+      xp: 0,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,module_id' },
+  );
+}
+
 export async function completeOnboarding(answers: OnboardingAnswers): Promise<void> {
   const db = getSupabase();
   if (!db) return;

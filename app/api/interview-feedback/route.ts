@@ -3,7 +3,38 @@ import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
-import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
+import { checkAiRateLimit, getUserSubscription, recordAiUsage } from '@/lib/subscription';
+
+const MAX_CODE_LENGTH = 10_000;
+const MAX_DESCRIPTION_LENGTH = 8_000;
+
+const requestSchema = z.object({
+  problems: z
+    .array(
+      z.object({
+        slug: z.string().max(200),
+        title: z.string().max(200),
+        difficulty: z.string().max(40),
+        pattern: z.string().max(200),
+        descriptionMd: z.string().max(MAX_DESCRIPTION_LENGTH),
+      }),
+    )
+    .length(2),
+  submissions: z
+    .array(
+      z.object({
+        code: z.string().max(MAX_CODE_LENGTH).optional().default(''),
+        testsPassed: z.number().int().min(0).max(1000).optional().default(0),
+        testsTotal: z.number().int().min(0).max(1000).optional().default(0),
+        timeSpentMs: z.number().min(0).max(1000 * 60 * 60 * 6).optional().default(0),
+      }),
+    )
+    .length(2),
+  totalTimeMs: z.number().min(0).max(1000 * 60 * 60 * 6),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
+});
+
+export const maxDuration = 60;
 
 const feedbackSchema = z.object({
   overallScore: z.number().min(1).max(10).describe('Overall interview performance 1-10'),
@@ -59,15 +90,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Sign in required' }, { status: 401 });
     }
 
+    const { isPro } = await getUserSubscription(user.id);
+    if (!isPro) {
+      return NextResponse.json({ error: 'Mock interview feedback is a Pro feature' }, { status: 403 });
+    }
+
     const rateLimit = await checkAiRateLimit(user.id);
     if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: 'Daily AI limit reached', used: rateLimit.used, limit: rateLimit.limit },
+        { error: 'AI limit reached', used: rateLimit.used, limit: rateLimit.limit, reason: rateLimit.reason },
         { status: 429 },
       );
     }
 
-    const { problems, submissions, totalTimeMs, difficulty } = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+    const parsed = requestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+    const { problems, submissions, totalTimeMs, difficulty } = parsed.data;
 
     const userPrompt = `Mock interview: ${difficulty} difficulty, ${Math.round(totalTimeMs / 60000)} minutes used out of 45.
 

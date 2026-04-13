@@ -1956,7 +1956,9 @@ function PracticeCard({ step, blockStatus, onOpen }: {
             'inline-flex items-center self-start ml-5 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-[0.08em] uppercase',
             step.difficulty === 'Easy'
               ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
-              : 'bg-amber-500/15 text-amber-400 border border-amber-500/25',
+              : step.difficulty === 'Medium'
+              ? 'bg-amber-500/15 text-amber-400 border border-amber-500/25'
+              : 'bg-red-500/15 text-red-400 border border-red-500/25',
           )}
         >
           {step.difficulty}
@@ -2459,6 +2461,7 @@ const PATH_COLORS: Record<number, {
   2: { bar: 'linear-gradient(90deg, #8b5cf6, #a78bfa)',   accent: '#a78bfa', bg: 'rgba(167,139,250,0.06)', border: 'rgba(167,139,250,0.35)', pill: 'rgba(167,139,250,0.12)' },
   3: { bar: 'linear-gradient(90deg, #f59e0b, #f97316)',   accent: '#fbbf24', bg: 'rgba(251,191,36,0.06)',  border: 'rgba(251,191,36,0.3)',   pill: 'rgba(251,191,36,0.12)' },
   4: { bar: 'linear-gradient(90deg, #14b8a6, #06b6d4)',   accent: '#2dd4bf', bg: 'rgba(45,212,191,0.06)',  border: 'rgba(45,212,191,0.35)',  pill: 'rgba(45,212,191,0.12)' },
+  5: { bar: 'linear-gradient(90deg, #e11d48, #f43f5e)',   accent: '#fb7185', bg: 'rgba(251,113,133,0.06)', border: 'rgba(251,113,133,0.35)', pill: 'rgba(251,113,133,0.12)' },
 };
 const DEFAULT_PATH_COLOR = PATH_COLORS[1];
 function pathColor(order: number) { return PATH_COLORS[order] ?? DEFAULT_PATH_COLOR; }
@@ -2842,7 +2845,7 @@ export function ProgressView({
         {skillsMastered.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {skillsMastered.map((skill, i) => {
-              const pc = pathColor((i % 4) + 1);
+              const pc = pathColor((i % 5) + 1);
               return (
                 <span
                   key={skill}

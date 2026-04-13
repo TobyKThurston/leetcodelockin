@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
 const FEATURES = [
-  { icon: MessageSquare, label: 'Unlimited AI tutor chats', desc: 'No daily cap on hints or explanations' },
+  { icon: MessageSquare, label: 'Unlimited AI tutor chats', desc: 'No cap on hints or explanations' },
   { icon: Code2, label: 'AI code review', desc: 'Get feedback on every solution you write' },
   { icon: Brain, label: 'Mock interview access', desc: 'Timed sessions with AI-powered feedback' },
 ];
@@ -68,7 +68,7 @@ export default function UpgradePrompt({
         <p className="text-[13px] text-zinc-400 leading-relaxed">
           You've used{' '}
           <span className="text-zinc-200 font-medium">{used}/{limit}</span>{' '}
-          free requests today. Go Pro for unlimited access.
+          free tutor messages. Go Pro for unlimited access.
         </p>
       </div>
 

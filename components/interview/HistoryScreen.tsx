@@ -1,6 +1,6 @@
 'use client';
 
-import { Trophy, Clock, ArrowRight, Plus } from 'lucide-react';
+import { Trophy, Clock, ArrowRight, Plus, AlertCircle, RotateCw } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
@@ -30,11 +30,21 @@ function difficultyLabel(d: string): string {
 
 interface HistoryScreenProps {
   sessions: InterviewSession[];
+  pendingFeedbackId?: string | null;
+  feedbackError?: { sessionId: string; message: string } | null;
   onNewInterview: () => void;
   onViewSession: (session: InterviewSession) => void;
+  onRetryFeedback?: (sessionId: string) => void;
 }
 
-export default function HistoryScreen({ sessions, onNewInterview, onViewSession }: HistoryScreenProps) {
+export default function HistoryScreen({
+  sessions,
+  pendingFeedbackId,
+  feedbackError,
+  onNewInterview,
+  onViewSession,
+  onRetryFeedback,
+}: HistoryScreenProps) {
   const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
   const avgScore = completed.length > 0
     ? completed.reduce((sum, s) => sum + (s.overallScore ?? 0), 0) / completed.length
@@ -147,60 +157,114 @@ export default function HistoryScreen({ sessions, onNewInterview, onViewSession 
 
         {/* Session list */}
         <div className="space-y-2">
-          {sessions.map(s => (
-            <button
-              key={s.id}
-              onClick={() => onViewSession(s)}
-              className="w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-white/[0.02]"
-              style={{ background: 'rgba(255,255,255,0.015)', border: `1px solid ${BORDER}` }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {s.overallScore != null ? (
-                    <span
-                      className="text-[18px] font-bold tabular-nums w-10 text-center"
-                      style={{ ...MONO, color: scoreColor(s.overallScore) }}
-                    >
-                      {s.overallScore}
-                    </span>
-                  ) : (
-                    <span className="text-[13px] text-zinc-600 w-10 text-center" style={SG}>
-                      {s.status === 'in_progress' ? '…' : '—'}
-                    </span>
-                  )}
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-medium text-zinc-200" style={SG}>
-                        {formatDate(s.createdAt)}
+          {sessions.map(s => {
+            const isPending = s.id === pendingFeedbackId;
+            const errorMsg = feedbackError?.sessionId === s.id ? feedbackError.message : null;
+            const inactive = isPending || !!errorMsg;
+
+            return (
+              <button
+                key={s.id}
+                onClick={() => onViewSession(s)}
+                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${inactive ? 'cursor-default' : 'hover:bg-white/[0.02]'}`}
+                style={{ background: 'rgba(255,255,255,0.015)', border: `1px solid ${BORDER}` }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {isPending ? (
+                      <span className="flex items-center justify-center gap-1 w-10" aria-label="Analyzing">
+                        {[0, 1, 2].map(i => (
+                          <span
+                            key={i}
+                            className="w-1.5 h-1.5 rounded-full animate-pulse"
+                            style={{ background: 'rgba(96,165,250,0.75)', animationDelay: `${i * 180}ms` }}
+                          />
+                        ))}
                       </span>
+                    ) : errorMsg ? (
+                      <span className="flex items-center justify-center w-10">
+                        <AlertCircle size={18} style={{ color: 'rgba(248,113,113,0.85)' }} />
+                      </span>
+                    ) : s.overallScore != null ? (
                       <span
-                        className="text-[11px] px-1.5 py-0.5 rounded font-medium"
-                        style={{
-                          color: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.7)' : 'rgba(251,191,36,0.7)',
-                          background: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.07)' : 'rgba(251,191,36,0.07)',
-                        }}
+                        className="text-[18px] font-bold tabular-nums w-10 text-center"
+                        style={{ ...MONO, color: scoreColor(s.overallScore) }}
                       >
-                        {difficultyLabel(s.difficulty)}
+                        {s.overallScore}
                       </span>
+                    ) : (
+                      <span className="text-[13px] text-zinc-600 w-10 text-center" style={SG}>
+                        {s.status === 'in_progress' ? '…' : '—'}
+                      </span>
+                    )}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] font-medium text-zinc-200" style={SG}>
+                          {formatDate(s.createdAt)}
+                        </span>
+                        <span
+                          className="text-[11px] px-1.5 py-0.5 rounded font-medium"
+                          style={{
+                            color: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.7)' : 'rgba(251,191,36,0.7)',
+                            background: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.07)' : 'rgba(251,191,36,0.07)',
+                          }}
+                        >
+                          {difficultyLabel(s.difficulty)}
+                        </span>
+                      </div>
+                      <p className="text-[12px] text-zinc-500 mt-0.5">
+                        {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
+                      </p>
+                      {isPending && (
+                        <p className="text-[11px] text-zinc-500 mt-1.5" style={SG}>
+                          Analyzing… usually 20–40 seconds
+                        </p>
+                      )}
+                      {errorMsg && (
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-[11px]" style={{ color: 'rgba(248,113,113,0.8)', ...SG }}>
+                            {errorMsg}
+                          </span>
+                          {onRetryFeedback && (
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onRetryFeedback(s.id);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  onRetryFeedback(s.id);
+                                }
+                              }}
+                              className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded text-zinc-300 hover:text-white transition-colors"
+                              style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...SG }}
+                            >
+                              <RotateCw size={10} />
+                              Retry
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <p className="text-[12px] text-zinc-500 mt-0.5">
-                      {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
-                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-zinc-600">
+                    {s.timeUsedMs != null && (
+                      <span className="flex items-center gap-1 text-[12px]" style={MONO}>
+                        <Clock size={12} />
+                        {formatTime(s.timeUsedMs)}
+                      </span>
+                    )}
+                    {!inactive && <ArrowRight size={14} />}
                   </div>
                 </div>
-
-                <div className="flex items-center gap-3 text-zinc-600">
-                  {s.timeUsedMs != null && (
-                    <span className="flex items-center gap-1 text-[12px]" style={MONO}>
-                      <Clock size={12} />
-                      {formatTime(s.timeUsedMs)}
-                    </span>
-                  )}
-                  <ArrowRight size={14} />
-                </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

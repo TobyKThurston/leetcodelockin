@@ -5,6 +5,14 @@ import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
 
+const MAX_PROBLEM_LENGTH = 8_000;
+const MAX_ATTEMPT_LENGTH = 10_000;
+
+const requestSchema = z.object({
+  problem: z.string().min(1).max(MAX_PROBLEM_LENGTH),
+  attempt: z.string().max(MAX_ATTEMPT_LENGTH).optional(),
+});
+
 const schema = z.object({
   hints: z
     .array(z.string())
@@ -52,16 +60,22 @@ export async function POST(req: NextRequest) {
     const rateLimit = await checkAiRateLimit(user.id);
     if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: 'Daily limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: false },
+        { error: 'AI limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: rateLimit.isPro, reason: rateLimit.reason },
         { status: 429 },
       );
     }
 
-    const { problem, attempt } = await req.json();
-
-    if (!problem?.trim()) {
-      return NextResponse.json({ error: 'Problem description is required' }, { status: 400 });
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
+    const parsed = requestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+    const { problem, attempt } = parsed.data;
 
     const userPrompt = attempt?.trim()
       ? `Problem:\n${problem}\n\nStudent's attempt:\n${attempt}\n\nAnalyze the attempt and guide the student toward the correct solution.`

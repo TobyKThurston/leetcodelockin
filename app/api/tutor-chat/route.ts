@@ -1,8 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
+import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
+
+const MAX_CODE_LENGTH = 10_000;
+const MAX_PROBLEM_LENGTH = 8_000;
+const MAX_MESSAGE_LENGTH = 4_000;
+const MAX_MESSAGES = 40;
+
+const requestSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string().min(1).max(MAX_MESSAGE_LENGTH),
+      }),
+    )
+    .min(1)
+    .max(MAX_MESSAGES),
+  problem: z.string().max(MAX_PROBLEM_LENGTH).optional().default(''),
+  code: z.string().max(MAX_CODE_LENGTH).optional().default(''),
+});
 
 const SYSTEM_PROMPT = `You're a chill but sharp coding buddy helping a student work through a LeetCode problem in real time. Think pair-programming energy, not lecture hall.
 
@@ -22,11 +42,6 @@ RULES:
 - If they changed their code since last message, notice it and react ("nice, you added the set — now think about when to remove from it")
 - Keep the momentum going — every response should leave them with a clear next thing to try`;
 
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const user = await getSupabaseUser();
@@ -37,19 +52,22 @@ export async function POST(req: NextRequest) {
     const rateLimit = await checkAiRateLimit(user.id);
     if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: 'Daily limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: false },
+        { error: 'AI limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: rateLimit.isPro, reason: rateLimit.reason },
         { status: 429 },
       );
     }
 
-    const body = await req.json();
-    const messages: ChatMessage[] = Array.isArray(body.messages) ? body.messages : [];
-    const problemContext: string = typeof body.problem === 'string' ? body.problem : '';
-    const codeContext: string = typeof body.code === 'string' ? body.code : '';
-
-    if (messages.length === 0) {
-      return NextResponse.json({ error: 'messages is required' }, { status: 400 });
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
+    const parsed = requestSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+    const { messages, problem: problemContext, code: codeContext } = parsed.data;
 
     const contextPrefix = [
       problemContext && `PROBLEM:\n${problemContext}`,

@@ -123,7 +123,7 @@ export default function SubscriptionCard({
             <div className="rounded-lg bg-slate-800/40 border border-slate-700/60 px-4 py-3">
               <p className="text-[13px] font-semibold text-white" style={SG}>Free Plan</p>
               <p className="text-[12px] text-slate-400 mt-0.5" style={SG}>
-                3 AI tutor requests per day
+                5 AI tutor messages (lifetime)
               </p>
             </div>
             <Button

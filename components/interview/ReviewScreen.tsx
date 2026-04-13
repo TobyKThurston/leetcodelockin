@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowLeft, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
-import type { InterviewSession, InterviewFeedback, InterviewReadiness } from '@/lib/interview';
+import type { InterviewSession, InterviewReadiness } from '@/lib/interview';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -30,36 +30,34 @@ const CORRECTNESS_LABEL: Record<string, { color: string; text: string }> = {
 
 interface ReviewScreenProps {
   session: InterviewSession;
-  feedback: InterviewFeedback | null;
-  loadingFeedback: boolean;
   onBack: () => void;
   onNewInterview: () => void;
 }
 
 export default function ReviewScreen({
-  session, feedback, loadingFeedback, onBack, onNewInterview,
+  session, onBack, onNewInterview,
 }: ReviewScreenProps) {
   const [expandedCode, setExpandedCode] = useState<number | null>(null);
+  const feedback = session.feedback;
 
-  if (loadingFeedback || !feedback) {
+  if (!feedback) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center gap-1.5">
-            {[0, 1, 2].map(i => (
-              <div
-                key={i}
-                className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: 'rgba(59,130,246,0.5)', animationDelay: `${i * 200}ms` }}
-              />
-            ))}
-          </div>
-          <p className="text-[14px] text-zinc-400" style={SG}>
-            Analyzing your interview performance…
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="max-w-sm text-center space-y-4">
+          <p className="text-[15px] text-zinc-300" style={SG}>
+            Feedback unavailable for this session.
           </p>
-          <p className="text-[12px] text-zinc-600">
-            This takes about 10 seconds
+          <p className="text-[12px] text-zinc-500 leading-relaxed">
+            Head back to your history — if generation failed, you can retry from the card.
           </p>
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium text-zinc-200 transition-colors hover:text-white"
+            style={{ border: `1px solid ${BORDER}`, ...SG }}
+          >
+            <ArrowLeft size={13} />
+            Back to history
+          </button>
         </div>
       </div>
     );

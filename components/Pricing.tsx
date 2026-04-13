@@ -14,7 +14,7 @@ const FREE_FEATURES = [
   'Full problem library (212+ problems)',
   'Python code editor + execution',
   'Progress tracking across paths',
-  '3 AI tutor requests per day',
+  '5 AI tutor messages (lifetime)',
 ];
 
 const PRO_FEATURES = [
