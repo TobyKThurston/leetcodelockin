@@ -3,8 +3,9 @@ import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
-import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
+import { checkAiQuota, recordAiUsage } from '@/lib/subscription';
 import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
+import { logApiError } from '@/lib/log';
 
 const MAX_PROBLEM_LENGTH = 8_000;
 const MAX_ATTEMPT_LENGTH = 10_000;
@@ -58,10 +59,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Sign in to use AI hints' }, { status: 401 });
     }
 
-    const rateLimit = await checkAiRateLimit(user.id);
-    if (!rateLimit.allowed) {
+    const quota = await checkAiQuota(user.id);
+    if (!quota.allowed) {
       return NextResponse.json(
-        { error: 'AI limit reached', used: rateLimit.used, limit: rateLimit.limit, isPro: rateLimit.isPro, reason: rateLimit.reason },
+        { error: 'AI limit reached', used: quota.used, limit: quota.limit, isPro: quota.isPro, reason: quota.reason },
         { status: 429 },
       );
     }
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     await recordAiUsage(user.id, 'solve');
     return NextResponse.json(output);
   } catch (err) {
-    console.error('/api/solve error:', err);
+    logApiError('api/solve', err);
     return NextResponse.json({ error: 'Something went wrong. Check your OPENAI_API_KEY.' }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, bucketForPath, isRateLimitExempt } from '@/lib/rate-limit';
 
 // Unauthed API endpoints. Stripe webhook must stay open so Stripe can POST to it;
 // it verifies authenticity via signature instead of auth cookie.
@@ -7,6 +8,21 @@ const PUBLIC_API_PREFIXES = ['/api/stripe/webhook', '/api/auth/'];
 
 function isPublicApi(pathname: string): boolean {
   return PUBLIC_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(p));
+}
+
+function clientIp(req: NextRequest): string {
+  const fwd = req.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0].trim();
+  const real = req.headers.get('x-real-ip');
+  if (real) return real.trim();
+  return 'unknown';
+}
+
+function rateLimitResponse(retryAfterSec: number): NextResponse {
+  return NextResponse.json(
+    { error: 'Rate limit exceeded', retryAfter: retryAfterSec },
+    { status: 429, headers: { 'Retry-After': String(retryAfterSec) } },
+  );
 }
 
 export default async function proxy(req: NextRequest) {
@@ -22,6 +38,14 @@ export default async function proxy(req: NextRequest) {
   // Public API routes bypass auth entirely (Stripe webhook, OAuth callbacks, etc.).
   if (isApi && isPublicApi(pathname)) {
     return res;
+  }
+
+  // IP-level global ceiling, applied to every API request (including unauthed).
+  // Skipped for webhook/auth callbacks so Stripe retries and OAuth flows never 429.
+  if (isApi && !isRateLimitExempt(pathname)) {
+    const ip = clientIp(req);
+    const ipCheck = checkRateLimit('IP_GLOBAL', `ip:${ip}`);
+    if (!ipCheck.ok) return rateLimitResponse(ipCheck.retryAfterSec);
   }
 
   const supabase = createServerClient(

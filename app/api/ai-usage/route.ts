@@ -6,8 +6,7 @@ import {
   getDailyAiUsage,
 } from '@/lib/subscription';
 
-// Read-only endpoint — must NOT go through checkAiRateLimit, which would
-// consume a burst-throttle slot just for checking your own counter.
+// Read-only usage counter. Abuse throttling lives in proxy.ts (READ_BURST bucket).
 const FREE_LIFETIME_LIMIT = 5;
 const PRO_DAILY_LIMIT = 50;
 

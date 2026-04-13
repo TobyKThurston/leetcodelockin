@@ -3,8 +3,9 @@ import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
-import { checkAiRateLimit, getUserSubscription, recordAiUsage } from '@/lib/subscription';
+import { checkAiQuota, getUserSubscription, recordAiUsage } from '@/lib/subscription';
 import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
+import { logApiError } from '@/lib/log';
 
 const MAX_CODE_LENGTH = 10_000;
 const MAX_DESCRIPTION_LENGTH = 8_000;
@@ -104,10 +105,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mock interview feedback is a Pro feature' }, { status: 403 });
     }
 
-    const rateLimit = await checkAiRateLimit(user.id);
-    if (!rateLimit.allowed) {
+    const quota = await checkAiQuota(user.id);
+    if (!quota.allowed) {
       return NextResponse.json(
-        { error: 'AI limit reached', used: rateLimit.used, limit: rateLimit.limit, reason: rateLimit.reason },
+        { error: 'AI limit reached', used: quota.used, limit: quota.limit, reason: quota.reason },
         { status: 429 },
       );
     }
@@ -155,7 +156,7 @@ Evaluate this candidate's performance across both problems.`;
     await recordAiUsage(user.id, 'interview-feedback');
     return NextResponse.json(output);
   } catch (err) {
-    console.error('/api/interview-feedback error:', err);
+    logApiError('api/interview-feedback', err);
     return NextResponse.json({ error: 'Something went wrong generating feedback.' }, { status: 500 });
   }
 }

@@ -3,8 +3,6 @@ import { getStripe } from './stripe';
 
 const FREE_LIFETIME_LIMIT = 5;
 const PRO_DAILY_LIMIT = 50;
-const BURST_WINDOW_MS = 60_000;
-const BURST_MAX = 10;
 
 export interface SubscriptionInfo {
   isPro: boolean;
@@ -13,12 +11,12 @@ export interface SubscriptionInfo {
   cancelAtPeriodEnd: boolean;
 }
 
-export interface RateLimitResult {
+export interface QuotaResult {
   allowed: boolean;
   used: number;
   limit: number;
   isPro: boolean;
-  reason?: 'lifetime' | 'daily' | 'burst';
+  reason?: 'lifetime' | 'daily';
 }
 
 // ─── Subscription status ─────────────────────────────────────────────────────
@@ -102,47 +100,12 @@ export async function recordAiUsage(userId: string, endpoint: string): Promise<v
   }
 }
 
-// ─── Burst throttle (in-memory token bucket per user) ──────────────────────
-// Coarse protection against scripts that try to drain quota in one second.
-// In-memory state only — state is per serverless instance, not a durable SLA.
-// The durable cap is the daily/lifetime count above; this just slows drains.
+// ─── AI quota check (business cap) ───────────────────────────────────────────
+// Burst/abuse throttling lives in proxy.ts via lib/rate-limit.ts.
+// This function only enforces the billable cap: lifetime for free, daily for Pro.
 
-const burstHits = new Map<string, number[]>();
-
-function checkBurst(userId: string): boolean {
-  const now = Date.now();
-  const cutoff = now - BURST_WINDOW_MS;
-  const recent = (burstHits.get(userId) ?? []).filter((t) => t > cutoff);
-  if (recent.length >= BURST_MAX) {
-    burstHits.set(userId, recent);
-    return false;
-  }
-  recent.push(now);
-  burstHits.set(userId, recent);
-  if (burstHits.size > 1000) {
-    for (const [k, v] of burstHits) {
-      const kept = v.filter((t) => t > cutoff);
-      if (kept.length === 0) burstHits.delete(k);
-      else burstHits.set(k, kept);
-    }
-  }
-  return true;
-}
-
-// ─── Rate limiting ───────────────────────────────────────────────────────────
-
-export async function checkAiRateLimit(userId: string): Promise<RateLimitResult> {
+export async function checkAiQuota(userId: string): Promise<QuotaResult> {
   const { isPro } = await getUserSubscription(userId);
-
-  if (!checkBurst(userId)) {
-    return {
-      allowed: false,
-      used: BURST_MAX,
-      limit: BURST_MAX,
-      isPro,
-      reason: 'burst',
-    };
-  }
 
   if (isPro) {
     const used = await getDailyAiUsage(userId);
