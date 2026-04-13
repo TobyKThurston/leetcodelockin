@@ -276,10 +276,12 @@ export default function ReviewScreen({
           </button>
           <button
             onClick={onNewInterview}
-            className="px-5 py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110"
+            className="px-5 py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >

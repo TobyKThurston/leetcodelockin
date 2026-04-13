@@ -94,7 +94,8 @@ export default function HistoryScreen({
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
-              boxShadow: '0 12px 32px -12px rgba(59,130,246,0.65), 0 0 0 1px rgba(96,165,250,0.35)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >
@@ -116,10 +117,12 @@ export default function HistoryScreen({
           </h1>
           <button
             onClick={onNewInterview}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-colors hover:brightness-110"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >

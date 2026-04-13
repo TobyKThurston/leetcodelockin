@@ -25,7 +25,7 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
           }
         `}
       >
-        <div className="flex items-center gap-1.5 mr-auto">
+        <a href="/" className="flex items-center gap-1.5 mr-auto cursor-pointer">
           <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           <span
             className={`font-semibold tracking-tight text-white transition-all duration-500 ${
@@ -34,7 +34,7 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
           >
             LeetLockin
           </span>
-        </div>
+        </a>
 
         <nav
           className={`hidden md:flex items-center gap-5 text-zinc-400 transition-all duration-500 ${
