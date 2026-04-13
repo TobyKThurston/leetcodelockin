@@ -33,13 +33,13 @@ const PRO_FEATURES = [
 export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null);
 
-  async function handleCheckout(priceId: string) {
-    setLoading(priceId);
+  async function handleCheckout(plan: 'monthly' | 'yearly') {
+    setLoading(plan);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -52,9 +52,6 @@ export default function Pricing() {
       setLoading(null);
     }
   }
-
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
     <section id="pricing" className="px-4 sm:px-6 py-28">
@@ -134,10 +131,10 @@ export default function Pricing() {
               <Button
                 className="w-full h-12 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                 variant="outline"
-                onClick={() => handleCheckout(monthlyPriceId)}
-                disabled={loading !== null || !monthlyPriceId}
+                onClick={() => handleCheckout('monthly')}
+                disabled={loading !== null}
               >
-                {loading === monthlyPriceId ? 'Loading...' : 'Start monthly'}
+                {loading === 'monthly' ? 'Loading...' : 'Start monthly'}
               </Button>
             </CardFooter>
           </Card>
@@ -173,10 +170,10 @@ export default function Pricing() {
               <Button
                 className="w-full h-12 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                 variant="outline"
-                onClick={() => handleCheckout(yearlyPriceId)}
-                disabled={loading !== null || !yearlyPriceId}
+                onClick={() => handleCheckout('yearly')}
+                disabled={loading !== null}
               >
-                {loading === yearlyPriceId ? 'Loading...' : 'Start yearly'}
+                {loading === 'yearly' ? 'Loading...' : 'Start yearly'}
               </Button>
             </CardFooter>
           </Card>

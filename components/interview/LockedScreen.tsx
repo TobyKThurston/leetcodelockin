@@ -31,13 +31,13 @@ export default function LockedScreen() {
   const [loading, setLoading] = useState(false);
   const pricingRef = useRef<HTMLDivElement>(null);
 
-  async function handleUpgrade(priceId: string) {
+  async function handleUpgrade(plan: 'monthly' | 'yearly') {
     setLoading(true);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;
@@ -46,9 +46,6 @@ export default function LockedScreen() {
       setLoading(false);
     }
   }
-
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.06) transparent' }}>
@@ -208,8 +205,8 @@ export default function LockedScreen() {
                 <Button
                   className="w-full h-12 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
-                  onClick={() => handleUpgrade(monthlyPriceId)}
-                  disabled={loading || !monthlyPriceId}
+                  onClick={() => handleUpgrade('monthly')}
+                  disabled={loading}
                 >
                   {loading ? 'Loading...' : 'Start monthly'}
                 </Button>
@@ -249,8 +246,8 @@ export default function LockedScreen() {
                 <Button
                   className="w-full h-12 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
-                  onClick={() => handleUpgrade(yearlyPriceId)}
-                  disabled={loading || !yearlyPriceId}
+                  onClick={() => handleUpgrade('yearly')}
+                  disabled={loading}
                 >
                   {loading ? 'Loading...' : 'Start yearly'}
                 </Button>

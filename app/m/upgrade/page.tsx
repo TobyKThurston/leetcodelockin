@@ -29,9 +29,6 @@ export default async function MobileUpgradePage() {
   const user = await getSupabaseUser();
   const sub = user ? await getUserSubscription(user.id) : null;
 
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
-
   // Already pro — confirmation view.
   if (sub?.isPro) {
     return (
@@ -124,7 +121,7 @@ export default async function MobileUpgradePage() {
       </div>
 
       {/* Pricing cards */}
-      <MobileUpgradeCards monthlyPriceId={monthlyPriceId} yearlyPriceId={yearlyPriceId} />
+      <MobileUpgradeCards />
 
       {/* Free tier reassurance */}
       <div className="text-center">

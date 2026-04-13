@@ -26,13 +26,13 @@ export default function UpgradePrompt({
 }) {
   const [loading, setLoading] = useState(false);
 
-  async function handleUpgrade(priceId: string) {
+  async function handleUpgrade(plan: 'monthly' | 'yearly') {
     setLoading(true);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -45,9 +45,6 @@ export default function UpgradePrompt({
       setLoading(false);
     }
   }
-
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
     <div
@@ -96,8 +93,8 @@ export default function UpgradePrompt({
           size="sm"
           variant="outline"
           className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
-          onClick={() => handleUpgrade(monthlyPriceId)}
-          disabled={loading || !monthlyPriceId}
+          onClick={() => handleUpgrade('monthly')}
+          disabled={loading}
         >
           {loading ? 'Loading...' : `${MONTHLY_PRICE_LABEL}/month`}
         </Button>
@@ -105,8 +102,8 @@ export default function UpgradePrompt({
           size="sm"
           variant="outline"
           className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
-          onClick={() => handleUpgrade(yearlyPriceId)}
-          disabled={loading || !yearlyPriceId}
+          onClick={() => handleUpgrade('yearly')}
+          disabled={loading}
         >
           {YEARLY_PRICE_LABEL}/year (save {YEARLY_SAVINGS_LABEL})
         </Button>

@@ -148,12 +148,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
               size="sm"
               className="text-[12px] font-medium text-slate-200 border-slate-700 bg-transparent hover:bg-slate-800 hover:text-white"
               onClick={async () => {
-                const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-                if (!priceId) return;
                 const res = await fetch('/api/stripe/checkout', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ priceId }),
+                  body: JSON.stringify({ plan: 'monthly' }),
                 });
                 const { url } = await res.json();
                 if (url) window.location.href = url;

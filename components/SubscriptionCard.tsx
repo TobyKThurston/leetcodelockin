@@ -44,13 +44,13 @@ export default function SubscriptionCard({
     }
   }
 
-  async function handleUpgrade(priceId: string) {
+  async function handleUpgrade() {
     setLoading('checkout');
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan: 'monthly' }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -63,8 +63,6 @@ export default function SubscriptionCard({
       setLoading(null);
     }
   }
-
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
 
   const formattedEnd = currentPeriodEnd
     ? new Date(currentPeriodEnd).toLocaleDateString('en-US', {
@@ -129,8 +127,8 @@ export default function SubscriptionCard({
             <Button
               size="sm"
               className="bg-white text-zinc-900 hover:bg-zinc-100 text-[12px] font-semibold w-fit"
-              onClick={() => handleUpgrade(monthlyPriceId)}
-              disabled={loading !== null || !monthlyPriceId}
+              onClick={() => handleUpgrade()}
+              disabled={loading !== null}
             >
               {loading === 'checkout' ? 'Loading...' : 'Upgrade to Pro'}
             </Button>

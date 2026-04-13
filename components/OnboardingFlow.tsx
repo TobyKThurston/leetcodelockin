@@ -85,13 +85,13 @@ export default function OnboardingFlow() {
     });
   }, [getOnboardingAnswers, go]);
 
-  const handleCheckout = useCallback(async (priceId: string) => {
-    setCheckoutLoading(priceId);
+  const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
+    setCheckoutLoading(plan);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -458,13 +458,11 @@ function ProStep({
   fadeUp,
 }: {
   onStartFree: () => void;
-  onCheckout: (priceId: string) => void;
+  onCheckout: (plan: 'monthly' | 'yearly') => void;
   checkoutLoading: string | null;
   stagger: Variants;
   fadeUp: Variants;
 }) {
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
 
   return (
     <div>
@@ -491,11 +489,9 @@ function ProStep({
             <span className="text-3xl font-bold text-white" style={SG}>$9</span>
             <span className="text-[13px] text-slate-500">/month</span>
           </div>
-          {yearlyPriceId && (
-            <p className="mt-1 text-[11px] text-slate-600">
-              or $59/year (save $49)
-            </p>
-          )}
+          <p className="mt-1 text-[11px] text-slate-600">
+            or $59/year (save $49)
+          </p>
         </div>
 
         {/* Features */}
@@ -524,21 +520,19 @@ function ProStep({
       {/* CTAs */}
       <div className="mt-6 flex flex-col gap-2.5">
         <Button
-          onClick={() => onCheckout(yearlyPriceId || monthlyPriceId)}
+          onClick={() => onCheckout('yearly')}
           disabled={!!checkoutLoading}
           className="h-12 w-full text-[13px] font-semibold bg-white text-zinc-900 hover:bg-zinc-100 rounded-lg"
         >
-          {checkoutLoading ? 'Loading...' : yearlyPriceId ? 'Start Pro yearly ($59/year)' : 'Start Pro ($9/mo)'}
+          {checkoutLoading === 'yearly' ? 'Loading...' : 'Start Pro yearly ($59/year)'}
         </Button>
-        {yearlyPriceId && monthlyPriceId && (
-          <button
-            onClick={() => onCheckout(monthlyPriceId)}
-            disabled={!!checkoutLoading}
-            className="h-10 w-full rounded-lg border border-white/[0.1] bg-white/[0.02] text-[12px] font-medium text-slate-400 hover:text-white hover:border-white/[0.2] transition-colors"
-          >
-            {checkoutLoading === monthlyPriceId ? 'Loading...' : 'Start Pro monthly ($9/mo)'}
-          </button>
-        )}
+        <button
+          onClick={() => onCheckout('monthly')}
+          disabled={!!checkoutLoading}
+          className="h-10 w-full rounded-lg border border-white/[0.1] bg-white/[0.02] text-[12px] font-medium text-slate-400 hover:text-white hover:border-white/[0.2] transition-colors"
+        >
+          {checkoutLoading === 'monthly' ? 'Loading...' : 'Start Pro monthly ($9/mo)'}
+        </button>
         <button
           onClick={onStartFree}
           className="mt-1 text-[12px] text-slate-600 hover:text-slate-400 transition-colors py-1"

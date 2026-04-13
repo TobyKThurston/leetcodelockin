@@ -9,9 +9,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Sign in required' }, { status: 401 });
   }
 
-  const { priceId } = (await req.json()) as { priceId?: string };
+  const body = (await req.json().catch(() => ({}))) as { plan?: string };
+  const plan = body.plan === 'yearly' ? 'yearly' : 'monthly';
+
+  const priceId =
+    plan === 'yearly'
+      ? process.env.STRIPE_PRICE_ID_YEARLY
+      : process.env.STRIPE_PRICE_ID_MONTHLY ?? process.env.STRIPE_PRICE_ID;
+
   if (!priceId) {
-    return NextResponse.json({ error: 'priceId is required' }, { status: 400 });
+    const envName = plan === 'yearly' ? 'STRIPE_PRICE_ID_YEARLY' : 'STRIPE_PRICE_ID_MONTHLY';
+    return NextResponse.json(
+      { error: `${envName} is not configured on the server` },
+      { status: 500 },
+    );
   }
 
   const stripe = getStripe();

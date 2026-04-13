@@ -22,23 +22,16 @@ const PRO_FEATURES = [
 
 type PlanKey = 'monthly' | 'yearly';
 
-export default function MobileUpgradeCards({
-  monthlyPriceId,
-  yearlyPriceId,
-}: {
-  monthlyPriceId: string;
-  yearlyPriceId: string;
-}) {
+export default function MobileUpgradeCards() {
   const [loading, setLoading] = useState<PlanKey | null>(null);
 
-  async function handleCheckout(plan: PlanKey, priceId: string) {
-    if (!priceId) return;
+  async function handleCheckout(plan: PlanKey) {
     setLoading(plan);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;
@@ -84,8 +77,8 @@ export default function MobileUpgradeCards({
 
         <button
           type="button"
-          onClick={() => handleCheckout('yearly', yearlyPriceId)}
-          disabled={loading !== null || !yearlyPriceId}
+          onClick={() => handleCheckout('yearly')}
+          disabled={loading !== null}
           className={cn(
             'mt-5 h-12 w-full rounded-xl bg-white text-zinc-900 text-[14px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all',
             loading !== null && 'opacity-70 cursor-not-allowed',
@@ -120,8 +113,8 @@ export default function MobileUpgradeCards({
 
         <button
           type="button"
-          onClick={() => handleCheckout('monthly', monthlyPriceId)}
-          disabled={loading !== null || !monthlyPriceId}
+          onClick={() => handleCheckout('monthly')}
+          disabled={loading !== null}
           className={cn(
             'mt-5 h-12 w-full rounded-xl border border-white/15 bg-white/[0.04] text-[14px] font-semibold text-white hover:bg-white/[0.08] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2',
             loading !== null && 'opacity-70 cursor-not-allowed',

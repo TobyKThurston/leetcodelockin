@@ -676,9 +676,6 @@ const PRO_FEATURES = [
 function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [loading, setLoading] = useState<string | null>(null);
 
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
-
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -695,13 +692,13 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
 
   if (!open) return null;
 
-  async function handleCheckout(priceId: string) {
-    setLoading(priceId);
+  async function handleCheckout(plan: 'monthly' | 'yearly') {
+    setLoading(plan);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;
@@ -783,10 +780,10 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                 <Button
                   className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
-                  onClick={() => handleCheckout(monthlyPriceId)}
-                  disabled={loading !== null || !monthlyPriceId}
+                  onClick={() => handleCheckout('monthly')}
+                  disabled={loading !== null}
                 >
-                  {loading === monthlyPriceId ? 'Loading...' : 'Start monthly'}
+                  {loading === 'monthly' ? 'Loading...' : 'Start monthly'}
                 </Button>
               </CardFooter>
             </Card>
@@ -823,10 +820,10 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                 <Button
                   className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
-                  onClick={() => handleCheckout(yearlyPriceId)}
-                  disabled={loading !== null || !yearlyPriceId}
+                  onClick={() => handleCheckout('yearly')}
+                  disabled={loading !== null}
                 >
-                  {loading === yearlyPriceId ? 'Loading...' : 'Start yearly'}
+                  {loading === 'yearly' ? 'Loading...' : 'Start yearly'}
                 </Button>
               </CardFooter>
             </Card>
