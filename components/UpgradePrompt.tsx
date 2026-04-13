@@ -103,7 +103,7 @@ export default function UpgradePrompt({
           onClick={() => handleUpgrade(yearlyPriceId)}
           disabled={loading || !yearlyPriceId}
         >
-          $90/year (save $18)
+          $59/year (save $49)
         </Button>
       </div>
     </div>

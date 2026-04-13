@@ -16,6 +16,8 @@ const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-s
 const MONO = 'var(--font-geist-mono), ui-monospace, monospace';
 
 const BATCH_SIZE = 10;
+const FREE_LIMIT = 10;
+const FREE_USED_KEY = 'zl-free-review-used';
 
 // ─── Palette — identical to Library / Dashboard ──────────────────────────────
 const C = {
@@ -724,20 +726,36 @@ function ReviewRightRail({
   );
 }
 
-// ─── Pro upgrade bottom sheet ───────────────────────────────────────────────
+// ─── Pro upgrade modal ──────────────────────────────────────────────────────
 
 const PRO_FEATURES = [
+  'Unlimited Quick Review questions',
   'Spaced repetition from your solutions',
   'Unlimited AI Socratic tutor',
   'Unlimited AI chat follow-ups',
-  'Priority when things get busy',
 ];
 
-function ProGateBanner() {
+function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [loading, setLoading] = useState<string | null>(null);
 
   const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY ?? '';
   const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_YEARLY ?? '';
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
 
   async function handleCheckout(priceId: string) {
     setLoading(priceId);
@@ -757,87 +775,75 @@ function ProGateBanner() {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
       aria-label="Upgrade to Pro"
-      className="fixed inset-x-0 md:left-[304px] lg:right-[304px] bottom-0 z-40 pointer-events-none"
-      style={{ top: '50vh' }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(3,7,18,0.82)', backdropFilter: 'blur(6px)' }}
+      onClick={onClose}
     >
-      {/* Top fade — lets the content above stay partially visible */}
       <div
-        className="absolute inset-x-0 top-0 h-24 pointer-events-none"
+        className="relative w-full max-w-2xl rounded-2xl"
         style={{
-          background:
-            'linear-gradient(to bottom, rgba(11,18,32,0) 0%, rgba(11,18,32,0.85) 60%, #0b1220 100%)',
-        }}
-      />
-
-      {/* Sheet body */}
-      <div
-        className="absolute inset-x-0 bottom-0 pointer-events-auto overflow-y-auto"
-        style={{
-          top: 72,
           background: '#0b1220',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          boxShadow: '0 -24px 60px -30px rgba(59,130,246,0.15)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 30px 80px -20px rgba(0,0,0,0.6)',
         }}
+        onClick={e => e.stopPropagation()}
       >
-        <div className="max-w-3xl mx-auto px-6 pt-10 pb-12">
-          {/* Header */}
-          <div className="text-center mb-8">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="px-6 sm:px-8 pt-8 pb-7">
+          <div className="text-center mb-6">
             <p
-              className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-600 mb-3"
+              className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-2"
               style={SG}
             >
               Upgrade to Pro
             </p>
             <h2
-              className="text-[22px] sm:text-[26px] font-bold text-white tracking-tight"
+              className="text-[22px] sm:text-[24px] font-bold text-white tracking-tight"
               style={SG}
             >
-              Unlock spaced repetition review
+              You&apos;ve reached the free limit
             </h2>
-            <p className="mt-2.5 text-slate-500 text-[13px] max-w-md mx-auto leading-relaxed">
-              Pro generates personalized flashcards from the problems you solve, and
-              schedules them at optimized intervals so you review right before you forget.
+            <p className="mt-2 text-slate-500 text-[13px] max-w-md mx-auto leading-relaxed">
+              Free plan covers the first {BATCH_SIZE} Quick Review questions. Go Pro for unlimited review plus personalized spaced repetition from your solutions.
             </p>
           </div>
 
-          {/* Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto">
-            {/* Pro Monthly */}
-            <Card className="bg-white/[0.02] ring-white/[0.06] rounded-2xl py-0 gap-0">
-              <CardHeader className="px-6 pt-6 pb-0">
-                <span
-                  className="text-[12px] font-semibold tracking-wider uppercase text-slate-400"
-                  style={SG}
-                >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
+            <Card className="bg-white/[0.02] ring-white/[0.06] rounded-xl py-0 gap-0">
+              <CardHeader className="px-5 pt-5 pb-0">
+                <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-400" style={SG}>
                   Pro Monthly
                 </span>
-                <div className="mt-4 flex items-baseline gap-1.5">
-                  <span className="text-[40px] font-bold text-white leading-none" style={SG}>
-                    $9
-                  </span>
-                  <span className="text-[15px] text-slate-500">/month</span>
+                <div className="mt-2.5 flex items-baseline gap-1">
+                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>$9</span>
+                  <span className="text-[13px] text-slate-500">/month</span>
                 </div>
-                <p className="text-[12px] text-slate-600 mt-1.5">Cancel anytime</p>
+                <p className="text-[11px] text-slate-600 mt-1">Cancel anytime</p>
               </CardHeader>
-              <CardContent className="px-6 pt-5 flex-1">
-                <ul className="space-y-2.5">
-                  {PRO_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5">
-                      <Check
-                        className="size-3.5 shrink-0 mt-0.5 text-slate-500"
-                        strokeWidth={2.5}
-                      />
-                      <span className="text-[12.5px] text-slate-300 leading-relaxed">
-                        {f}
-                      </span>
+              <CardContent className="px-5 pt-4 flex-1">
+                <ul className="space-y-1.5">
+                  {PRO_FEATURES.map(f => (
+                    <li key={f} className="flex items-start gap-2">
+                      <Check className="size-3 shrink-0 mt-0.5 text-slate-500" strokeWidth={2.5} />
+                      <span className="text-[11.5px] text-slate-300 leading-snug">{f}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="px-6 pb-6 pt-6 bg-transparent border-0">
+              <CardFooter className="px-5 pb-5 pt-4 bg-transparent border-0">
                 <Button
-                  className="w-full h-11 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
                   onClick={() => handleCheckout(monthlyPriceId)}
                   disabled={loading !== null || !monthlyPriceId}
@@ -847,48 +853,37 @@ function ProGateBanner() {
               </CardFooter>
             </Card>
 
-            {/* Pro Yearly */}
-            <Card className="relative bg-gradient-to-b from-blue-500/[0.05] to-blue-500/[0.01] ring-blue-500/20 rounded-2xl py-0 gap-0 shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)]">
-              <CardHeader className="px-6 pt-6 pb-0">
+            <Card className="relative bg-gradient-to-b from-blue-500/[0.05] to-blue-500/[0.01] ring-blue-500/20 rounded-xl py-0 gap-0 shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)]">
+              <CardHeader className="px-5 pt-5 pb-0">
                 <div className="flex items-center gap-2">
-                  <span
-                    className="text-[12px] font-semibold tracking-wider uppercase text-blue-400"
-                    style={SG}
-                  >
+                  <span className="text-[11px] font-semibold tracking-wider uppercase text-blue-400" style={SG}>
                     Pro Yearly
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
-                    Save $18
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                    Save $49
                   </span>
                 </div>
-                <div className="mt-4 flex items-baseline gap-1.5">
-                  <span className="text-[40px] font-bold text-white leading-none" style={SG}>
-                    $90
-                  </span>
-                  <span className="text-[15px] text-slate-500">/year</span>
+                <div className="mt-2.5 flex items-baseline gap-1">
+                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>$59</span>
+                  <span className="text-[13px] text-slate-500">/year</span>
                 </div>
-                <p className="text-[12px] text-slate-500 mt-1.5">
-                  That&apos;s <span className="text-slate-300">$7.50/mo</span>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  That&apos;s <span className="text-slate-300">$4.92/mo</span>
                 </p>
               </CardHeader>
-              <CardContent className="px-6 pt-5 flex-1">
-                <ul className="space-y-2.5">
-                  {PRO_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5">
-                      <Check
-                        className="size-3.5 shrink-0 mt-0.5 text-blue-400"
-                        strokeWidth={2.5}
-                      />
-                      <span className="text-[12.5px] text-slate-300 leading-relaxed">
-                        {f}
-                      </span>
+              <CardContent className="px-5 pt-4 flex-1">
+                <ul className="space-y-1.5">
+                  {PRO_FEATURES.map(f => (
+                    <li key={f} className="flex items-start gap-2">
+                      <Check className="size-3 shrink-0 mt-0.5 text-blue-400" strokeWidth={2.5} />
+                      <span className="text-[11.5px] text-slate-300 leading-snug">{f}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="px-6 pb-6 pt-6 bg-transparent border-0">
+              <CardFooter className="px-5 pb-5 pt-4 bg-transparent border-0">
                 <Button
-                  className="w-full h-11 rounded-xl text-[13px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
                   variant="outline"
                   onClick={() => handleCheckout(yearlyPriceId)}
                   disabled={loading !== null || !yearlyPriceId}
@@ -1249,6 +1244,19 @@ export default function ReviewPageClient({
   const [cumulativeCorrect, setCumulativeCorrect] = useState(0);
   const [cumulativeTotal, setCumulativeTotal] = useState(0);
 
+  // Pro upgrade modal
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const autoOpenedUpgradeRef = useRef(false);
+
+  // Lifetime free usage (persisted in localStorage)
+  const [freeUsed, setFreeUsed] = useState(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const v = parseInt(localStorage.getItem(FREE_USED_KEY) ?? '0', 10);
+    if (!Number.isNaN(v)) setFreeUsed(v);
+  }, []);
+  const freeLimitReached = !isPro && freeUsed >= FREE_LIMIT;
+
   // Are we in SR mode (have due cards) or quick review mode?
   const mode = srCards.length > 0 ? 'sr' : 'quick';
 
@@ -1269,6 +1277,14 @@ export default function ReviewPageClient({
     if (isPro && isSignedIn) fetchCards();
     else setSrLoading(false);
   }, [isPro, isSignedIn, fetchCards]);
+
+  // Auto-open upgrade modal once per page load when the free limit is reached
+  useEffect(() => {
+    if (freeLimitReached && !autoOpenedUpgradeRef.current) {
+      autoOpenedUpgradeRef.current = true;
+      setShowUpgradeModal(true);
+    }
+  }, [freeLimitReached]);
 
   async function handleSrResult(result: 'got_it' | 'forgot') {
     const card = srCards[srCurrentIdx];
@@ -1310,12 +1326,20 @@ export default function ReviewPageClient({
   }
 
   function handleQuickAnswer(correct: boolean) {
+    const alreadyAnswered = quickReviewedSet.has(quickIdx);
     setQuickReviewedSet(prev => new Set(prev).add(quickIdx));
     setQuickResults(prev => {
       const next = new Map(prev);
       next.set(quickIdx, correct ? 'correct' : 'incorrect');
       return next;
     });
+    if (!isPro && !alreadyAnswered) {
+      setFreeUsed(prev => {
+        const next = prev + 1;
+        try { localStorage.setItem(FREE_USED_KEY, String(next)); } catch {}
+        return next;
+      });
+    }
   }
 
   function handleQuickNext() {
@@ -1589,9 +1613,6 @@ export default function ReviewPageClient({
         <div className="lg:pr-[304px]">
         <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
 
-          {/* Pro upgrade banner for non-pro users */}
-          {!isPro && <ProGateBanner />}
-
           {/* Session complete banner */}
           {isPro && srReviewed > 0 && srCards.length === 0 && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 mb-6 flex items-center gap-3">
@@ -1637,8 +1658,36 @@ export default function ReviewPageClient({
             })()}
           </div>
 
-          {/* Quick card */}
-          {quickCard && quickMeta ? (
+          {/* Free-tier lock panel */}
+          {freeLimitReached ? (
+            <div
+              className="rounded-xl border overflow-hidden px-8 py-12 text-center"
+              style={{ background: C.cardBg, borderColor: C.border }}
+            >
+              <div
+                className="mx-auto flex items-center justify-center w-12 h-12 rounded-xl mb-4"
+                style={{
+                  background: 'rgba(59,130,246,0.1)',
+                  border: '1px solid rgba(59,130,246,0.25)',
+                }}
+              >
+                <Lock size={18} className="text-blue-400" />
+              </div>
+              <h2 className="text-[20px] font-bold text-white mb-2" style={SG}>
+                Free limit reached
+              </h2>
+              <p className="text-[13px] text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
+                You&apos;ve used all {FREE_LIMIT} free Quick Review questions. Upgrade to Pro for unlimited practice and personalized spaced repetition from the problems you solve.
+              </p>
+              <Button
+                onClick={() => setShowUpgradeModal(true)}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6 h-10"
+              >
+                Upgrade to Pro
+                <ArrowRight size={15} className="ml-2" />
+              </Button>
+            </div>
+          ) : quickCard && quickMeta ? (
             <div
               className="rounded-xl border overflow-hidden"
               style={{ background: C.cardBg, borderColor: C.border }}
@@ -1716,13 +1765,22 @@ export default function ReviewPageClient({
                     )}
                   </p>
                   <div className="flex items-center gap-3">
-                    {hasMoreBatches && (
+                    {hasMoreBatches && isPro && (
                       <Button
                         onClick={handleNextBatch}
                         className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
                       >
                         Next {Math.min(BATCH_SIZE, shuffledAllCards.length - batchStart - BATCH_SIZE)} questions
                         <ArrowRight size={15} className="ml-2" />
+                      </Button>
+                    )}
+                    {hasMoreBatches && !isPro && (
+                      <Button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
+                      >
+                        <Lock size={13} className="mr-2" />
+                        Unlock more with Pro
                       </Button>
                     )}
                     <Button
@@ -1734,6 +1792,7 @@ export default function ReviewPageClient({
                         setCumulativeCorrect(0);
                         setCumulativeTotal(0);
                         setCardKey(k => k + 1);
+                        autoOpenedUpgradeRef.current = false;
                       }}
                       variant="outline"
                       className="border-slate-700 text-slate-300 hover:bg-slate-800 text-[13px]"
@@ -1747,6 +1806,11 @@ export default function ReviewPageClient({
                       You&apos;ve completed all {shuffledAllCards.length} questions. Start over to review again.
                     </p>
                   )}
+                  {hasMoreBatches && !isPro && (
+                    <p className="text-[12px] text-slate-500 text-center max-w-sm">
+                      Free plan covers the first {BATCH_SIZE} questions. Go Pro for unlimited review.
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -1755,6 +1819,7 @@ export default function ReviewPageClient({
         </div>
         </div>
       </main>
+      <ProUpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </div>
   );
 }

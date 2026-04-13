@@ -147,17 +147,17 @@ export default function Pricing() {
                   Pro Yearly
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
-                  Save $18
+                  Save $49
                 </span>
               </div>
               <div className="mt-6 flex items-baseline gap-1.5">
                 <span className="text-5xl font-bold text-white" style={SG}>
-                  $90
+                  $59
                 </span>
                 <span className="text-lg text-slate-500">/year</span>
               </div>
               <p className="text-[13px] text-slate-500 mt-1.5">
-                That&apos;s <span className="text-slate-300">$7.50/mo</span>
+                That&apos;s <span className="text-slate-300">$4.92/mo</span>
               </p>
             </CardHeader>
             <CardContent className="px-8 pt-8 flex-1">

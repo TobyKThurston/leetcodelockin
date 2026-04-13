@@ -59,12 +59,12 @@ export default function MobileUpgradeCards({
         </div>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className="text-[44px] leading-none font-bold text-white tracking-tight" style={SG}>
-            $90
+            $59
           </span>
           <span className="text-[15px] text-slate-500">/year</span>
         </div>
         <p className="text-[12px] text-slate-500 mt-1">
-          That&apos;s <span className="text-slate-300">$7.50/mo</span> — save $18
+          That&apos;s <span className="text-slate-300">$4.92/mo</span> — save $49
         </p>
 
         <ul className="mt-5 space-y-2.5">

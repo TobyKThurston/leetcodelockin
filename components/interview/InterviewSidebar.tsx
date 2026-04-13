@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, BarChart3 } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,6 @@ const C = {
   panelBg: '#070c17',
   cardBgDark: '#070c17',
   border: 'rgba(255,255,255,0.06)',
-  blue: '#3b82f6',
 };
 
 function scoreColor(score: number): string {
@@ -44,49 +43,53 @@ function SessionRow({
     <button
       onClick={onClick}
       className={cn(
-        'w-full text-left rounded-lg px-3 py-2.5 transition-all border',
+        'w-full text-left rounded-lg px-3 py-2.5 transition-all border flex items-center gap-3',
         isActive
           ? 'bg-blue-500/[0.08] border-blue-400/45'
-          : 'bg-white/[0.015] border-white/[0.045] hover:bg-white/[0.035]',
+          : 'bg-white/[0.015] border-white/[0.05] hover:bg-white/[0.035]',
       )}
     >
-      <div className="flex items-center gap-2 mb-1">
+      {/* Score badge */}
+      <div className="w-9 shrink-0 flex items-center justify-center">
         {isPending ? (
-          <Loader2 size={12} className="animate-spin" style={{ color: 'rgba(96,165,250,0.85)' }} />
+          <Loader2
+            size={16}
+            className="animate-spin"
+            style={{ color: 'rgba(96,165,250,0.85)' }}
+          />
         ) : hasError ? (
-          <AlertCircle size={12} style={{ color: 'rgba(248,113,113,0.85)' }} />
+          <AlertCircle size={16} style={{ color: 'rgba(248,113,113,0.85)' }} />
         ) : score != null ? (
           <span
-            className="text-[13px] font-bold tabular-nums leading-none"
+            className="text-[20px] font-bold tabular-nums leading-none"
             style={{ color: scoreColor(score), ...MONO }}
           >
             {score}
           </span>
         ) : (
-          <span className="text-[11px] text-slate-600 leading-none" style={MONO}>
+          <span className="text-[14px] text-slate-600 leading-none" style={MONO}>
             —
           </span>
         )}
-        <span className="text-[10.5px] text-slate-500 font-medium" style={SG}>
-          {formatDate(session.createdAt)}
-        </span>
-        <span
-          className="ml-auto text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider"
-          style={{
-            color: isEasyMed ? 'rgba(52,211,153,0.85)' : 'rgba(251,191,36,0.85)',
-            background: isEasyMed ? 'rgba(52,211,153,0.08)' : 'rgba(251,191,36,0.08)',
-            ...SG,
-          }}
-        >
-          {isEasyMed ? 'E+M' : 'M+H'}
-        </span>
       </div>
-      <p className="text-[11.5px] text-slate-300 leading-tight truncate" style={SG}>
-        {session.problem1Slug.replace(/-/g, ' ')}
-      </p>
-      <p className="text-[11.5px] text-slate-500 leading-tight truncate" style={SG}>
-        + {session.problem2Slug.replace(/-/g, ' ')}
-      </p>
+
+      {/* Date + difficulty */}
+      <div className="flex-1 min-w-0">
+        <p className="text-[12px] text-slate-300 font-medium leading-tight" style={SG}>
+          {formatDate(session.createdAt)}
+        </p>
+        <p className="text-[10px] text-slate-500 leading-tight mt-0.5" style={SG}>
+          {isEasyMed ? 'Easy + Med' : 'Med + Hard'}
+        </p>
+      </div>
+
+      {/* Difficulty accent bar */}
+      <div
+        className="w-1 self-stretch rounded-full shrink-0"
+        style={{
+          background: isEasyMed ? 'rgba(52,211,153,0.55)' : 'rgba(251,191,36,0.55)',
+        }}
+      />
     </button>
   );
 }
@@ -97,7 +100,6 @@ interface InterviewSidebarProps {
   pendingFeedbackId: string | null;
   feedbackErrorId: string | null;
   onSelectSession: (session: InterviewSession) => void;
-  onNewInterview: () => void;
 }
 
 export default function InterviewSidebar({
@@ -106,7 +108,6 @@ export default function InterviewSidebar({
   pendingFeedbackId,
   feedbackErrorId,
   onSelectSession,
-  onNewInterview,
 }: InterviewSidebarProps) {
   const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
   const avgScore =
@@ -126,28 +127,15 @@ export default function InterviewSidebar({
         borderRight: `1px solid ${C.border}`,
       }}
     >
-      {/* Header row with label + New button */}
-      <div className="px-4 pt-5 pb-3 flex items-center justify-between">
+      {/* Header */}
+      <div className="px-4 pt-5 pb-3 flex items-center gap-2">
+        <BarChart3 size={11} className="text-slate-600" strokeWidth={2.5} />
         <p
-          className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase px-1"
+          className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase"
           style={SG}
         >
-          Mock Interviews
+          Debriefs
         </p>
-        <button
-          onClick={onNewInterview}
-          className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold text-white transition-all hover:brightness-110"
-          style={{
-            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-            border: '1px solid rgba(147,197,253,0.55)',
-            boxShadow:
-              '0 1px 0 rgba(255,255,255,0.22) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 6px 14px -8px rgba(59,130,246,0.7)',
-            ...SG,
-          }}
-        >
-          <Plus size={11} strokeWidth={3} />
-          New
-        </button>
       </div>
 
       {/* Session list */}

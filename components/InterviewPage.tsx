@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { Plus, ArrowRight, Trophy, Clock, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import LockedScreen from '@/components/interview/LockedScreen';
 import SetupScreen from '@/components/interview/SetupScreen';
@@ -44,12 +44,6 @@ interface Props {
   isPro: boolean;
 }
 
-function scoreColor(score: number): string {
-  if (score >= 8) return 'rgba(52,211,153,0.9)';
-  if (score >= 5) return 'rgba(251,191,36,0.9)';
-  return 'rgba(248,113,113,0.9)';
-}
-
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
@@ -64,28 +58,24 @@ function difficultyLabel(d: string): string {
   return d === 'easy-medium' ? 'Easy + Med' : 'Med + Hard';
 }
 
-// ─── Desktop-only welcome panel for the history phase ──────────────────────
+// ─── Desktop-only history / redo panel for the history phase ──────────────
 
 function HistoryWelcome({
   sessions,
   pendingFeedbackId,
   feedbackErrorId,
   onNewInterview,
-  onViewSession,
+  onRedo,
+  redoLoadingId,
 }: {
   sessions: InterviewSession[];
   pendingFeedbackId: string | null;
   feedbackErrorId: string | null;
   onNewInterview: () => void;
-  onViewSession: (s: InterviewSession) => void;
+  onRedo: (sessionId: string, difficulty: InterviewDifficulty) => void;
+  redoLoadingId: string | null;
 }) {
   const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
-  const avgScore =
-    completed.length > 0
-      ? completed.reduce((sum, s) => sum + (s.overallScore ?? 0), 0) / completed.length
-      : 0;
-  const bestScore =
-    completed.length > 0 ? Math.max(...completed.map(s => s.overallScore ?? 0)) : 0;
 
   if (sessions.length === 0) {
     return (
@@ -104,8 +94,8 @@ function HistoryWelcome({
             <h2 className="text-[24px] font-bold text-white tracking-tight" style={SG}>
               Ready to test yourself?
             </h2>
-            <p className="text-[14px] text-zinc-400 leading-relaxed">
-              Take your first mock interview — 2 problems, 45 minutes, AI feedback after.
+            <p className="text-[14px] text-slate-400 leading-relaxed" style={SG}>
+              Take your first mock interview — 2 problems, 45 minutes, AI debrief after.
             </p>
           </div>
           <button
@@ -127,9 +117,6 @@ function HistoryWelcome({
     );
   }
 
-  // >= 1 session: landing summary + recent highlights
-  const recent = sessions.slice(0, 5);
-
   return (
     <div className="max-w-3xl mx-auto px-8 pt-10 pb-16">
       {/* Headline */}
@@ -143,67 +130,36 @@ function HistoryWelcome({
         <h1 className="text-[28px] font-bold text-white tracking-tight" style={SG}>
           Next mock interview?
         </h1>
-        <p className="text-[14px] text-zinc-400 leading-relaxed max-w-md">
-          45 minutes. Two problems. AI debrief after. Pick a past session on the left to review,
-          or start a new one.
+        <p className="text-[14px] text-slate-400 leading-relaxed max-w-md" style={SG}>
+          45 minutes. Two problems. AI debrief after. Click any past session to redo it at the
+          same difficulty, or start a fresh one.
         </p>
       </div>
 
-      {/* Quick stats + CTA row */}
+      {/* Primary CTA card */}
       <div
         className="rounded-2xl p-6 mb-8"
         style={{
           background:
             'linear-gradient(180deg, rgba(59,130,246,0.04) 0%, rgba(59,130,246,0.015) 100%)',
-          border: '1px solid rgba(59,130,246,0.15)',
+          border: '1px solid rgba(59,130,246,0.18)',
           boxShadow: '0 0 60px -30px rgba(59,130,246,0.35)',
         }}
       >
         <div className="flex items-center justify-between gap-6 flex-wrap">
-          <div className="flex items-center gap-8">
-            <div>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1" style={SG}>
-                Completed
-              </p>
-              <p className="text-[26px] font-bold text-white leading-none" style={SG}>
-                {completed.length}
-              </p>
-            </div>
-            {completed.length > 0 && (
-              <>
-                <div className="w-px h-10 bg-white/[0.06]" />
-                <div>
-                  <p
-                    className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1"
-                    style={SG}
-                  >
-                    Avg Score
-                  </p>
-                  <p
-                    className="text-[26px] font-bold leading-none tabular-nums"
-                    style={{ ...SG, color: scoreColor(avgScore) }}
-                  >
-                    {avgScore.toFixed(1)}
-                  </p>
-                </div>
-                <div className="w-px h-10 bg-white/[0.06]" />
-                <div>
-                  <p
-                    className="text-[10px] text-zinc-500 uppercase tracking-wider mb-1"
-                    style={SG}
-                  >
-                    Best
-                  </p>
-                  <p
-                    className="text-[26px] font-bold leading-none tabular-nums"
-                    style={{ ...SG, color: scoreColor(bestScore) }}
-                  >
-                    {bestScore}
-                    <span className="text-[16px] text-zinc-600">/10</span>
-                  </p>
-                </div>
-              </>
-            )}
+          <div>
+            <p
+              className="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-semibold mb-1.5"
+              style={SG}
+            >
+              Fresh Interview
+            </p>
+            <p className="text-[15px] text-slate-200 font-medium" style={SG}>
+              Randomized problems from your unlocked set.
+            </p>
+            <p className="text-[12px] text-slate-500 mt-0.5" style={SG}>
+              You pick the difficulty. We pick the problems.
+            </p>
           </div>
           <button
             onClick={onNewInterview}
@@ -222,64 +178,53 @@ function HistoryWelcome({
         </div>
       </div>
 
-      {/* Recent sessions */}
+      {/* History list — each row is a "Redo" action */}
       <div className="space-y-3">
-        <p
-          className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase px-1"
-          style={SG}
-        >
-          Recent
-        </p>
+        <div className="flex items-center justify-between px-1">
+          <p
+            className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase"
+            style={SG}
+          >
+            History
+          </p>
+          <p className="text-[10px] text-slate-600" style={SG}>
+            Click any row to redo at the same difficulty
+          </p>
+        </div>
         <div className="space-y-2">
-          {recent.map(s => {
+          {sessions.map(s => {
             const isPending = s.id === pendingFeedbackId;
             const hasError = s.id === feedbackErrorId;
+            const isLoading = s.id === redoLoadingId;
+            const isEasyMed = s.difficulty === 'easy-medium';
+
             return (
               <button
                 key={s.id}
-                onClick={() => onViewSession(s)}
-                className="w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-white/[0.03]"
+                onClick={() => onRedo(s.id, s.difficulty)}
+                disabled={isLoading}
+                className="group w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-white/[0.03] disabled:opacity-60 disabled:cursor-wait"
                 style={{
-                  background: 'rgba(255,255,255,0.015)',
+                  background: '#0f1729',
                   border: `1px solid ${C.border}`,
                 }}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {isPending ? (
-                      <span className="flex items-center justify-center w-9">
-                        <Loader2
-                          size={16}
-                          className="animate-spin"
-                          style={{ color: 'rgba(96,165,250,0.85)' }}
-                        />
-                      </span>
-                    ) : hasError ? (
-                      <span className="flex items-center justify-center w-9">
-                        <AlertCircle
-                          size={16}
-                          style={{ color: 'rgba(248,113,113,0.85)' }}
-                        />
-                      </span>
-                    ) : s.overallScore != null ? (
-                      <span
-                        className="text-[18px] font-bold tabular-nums w-9 text-center"
-                        style={{ ...MONO, color: scoreColor(s.overallScore) }}
-                      >
-                        {s.overallScore}
-                      </span>
-                    ) : (
-                      <span
-                        className="text-[13px] text-zinc-600 w-9 text-center"
-                        style={SG}
-                      >
-                        —
-                      </span>
-                    )}
+                  <div className="flex items-center gap-4 min-w-0">
+                    {/* Difficulty accent */}
+                    <div
+                      className="w-1 self-stretch rounded-full shrink-0"
+                      style={{
+                        background: isEasyMed
+                          ? 'rgba(52,211,153,0.55)'
+                          : 'rgba(251,191,36,0.55)',
+                      }}
+                    />
+
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span
-                          className="text-[13px] font-medium text-zinc-200"
+                          className="text-[13px] font-semibold text-slate-200"
                           style={SG}
                         >
                           {formatDate(s.createdAt)}
@@ -287,36 +232,64 @@ function HistoryWelcome({
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider"
                           style={{
-                            color:
-                              s.difficulty === 'easy-medium'
-                                ? 'rgba(52,211,153,0.75)'
-                                : 'rgba(251,191,36,0.75)',
-                            background:
-                              s.difficulty === 'easy-medium'
-                                ? 'rgba(52,211,153,0.07)'
-                                : 'rgba(251,191,36,0.07)',
+                            color: isEasyMed
+                              ? 'rgba(52,211,153,0.75)'
+                              : 'rgba(251,191,36,0.75)',
+                            background: isEasyMed
+                              ? 'rgba(52,211,153,0.07)'
+                              : 'rgba(251,191,36,0.07)',
+                            ...SG,
                           }}
                         >
                           {difficultyLabel(s.difficulty)}
                         </span>
+                        {isPending && (
+                          <span
+                            className="flex items-center gap-1 text-[10px] text-blue-400 font-semibold uppercase tracking-wider"
+                            style={SG}
+                          >
+                            <Loader2 size={10} className="animate-spin" />
+                            Analyzing
+                          </span>
+                        )}
+                        {hasError && (
+                          <span
+                            className="flex items-center gap-1 text-[10px] text-red-400 font-semibold uppercase tracking-wider"
+                            style={SG}
+                          >
+                            <AlertCircle size={10} />
+                            Analysis failed
+                          </span>
+                        )}
                       </div>
-                      <p className="text-[12px] text-zinc-500 truncate">
+                      <p className="text-[12px] text-slate-500 truncate" style={SG}>
                         {s.problem1Slug.replace(/-/g, ' ')} +{' '}
                         {s.problem2Slug.replace(/-/g, ' ')}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 text-zinc-600 shrink-0">
+
+                  <div className="flex items-center gap-4 shrink-0">
                     {s.timeUsedMs != null && (
                       <span
-                        className="flex items-center gap-1 text-[12px]"
+                        className="flex items-center gap-1 text-[12px] text-slate-500"
                         style={MONO}
                       >
                         <Clock size={12} />
                         {formatTime(s.timeUsedMs)}
                       </span>
                     )}
-                    <ChevronRight size={16} />
+                    <span
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 border border-white/[0.06] bg-white/[0.03] transition-all group-hover:text-white group-hover:bg-blue-500/10 group-hover:border-blue-400/30"
+                      style={SG}
+                    >
+                      {isLoading ? (
+                        <Loader2 size={11} className="animate-spin" />
+                      ) : (
+                        <RotateCcw size={11} strokeWidth={2.5} />
+                      )}
+                      Redo
+                    </span>
                   </div>
                 </div>
               </button>
@@ -345,6 +318,9 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
   // Feedback generation state — tracked per-session, shown inline on the history card.
   const [pendingFeedbackId, setPendingFeedbackId] = useState<string | null>(null);
   const [feedbackError, setFeedbackError] = useState<{ sessionId: string; message: string } | null>(null);
+
+  // Redo-in-flight id — shows a spinner on the row being redone.
+  const [redoLoadingId, setRedoLoadingId] = useState<string | null>(null);
 
   // Recover active session from localStorage on mount
   useEffect(() => {
@@ -597,6 +573,20 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
     setPhase('setup');
   }, []);
 
+  // Redo an interview at the same difficulty — kicks straight into an active session.
+  const handleRedo = useCallback(
+    async (sessionId: string, difficulty: InterviewDifficulty) => {
+      setRedoLoadingId(sessionId);
+      setReviewSession(null);
+      try {
+        await handleStart(difficulty);
+      } finally {
+        setRedoLoadingId(null);
+      }
+    },
+    [handleStart],
+  );
+
   // Selected session id — lights up the matching row in the sidebar.
   const selectedSessionId = useMemo(() => {
     if (phase === 'review' && reviewSession) return reviewSession.id;
@@ -641,7 +631,6 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
         pendingFeedbackId={pendingFeedbackId}
         feedbackErrorId={feedbackErrorId}
         onSelectSession={handleViewSession}
-        onNewInterview={goToSetup}
       />
 
       <InterviewRightRail sessions={history} currentSession={reviewSession} />
@@ -674,14 +663,15 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
           </div>
         ) : (
           <>
-            {/* Desktop: welcome / summary panel (sidebar shows the list) */}
+            {/* Desktop: history + redo panel (sidebar is for analysis) */}
             <div className="hidden md:block">
               <HistoryWelcome
                 sessions={history}
                 pendingFeedbackId={pendingFeedbackId}
                 feedbackErrorId={feedbackErrorId}
                 onNewInterview={goToSetup}
-                onViewSession={handleViewSession}
+                onRedo={handleRedo}
+                redoLoadingId={redoLoadingId}
               />
             </div>
             {/* Mobile: full history list fallback (sidebar is hidden) */}
