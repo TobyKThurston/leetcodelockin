@@ -32,9 +32,11 @@ const PRO_FEATURES = [
 
 export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function handleCheckout(plan: 'monthly' | 'yearly') {
     setLoading(plan);
+    setErrorMsg(null);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -45,10 +47,11 @@ export default function Pricing() {
       if (url) {
         window.location.href = url;
       } else {
-        console.error('Checkout error:', error);
+        setErrorMsg(error ?? 'Could not start checkout');
         setLoading(null);
       }
-    } catch {
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Network error');
       setLoading(null);
     }
   }
@@ -182,6 +185,9 @@ export default function Pricing() {
         <p className="text-center text-[12px] text-slate-600 mt-8">
           All content is free. Pro only gates AI tutor usage.
         </p>
+        {errorMsg && (
+          <p className="text-center text-[12px] text-red-400 mt-3">{errorMsg}</p>
+        )}
       </div>
     </section>
   );

@@ -27,25 +27,29 @@ export default function SubscriptionCard({
   cancelAtPeriodEnd,
 }: SubscriptionCardProps) {
   const [loading, setLoading] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function handlePortal() {
     setLoading('portal');
+    setErrorMsg(null);
     try {
       const res = await fetch('/api/stripe/portal', { method: 'POST' });
       const { url, error } = await res.json();
       if (url) {
         window.location.href = url;
       } else {
-        console.error('Portal error:', error);
+        setErrorMsg(error ?? 'Something went wrong opening the billing portal');
         setLoading(null);
       }
-    } catch {
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Network error');
       setLoading(null);
     }
   }
 
   async function handleUpgrade() {
     setLoading('checkout');
+    setErrorMsg(null);
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -56,10 +60,11 @@ export default function SubscriptionCard({
       if (url) {
         window.location.href = url;
       } else {
-        console.error('Checkout error:', error);
+        setErrorMsg(error ?? 'Could not start checkout');
         setLoading(null);
       }
-    } catch {
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Network error');
       setLoading(null);
     }
   }
@@ -115,6 +120,9 @@ export default function SubscriptionCard({
             >
               {loading === 'portal' ? 'Loading...' : 'Manage subscription'}
             </Button>
+            {errorMsg && (
+              <p className="text-[11.5px] text-red-400" style={SG}>{errorMsg}</p>
+            )}
           </>
         ) : (
           <>
@@ -132,6 +140,9 @@ export default function SubscriptionCard({
             >
               {loading === 'checkout' ? 'Loading...' : 'Upgrade to Pro'}
             </Button>
+            {errorMsg && (
+              <p className="text-[11.5px] text-red-400" style={SG}>{errorMsg}</p>
+            )}
           </>
         )}
       </CardContent>

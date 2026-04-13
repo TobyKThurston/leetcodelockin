@@ -17,19 +17,27 @@ export async function POST(req: Request) {
     .from('subscriptions')
     .select('stripe_customer_id')
     .eq('user_id', user.id)
-    .single();
+    .maybeSingle();
 
   if (!data?.stripe_customer_id) {
-    return NextResponse.json({ error: 'No subscription found' }, { status: 404 });
+    return NextResponse.json({ error: 'No Stripe customer found' }, { status: 404 });
   }
 
-  const stripe = getStripe();
-  const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const origin =
+    req.headers.get('origin') ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    'http://localhost:3000';
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: data.stripe_customer_id,
-    return_url: `${origin}/settings`,
-  });
-
-  return NextResponse.json({ url: session.url });
+  try {
+    const stripe = getStripe();
+    const session = await stripe.billingPortal.sessions.create({
+      customer: data.stripe_customer_id,
+      return_url: `${origin}/settings`,
+    });
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown Stripe error';
+    console.error('stripe/portal error:', message);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

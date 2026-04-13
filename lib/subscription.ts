@@ -29,7 +29,7 @@ export async function getUserSubscription(userId: string): Promise<SubscriptionI
     .from('subscriptions')
     .select('status, current_period_end, cancel_at_period_end')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (!data) return { isPro: false, status: 'inactive', currentPeriodEnd: null, cancelAtPeriodEnd: false };
 
@@ -139,9 +139,21 @@ export async function getOrCreateStripeCustomer(userId: string, email: string): 
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
-    if (data?.stripe_customer_id) return data.stripe_customer_id;
+    if (data?.stripe_customer_id) {
+      // Verify the stored customer still exists in the current Stripe mode.
+      // A test-mode customer saved while the server used test keys will 404
+      // once the keys are flipped to live (and vice versa). In that case we
+      // fall through and create a fresh customer in the current mode.
+      try {
+        const existing = await stripe.customers.retrieve(data.stripe_customer_id);
+        if (!existing.deleted) return existing.id;
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (code !== 'resource_missing') throw err;
+      }
+    }
   }
 
   // Create a new Stripe customer
