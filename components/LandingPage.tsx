@@ -31,9 +31,6 @@ export function Footer() {
                   LeetLockin
                 </span>
               </div>
-              <span className="ml-2 text-[11px] font-mono text-slate-700 tracking-widest uppercase">
-                LLC
-              </span>
             </div>
             <p className="text-[13px] text-slate-600 leading-relaxed max-w-[220px]">
               Interview prep for engineers who take it seriously. Pattern-first. Hint-guided. Built to compound.
@@ -116,12 +113,10 @@ export function Footer() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
         >
           <span className="text-[11px] text-slate-800">
-            &copy; {year} LeetLockin LLC. All rights reserved.
+            &copy; {year} LeetLockin. All rights reserved.
           </span>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] text-slate-800">Lock In</span>
-            <span className="text-slate-800 text-[10px]">&middot;</span>
-            <span className="text-[11px] text-slate-800">A product of LeetLockin LLC</span>
           </div>
         </div>
 

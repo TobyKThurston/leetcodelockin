@@ -22,7 +22,7 @@ export default function PrivacyPage() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold text-white mb-3">1. Introduction</h2>
           <p className="text-[14px] text-slate-400 leading-relaxed">
-            LeetLockin LLC (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the LeetLockin platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.
+            LeetLockin (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates the LeetLockin platform. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.
           </p>
         </section>
 

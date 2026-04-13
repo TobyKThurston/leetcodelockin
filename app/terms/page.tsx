@@ -22,7 +22,7 @@ export default function TermsPage() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold text-white mb-3">1. Acceptance of Terms</h2>
           <p className="text-[14px] text-slate-400 leading-relaxed">
-            By accessing or using LeetLockin (&quot;the Service&quot;), operated by LeetLockin LLC (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service.
+            By accessing or using LeetLockin (&quot;the Service&quot;), operated by LeetLockin (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service.
           </p>
         </section>
 
@@ -62,7 +62,7 @@ export default function TermsPage() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold text-white mb-3">5. Intellectual Property</h2>
           <p className="text-[14px] text-slate-400 leading-relaxed">
-            All content on the Service, including curriculum materials, problem descriptions, editorial content, and AI-generated explanations, is the property of LeetLockin LLC or its licensors. You may not copy, modify, distribute, or create derivative works from any content on the Service without our prior written consent.
+            All content on the Service, including curriculum materials, problem descriptions, editorial content, and AI-generated explanations, is the property of LeetLockin or its licensors. You may not copy, modify, distribute, or create derivative works from any content on the Service without our prior written consent.
           </p>
         </section>
 
@@ -87,7 +87,7 @@ export default function TermsPage() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold text-white mb-3">8. Limitation of Liability</h2>
           <p className="text-[14px] text-slate-400 leading-relaxed">
-            To the maximum extent permitted by law, LeetLockin LLC shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service.
+            To the maximum extent permitted by law, LeetLockin shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service.
           </p>
         </section>
 
