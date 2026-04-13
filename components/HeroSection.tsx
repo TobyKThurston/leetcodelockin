@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden px-6 sm:px-10 pt-32 sm:pt-40 pb-20">
+    <section className="relative overflow-hidden px-6 sm:px-10 pt-32 sm:pt-40 pb-4">
       {/* Subtle top glow */}
       <div
         className="absolute top-0 left-0 right-0 h-[500px] pointer-events-none"
@@ -49,7 +49,7 @@ export default function HeroSection() {
           style={{ animationDelay: '420ms' }}
         >
           Stop memorizing solutions. Learn how to think through every problem,
-          pattern by pattern — with a structured curriculum built to compound.
+          pattern by pattern.
         </p>
 
         {/* CTAs */}

@@ -74,7 +74,7 @@ export default function ProductDemo() {
     phase === 'accepted' ? 'Accepted' : phase === 'submitting' ? 'Running\u2026' : 'Submit';
 
   return (
-    <section className="relative flex flex-col items-center bg-[#0b1220] px-4 sm:px-6 pt-8 sm:pt-12 pb-0">
+    <section className="relative flex flex-col items-center bg-[#0b1220] px-4 sm:px-6 pt-2 sm:pt-4 pb-0">
       {/* Mockup — peeks into the viewport, fades in on scroll */}
       <div
         ref={wrapperRef}
