@@ -1,7 +1,18 @@
 'use client';
 
-import { Trophy, Clock, ArrowRight, Plus, AlertCircle, RotateCw } from 'lucide-react';
+import { useState } from 'react';
+import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2 } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -45,6 +56,14 @@ export default function HistoryScreen({
   onViewSession,
   onRetryFeedback,
 }: HistoryScreenProps) {
+  const [errorDialogSessionId, setErrorDialogSessionId] = useState<string | null>(null);
+  const dialogSession = errorDialogSessionId
+    ? sessions.find(s => s.id === errorDialogSessionId) ?? null
+    : null;
+  const dialogErrorMessage = dialogSession && feedbackError?.sessionId === dialogSession.id
+    ? feedbackError.message
+    : null;
+
   const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
   const avgScore = completed.length > 0
     ? completed.reduce((sum, s) => sum + (s.overallScore ?? 0), 0) / completed.length
@@ -159,29 +178,34 @@ export default function HistoryScreen({
         <div className="space-y-2">
           {sessions.map(s => {
             const isPending = s.id === pendingFeedbackId;
-            const errorMsg = feedbackError?.sessionId === s.id ? feedbackError.message : null;
-            const inactive = isPending || !!errorMsg;
+            const hasError = feedbackError?.sessionId === s.id;
+
+            const handleClick = () => {
+              if (isPending) return;
+              if (hasError) {
+                setErrorDialogSessionId(s.id);
+                return;
+              }
+              onViewSession(s);
+            };
 
             return (
               <button
                 key={s.id}
-                onClick={() => onViewSession(s)}
-                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${inactive ? 'cursor-default' : 'hover:bg-white/[0.02]'}`}
+                onClick={handleClick}
+                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${isPending ? 'cursor-default' : 'hover:bg-white/[0.02]'}`}
                 style={{ background: 'rgba(255,255,255,0.015)', border: `1px solid ${BORDER}` }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     {isPending ? (
-                      <span className="flex items-center justify-center gap-1 w-10" aria-label="Analyzing">
-                        {[0, 1, 2].map(i => (
-                          <span
-                            key={i}
-                            className="w-1.5 h-1.5 rounded-full animate-pulse"
-                            style={{ background: 'rgba(96,165,250,0.75)', animationDelay: `${i * 180}ms` }}
-                          />
-                        ))}
+                      <span
+                        className="flex items-center justify-center w-10"
+                        aria-label="Analyzing"
+                      >
+                        <Loader2 size={18} className="animate-spin" style={{ color: 'rgba(96,165,250,0.85)' }} />
                       </span>
-                    ) : errorMsg ? (
+                    ) : hasError ? (
                       <span className="flex items-center justify-center w-10">
                         <AlertCircle size={18} style={{ color: 'rgba(248,113,113,0.85)' }} />
                       </span>
@@ -197,8 +221,8 @@ export default function HistoryScreen({
                         {s.status === 'in_progress' ? '…' : '—'}
                       </span>
                     )}
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[13px] font-medium text-zinc-200" style={SG}>
                           {formatDate(s.createdAt)}
                         </span>
@@ -211,55 +235,37 @@ export default function HistoryScreen({
                         >
                           {difficultyLabel(s.difficulty)}
                         </span>
+                        {isPending && (
+                          <Badge
+                            className="bg-blue-500/10 text-blue-300 border-blue-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            style={SG}
+                          >
+                            Analyzing
+                          </Badge>
+                        )}
+                        {hasError && (
+                          <Badge
+                            className="bg-red-500/10 text-red-300 border-red-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            style={SG}
+                          >
+                            Analysis failed
+                          </Badge>
+                        )}
                       </div>
-                      <p className="text-[12px] text-zinc-500 mt-0.5">
+                      <p className="text-[12px] text-zinc-500 mt-0.5 truncate">
                         {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
                       </p>
-                      {isPending && (
-                        <p className="text-[11px] text-zinc-500 mt-1.5" style={SG}>
-                          Analyzing… usually 20–40 seconds
-                        </p>
-                      )}
-                      {errorMsg && (
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <span className="text-[11px]" style={{ color: 'rgba(248,113,113,0.8)', ...SG }}>
-                            {errorMsg}
-                          </span>
-                          {onRetryFeedback && (
-                            <span
-                              role="button"
-                              tabIndex={0}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onRetryFeedback(s.id);
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  onRetryFeedback(s.id);
-                                }
-                              }}
-                              className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded text-zinc-300 hover:text-white transition-colors"
-                              style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...SG }}
-                            >
-                              <RotateCw size={10} />
-                              Retry
-                            </span>
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-zinc-600">
+                  <div className="flex items-center gap-3 text-zinc-600 shrink-0">
                     {s.timeUsedMs != null && (
                       <span className="flex items-center gap-1 text-[12px]" style={MONO}>
                         <Clock size={12} />
                         {formatTime(s.timeUsedMs)}
                       </span>
                     )}
-                    {!inactive && <ArrowRight size={14} />}
+                    {!isPending && <ChevronRight size={16} />}
                   </div>
                 </div>
               </button>
@@ -267,6 +273,50 @@ export default function HistoryScreen({
           })}
         </div>
       </div>
+
+      {/* Feedback error popup — small, keeps history visible behind */}
+      <Dialog
+        open={!!dialogSession}
+        onOpenChange={(open) => {
+          if (!open) setErrorDialogSessionId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2" style={SG}>
+              <AlertCircle size={16} style={{ color: 'rgba(248,113,113,0.9)' }} />
+              Analysis unavailable
+            </DialogTitle>
+            <DialogDescription className="text-[13px] text-zinc-400 leading-relaxed">
+              {dialogErrorMessage ?? 'We couldn\u2019t generate feedback for this session. Your code and results are still saved.'}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              className="h-9 text-[13px]"
+              style={SG}
+              onClick={() => setErrorDialogSessionId(null)}
+            >
+              Close
+            </Button>
+            {onRetryFeedback && dialogSession && (
+              <Button
+                className="h-9 text-[13px] bg-blue-600 hover:bg-blue-500 text-white gap-1.5"
+                style={SG}
+                onClick={() => {
+                  const id = dialogSession.id;
+                  setErrorDialogSessionId(null);
+                  onRetryFeedback(id);
+                }}
+              >
+                <RotateCw size={13} />
+                Retry analysis
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
