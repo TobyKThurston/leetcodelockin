@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { getSupabase } from '@/lib/supabase';
 import { getUserSubscription } from '@/lib/subscription';
 import { recordAiUsage } from '@/lib/subscription';
+import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -109,8 +110,8 @@ export async function generateReviewCards(
 
   const { output } = await generateText({
     model: openai('gpt-4o'),
-    system: SYSTEM_PROMPT,
-    prompt: `Problem: ${problem.title}\n\n${problem.description_md}\n\nStudent's accepted solution:\n${code}`,
+    system: `${SYSTEM_PROMPT}\n\n${INJECTION_GUARD}`,
+    prompt: `Problem: ${problem.title}\n\n${fenceUserContent('description', problem.description_md)}\n\nStudent's accepted solution:\n${fenceUserContent('code', code)}`,
     output: Output.object({ schema: reviewAiSchema }),
   });
 

@@ -4,6 +4,7 @@ import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
+import { INJECTION_GUARD, fenceUserContent, sanitizeUserText } from '@/lib/prompt-safety';
 
 const MAX_CODE_LENGTH = 10_000;
 const MAX_PROBLEM_LENGTH = 8_000;
@@ -70,22 +71,28 @@ export async function POST(req: NextRequest) {
     const { messages, problem: problemContext, code: codeContext } = parsed.data;
 
     const contextPrefix = [
-      problemContext && `PROBLEM:\n${problemContext}`,
-      codeContext && `STUDENT'S CURRENT CODE:\n\`\`\`python\n${codeContext}\n\`\`\``,
+      problemContext && `PROBLEM:\n${fenceUserContent('problem', problemContext)}`,
+      codeContext && `STUDENT'S CURRENT CODE:\n${fenceUserContent('code', codeContext)}`,
     ]
       .filter(Boolean)
       .join('\n\n');
+
+    const sanitizedMessages = messages.map((m) =>
+      m.role === 'user'
+        ? { role: 'user' as const, content: fenceUserContent('message', m.content) }
+        : { role: m.role, content: sanitizeUserText(m.content) },
+    );
 
     const modelMessages = [
       ...(contextPrefix
         ? ([{ role: 'system' as const, content: contextPrefix }])
         : []),
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ...sanitizedMessages,
     ];
 
     const { text } = await generateText({
       model: openai('gpt-4o'),
-      system: SYSTEM_PROMPT,
+      system: `${SYSTEM_PROMPT}\n\n${INJECTION_GUARD}`,
       messages: modelMessages,
     });
 

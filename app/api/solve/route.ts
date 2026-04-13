@@ -4,6 +4,7 @@ import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiRateLimit, recordAiUsage } from '@/lib/subscription';
+import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
 
 const MAX_PROBLEM_LENGTH = 8_000;
 const MAX_ATTEMPT_LENGTH = 10_000;
@@ -77,13 +78,15 @@ export async function POST(req: NextRequest) {
     }
     const { problem, attempt } = parsed.data;
 
-    const userPrompt = attempt?.trim()
-      ? `Problem:\n${problem}\n\nStudent's attempt:\n${attempt}\n\nAnalyze the attempt and guide the student toward the correct solution.`
-      : `Problem:\n${problem}\n\nNo attempt yet — guide the student from scratch.`;
+    const problemBlock = fenceUserContent('problem', problem);
+    const attemptBlock = attempt?.trim() ? fenceUserContent('attempt', attempt) : '';
+    const userPrompt = attemptBlock
+      ? `Problem:\n${problemBlock}\n\nStudent's attempt:\n${attemptBlock}\n\nAnalyze the attempt and guide the student toward the correct solution.`
+      : `Problem:\n${problemBlock}\n\nNo attempt yet — guide the student from scratch.`;
 
     const { output } = await generateText({
       model: openai('gpt-4o'),
-      system: SYSTEM_PROMPT,
+      system: `${SYSTEM_PROMPT}\n\n${INJECTION_GUARD}`,
       prompt: userPrompt,
       output: Output.object({ schema }),
     });

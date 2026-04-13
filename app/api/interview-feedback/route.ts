@@ -4,6 +4,7 @@ import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiRateLimit, getUserSubscription, recordAiUsage } from '@/lib/subscription';
+import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
 
 const MAX_CODE_LENGTH = 10_000;
 const MAX_DESCRIPTION_LENGTH = 8_000;
@@ -122,12 +123,11 @@ ${problems
     (p: { title: string; difficulty: string; pattern: string; descriptionMd: string }, i: number) => `
 --- PROBLEM ${i + 1}: ${p.title} (${p.difficulty}) ---
 Pattern: ${p.pattern}
-Description: ${p.descriptionMd}
+Description:
+${fenceUserContent('description', p.descriptionMd)}
 
 Candidate's code:
-\`\`\`python
-${submissions[i]?.code || '# No code submitted'}
-\`\`\`
+${fenceUserContent('code', submissions[i]?.code || '# No code submitted')}
 
 Test results: ${submissions[i]?.testsPassed ?? 0}/${submissions[i]?.testsTotal ?? 0} passed
 Time spent on this problem: ~${Math.round((submissions[i]?.timeSpentMs ?? 0) / 60000)} minutes
@@ -139,7 +139,7 @@ Evaluate this candidate's performance across both problems.`;
 
     const { output } = await generateText({
       model: openai('gpt-4o'),
-      system: SYSTEM_PROMPT,
+      system: `${SYSTEM_PROMPT}\n\n${INJECTION_GUARD}`,
       prompt: userPrompt,
       output: Output.object({ schema: feedbackSchema }),
     });
