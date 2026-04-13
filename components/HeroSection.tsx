@@ -24,20 +24,25 @@ export default function HeroSection() {
           style={{
             fontFamily: 'var(--font-space-grotesk), "Inter Tight", sans-serif',
             fontWeight: 700,
-            letterSpacing: '-0.035em',
-            lineHeight: 0.92,
-            fontSize: 'clamp(3rem, 9.5vw, 7.5rem)',
+            letterSpacing: '-0.03em',
+            lineHeight: 0.95,
+            fontSize: 'clamp(3.5rem, 11vw, 8.5rem)',
+            textShadow: '0 1px 0 rgba(255,255,255,0.06), 0 -1px 2px rgba(0,0,0,0.6)',
           }}
         >
-          <span
-            className="block animate-slam-in text-zinc-100"
-            style={{ animationDelay: '0ms' }}
-          >
+          <span className="block animate-slam-in" style={{ animationDelay: '0ms', color: '#e5e7eb' }}>
             LEETCODE
           </span>
           <span
-            className="block animate-slam-in text-blue-400"
-            style={{ animationDelay: '180ms' }}
+            className="block animate-slam-in"
+            style={{
+              animationDelay: '200ms',
+              backgroundImage: 'linear-gradient(180deg, #93c5fd 0%, #60a5fa 40%, #3b82f6 100%)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              color: 'transparent',
+            }}
           >
             LOCK IN
           </span>
