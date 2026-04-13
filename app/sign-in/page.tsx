@@ -53,9 +53,12 @@ export default async function SignInPage({
 }) {
   const user = await getSupabaseUser();
   const { next, mode: modeParam, error, message } = await searchParams;
+  // Upgrade flow: if the user was sent here to complete checkout, skip the
+  // onboarding questionnaire so they go straight to Stripe after sign-in.
+  const bypassOnboarding = next?.startsWith('/checkout') ?? false;
   if (user) {
     const onboarded = await hasCompletedOnboarding();
-    redirect(onboarded ? (next ?? '/dashboard') : '/onboarding');
+    redirect(onboarded || bypassOnboarding ? (next ?? '/dashboard') : '/onboarding');
   }
 
   const mode: Mode = modeParam === 'signup' ? 'signup' : 'signin';
@@ -102,7 +105,8 @@ export default async function SignInPage({
     }
 
     const onboarded = await hasCompletedOnboarding();
-    redirect(onboarded ? nextUrl : '/onboarding');
+    const bypassOnboarding = nextUrl.startsWith('/checkout');
+    redirect(onboarded || bypassOnboarding ? nextUrl : '/onboarding');
   }
 
   async function signUpWithPassword(formData: FormData) {

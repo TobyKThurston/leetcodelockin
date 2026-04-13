@@ -52,9 +52,12 @@ export async function GET(req: NextRequest) {
     return res;
   }
 
-  // Desktop flow unchanged.
+  // Desktop flow unchanged, except upgrade flow skips the onboarding
+  // questionnaire so clicking "Upgrade" on the landing page takes the user
+  // straight to Stripe after sign-in.
+  const bypassOnboarding = next.startsWith('/checkout');
   const onboarded = await hasCompletedOnboarding();
-  if (!onboarded) {
+  if (!onboarded && !bypassOnboarding) {
     return NextResponse.redirect(new URL('/onboarding', req.url));
   }
   return NextResponse.redirect(new URL(next, req.url));
