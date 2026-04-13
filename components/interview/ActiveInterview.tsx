@@ -91,6 +91,7 @@ const EDITOR_OPTIONS = {
   fontLigatures: true,
   lineHeight: 20,
   minimap:              { enabled: false },
+  stickyScroll:         { enabled: false },
   scrollBeyondLastLine: false,
   padding:              { top: 16, bottom: 16 },
   renderLineHighlight:  'line'  as const,
