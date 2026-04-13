@@ -17,7 +17,7 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto w-full">
+      <div className="relative max-w-6xl mx-auto w-full text-center">
         {/* Headline */}
         <h1
           className="text-white select-none uppercase"
@@ -50,7 +50,7 @@ export default function HeroSection() {
 
         {/* Subtext */}
         <p
-          className="mt-6 max-w-xl text-[15px] sm:text-base leading-relaxed text-slate-400/90 animate-fade-up"
+          className="mt-6 max-w-xl mx-auto text-[15px] sm:text-base leading-relaxed text-slate-400/90 animate-fade-up"
           style={{ animationDelay: '420ms' }}
         >
           Stop memorizing solutions. Learn how to think through every problem,
@@ -59,7 +59,7 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <div
-          className="mt-8 flex flex-wrap items-center gap-3 animate-fade-up"
+          className="mt-8 flex flex-wrap items-center justify-center gap-3 animate-fade-up"
           style={{ animationDelay: '560ms' }}
         >
           <Link

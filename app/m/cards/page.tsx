@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default function MobileCardsPage() {
-  return <FlashcardDeck cards={QUICK_CARDS} />;
+  return <FlashcardDeck cards={QUICK_CARDS.slice(0, 10)} />;
 }
