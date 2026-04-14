@@ -12,16 +12,12 @@ export const DP_1D_PROBLEMS: ProblemContent[] = [
     pattern: 'Dynamic Programming',
     tags: ['dp'],
     descriptionMd: `You are climbing a staircase that has \`n\` steps. On each move you may take **either
-1 or 2 steps**. Return the number of distinct sequences of moves that reach the top.
-
-This is the simplest possible DP problem: \`ways(n) = ways(n - 1) + ways(n - 2)\`, with the
-base cases \`ways(1) = 1\` and \`ways(2) = 2\`. The recurrence is identical to the Fibonacci
-sequence shifted by one.`,
+1 or 2 steps**. Return the number of distinct sequences of moves that reach the top.`,
     examples: [
       {
         input: 'n = 5',
         output: '8',
-        explanation: 'The Fibonacci-style count: ways(5) = ways(4) + ways(3) = 5 + 3 = 8.',
+        explanation: 'There are 8 distinct sequences: 1+1+1+1+1, 2+1+1+1, 1+2+1+1, 1+1+2+1, 1+1+1+2, 2+2+1, 2+1+2, 1+2+2.',
       },
       {
         input: 'n = 1',
@@ -88,16 +84,12 @@ sequence shifted by one.`,
     descriptionMd: `You are given an integer array \`cost\` where \`cost[i]\` is the cost of stepping
 on stair \`i\`. Once you pay the cost of a stair, you may move either **one or two** stairs
 up. You can start at either stair 0 or stair 1. Return the **minimum total cost** required
-to reach the top of the staircase (the position just past the last stair).
-
-The recurrence is \`dp[i] = cost[i] + min(dp[i - 1], dp[i - 2])\`, and the answer is
-\`min(dp[n - 1], dp[n - 2])\`. Since you only ever need the last two values, \`O(1)\`
-memory is enough.`,
+to reach the top of the staircase (the position just past the last stair).`,
     examples: [
       {
         input: 'cost = [2, 5, 3]',
         output: '5',
-        explanation: 'Start at 1 (pay 5), step two to the top — total 5.',
+        explanation: 'Start at stair 1 (pay 5), step two to reach the top. Total cost is 5.',
       },
       {
         input: 'cost = [10, 15, 20]',
@@ -170,10 +162,7 @@ memory is enough.`,
     descriptionMd: `You are a thief planning to rob houses along a street. Each house holds
 \`nums[i]\` dollars, but **adjacent houses are wired to the same alarm system** — robbing
 two adjacent houses on the same night triggers the police. Return the **maximum amount of
-money** you can rob in one night without alerting the police.
-
-The recurrence is \`dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])\`. You only need the last
-two values.`,
+money** you can rob in one night without alerting the police.`,
     examples: [
       {
         input: 'nums = [2, 7, 9, 3, 1]',
@@ -248,11 +237,8 @@ two values.`,
     pattern: 'DP',
     tags: ['dp'],
     descriptionMd: `Same setup as "House Robber", but now the houses are arranged in a **circle** —
-the first and last houses are also adjacent. Return the maximum money you can rob without
-triggering the alarm.
-
-The trick: run the linear House Robber twice, once on \`nums[0..n-2]\` (exclude the last
-house) and once on \`nums[1..n-1]\` (exclude the first), and take the larger answer.`,
+the first and last houses are also adjacent, so you cannot rob both of them. Return the
+maximum amount of money you can rob in one night without triggering the alarm.`,
     examples: [
       {
         input: 'nums = [2, 3, 2]',
@@ -315,9 +301,7 @@ house) and once on \`nums[1..n-1]\` (exclude the first), and take the larger ans
     pattern: 'DP',
     tags: ['dp', 'math'],
     descriptionMd: `Return the \`n\`-th Fibonacci number, defined by \`F(0) = 0\`, \`F(1) = 1\`, and
-\`F(n) = F(n - 1) + F(n - 2)\` for \`n >= 2\`.
-
-The iterative \`O(n)\` loop using two rolling variables is the standard solution.`,
+\`F(n) = F(n - 1) + F(n - 2)\` for \`n >= 2\`.`,
     examples: [
       {
         input: 'n = 10',
@@ -389,11 +373,7 @@ The iterative \`O(n)\` loop using two rolling variables is the standard solution
     descriptionMd: `You are given an integer array \`nums\`. You may repeatedly pick any value \`v\`
 still present in \`nums\` and earn \`v\` points for each copy of \`v\` you remove — but
 doing so forces you to also delete **every copy** of \`v - 1\` and \`v + 1\`. Return the
-**maximum points** you can earn across all such operations.
-
-Reduce the problem to House Robber: build an array \`pts[v] = v * count[v]\`, and find the
-max subset sum where no two chosen indices are adjacent. Use the standard
-\`pick\` / \`skip\` DP.`,
+**maximum points** you can earn across all such operations.`,
     examples: [
       {
         input: 'nums = [3, 4, 2]',
@@ -455,16 +435,12 @@ max subset sum where no two chosen indices are adjacent. Use the standard
     pattern: 'DP',
     tags: ['dp', 'array'],
     descriptionMd: `Given an integer array \`nums\`, return the **largest product** of any contiguous
-non-empty subarray.
-
-The trick with signed products: negative numbers can turn a large negative product into a
-large positive one. So track both the **max** and **min** product ending at each index, and
-when you see a negative \`nums[i]\` the new max comes from the old **min**.`,
+non-empty subarray.`,
     examples: [
       {
         input: 'nums = [-2, -3, 4]',
         output: '24',
-        explanation: 'Taking the whole array gives (-2) * (-3) * 4 = 24.',
+        explanation: 'The whole array [-2, -3, 4] has product (-2) * (-3) * 4 = 24.',
       },
       {
         input: 'nums = [2, -5, 3]',
@@ -524,10 +500,7 @@ when you see a negative \`nums[i]\` the new max comes from the old **min**.`,
     tags: ['dp', 'string'],
     descriptionMd: `Given a string \`s\` and a list of dictionary words \`wordDict\`, return \`True\` if
 \`s\` can be segmented into a space-separated sequence of one or more words from
-\`wordDict\`. A word may be reused any number of times.
-
-The classic DP: \`dp[i] = True\` if the prefix \`s[0..i]\` can be segmented, which holds
-whenever there's some \`j < i\` with \`dp[j]\` true and \`s[j..i]\` in \`wordDict\`.`,
+\`wordDict\`. A word may be reused any number of times.`,
     examples: [
       {
         input: 's = "applepenapple", wordDict = ["apple", "pen"]',
@@ -614,11 +587,9 @@ whenever there's some \`j < i\` with \`dp[j]\` true and \`s[j..i]\` in \`wordDic
     pattern: 'DP',
     tags: ['dp', 'array'],
     descriptionMd: `Given an integer array \`nums\`, return the length of the longest **strictly
-increasing subsequence** (the chosen elements don't need to be contiguous in \`nums\`).
-
-The simple \`O(n^2)\` DP: \`dp[i] = 1 + max(dp[j] for j < i if nums[j] < nums[i])\`, or 1
-if no such \`j\` exists. An \`O(n log n)\` approach uses patience sorting with a tails
-array maintained by binary search.`,
+increasing subsequence**. A subsequence is derived by deleting some or no elements from
+\`nums\` without changing the order of the remaining elements; the chosen elements don't
+need to be contiguous.`,
     examples: [
       {
         input: 'nums = [1, 3, 2, 4]',
@@ -700,16 +671,12 @@ class Solution:
     tags: ['dp'],
     descriptionMd: `You are given a list of coin denominations \`coins\` and a target \`amount\`.
 Return the **fewest** coins needed to make up \`amount\` (you may use each coin an unlimited
-number of times). If it cannot be done, return \`-1\`.
-
-The standard DP builds \`dp[i]\` = fewest coins for amount \`i\`, initialised to infinity
-with \`dp[0] = 0\`, and relaxes as
-\`dp[i] = min(dp[i], dp[i - c] + 1)\` for every coin \`c\`.`,
+number of times). If it cannot be done, return \`-1\`.`,
     examples: [
       {
         input: 'coins = [1, 2, 5], amount = 11',
         output: '3',
-        explanation: '5 + 5 + 1 = 11 with three coins.',
+        explanation: '11 = 5 + 5 + 1 uses three coins.',
       },
       {
         input: 'coins = [2], amount = 3',
@@ -788,11 +755,7 @@ with \`dp[0] = 0\`, and relaxes as
     tags: ['dp', 'string'],
     descriptionMd: `A digit string \`s\` is encoded using the mapping \`A = "1"\`, \`B = "2"\`, ...,
 \`Z = "26"\`. Return the **number of distinct ways** to decode \`s\`. If \`s\` contains a
-\`'0'\` that can't be part of a valid 10..26 pair, the answer is \`0\`.
-
-The DP is Fibonacci-like: \`dp[i]\` is the number of decodings for \`s[0..i-1]\`. At each
-index, add \`dp[i - 1]\` if \`s[i - 1] != '0'\` and \`dp[i - 2]\` if \`s[i - 2..i]\` is
-between \`10\` and \`26\`.`,
+\`'0'\` that can't be part of a valid \`10\`..\`26\` pair, the answer is \`0\`.`,
     examples: [
       {
         input: 's = "226"',
@@ -883,11 +846,7 @@ between \`10\` and \`26\`.`,
     pattern: 'DP',
     tags: ['dp', 'math'],
     descriptionMd: `Given a positive integer \`n\`, return the **least number** of perfect-square
-integers (\`1, 4, 9, 16, ...\`) whose sum equals \`n\`.
-
-The DP is \`dp[i] = 1 + min(dp[i - j * j] for j from 1 while j * j <= i)\`, with
-\`dp[0] = 0\`. (Lagrange's four-square theorem says the answer is always 1, 2, 3, or 4 —
-useful for sanity checks.)`,
+integers (\`1, 4, 9, 16, ...\`) whose sum equals \`n\`.`,
     examples: [
       {
         input: 'n = 12',
@@ -979,13 +938,12 @@ useful for sanity checks.)`,
 - \`T_2 = 1\`
 - For \`n >= 0\`: \`T_{n+3} = T_n + T_{n+1} + T_{n+2}\`
 
-Given a non-negative integer \`n\`, return \`T_n\`. The naive recursion is exponential —
-use a rolling window of the last three values for a constant-space \`O(n)\` solution.`,
+Given a non-negative integer \`n\`, return \`T_n\`.`,
     examples: [
       {
         input: 'n = 4',
         output: '4',
-        explanation: 'T_3 = 0+1+1 = 2, T_4 = 1+1+2 = 4.',
+        explanation: 'T_3 = 0 + 1 + 1 = 2, T_4 = 1 + 1 + 2 = 4.',
       },
       {
         input: 'n = 25',
@@ -1044,9 +1002,7 @@ use a rolling window of the last three values for a constant-space \`O(n)\` solu
 **Pascal's Triangle**. In Pascal's Triangle, each number is the sum of the two directly
 above it, with the outermost entries of every row equal to \`1\`.
 
-Row 0 is \`[1]\`, row 1 is \`[1, 1]\`, row 2 is \`[1, 2, 1]\`, and so on. The classic build
-is bottom-up: start from the previous row, slide a window of width two, and sandwich the
-result between two ones.`,
+Row 0 is \`[1]\`, row 1 is \`[1, 1]\`, row 2 is \`[1, 2, 1]\`, and so on.`,
     examples: [
       {
         input: 'numRows = 5',

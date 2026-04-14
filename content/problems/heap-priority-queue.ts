@@ -11,14 +11,14 @@ export const HEAP_PRIORITY_QUEUE_PROBLEMS: ProblemContent[] = [
     difficulty: 'Easy',
     pattern: 'Min Heap',
     tags: ['heap', 'design'],
-    descriptionMd: `Design a class \`KthLargest\` that tracks the \`k\`-th largest element in a stream
-of integers. The constructor is given \`k\` and an initial list \`nums\`; each call to
-\`add(val)\` inserts \`val\` and then returns the current \`k\`-th largest value across
-everything seen so far.
+    descriptionMd: `Design a class \`KthLargest\` to find the \`k\`-th largest element in a stream
+of integers. Note that this is the \`k\`-th largest element in sorted order, not the
+\`k\`-th distinct element.
 
-The idiomatic solution keeps a **min-heap of size exactly \`k\`**. On every \`add\`, push
-the value; if the heap has more than \`k\` items, pop the smallest; the top is then the
-answer.
+- \`KthLargest(k, nums)\` — initialise the object with the integer \`k\` and the stream of
+  integers \`nums\`.
+- \`add(val)\` — append \`val\` to the stream and return the \`k\`-th largest element
+  across all elements seen so far.
 
 Expose the class behaviour through a driver \`runKthLargestOps(k, nums, ops, vals)\` that
 constructs the class and runs every operation in order.`,
@@ -113,12 +113,16 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'Max Heap',
     tags: ['heap', 'array'],
-    descriptionMd: `You are given an array \`stones\` of positive integer weights. Repeatedly do
-the following: take the **two heaviest** stones, smash them, and put back a single stone of
-weight \`|a - b|\` (or nothing if they were equal). Return the weight of the single stone
-left at the end, or \`0\` if no stones remain.
+    descriptionMd: `You are given an array \`stones\` of positive integer weights. On each turn,
+choose the **two heaviest** stones and smash them together. Let their weights be \`a\` and
+\`b\` with \`a >= b\`. Then:
 
-A max-heap lets you always peek at the two largest in \`O(log n)\` per round.`,
+- If \`a == b\`, both stones are destroyed.
+- If \`a != b\`, the stone of weight \`b\` is destroyed and the stone of weight \`a\` has
+  its weight replaced with \`a - b\`.
+
+At the end, there is **at most one** stone remaining. Return the weight of that stone, or
+\`0\` if no stones remain.`,
     examples: [
       {
         input: 'stones = [10, 4, 6]',
@@ -184,12 +188,11 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['heap', 'array', 'quickselect'],
-    descriptionMd: `Given an unsorted integer array \`nums\` and an integer \`k\`, return the
-\`k\`-th **largest** element in the array. Note that this is the \`k\`-th largest value in
-**sorted order**, not the \`k\`-th distinct value.
+    descriptionMd: `Given an integer array \`nums\` and an integer \`k\`, return the \`k\`-th
+**largest** element in the array.
 
-A size-\`k\` min-heap gives an \`O(n log k)\` solution; quickselect runs in expected
-\`O(n)\`. Either is acceptable.`,
+Note that it is the \`k\`-th largest element in **sorted order**, not the \`k\`-th distinct
+element.`,
     examples: [
       {
         input: 'nums = [1, 5, 3, 2, 4], k = 3',
@@ -261,12 +264,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['heap', 'array', 'geometry'],
-    descriptionMd: `Given an array \`points\` where \`points[i] = [x, y]\` and an integer \`k\`, return
-the \`k\` points with the **smallest Euclidean distance** from the origin \`(0, 0)\`. You
-may return them in any order.
+    descriptionMd: `Given an array \`points\` where \`points[i] = [x, y]\` representing points on
+the X-Y plane, and an integer \`k\`, return the \`k\` **closest** points to the origin
+\`(0, 0)\`.
 
-A size-\`k\` max-heap keyed on squared distance works in \`O(n log k)\`. You don't need to
-take a square root — \`x^2 + y^2\` is monotone in the real distance.`,
+Distance is measured as the Euclidean distance \`sqrt(x^2 + y^2)\`. You may return the
+answer in **any order**; the answer is guaranteed to be unique (except for the order).`,
     examples: [
       {
         input: 'points = [[1, 1], [2, 2], [3, 3]], k = 2',
@@ -340,12 +343,11 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['heap', 'hash-map', 'sorting'],
-    descriptionMd: `Given an array of strings \`words\` and an integer \`k\`, return the \`k\` most
-frequent words. The result must be sorted **first by frequency descending**, then by
-**alphabetical order ascending** to break ties.
+    descriptionMd: `Given an array of strings \`words\` and an integer \`k\`, return the \`k\`
+**most frequent** strings.
 
-A hash map of counts plus sorting runs in \`O(n log n)\`; a size-\`k\` heap keyed on
-\`(-count, word)\` runs in \`O(n log k)\` but needs a careful comparator.`,
+Return the answer sorted by frequency **from highest to lowest**. Break ties by
+**lexicographical order**.`,
     examples: [
       {
         input: 'words = ["apple","banana","apple","cherry","banana","apple"], k = 2',
@@ -414,13 +416,11 @@ A hash map of counts plus sorting runs in \`O(n log n)\`; a size-\`k\` heap keye
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['heap', 'matrix', 'binary-search'],
-    descriptionMd: `You are given an \`n x n\` integer matrix \`matrix\` where **each row and each
-column is sorted in ascending order**, and an integer \`k\`. Return the \`k\`-th smallest
-value in the matrix (using the global sort order, not the \`k\`-th smallest distinct value).
+    descriptionMd: `Given an \`n x n\` integer \`matrix\` where **each row and each column is
+sorted in ascending order**, return the \`k\`-th smallest element in the matrix.
 
-A heap-based solution pops \`(val, r, c)\` entries starting from \`(0, 0)\` and pushes the
-right/down neighbours as it goes, \`k\` times. A binary search on the value range is even
-faster but trickier.`,
+Note that it is the \`k\`-th smallest element in the **sorted order**, not the \`k\`-th
+distinct element.`,
     examples: [
       {
         input: 'matrix = [[1, 2], [3, 4]], k = 3',
@@ -485,14 +485,15 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Greedy + Heap',
     tags: ['heap', 'greedy', 'hash-map'],
-    descriptionMd: `You are given a list of task labels \`tasks\` and an integer \`n\`. Each task takes
-one time unit; between two executions of the **same** task there must be at least \`n\`
-idle units (or any other tasks). Return the minimum number of time units needed to finish
-all tasks.
+    descriptionMd: `You are given an array of CPU \`tasks\`, each represented by a letter, and a
+non-negative integer \`n\`. Each task takes one unit of time to complete. At each unit of
+time, the CPU can either complete one task or stay idle.
 
-The closed-form greedy answer is:
-\`max(len(tasks), (max_count - 1) * (n + 1) + number_of_tasks_with_max_count)\`.
-A heap-based simulation also works and is often what the pattern tag refers to.`,
+However, there is a cooldown: two executions of the **same** task must be separated by at
+least \`n\` units of time (during which the CPU can run other tasks or stay idle).
+
+Return the **minimum number of time units** the CPU will take to finish all the given
+tasks.`,
     examples: [
       {
         input: 'tasks = ["A","A","A","B","B"], n = 2',
@@ -554,17 +555,13 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Greedy + Heap',
     tags: ['heap', 'greedy', 'string'],
-    descriptionMd: `Given a string \`s\`, rearrange its characters so that **no two adjacent
-characters are the same**. Return any valid reordering, or the empty string \`""\` if no
-valid reordering exists.
+    descriptionMd: `Given a string \`s\`, rearrange the characters of \`s\` so that **no two
+adjacent characters are the same**. Return any valid reordering, or return the empty string
+\`""\` if no valid reordering exists.
 
 > Note: there may be more than one valid answer. Our tests pick inputs whose canonical
-> max-heap output is uniquely determined (or trivially \`""\` / unchanged), so any correct
-> heap-based implementation matches.
-
-The greedy algorithm: repeatedly pop the two most-common remaining letters, append both,
-decrement their counts, push them back. If the top letter's count is ever more than
-\`(n + 1) // 2\` at the start, the answer is impossible.`,
+> output is uniquely determined (or trivially \`""\` / unchanged), so any correct
+> implementation matches.`,
     examples: [
       {
         input: 's = "aab"',
@@ -642,15 +639,14 @@ class Solution:
     difficulty: 'Hard',
     pattern: 'Two Heaps',
     tags: ['heap', 'design'],
-    descriptionMd: `Design a class \`MedianFinder\` supporting:
+    descriptionMd: `The **median** is the middle value in an ordered integer list. If the size
+of the list is even, there is no middle value, and the median is the average of the two
+middle values.
 
-- \`addNum(num)\` — add \`num\` to the stream.
-- \`findMedian()\` — return the median of all numbers seen so far, as a float.
+Design a class \`MedianFinder\` supporting:
 
-The canonical \`O(log n)\` solution keeps two heaps: a **max-heap** \`lower\` of the smaller
-half and a **min-heap** \`upper\` of the larger half, balanced so their sizes differ by at
-most one. The median is either the top of \`lower\` (odd total) or the average of the two
-tops (even total).
+- \`addNum(num)\` — add the integer \`num\` from the data stream to the data structure.
+- \`findMedian()\` — return the median of all elements so far, as a float.
 
 Expose the class through a driver \`runMedianOps(ops, vals)\`.`,
     examples: [
@@ -750,12 +746,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['heap', 'array'],
-    descriptionMd: `You are given two sorted integer arrays \`nums1\` and \`nums2\` and an integer
-\`k\`. Return \`k\` pairs \`[a, b]\` (\`a\` from \`nums1\`, \`b\` from \`nums2\`) with the
-**smallest sums**. Return the pairs in any order.
+    descriptionMd: `You are given two integer arrays \`nums1\` and \`nums2\` sorted in
+non-decreasing order and an integer \`k\`.
 
-A min-heap seeded with the \`k\` pairs \`(nums1[0] + nums2[j], 0, j)\` works; every pop
-inserts the neighbour \`(i + 1, j)\` once.`,
+Define a pair \`[u, v]\` which consists of one element from \`nums1\` and one element from
+\`nums2\`. Return the \`k\` pairs \`[u_1, v_1], [u_2, v_2], ...\` with the **smallest sums**.
+You may return the pairs in any order.`,
     examples: [
       {
         input: 'nums1 = [1, 2], nums2 = [3], k = 2',
@@ -825,15 +821,14 @@ class Solution:
     difficulty: 'Hard',
     pattern: 'Greedy + Heap',
     tags: ['heap', 'greedy'],
-    descriptionMd: `You are a startup running projects. You have current capital \`w\`, and you can
-undertake at most \`k\` projects. Each project \`i\` requires at least \`capital[i]\` capital
-to start and rewards you with \`profits[i]\` (added to your capital) when finished. Return
-the maximum capital you can accumulate after completing at most \`k\` projects.
+    descriptionMd: `Suppose your startup wants to do an IPO. You have \`w\` initial capital and
+can complete at most \`k\` distinct projects before the IPO. Each project \`i\` requires at
+least \`capital[i]\` capital to start and, once completed, rewards you with \`profits[i]\`
+(added to your total capital).
 
-The greedy-with-two-heaps solution keeps: (1) a min-heap of "projects sorted by required
-capital" for fast lookup of newly-affordable projects, and (2) a max-heap of profits for the
-most lucrative affordable project. Each round transfers newly-affordable projects from (1)
-to (2), then pops the best profit.`,
+Pick a list of at most \`k\` distinct projects to **maximize your final capital**, and
+return this maximized capital. Once you complete a project, you cannot complete it again,
+and the profit is added to your capital so it can be used to fund subsequent projects.`,
     examples: [
       {
         input: 'k = 2, w = 0, profits = [1, 2, 3], capital = [0, 1, 1]',
@@ -904,17 +899,20 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'Heap / Sorting',
     tags: ['array', 'heap', 'sorting'],
-    descriptionMd: `You are given \`score\` — an array of unique integers representing the
-scores of \`n\` athletes. Return an array \`answer\` where \`answer[i]\` is the **rank
-label** for the \`i\`-th athlete, formatted as follows:
+    descriptionMd: `You are given an integer array \`score\` of size \`n\`, where \`score[i]\` is
+the score of the \`i\`-th athlete in a competition. All the scores are **unique**.
 
-- The athlete with the **highest** score gets \`"Gold Medal"\`.
-- The athlete with the **second highest** score gets \`"Silver Medal"\`.
-- The athlete with the **third highest** score gets \`"Bronze Medal"\`.
-- Every other athlete gets the string form of their placement (\`"4"\`, \`"5"\`, …).
+The athletes are placed based on their scores, where the \`1\`st place athlete has the
+highest score, the \`2\`nd place athlete has the second highest, and so on. The placement
+of each athlete determines their **rank label**:
 
-A max-heap of \`(score, original_index)\` pairs makes popping the top-three podium
-finishers extremely natural, but a straight sort works too.`,
+- The \`1\`st place athlete's rank is \`"Gold Medal"\`.
+- The \`2\`nd place athlete's rank is \`"Silver Medal"\`.
+- The \`3\`rd place athlete's rank is \`"Bronze Medal"\`.
+- For the \`i\`-th place athlete (\`i > 3\`), their rank is the string \`"i"\`.
+
+Return an array \`answer\` of size \`n\` where \`answer[i]\` is the rank label for the
+\`i\`-th athlete.`,
     examples: [
       {
         input: 'score = [5, 4, 3, 2, 1]',

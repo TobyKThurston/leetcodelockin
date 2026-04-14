@@ -13,20 +13,17 @@ export const TWO_POINTERS_PROBLEMS: ProblemContent[] = [
     tags: ['string', 'two-pointers'],
     descriptionMd: `Given a string \`s\`, return \`True\` if it reads the same forwards and backwards
 **after dropping every character that is not a letter or digit, and lowercasing the rest**.
-Otherwise return \`False\`.
-
-The cleanest solution uses two pointers — one moving in from each end — that skip past any
-character that is not alphanumeric and compare the rest case-insensitively.`,
+Otherwise return \`False\`.`,
     examples: [
       {
         input: 's = "Step on no pets!"',
         output: 'True',
-        explanation: 'Cleaned string is "steponnopets" which is a palindrome.',
+        explanation: 'After cleaning, the string is "steponnopets", which reads the same forwards and backwards.',
       },
       {
         input: 's = "robot"',
         output: 'False',
-        explanation: '"robot" reversed is "tobor", which is different.',
+        explanation: '"robot" reversed is "tobor", which differs.',
       },
     ],
     constraints: [
@@ -92,8 +89,7 @@ character that is not alphanumeric and compare the rest case-insensitively.`,
     descriptionMd: `Given a list of characters \`s\`, reverse the order of the elements and return the
 resulting list.
 
-The textbook approach uses two pointers (one at the start, one at the end) that swap characters
-as they move toward each other. You should aim for **O(1)** extra memory beyond the input.
+You must do this by modifying the input array in place with **O(1)** extra memory.
 
 > Note: LeetCode asks you to mutate the list in place. To make our test runner happy, please
 > also \`return\` the (now reversed) list at the end.`,
@@ -155,10 +151,6 @@ as they move toward each other. You should aim for **O(1)** extra memory beyond 
     descriptionMd: `Given an integer array \`nums\`, push every zero to the end of the array while keeping
 the relative order of the non-zero elements unchanged. Return the resulting array.
 
-The two-pointer trick: a write pointer that always points at the next slot for a non-zero
-value, and a read pointer that scans every element. After the scan, fill the remaining slots
-with zeros.
-
 > Note: LeetCode asks you to mutate the list in place. To make our test runner happy, please
 > also \`return\` the (now updated) list at the end.`,
     examples: [
@@ -218,11 +210,7 @@ with zeros.
     tags: ['array', 'two-pointers'],
     descriptionMd: `You are given an integer array \`nums\` that is sorted in **non-decreasing** order
 (it may contain negatives). Return a new array containing the squares of each element, also
-sorted in non-decreasing order.
-
-The brute force is to square each element and sort the result in \`O(n log n)\`. The optimal
-approach uses two pointers — one at each end — and fills the result from the back, since the
-largest square always lives at one of the two ends.`,
+sorted in non-decreasing order.`,
     examples: [
       {
         input: 'nums = [-6, -3, 1, 2, 5]',
@@ -299,13 +287,12 @@ largest square always lives at one of the two ends.`,
 non-decreasing order, and a target integer \`target\`. Return the **two 1-indexed positions**
 \`[i, j]\` (with \`i < j\`) such that \`numbers[i] + numbers[j] == target\`.
 
-You may assume there is exactly one such pair. Because the array is sorted, the two-pointer
-sweep from both ends takes \`O(n)\` time and \`O(1)\` extra memory.`,
+You may assume there is exactly one such pair, and you may not use the same element twice.`,
     examples: [
       {
         input: 'numbers = [2, 4, 7, 11, 15], target = 18',
         output: '[3, 4]',
-        explanation: 'numbers[3] + numbers[4] = 7 + 11 = 18 (1-indexed).',
+        explanation: 'numbers[3] + numbers[4] = 7 + 11 = 18 (using 1-indexed positions).',
       },
       {
         input: 'numbers = [1, 3], target = 4',
@@ -367,15 +354,12 @@ drawn at position \`i\` on a flat surface. Pick **two of these lines** that, tog
 x-axis, form a container holding the maximum possible amount of water.
 
 Return the area of that container. The area between two lines at positions \`i\` and \`j\` is
-\`(j - i) * min(height[i], height[j])\`.
-
-The two-pointer approach starts at both ends and always moves the **shorter** side inward,
-because moving the taller side inward can only shrink the area.`,
+\`(j - i) * min(height[i], height[j])\`.`,
     examples: [
       {
         input: 'height = [4, 1, 2, 8, 3, 5, 6]',
         output: '24',
-        explanation: 'Pick the lines at positions 0 and 6: width 6, min height 4, area 24.',
+        explanation: 'The lines at positions 0 and 6 give width 6 and min height 4, for area 24.',
       },
       {
         input: 'height = [1, 1]',
@@ -452,10 +436,7 @@ order.
 
 On LeetCode this problem asks you to return the new length \`k\` and mutate the input so that
 the first \`k\` entries hold the distinct values. Our grader instead checks the list you return,
-so please return the deduplicated list directly.
-
-The two-pointer technique walks a read pointer through every element and a write pointer that
-only advances when the read pointer finds a value different from the previous unique value.`,
+so please return the deduplicated list directly.`,
     examples: [
       {
         input: 'nums = [2, 4, 4, 6, 6, 6, 9]',
@@ -517,13 +498,12 @@ only advances when the read pointer finds a value different from the previous un
     descriptionMd: `Given an integer array \`nums\`, return every **unique triplet** \`[a, b, c]\` of
 values (not indices) drawn from \`nums\` such that \`a + b + c == 0\`.
 
+The same triplet of values must not appear twice in the result.
+
 To make grading deterministic, please:
 
 1. Sort each inner triplet in non-decreasing order.
-2. Sort the outer list of triplets lexicographically.
-
-The standard approach sorts the array, then for each index \`i\` runs a two-pointer sweep on
-the suffix looking for pairs summing to \`-nums[i]\`, skipping duplicates at every level.`,
+2. Sort the outer list of triplets lexicographically.`,
     examples: [
       {
         input: 'nums = [-4, -1, -1, 0, 1, 2]',
@@ -600,13 +580,12 @@ the suffix looking for pairs summing to \`-nums[i]\`, skipping duplicates at eve
     descriptionMd: `Given an integer array \`nums\` and an integer \`target\`, return every **unique
 quadruplet** \`[a, b, c, d]\` of values drawn from \`nums\` whose sum equals \`target\`.
 
+The same quadruplet of values must not appear twice in the result.
+
 To make grading deterministic, please:
 
 1. Sort each inner quadruplet in non-decreasing order.
-2. Sort the outer list lexicographically.
-
-The usual approach generalises 3Sum: sort the array, then loop over the first two indices and
-run a two-pointer sweep on the remaining suffix, skipping duplicates at every level.`,
+2. Sort the outer list lexicographically.`,
     examples: [
       {
         input: 'nums = [1, 2, 3, 4, 5], target = 10',
@@ -688,9 +667,7 @@ run a two-pointer sweep on the remaining suffix, skipping duplicates at every le
 \`2\`. Sort the array so that all \`0\`s come first, then all \`1\`s, then all \`2\`s, and
 return the sorted list.
 
-The classic one-pass solution is the Dutch National Flag algorithm: three pointers (\`lo\`,
-\`mid\`, \`hi\`) that partition the array into "zeros / ones / unknown / twos" regions. You
-should aim for **O(1)** extra memory beyond the input.
+You must solve this without using a library sort function.
 
 > Note: LeetCode asks you to mutate the list in place. To make our test runner happy, please
 > also \`return\` the (now sorted) list at the end.`,
@@ -774,16 +751,12 @@ should aim for **O(1)** extra memory beyond the input.
     tags: ['array', 'two-pointers', 'dp'],
     descriptionMd: `You are given an array \`height\` of non-negative integers where \`height[i]\` is the
 height of a bar one unit wide at position \`i\`. After it rains, water pools between the bars.
-Return the **total units of water** that would be trapped.
-
-The water above each position is bounded by the taller of the highest bar to its left and the
-highest bar to its right. The two-pointer solution walks from both ends, always advancing the
-shorter side and accumulating water based on the running maximum on that side.`,
+Return the **total units of water** that would be trapped.`,
     examples: [
       {
         input: 'height = [3, 0, 1, 0, 2]',
         output: '5',
-        explanation: 'Water above the interior positions: 2 + 1 + 2 = 5.',
+        explanation: 'Water pools above the interior positions: 2 + 1 + 2 = 5 units.',
       },
       {
         input: 'height = [4, 1, 3, 2, 5]',
@@ -878,11 +851,7 @@ carry. **Every boat can carry at most two people** at a time, and their combined
 not exceed \`limit\`.
 
 Return the **minimum number of boats** needed to rescue everyone. You may assume each person's
-weight is at most \`limit\`.
-
-The greedy two-pointer approach: sort the array and use pointers \`i\` (lightest remaining)
-and \`j\` (heaviest remaining). If \`people[i] + people[j] <= limit\` the two share a boat;
-otherwise the heavy person goes alone. Advance pointers and repeat.`,
+weight is at most \`limit\`.`,
     examples: [
       {
         input: 'people = [4, 2, 1], limit = 4',
@@ -892,7 +861,7 @@ otherwise the heavy person goes alone. Advance pointers and repeat.`,
       {
         input: 'people = [5, 5, 5, 5], limit = 5',
         output: '4',
-        explanation: 'Nobody can share a boat, so each person needs their own.',
+        explanation: 'Every person weighs the full limit, so each one needs a separate boat.',
       },
     ],
     constraints: [
@@ -949,11 +918,7 @@ trailing \`n\` slots are zero-filled placeholders). \`nums2\` has length \`n\`. 
 two arrays so the result is sorted in non-decreasing order.
 
 On LeetCode this problem asks you to mutate \`nums1\` in place. To make the grader happy,
-please return the merged list of length \`m + n\`.
-
-The classic trick is to fill from the **back** of \`nums1\` using three pointers — the
-tail of the real portion of \`nums1\`, the tail of \`nums2\`, and the write pointer at the
-very end of \`nums1\`.`,
+please return the merged list of length \`m + n\`.`,
     examples: [
       {
         input: 'nums1 = [1, 2, 3, 0, 0, 0], m = 3, nums2 = [2, 5, 6], n = 3',
@@ -1020,10 +985,7 @@ the relative order of the remaining elements preserved.
 
 On LeetCode this problem asks you to mutate \`nums\` in place and return the new length
 \`k\`. Our grader instead checks the list you return, so please return the filtered list
-directly.
-
-The two-pointer trick: a write pointer \`w\` tracks where the next kept element goes, and
-a read pointer scans every element.`,
+directly.`,
     examples: [
       {
         input: 'nums = [3, 2, 2, 3], val = 3',

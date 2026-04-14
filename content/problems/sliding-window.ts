@@ -14,20 +14,17 @@ export const SLIDING_WINDOW_PROBLEMS: ProblemContent[] = [
     descriptionMd: `You are given an array \`prices\` where \`prices[i]\` is the price of a stock on day \`i\`.
 
 You may pick **one day** to buy and a **later day** to sell. Return the largest profit you can
-make. If no profit is possible, return \`0\`.
-
-The single-pass trick: walk through the prices once, tracking the lowest price you have seen so
-far, and at each day compute today's price minus that minimum. Keep the largest such difference.`,
+make from that single transaction. If no profit is possible, return \`0\`.`,
     examples: [
       {
         input: 'prices = [9, 2, 7, 1, 8, 3]',
         output: '7',
-        explanation: 'Buy on day 3 (price 1) and sell on day 4 (price 8) for a profit of 7.',
+        explanation: 'Buy on day 3 at price 1, sell on day 4 at price 8, profit = 7.',
       },
       {
         input: 'prices = [10, 9, 8, 7]',
         output: '0',
-        explanation: 'Prices only go down, so the best move is not to trade.',
+        explanation: 'Prices only decrease, so no transaction produces a positive profit.',
       },
     ],
     constraints: [
@@ -93,16 +90,12 @@ far, and at each day compute today's price minus that minimum. Keep the largest 
     pattern: 'Sliding Window',
     tags: ['string', 'sliding-window', 'hash-map'],
     descriptionMd: `Given a string \`s\`, return the length of the **longest contiguous substring** that
-contains no repeated characters.
-
-The textbook solution is a sliding window with a set or last-seen map: expand the right edge
-forward, and whenever you see a character already inside the window, shrink the left edge until
-the duplicate is gone.`,
+contains no repeated characters.`,
     examples: [
       {
         input: 's = "fishchips"',
         output: '5',
-        explanation: 'The longest unique-character window is "chips" (length 5).',
+        explanation: 'The substring "chips" has 5 distinct characters.',
       },
       {
         input: 's = "aaaa"',
@@ -184,16 +177,12 @@ the duplicate is gone.`,
     tags: ['array', 'sliding-window'],
     descriptionMd: `You are given an integer array \`nums\` and an integer \`k\`. Find the contiguous
 subarray of length exactly \`k\` that has the largest average value, and return that average
-as a float.
-
-Because the window size is fixed, the usual trick is to compute the sum of the first window,
-then slide it one step at a time by adding the new right element and subtracting the old left
-element. Divide the best sum by \`k\` at the end.`,
+as a float.`,
     examples: [
       {
         input: 'nums = [2, 4, 1, 5, 3], k = 2',
         output: '4.0',
-        explanation: 'The window [5, 3] has sum 8 and average 4.0.',
+        explanation: 'The subarray [5, 3] sums to 8, average 4.0.',
       },
       {
         input: 'nums = [-1, -2, -3, -4], k = 2',
@@ -262,10 +251,7 @@ element. Divide the best sum by \`k\` at the end.`,
     tags: ['array', 'hash-map', 'sliding-window'],
     descriptionMd: `Given an integer array \`nums\` and an integer \`k\`, return \`True\` if there exist
 **two distinct indices** \`i\` and \`j\` such that \`nums[i] == nums[j]\` and
-\`abs(i - j) <= k\`. Otherwise return \`False\`.
-
-The canonical solution keeps a hash map from value to most recent index, checking whether the
-previous occurrence of each value is within distance \`k\` as you scan.`,
+\`abs(i - j) <= k\`. Otherwise return \`False\`.`,
     examples: [
       {
         input: 'nums = [5, 6, 5], k = 2',
@@ -339,16 +325,12 @@ previous occurrence of each value is within distance \`k\` as you scan.`,
     tags: ['array', 'sliding-window'],
     descriptionMd: `Given an array of positive integers \`nums\` and a positive integer \`target\`,
 return the **minimum length** of a contiguous subarray whose sum is \`>= target\`. If no such
-subarray exists, return \`0\`.
-
-Because the values are positive, the running sum is monotonic in window size. That lets you
-use a classic variable-size sliding window: grow the window by moving \`right\`, and whenever
-the sum reaches \`target\` shrink from the left while the sum stays large enough.`,
+subarray exists, return \`0\`.`,
     examples: [
       {
         input: 'nums = [4, 2, 2, 5, 1, 6], target = 10',
         output: '3',
-        explanation: 'The shortest qualifying window is [5, 1, 6] with sum 12.',
+        explanation: 'The shortest qualifying subarray is [5, 1, 6] with sum 12.',
       },
       {
         input: 'nums = [1, 1, 1], target = 10',
@@ -430,16 +412,12 @@ the sum reaches \`target\` shrink from the left while the sum stays large enough
     tags: ['string', 'sliding-window'],
     descriptionMd: `Given a lowercase string \`s\` and an integer \`k\`, return the maximum number of
 vowel letters (\`a\`, \`e\`, \`i\`, \`o\`, \`u\`) appearing in any contiguous substring of
-length exactly \`k\`.
-
-This is a fixed-size window problem: compute the vowel count of the first \`k\` characters,
-then slide the window one character at a time, incrementing/decrementing the count based on
-what enters and leaves the window.`,
+length exactly \`k\`.`,
     examples: [
       {
         input: 's = "greedy", k = 3',
         output: '2',
-        explanation: 'Windows "ree" and "eed" each contain 2 vowels.',
+        explanation: 'The substrings "ree" and "eed" each contain 2 vowels.',
       },
       {
         input: 's = "rhythm", k = 2',
@@ -516,19 +494,18 @@ what enters and leaves the window.`,
     descriptionMd: `Given two strings \`s1\` and \`s2\`, return \`True\` if \`s2\` contains any
 **permutation** of \`s1\` as a contiguous substring. Otherwise return \`False\`.
 
-Equivalently: is there a window of length \`len(s1)\` in \`s2\` whose character counts exactly
-match those of \`s1\`? The usual solution maintains two length-26 frequency arrays (one for
-\`s1\`, one for the current window in \`s2\`) and slides the window one character at a time.`,
+A permutation of \`s1\` is any rearrangement of its characters using each character the same
+number of times.`,
     examples: [
       {
         input: 's1 = "abc", s2 = "lazabcxyz"',
         output: 'True',
-        explanation: 'The substring "abc" at position 3 matches exactly.',
+        explanation: '"abc" appears as a substring of "lazabcxyz" starting at index 3.',
       },
       {
         input: 's1 = "xy", s2 = "yxwz"',
         output: 'True',
-        explanation: '"yx" is a permutation of "xy".',
+        explanation: '"yx" is a permutation of "xy" and appears at the start of "yxwz".',
       },
       {
         input: 's1 = "ab", s2 = "a"',
@@ -608,16 +585,15 @@ match those of \`s1\`? The usual solution maintains two length-26 frequency arra
     pattern: 'Frequency Map',
     tags: ['string', 'sliding-window', 'frequency-map'],
     descriptionMd: `Given two strings \`s\` and \`p\`, return a list of all the **start indices** in
-\`s\` where a substring is an anagram of \`p\`.
+\`s\` where a substring of length \`len(p)\` is an anagram of \`p\`. An anagram is a
+rearrangement of the characters using each character the same number of times.
 
-Use a sliding frequency map of size \`len(p)\` over \`s\` and record the current start index
-every time the window's frequency counts match those of \`p\`. Indices should be returned in
-ascending order.`,
+Indices should be returned in ascending order.`,
     examples: [
       {
         input: 's = "abab", p = "ab"',
         output: '[0, 1, 2]',
-        explanation: 'Windows "ab", "ba", and "ab" are all anagrams of "ab".',
+        explanation: 'The substrings "ab", "ba", and "ab" starting at indices 0, 1, 2 are all anagrams of "ab".',
       },
       {
         input: 's = "xxx", p = "x"',
@@ -696,16 +672,12 @@ ascending order.`,
     tags: ['string', 'sliding-window', 'frequency-map'],
     descriptionMd: `Given an uppercase string \`s\` and an integer \`k\`, return the length of the
 longest contiguous substring you can make consist of the **same single letter** by replacing
-at most \`k\` characters (with any letters you choose).
-
-The variable-window trick: expand the right edge freely, and whenever
-\`window_length - (highest letter count inside the window) > k\`, shrink the left edge. The
-answer is the maximum window length seen at any point.`,
+at most \`k\` characters (with any letters you choose).`,
     examples: [
       {
         input: 's = "AABABB", k = 2',
         output: '5',
-        explanation: 'Replace the two non-B characters in "ABABB" to get "BBBBB" — length 5.',
+        explanation: 'Replace the two A characters in the substring "ABABB" to get "BBBBB" — length 5.',
       },
       {
         input: 's = "ABCD", k = 0',
@@ -791,22 +763,17 @@ answer is the maximum window length seen at any point.`,
     pattern: 'Variable Window',
     tags: ['array', 'sliding-window'],
     descriptionMd: `Given an array of positive integers \`nums\` and an integer \`k\`, return the number
-of contiguous non-empty subarrays whose **product is strictly less than** \`k\`.
-
-Because every element is positive, the running product is monotonic in window size, which is
-exactly what lets a sliding window work. Grow the right edge, multiplying as you go. Whenever
-the product hits \`k\` or more, shrink from the left (dividing out) until it drops below
-\`k\`. The number of qualifying subarrays ending at \`right\` is \`right - left + 1\`.`,
+of contiguous non-empty subarrays whose **product is strictly less than** \`k\`.`,
     examples: [
       {
         input: 'nums = [1, 2, 3], k = 7',
         output: '6',
-        explanation: 'All six non-empty subarrays have a product under 7.',
+        explanation: 'All six non-empty subarrays of [1, 2, 3] have product strictly less than 7.',
       },
       {
         input: 'nums = [5, 5, 5], k = 5',
         output: '0',
-        explanation: 'Every single element already equals 5, so none is strictly less than k.',
+        explanation: 'Every element equals 5, so no subarray has a product strictly less than 5.',
       },
     ],
     constraints: [
@@ -890,15 +857,12 @@ stretch of trees starting from the first tree you choose, and you must pick one 
 every tree you pass.
 
 Return the **maximum number of fruits** you can collect. Equivalently: the length of the
-longest contiguous subarray of \`fruits\` that contains at most **two distinct values**.
-
-The usual solution is a variable-size window that tracks a count of each type inside. When a
-third distinct value appears, shrink from the left until one type's count drops to zero.`,
+longest contiguous subarray of \`fruits\` that contains at most **two distinct values**.`,
     examples: [
       {
         input: 'fruits = [1, 2, 1, 3, 4, 3, 3]',
         output: '4',
-        explanation: 'Pick the contiguous stretch [4, 3, 3, 3] of length 4 — wait, read again: the window [3,4,3,3] starts at index 3. Two types, length 4.',
+        explanation: 'The contiguous stretch [3, 4, 3, 3] starting at index 3 uses two types and has length 4.',
       },
       {
         input: 'fruits = [2, 2, 2]',
@@ -979,17 +943,15 @@ third distinct value appears, shrink from the left until one type's count drops 
     pattern: 'Frequency Map',
     tags: ['string', 'sliding-window', 'frequency-map'],
     descriptionMd: `Given two strings \`s\` and \`t\`, return the **shortest contiguous substring** of
-\`s\` that contains every character of \`t\` (including repetitions). If no such window exists,
-return the empty string \`""\`.
+\`s\` that contains every character of \`t\` (including repetitions). If no such substring
+exists, return the empty string \`""\`.
 
-The classic solution maintains a frequency map of \`t\`, a \`need\` counter, and a sliding
-window. Expand the right edge until every required character is covered, then shrink the
-left edge as far as possible while still covered, recording the smallest window each time.`,
+If multiple substrings tie for shortest, any one of them is acceptable.`,
     examples: [
       {
         input: 's = "abbcba", t = "abc"',
         output: '"cba"',
-        explanation: 'The window "cba" has length 3 and contains one of each required letter.',
+        explanation: 'The substring "cba" has length 3 and contains one of each required letter.',
       },
       {
         input: 's = "a", t = "b"',

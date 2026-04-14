@@ -17,10 +17,7 @@ export const ARRAYS_HASHING_PROBLEMS: ProblemContent[] = [
     pattern: 'Hash Set',
     tags: ['array', 'hash-set'],
     descriptionMd: `Given an integer array \`nums\`, return \`True\` if **any value appears more than once**
-in the array, and \`False\` if every value is unique.
-
-This is the canonical first hash-set problem: scan the array once, and for each value either
-record it as seen or report a collision.`,
+in the array, and \`False\` if every value is unique.`,
     examples: [
       {
         input: 'nums = [3, 8, 2, 5, 8]',
@@ -90,8 +87,7 @@ record it as seen or report a collision.`,
 that is, if \`t\` can be formed by rearranging exactly the characters of \`s\` (using each
 character the same number of times). Otherwise return \`False\`.
 
-You may assume both strings consist of lowercase ASCII letters. The classic approach builds a
-character-frequency map for one string and decrements while scanning the other.`,
+You may assume both strings consist of lowercase ASCII letters.`,
     examples: [
       {
         input: 's = "elbow", t = "below"',
@@ -163,19 +159,16 @@ character-frequency map for one string and decrements while scanning the other.`
     pattern: 'Hash Map',
     tags: ['array', 'hash-map'],
     descriptionMd: `You are given an array of integers \`nums\` and a target integer \`target\`.
-Your job is to find the **two distinct positions** in the array whose values add up to \`target\`,
-and return their indices as a length-2 list.
+Return the **indices of the two distinct positions** in the array whose values add up to \`target\`,
+as a length-2 list.
 
 You may assume that there is **exactly one** valid pair, and you may not use the same element
-twice. Indices may be returned in either order.
-
-The most straightforward solution scans every pair, but you can do this in a single pass by
-remembering each value you have seen so far in a hash map keyed by value.`,
+twice. Indices may be returned in either order.`,
     examples: [
       {
         input: 'nums = [4, 1, 9, 6], target = 10',
         output: '[1, 2]',
-        explanation: 'nums[1] + nums[2] = 1 + 9 = 10, so return the positions 1 and 2.',
+        explanation: 'nums[1] + nums[2] = 1 + 9 = 10.',
       },
       {
         input: 'nums = [3, 3], target = 6',
@@ -251,12 +244,9 @@ lists.
 
 To make grading deterministic, please:
 
-1. **Sort the characters inside each individual group**, so that within a group the strings
+1. **Sort the strings inside each individual group**, so that within a group the strings
    appear in lexicographic order.
-2. **Sort the outer list** so groups appear in a stable order.
-
-A typical implementation builds a hash map keyed by the sorted-string canonical form of each
-input.`,
+2. **Sort the outer list** so groups appear in a stable order.`,
     examples: [
       {
         input: 'strs = ["bat","tab","cat","act","dog","god"]',
@@ -355,9 +345,7 @@ input.`,
     descriptionMd: `Given an integer array \`nums\` and an integer \`k\`, return the \`k\` values that occur
 most frequently in \`nums\`. The order of the returned values does not matter.
 
-You may assume the answer is always uniquely determined. The bucket-sort solution counts each
-value's frequency, then drops it into a bucket indexed by frequency. Walking the buckets from
-highest to lowest gives the top \`k\` in linear time.`,
+You may assume the answer is always uniquely determined.`,
     examples: [
       {
         input: 'nums = [1,1,1,2,2,3], k = 2',
@@ -439,10 +427,7 @@ highest to lowest gives the top \`k\` in linear time.`,
     descriptionMd: `Given an integer array \`nums\`, return an array \`output\` such that \`output[i]\` is
 equal to the product of every element of \`nums\` **except \`nums[i]\`**.
 
-You must solve it **without using division**, and the algorithm should run in \`O(n)\` time.
-
-The standard trick is two passes: first build a "product of everything to my left" array, then
-multiply each entry by "product of everything to my right" computed on the way back.`,
+You must solve it **without using division**.`,
     examples: [
       {
         input: 'nums = [2, 3, 4, 5]',
@@ -524,10 +509,7 @@ multiply each entry by "product of everything to my right" computed on the way b
     tags: ['array', 'hash-set'],
     descriptionMd: `Given two integer arrays \`nums1\` and \`nums2\`, return a list of the values that
 appear in **both** arrays. Each value in the result must be **unique** (no duplicates), and
-the order of the output does not matter.
-
-The canonical approach turns one array into a set, then walks the other collecting values
-that are present in the set.`,
+the order of the output does not matter.`,
     examples: [
       {
         input: 'nums1 = [3, 1, 4, 1, 5], nums2 = [9, 1, 5]',
@@ -582,11 +564,7 @@ that are present in the set.`,
     tags: ['array', 'hash-set', 'cyclic-sort'],
     descriptionMd: `You are given an integer array \`nums\` of length \`n\`, where every value lies in the
 range \`[1, n]\` (duplicates are allowed). Return the list of values in that range that do
-**not** appear in \`nums\`.
-
-A simple hash-set solution is \`O(n)\` time and \`O(n)\` extra space. The classic follow-up
-asks you to use only \`O(1)\` extra space by marking indices in place — hence the "cyclic
-sort" pattern tag.`,
+**not** appear in \`nums\`.`,
     examples: [
       {
         input: 'nums = [2, 3, 2, 1, 5]',
@@ -654,20 +632,17 @@ sort" pattern tag.`,
     pattern: 'Hash Map',
     tags: ['array', 'hash-map'],
     descriptionMd: `Given an integer array \`arr\`, return \`True\` if **every value's occurrence count is
-distinct** — that is, no two values appear the same number of times. Otherwise return \`False\`.
-
-The standard approach counts frequencies in a hash map, then checks that the set of counts
-is the same size as the list of counts.`,
+distinct** — that is, no two values appear the same number of times. Otherwise return \`False\`.`,
     examples: [
       {
         input: 'arr = [1, 2, 2, 1, 1, 3]',
         output: 'True',
-        explanation: '1 appears 3 times, 2 appears 2 times, 3 appears 1 time — all distinct.',
+        explanation: '1 appears 3 times, 2 appears 2 times, 3 appears 1 time.',
       },
       {
         input: 'arr = [7, 7, 8, 8, 9]',
         output: 'False',
-        explanation: '7 and 8 both appear twice, so two different values share a count.',
+        explanation: '7 and 8 both appear twice.',
       },
     ],
     constraints: [
@@ -724,15 +699,12 @@ Return \`True\` if the board is currently valid, meaning:
 - Each of the nine \`3 x 3\` sub-boxes contains each of the digits \`1\`..\`9\` at most once.
 
 You only have to check whether the currently-filled cells are consistent — you do **not** have
-to check whether the board is solvable.
-
-The classic implementation walks every cell once, maintaining a set per row, a set per column,
-and a set per 3x3 box, and reports a collision as soon as any set would receive a duplicate.`,
+to check whether the board is solvable.`,
     examples: [
       {
-        input: 'board = 9x9 grid with a "1" on the main diagonal and dots everywhere else',
+        input: 'board = 9x9 grid with digits 1..9 on the main diagonal and dots everywhere else',
         output: 'True',
-        explanation: 'Wait — diagonal 1..9 puts one distinct digit per row, column, and box.',
+        explanation: 'Each row, column, and 3x3 box contains at most one digit.',
       },
       {
         input: 'board = two "1"s in the same column',
@@ -807,12 +779,7 @@ and a set per 3x3 box, and reports a collision as soon as any set would receive 
     pattern: 'Prefix Sum',
     tags: ['array', 'prefix-sum', 'hash-map'],
     descriptionMd: `Given an integer array \`nums\` and an integer \`k\`, return the number of **contiguous
-non-empty subarrays** whose elements sum to exactly \`k\`.
-
-The brute-force approach is quadratic: try every start/end pair. The optimal solution walks the
-array once, maintaining a running prefix sum and a hash map from prefix-sum value to how many
-times that value has been seen. For each new prefix sum \`cur\`, the number of subarrays ending
-here with sum \`k\` is exactly the number of previously-seen prefix sums equal to \`cur - k\`.`,
+non-empty subarrays** whose elements sum to exactly \`k\`.`,
     examples: [
       {
         input: 'nums = [3, 1, 2, 4, 2], k = 6',
@@ -822,7 +789,7 @@ here with sum \`k\` is exactly the number of previously-seen prefix sums equal t
       {
         input: 'nums = [1, 1, 1], k = 2',
         output: '2',
-        explanation: 'The two length-2 windows each sum to 2.',
+        explanation: 'The subarrays [1,1] at positions 0..1 and 1..2 both sum to 2.',
       },
     ],
     constraints: [
@@ -892,11 +859,7 @@ here with sum \`k\` is exactly the number of previously-seen prefix sums equal t
     tags: ['array', 'hash-set', 'union-find'],
     descriptionMd: `Given an unsorted integer array \`nums\`, return the length of the longest run of
 **consecutive integers** that appear in the array. The run does not need to appear in order
-in \`nums\` — only its underlying values need to be consecutive.
-
-Your solution should run in \`O(n)\` time. The trick: throw every value into a set, then for
-each value \`v\`, skip it unless \`v - 1\` is **not** in the set (meaning \`v\` is the start
-of a run). For every start, walk forward counting how long the run extends.`,
+in \`nums\` — only its underlying values need to be consecutive.`,
     examples: [
       {
         input: 'nums = [8, 2, 4, 3, 5, 9]',
@@ -984,11 +947,7 @@ of a run). For every start, walk forward counting how long the run extends.`,
     tags: ['array', 'hash-map'],
     descriptionMd: `Given an integer array \`nums\`, return the **majority element** — the value
 that appears **strictly more than \`len(nums) // 2\`** times. You may assume the majority
-element always exists in the array.
-
-The textbook approach is a frequency hash map, but there is also a famously elegant
-single-pass, constant-space trick — the Boyer–Moore voting algorithm — that maintains a
-candidate and a count, flipping the candidate whenever the count drops to zero.`,
+element always exists in the array.`,
     examples: [
       {
         input: 'nums = [3, 2, 3]',
@@ -1065,8 +1024,7 @@ candidate and a count, flipping the candidate whenever the count drops to zero.`
 \`ans\` of length \`2 * n\` such that \`ans[i] == nums[i]\` and \`ans[i + n] == nums[i]\`
 for every \`0 <= i < n\`.
 
-In other words: return \`nums\` concatenated with itself. The one-liner in Python is
-\`nums + nums\`, but it is worth practising the explicit index-based build too.`,
+In other words: return \`nums\` concatenated with itself.`,
     examples: [
       {
         input: 'nums = [1, 2, 1]',

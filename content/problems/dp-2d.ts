@@ -13,11 +13,7 @@ export const DP_2D_PROBLEMS: ProblemContent[] = [
     tags: ['dp', 'matrix'],
     descriptionMd: `A robot starts at the top-left corner of an \`m x n\` grid and wants to reach the
 bottom-right corner. The robot can only move **down** or **right** at each step. Return the
-number of distinct paths the robot can take.
-
-The closed-form answer is the binomial coefficient \`C(m + n - 2, m - 1)\`. The DP solution
-is equally clean: \`dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\`, with any cell in the first row
-or first column equal to 1.`,
+number of distinct paths the robot can take.`,
     examples: [
       {
         input: 'm = 3, n = 2',
@@ -95,15 +91,12 @@ or first column equal to 1.`,
     tags: ['dp', 'matrix'],
     descriptionMd: `Given an \`m x n\` grid \`grid\` of non-negative integers, find a path from the
 top-left to the bottom-right that only moves **down** or **right** and minimises the sum
-of the values along the path. Return that minimum sum.
-
-The standard DP is \`dp[i][j] = grid[i][j] + min(dp[i - 1][j], dp[i][j - 1])\`, with
-edge cases for the top row and left column.`,
+of the values along the path. Return that minimum sum.`,
     examples: [
       {
         input: 'grid = [[1, 2], [1, 1]]',
         output: '3',
-        explanation: 'Path 1 → 1 → 1 has sum 3.',
+        explanation: 'The path 1 -> 1 -> 1 visits the top-left, bottom-left, and bottom-right cells; its sum is 3.',
       },
       {
         input: 'grid = [[7]]',
@@ -185,10 +178,7 @@ edge cases for the top row and left column.`,
     descriptionMd: `Same setup as "Unique Paths", except now the grid \`obstacleGrid\` contains
 obstacles marked with \`1\` (and free cells marked with \`0\`). Return the number of
 distinct paths from the top-left to the bottom-right, moving only **down** or **right** and
-never stepping on an obstacle.
-
-The DP is the same — \`dp[i][j] = dp[i - 1][j] + dp[i][j - 1]\` — except any cell with an
-obstacle has \`dp[i][j] = 0\`.`,
+never stepping on an obstacle. If the start or destination is an obstacle, return \`0\`.`,
     examples: [
       {
         input: 'obstacleGrid = [[0, 0, 0], [0, 1, 0], [0, 0, 0]]',
@@ -274,12 +264,7 @@ obstacle has \`dp[i][j] = 0\`.`,
     pattern: 'Grid DP',
     tags: ['dp', 'matrix'],
     descriptionMd: `Given an \`m x n\` binary matrix \`matrix\` of characters \`'0'\` and \`'1'\`,
-return the **area** of the largest square containing only \`'1'\`s.
-
-The classic DP: \`dp[i][j]\` is the side length of the largest \`'1'\`-square whose
-bottom-right corner is at \`(i, j)\`. If \`matrix[i][j] == '1'\`, then
-\`dp[i][j] = 1 + min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1])\`; otherwise \`0\`.
-The answer is the maximum side length squared.`,
+return the **area** of the largest square containing only \`'1'\`s.`,
     examples: [
       {
         input: 'matrix = [["1", "1"], ["1", "1"]]',
@@ -342,12 +327,11 @@ The answer is the maximum side length squared.`,
     pattern: 'String DP',
     tags: ['dp', 'string'],
     descriptionMd: `Given two strings \`text1\` and \`text2\`, return the length of their **longest
-common subsequence**. A subsequence of a string is what you get by deleting any number of
-characters (possibly zero) without changing the order of the rest.
+common subsequence**. If there is no common subsequence, return \`0\`.
 
-The standard 2-D DP: \`dp[i][j]\` is the LCS length of \`text1[:i]\` and \`text2[:j]\`.
-If \`text1[i - 1] == text2[j - 1]\`, then \`dp[i][j] = dp[i - 1][j - 1] + 1\`; otherwise
-\`dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\`.`,
+A subsequence of a string is formed by deleting some (or no) characters without changing
+the order of the remaining characters. A common subsequence of two strings is a subsequence
+that appears in both strings.`,
     examples: [
       {
         input: 'text1 = "abcde", text2 = "ace"',
@@ -430,11 +414,7 @@ If \`text1[i - 1] == text2[j - 1]\`, then \`dp[i][j] = dp[i - 1][j - 1] + 1\`; o
     tags: ['dp', 'string'],
     descriptionMd: `Given two strings \`word1\` and \`word2\`, return the **minimum number of
 operations** required to convert \`word1\` into \`word2\`. The allowed operations are:
-insert a character, delete a character, or replace a character.
-
-The Levenshtein DP: \`dp[i][j]\` is the edit distance between \`word1[:i]\` and
-\`word2[:j]\`. If the current characters match, \`dp[i][j] = dp[i - 1][j - 1]\`; otherwise
-\`dp[i][j] = 1 + min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1])\`.`,
+insert a character, delete a character, or replace a character.`,
     examples: [
       {
         input: 'word1 = "horse", word2 = "ros"',
@@ -523,11 +503,8 @@ The Levenshtein DP: \`dp[i][j]\` is the edit distance between \`word1[:i]\` and
     tags: ['dp', 'string'],
     descriptionMd: `Given three strings \`s1\`, \`s2\`, and \`s3\`, return \`True\` if \`s3\` is formed by
 **interleaving** \`s1\` and \`s2\`. An interleaving of two strings preserves the left-to-right
-order of characters from each of them.
-
-A 2-D DP \`dp[i][j]\` tells you whether \`s3[:i + j]\` can be built from \`s1[:i]\` and
-\`s2[:j]\`. The transition checks whether the next character of \`s3\` matches \`s1[i - 1]\`
-or \`s2[j - 1]\`.`,
+order of characters from each of them — every character of \`s1\` and \`s2\` appears in
+\`s3\` exactly once, and the relative order within each source string is preserved.`,
     examples: [
       {
         input: 's1 = "ab", s2 = "cd", s3 = "acbd"',
@@ -623,12 +600,8 @@ or \`s2[j - 1]\`.`,
     tags: ['dp'],
     descriptionMd: `Given an integer array \`nums\` and an integer \`target\`, you may prefix each
 number with either \`'+'\` or \`'-'\` and then concatenate all the numbers into an
-expression. Return the **number of distinct ways** to make the expression evaluate to
-\`target\`.
-
-Reduces to subset sum: find \`P\`, the sum of the \`+\` group. Then \`P - (S - P) = target\`,
-so \`P = (target + S) / 2\` (with \`S = sum(nums)\`). Count the number of subsets of
-\`nums\` summing to \`P\` via a 1-D knapsack DP.`,
+expression. Return the **number of distinct ways** to assign signs so that the expression
+evaluates to \`target\`.`,
     examples: [
       {
         input: 'nums = [1, 1, 1, 1, 1], target = 3',
@@ -707,16 +680,12 @@ so \`P = (target + S) / 2\` (with \`S = sum(nums)\`). Count the number of subset
     pattern: 'Knapsack',
     tags: ['dp'],
     descriptionMd: `Given an integer array \`nums\`, return \`True\` if you can partition the values
-into two subsets with **equal sum**, and \`False\` otherwise.
-
-Necessary conditions: the total sum must be even. Then the question reduces to "can we pick
-a subset summing to \`sum / 2\`?", which is a classic subset-sum DP with a boolean
-\`dp[s]\` array.`,
+into two subsets whose elements have **equal sum**, and \`False\` otherwise.`,
     examples: [
       {
         input: 'nums = [1, 5, 11, 5]',
         output: 'True',
-        explanation: 'Split into [1, 5, 5] and [11] — both sum to 11.',
+        explanation: 'The array can be split into [1, 5, 5] and [11], both summing to 11.',
       },
       {
         input: 'nums = [1, 2, 3, 5]',
@@ -776,16 +745,15 @@ a subset summing to \`sum / 2\`?", which is a classic subset-sum DP with a boole
     tags: ['dp'],
     descriptionMd: `Given an integer \`amount\` and a list of \`coins\`, return the number of distinct
 **combinations** (not permutations) of coins that sum to \`amount\`. Each coin denomination
-may be used an unlimited number of times.
+may be used an unlimited number of times. Two combinations are considered the same if they
+use the same multiset of coins, regardless of order.
 
-The unbounded knapsack DP: iterate \`coins\` in the **outer** loop and \`amount\` in the
-**inner** loop, updating \`dp[i] += dp[i - c]\`. Looping coins outer-first is what prevents
-counting \`[1, 2]\` and \`[2, 1]\` as distinct.`,
+If it is impossible to make \`amount\` with the given coins, return \`0\`.`,
     examples: [
       {
         input: 'amount = 5, coins = [1, 2, 5]',
         output: '4',
-        explanation: 'Combinations: 5, 2+2+1, 2+1+1+1, 1*5 — four total.',
+        explanation: 'The four combinations are 5, 2+2+1, 2+1+1+1, and 1+1+1+1+1.',
       },
       {
         input: 'amount = 3, coins = [2]',
@@ -841,11 +809,8 @@ counting \`[1, 2]\` and \`[2, 1]\` as distinct.`,
     tags: ['dp', 'string'],
     descriptionMd: `Given two strings \`s\` and \`t\`, return the number of **distinct subsequences** of
 \`s\` that equal \`t\`. A subsequence is formed by deleting zero or more characters from
-\`s\` without changing the order of the remaining characters.
-
-The 2-D DP: \`dp[i][j]\` = number of distinct subsequences of \`s[:i]\` that equal
-\`t[:j]\`. If \`s[i - 1] == t[j - 1]\`, then
-\`dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]\`; otherwise \`dp[i][j] = dp[i - 1][j]\`.`,
+\`s\` without changing the order of the remaining characters. The answer is guaranteed to
+fit in a 32-bit signed integer.`,
     examples: [
       {
         input: 's = "rabbbit", t = "rabbit"',
@@ -930,14 +895,14 @@ The 2-D DP: \`dp[i][j]\` = number of distinct subsequences of \`s[:i]\` that equ
     difficulty: 'Hard',
     pattern: 'String DP',
     tags: ['dp', 'string'],
-    descriptionMd: `Implement regular expression matching supporting \`'.'\` (matches any single
-character) and \`'*'\` (matches **zero or more** of the preceding element). The match must
-cover the **entire** input string (not partial).
+    descriptionMd: `Given an input string \`s\` and a pattern \`p\`, implement regular expression
+matching with support for:
 
-The 2-D DP: \`dp[i][j]\` = whether \`s[:i]\` matches \`p[:j]\`. When \`p[j - 1] == '*'\`,
-either skip the \`x*\` (\`dp[i][j] = dp[i][j - 2]\`) or consume one character
-(\`dp[i][j] = dp[i - 1][j]\` if \`s[i - 1]\` matches \`p[j - 2]\`). Otherwise
-\`dp[i][j] = dp[i - 1][j - 1]\` iff the current chars match.`,
+- \`'.'\` — matches any single character.
+- \`'*'\` — matches **zero or more** of the preceding element.
+
+The match must cover the **entire** input string, not a partial match. Return \`True\` if
+\`p\` matches \`s\`.`,
     examples: [
       {
         input: 's = "aa", p = "a*"',
@@ -1038,10 +1003,7 @@ either skip the \`x*\` (\`dp[i][j] = dp[i][j - 2]\`) or consume one character
 
 A **subsequence** of a string is formed by deleting zero or more characters from the
 string **without changing the relative order** of the remaining characters. For example,
-\`"ace"\` is a subsequence of \`"abcde"\`.
-
-The simplest solution is a two-pointer scan that advances through \`t\` and matches off
-characters of \`s\` one at a time — no DP table required for a single query.`,
+\`"ace"\` is a subsequence of \`"abcde"\`, while \`"aec"\` is not.`,
     examples: [
       {
         input: 's = "abc", t = "ahbgdc"',

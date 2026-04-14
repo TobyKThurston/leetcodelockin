@@ -18,11 +18,10 @@ export const TREES_PROBLEMS: ProblemContent[] = [
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
     descriptionMd: `Given the \`root\` of a binary tree (serialised as a level-order array with
-\`null\` for missing children), return the **maximum depth** — the number of nodes along
-the longest root-to-leaf path.
+\`null\` for missing children), return its **maximum depth**.
 
-The one-line recursive solution is \`max(depth(left), depth(right)) + 1\`, with the base
-case \`depth(null) = 0\`.`,
+A binary tree's maximum depth is the number of nodes along the longest path from the root
+down to the furthest leaf node.`,
     examples: [
       {
         input: 'root = [1, 2, 3]',
@@ -45,7 +44,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Compute the max depth of the tree below ───────────────
-        # Hint: recurse on left and right, take max + 1; null → 0.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -115,11 +113,11 @@ class Solution:
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
     descriptionMd: `Given the roots of two binary trees \`p\` and \`q\` (each serialised as a
-level-order array with \`null\` for missing children), return \`True\` if they are
-**structurally identical** and every corresponding pair of nodes has the same value.
+level-order array with \`null\` for missing children), return \`True\` if the trees are the
+**same**, and \`False\` otherwise.
 
-The canonical solution is a parallel DFS: both null → equal; one null → unequal; otherwise
-compare values and recurse into left-left and right-right.`,
+Two binary trees are considered the same if they are **structurally identical** and every
+corresponding pair of nodes has the same value.`,
     examples: [
       {
         input: 'p = [1, 2, 3], q = [1, 2, 3]',
@@ -143,7 +141,6 @@ class Solution:
         tq = _to_tree(q)
 
         # ─── Compare the two trees below ───────────────────────────
-        # Hint: recursive DFS — both None, one None, then compare.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -214,12 +211,10 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
-    descriptionMd: `Given the root of a binary tree, invert it — swap every node's left and right
-children — and return the resulting tree, serialised as a level-order array with \`null\`
-for missing children.
+    descriptionMd: `Given the \`root\` of a binary tree, **invert** the tree and return its root.
 
-Either a recursive DFS (swap children, recurse) or an iterative BFS (swap at each dequeued
-node) works fine.`,
+To invert a binary tree, swap the left and right children of every node. Return the
+resulting tree serialised as a level-order array with \`null\` for missing children.`,
     examples: [
       {
         input: 'root = [4, 2, 7, 1, 3, 6, 9]',
@@ -241,7 +236,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Invert the tree in place below ────────────────────────
-        # Hint: recursive swap of left and right at every node.
         new_root = tree  # TODO: replace with the inverted root
         # ───────────────────────────────────────────────────────────
 
@@ -309,12 +303,10 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
-    descriptionMd: `Given the root of a binary tree, return \`True\` if the tree is a **mirror image
-of itself** around its root. Otherwise return \`False\`.
+    descriptionMd: `Given the \`root\` of a binary tree, return \`True\` if the tree is a **mirror
+image of itself** around its root. Otherwise return \`False\`.
 
-A helper function \`isMirror(a, b)\` that returns whether two subtrees mirror each other
-(comparing \`a.left\` to \`b.right\` and \`a.right\` to \`b.left\`) is the standard
-recursive solution.`,
+In other words, the left subtree must be a mirror reflection of the right subtree.`,
     examples: [
       {
         input: 'root = [1, 2, 2, 3, 4, 4, 3]',
@@ -336,7 +328,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Decide whether the tree is symmetric below ───────────
-        # Hint: helper isMirror(a, b) comparing a.left vs b.right.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -409,13 +400,11 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
-    descriptionMd: `Given the root of a binary tree, return the **length of the longest path between
-any two nodes** in the tree, measured in edges. The path may or may not pass through the
-root, but every edge on the path is counted exactly once.
+    descriptionMd: `Given the \`root\` of a binary tree, return the **length of the diameter** of
+the tree.
 
-The trick is to run a single DFS that returns the height of each subtree, and on the way
-back up track the best "left_height + right_height" seen at any node — that sum is the
-diameter through that node.`,
+The diameter of a binary tree is the length of the longest path between any two nodes in
+the tree, measured in edges. This path may or may not pass through the root.`,
     examples: [
       {
         input: 'root = [1, 2, 3, 4, 5]',
@@ -438,7 +427,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Compute the diameter below ───────────────────────────
-        # Hint: DFS returns subtree heights while updating a best variable.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -488,13 +476,11 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
-    descriptionMd: `Given the root of a binary tree, return \`True\` if the tree is **height-balanced**
-— defined here as every node having left and right subtree heights differing by at most 1 —
-and \`False\` otherwise.
+    descriptionMd: `Given the \`root\` of a binary tree, return \`True\` if the tree is
+**height-balanced**, and \`False\` otherwise.
 
-The elegant solution runs a single DFS that returns either the subtree height or a sentinel
-value (e.g. \`-1\`) indicating the subtree is already unbalanced, bubbling the sentinel all
-the way up.`,
+A height-balanced binary tree is one in which the left and right subtree heights of every
+node differ by at most 1.`,
     examples: [
       {
         input: 'root = [3, 9, 20, null, null, 15, 7]',
@@ -516,7 +502,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Decide whether the tree is height-balanced below ─────
-        # Hint: DFS returning either the height or -1 for unbalanced.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -568,12 +553,12 @@ class Solution:
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs'],
     descriptionMd: `Given the roots of two binary trees \`root\` and \`subRoot\` (both serialised as
-level-order arrays with \`null\` for missing children), return \`True\` if there exists any
-subtree of \`root\` that is structurally identical to \`subRoot\`. Otherwise return
+level-order arrays with \`null\` for missing children), return \`True\` if there exists a
+subtree of \`root\` with the same structure and node values as \`subRoot\`. Otherwise return
 \`False\`.
 
-The simple \`O(m * n)\` approach composes a \`sameTree\` helper with a DFS that tries every
-node in \`root\` as a candidate root.`,
+A subtree of a binary tree \`root\` is a tree consisting of a node in \`root\` and all of
+that node's descendants.`,
     examples: [
       {
         input: 'root = [3, 4, 5, 1, 2], subRoot = [4, 1, 2]',
@@ -596,7 +581,6 @@ class Solution:
         s = _to_tree(subRoot)
 
         # ─── Decide whether subRoot appears inside root below ─────
-        # Hint: compose a sameTree helper with a walk over root.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -651,13 +635,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'BST',
     tags: ['binary-tree', 'bst', 'dfs'],
-    descriptionMd: `Given the root of a binary tree, return \`True\` if it is a valid **binary search
-tree**: for every node, every value in its **entire** left subtree is strictly less than the
-node's value, and every value in its **entire** right subtree is strictly greater.
+    descriptionMd: `Given the \`root\` of a binary tree, return \`True\` if it is a valid **binary
+search tree (BST)**, and \`False\` otherwise.
 
-The cleanest implementation is a DFS that carries a \`(lo, hi)\` open interval: \`lo\` and
-\`hi\` start as \`-infinity\` and \`+infinity\`, and each recursive call tightens one
-of the bounds.`,
+A valid BST is defined as follows: for every node, every value in its **entire** left
+subtree is strictly less than the node's value, and every value in its **entire** right
+subtree is strictly greater than the node's value.`,
     examples: [
       {
         input: 'root = [5, 3, 8, 1, 4, 6, 9]',
@@ -680,7 +663,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Decide whether the tree is a valid BST below ─────────
-        # Hint: DFS with lo/hi bounds, strict inequalities at each step.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -750,14 +732,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'BST',
     tags: ['binary-tree', 'bst'],
-    descriptionMd: `You are given the root of a **binary search tree** (serialised as a level-order
-array) and two values \`p\` and \`q\` known to exist in the tree. Return the value of their
-**lowest common ancestor** — the lowest node in the BST that has both \`p\` and \`q\` in
-(or equal to) its subtree.
+    descriptionMd: `You are given the \`root\` of a **binary search tree** (serialised as a
+level-order array) and two values \`p\` and \`q\` known to exist in the tree. Return the
+value of their **lowest common ancestor (LCA)**.
 
-Because the tree is a BST you can solve this without full traversal: walk from the root,
-and at each node if both targets are smaller go left, if both are larger go right, otherwise
-the current node is the LCA. This runs in \`O(h)\` time.`,
+The lowest common ancestor is defined as the lowest node in the tree that has both \`p\`
+and \`q\` as descendants (where a node is allowed to be a descendant of itself).`,
     examples: [
       {
         input: 'root = [5, 3, 7, 1, 4, 6, 8], p = 1, q = 4',
@@ -780,7 +760,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Find the LCA and return its value below ──────────────
-        # Hint: walk from root, pick left or right based on BST rules.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -845,11 +824,11 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'BFS',
     tags: ['binary-tree', 'bfs'],
-    descriptionMd: `Given the root of a binary tree, return the **level-order traversal** of its values
-as a list of lists (one inner list per level, root at index 0).
+    descriptionMd: `Given the \`root\` of a binary tree, return the **level-order traversal** of its
+node values as a list of lists (one inner list per level, root at index 0).
 
-The idiomatic implementation is a breadth-first search with a queue: pop the entire current
-level at once, collect the values, and push the next level's nodes onto the queue.`,
+That is, the values at depth 0 come first, then the values at depth 1 from left to right,
+and so on.`,
     examples: [
       {
         input: 'root = [3, 9, 20, null, null, 15, 7]',
@@ -871,7 +850,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Perform a BFS and collect values per level below ────
-        # Hint: pop the entire current level's length each iteration.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -947,13 +925,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Construction',
     tags: ['binary-tree', 'recursion'],
-    descriptionMd: `Given two integer arrays \`preorder\` and \`inorder\` that describe the preorder and
-inorder traversals of the same binary tree (with all values distinct), reconstruct the tree
-and return its **level-order** serialisation (using \`null\` for missing children).
+    descriptionMd: `Given two integer arrays \`preorder\` and \`inorder\` where \`preorder\` is the
+preorder traversal of a binary tree and \`inorder\` is the inorder traversal of the same
+tree, reconstruct the tree and return its **level-order** serialisation (using \`null\` for
+missing children).
 
-The recursive solution: the first element of \`preorder\` is the current root; find that
-value in \`inorder\` to split it into the left subtree's inorder and the right subtree's
-inorder, then recurse on both halves.`,
+All values in the tree are distinct.`,
     examples: [
       {
         input: 'preorder = [3, 9, 20, 15, 7], inorder = [9, 3, 15, 20, 7]',
@@ -1035,16 +1012,13 @@ class Solution:
     difficulty: 'Hard',
     pattern: 'DFS',
     tags: ['binary-tree', 'dfs', 'dp'],
-    descriptionMd: `Given the root of a non-empty binary tree, return the **maximum path sum**. A
-path is any sequence of nodes connected by edges (not necessarily passing through the root)
-where each consecutive pair shares an edge and no node is visited twice. Path sum is the sum
-of the node values along the path.
+    descriptionMd: `Given the \`root\` of a non-empty binary tree, return the **maximum path sum**
+of any non-empty path.
 
-The classic solution is a post-order DFS that, for each node, returns the best **downward**
-path sum from that node (either through the left child or the right child, whichever is
-larger — or zero if that side is negative). Meanwhile it updates a global best with the
-"left_down + node.val + right_down" candidate, which represents a path that bends at the
-current node.`,
+A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes in the
+sequence is connected by an edge. A node can appear in the path at most once, and the path
+does not need to pass through the root. The **path sum** is the sum of the node values
+along the path.`,
     examples: [
       {
         input: 'root = [1, 2, 3]',
@@ -1067,7 +1041,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Compute the maximum path sum below ───────────────────
-        # Hint: DFS that returns best downward sum and updates a global best.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -1118,14 +1091,9 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS',
     tags: ['binary-search-tree', 'dfs'],
-    descriptionMd: `Given the \`root\` of a **binary search tree** (serialised as a
-level-order array with \`null\` for missing children) and two integers \`low\` and
-\`high\`, return the **sum of values** of every node whose value lies in the inclusive
-range \`[low, high]\`.
-
-A straight DFS works, but the BST property lets you **prune** entire subtrees: if the
-current node's value is below \`low\`, you only need to recurse right; if it is above
-\`high\`, you only need to recurse left.`,
+    descriptionMd: `Given the \`root\` of a **binary search tree** (serialised as a level-order
+array with \`null\` for missing children) and two integers \`low\` and \`high\`, return the
+**sum of values** of every node whose value lies in the inclusive range \`[low, high]\`.`,
     examples: [
       {
         input: 'root = [10, 5, 15, 3, 7, null, 18], low = 7, high = 15',
@@ -1151,7 +1119,6 @@ class Solution:
         tree = _to_tree(root)
 
         # ─── Sum values in [low, high] below ───────────────────────
-        # Hint: use the BST property to prune subtrees.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -1199,11 +1166,11 @@ class Solution:
     difficulty: 'Easy',
     pattern: 'DFS / Backtracking',
     tags: ['binary-tree', 'dfs', 'backtracking'],
-    descriptionMd: `Given the \`root\` of a binary tree (serialised as a level-order array
-with \`null\` for missing children), return **all** root-to-leaf paths, each formatted as a
-string of node values separated by \`"->"\`.
+    descriptionMd: `Given the \`root\` of a binary tree (serialised as a level-order array with
+\`null\` for missing children), return **all** root-to-leaf paths in any order. Each path
+should be formatted as a string of node values separated by \`"->"\`.
 
-A leaf is a node with no children. Return the paths in **pre-order** DFS order
+A **leaf** is a node with no children. Paths should be returned in **pre-order**
 (left before right).`,
     examples: [
       {

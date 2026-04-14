@@ -12,21 +12,17 @@ export const GREEDY_PROBLEMS: ProblemContent[] = [
     pattern: "Kadane's Algorithm",
     tags: ['array', 'dp'],
     descriptionMd: `Given an integer array \`nums\`, find the contiguous **non-empty** subarray with the
-largest sum and return that sum.
-
-Kadane's algorithm walks the array once, keeping a running "best sum that ends at the current
-index". At each step you decide whether to extend the previous subarray or start a fresh one
-at \`nums[i]\`.`,
+largest sum and return that sum.`,
     examples: [
       {
         input: 'nums = [-3, 2, 5, -1, 3, -4, 2]',
         output: '9',
-        explanation: 'The best subarray is [2, 5, -1, 3] with sum 9.',
+        explanation: 'The subarray [2, 5, -1, 3] has sum 9, which is the largest over all contiguous subarrays.',
       },
       {
         input: 'nums = [-7, -2, -5]',
         output: '-2',
-        explanation: 'When every value is negative, the answer is the largest single element.',
+        explanation: 'The subarray [-2] has the largest sum; every other contiguous subarray is more negative.',
       },
     ],
     constraints: [
@@ -93,10 +89,7 @@ at \`nums[i]\`.`,
     descriptionMd: `You are given an array \`g\` of children's greed factors and an array \`s\` of cookie
 sizes. A child with greed \`g[i]\` is satisfied if you give them a cookie with size
 \`>= g[i]\`, and each cookie goes to at most one child. Return the **maximum number of
-children** you can satisfy.
-
-Sort both arrays, then sweep with two pointers: give the smallest cookie that will satisfy
-the greediest-still-unsatisfied child.`,
+children** you can satisfy.`,
     examples: [
       {
         input: 'g = [1, 2], s = [1, 2, 3]',
@@ -156,11 +149,9 @@ the greediest-still-unsatisfied child.`,
     pattern: 'Greedy',
     tags: ['greedy', 'array'],
     descriptionMd: `You have a long flowerbed represented by an integer array \`flowerbed\` where
-\`0\` is empty and \`1\` is already planted. No two flowers may be adjacent. Return \`True\`
-if you can plant exactly \`n\` new flowers without violating the adjacency rule.
-
-The greedy walk: at every empty cell whose neighbours are also empty (or at the edge),
-plant a flower and skip the next cell.`,
+\`0\` is empty and \`1\` is already planted. No two flowers may be planted in adjacent
+plots. Return \`True\` if you can plant at least \`n\` new flowers in the flowerbed without
+violating the adjacency rule, and \`False\` otherwise.`,
     examples: [
       {
         input: 'flowerbed = [1, 0, 0, 0, 1], n = 1',
@@ -224,12 +215,9 @@ plant a flower and skip the next cell.`,
     difficulty: 'Medium',
     pattern: 'Greedy',
     tags: ['greedy', 'array'],
-    descriptionMd: `You are given an integer array \`nums\`. Starting at index 0, \`nums[i]\` is the
-maximum jump length you can take from position \`i\`. Return \`True\` if you can reach the
-last index, \`False\` otherwise.
-
-The greedy sweep: walk the array left-to-right, tracking the furthest reachable index so
-far. If you ever reach an index beyond that bound, return \`False\`.`,
+    descriptionMd: `You are given an integer array \`nums\`. You start at index 0, and \`nums[i]\` is
+the maximum jump length you can take from position \`i\`. Return \`True\` if you can reach
+the last index, and \`False\` otherwise.`,
     examples: [
       {
         input: 'nums = [2, 3, 1, 1, 4]',
@@ -286,17 +274,14 @@ far. If you ever reach an index beyond that bound, return \`False\`.`,
     difficulty: 'Medium',
     pattern: 'Greedy',
     tags: ['greedy', 'array'],
-    descriptionMd: `You are given an integer array \`nums\` (guaranteed reachable to the end). Return
-the **minimum number of jumps** to reach the last index.
-
-The classic greedy sweeps across "levels" — track the current reachable range and the
-farthest index any position in that range can reach. When you exhaust the current range,
-jump and widen to the new range.`,
+    descriptionMd: `You are given an integer array \`nums\`. You start at index 0, and \`nums[i]\` is
+the maximum jump length from position \`i\`. It is guaranteed that you can reach the last
+index. Return the **minimum number of jumps** needed to reach it.`,
     examples: [
       {
         input: 'nums = [2, 3, 1, 1, 4]',
         output: '2',
-        explanation: 'Jump 1 from index 0 to 1, then 3 to the last index.',
+        explanation: 'Jump from index 0 to index 1, then from index 1 to the last index.',
       },
       {
         input: 'nums = [1, 1, 1, 1]',
@@ -355,11 +340,12 @@ jump and widen to the new range.`,
     tags: ['greedy', 'array'],
     descriptionMd: `There are \`n\` gas stations along a circular route. You have \`gas[i]\` gas
 available at station \`i\`, and it costs \`cost[i]\` to travel from station \`i\` to station
-\`i + 1\`. Given that you start with an empty tank, return the **index** of the starting
-station that lets you complete the loop, or \`-1\` if no such station exists.
+\`i + 1\` (the last station wraps back to station \`0\`). You begin the journey with an
+empty tank.
 
-Key observations: the total answer exists iff \`sum(gas) >= sum(cost)\`. When it does, the
-start is the index immediately **after** the point where the running tank dips lowest.`,
+Return the **index** of the starting station from which you can travel around the circuit
+once in the clockwise direction, or \`-1\` if no such station exists. If a solution exists,
+it is guaranteed to be unique.`,
     examples: [
       {
         input: 'gas = [1, 2, 3, 4, 5], cost = [3, 4, 5, 1, 2]',
@@ -420,13 +406,9 @@ start is the index immediately **after** the point where the running tank dips l
     pattern: 'Greedy',
     tags: ['greedy', 'hash-map', 'sorting'],
     descriptionMd: `You are given an integer array \`hand\` of card values and an integer \`groupSize\`.
-Return \`True\` if you can rearrange the cards into groups of \`groupSize\` cards, each
-group consisting of \`groupSize\` **consecutive** values (e.g. \`[4, 5, 6]\` with group
-size 3).
-
-The greedy approach: count occurrences, then repeatedly pick the smallest remaining value
-as the start of a new group and decrement the counts of the \`groupSize\` consecutive
-values. If any drop below zero, return \`False\`.`,
+Return \`True\` if you can rearrange every card into groups of exactly \`groupSize\` cards,
+where each group consists of \`groupSize\` **consecutive** values (for example, \`[4, 5, 6]\`
+with group size \`3\`). Return \`False\` otherwise.`,
     examples: [
       {
         input: 'hand = [1, 2, 3, 6, 2, 3, 4, 7, 8], groupSize = 3',
@@ -492,15 +474,13 @@ values. If any drop below zero, return \`False\`.`,
     difficulty: 'Medium',
     pattern: 'Greedy',
     tags: ['greedy', 'string', 'stack'],
-    descriptionMd: `Given a string \`s\` containing only \`'('\`, \`')'\`, and \`'*'\`, return \`True\` if
-the string can be a valid parenthesis sequence. The \`'*'\` character can act as either
-\`'('\`, \`')'\`, or an empty string.
+    descriptionMd: `Given a string \`s\` containing only the characters \`'('\`, \`')'\`, and \`'*'\`,
+return \`True\` if \`s\` is a valid parenthesis string. A \`'*'\` may be treated as a single
+\`'('\`, a single \`')'\`, or an empty string.
 
-The elegant \`O(n)\` greedy tracks the **range** of possible open-paren counts: \`lo\` (min
-possible) and \`hi\` (max possible). On \`'('\` both increment; on \`')'\` both decrement;
-on \`'*'\` \`lo\` decrements and \`hi\` increments. If \`hi\` ever dips below 0 it's
-invalid; if \`lo\` ever dips below 0 clamp it back. At the end the string is valid iff
-\`lo == 0\`.`,
+The string is valid when every left parenthesis has a matching right parenthesis that
+appears later in the string, every right parenthesis has a matching left parenthesis that
+appears earlier, and any \`'*'\` may be assigned one of the three interpretations.`,
     examples: [
       {
         input: 's = "(*)"',
@@ -572,11 +552,8 @@ invalid; if \`lo\` ever dips below 0 clamp it back. At the end the string is val
     pattern: 'Greedy',
     tags: ['greedy', 'string', 'hash-map'],
     descriptionMd: `You are given a string \`s\`. Partition it into **as many parts as possible** so
-that each letter appears in **at most one** part. Return the list of part sizes.
-
-The two-pass sweep: first pass records the **last index** each letter appears at; second
-pass walks \`s\` extending the current partition's end to the max last-index of any letter
-seen so far, and closes a partition whenever the sweep reaches that end.`,
+that each letter appears in **at most one** part. The concatenation of the parts in order
+must equal \`s\`. Return a list of integers giving the size of each part.`,
     examples: [
       {
         input: 's = "ababcbacadefegdehijhklij"',
@@ -638,16 +615,14 @@ seen so far, and closes a partition whenever the sweep reaches that end.`,
     pattern: 'Greedy',
     tags: ['greedy', 'intervals'],
     descriptionMd: `Given an array of intervals \`intervals\` where \`intervals[i] = [start, end]\`,
-return the **minimum number of intervals you need to remove** to make the rest mutually
-non-overlapping.
-
-Sort intervals by their **end** coordinate, then sweep: keep the first interval, and drop
-any subsequent interval whose start is before the currently-kept interval's end.`,
+return the **minimum number of intervals you need to remove** to make the rest of the
+intervals mutually non-overlapping. Two intervals that only touch at an endpoint (for
+example \`[1, 2]\` and \`[2, 3]\`) are not considered overlapping.`,
     examples: [
       {
         input: 'intervals = [[1, 2], [2, 3], [3, 4], [1, 3]]',
         output: '1',
-        explanation: 'Remove [1, 3] — the rest are pairwise non-overlapping.',
+        explanation: 'Removing [1, 3] leaves [[1, 2], [2, 3], [3, 4]], which are pairwise non-overlapping.',
       },
       {
         input: 'intervals = [[1, 2], [1, 2], [1, 2]]',
@@ -702,12 +677,9 @@ any subsequent interval whose start is before the currently-kept interval's end.
     pattern: 'Greedy',
     tags: ['greedy', 'intervals'],
     descriptionMd: `Each balloon is an interval \`points[i] = [x_start, x_end]\` on the x-axis. An
-arrow shot at a specific \`x\` pops every balloon whose interval contains \`x\` (inclusive
-of endpoints). Return the **minimum number of arrows** needed to burst all the balloons.
-
-Sort intervals by their right endpoint. Shoot the first arrow at the first interval's right
-edge; skip every subsequent interval that already starts at or before that point, then shoot
-another arrow at the next interval's right edge.`,
+arrow shot straight up at position \`x\` bursts every balloon whose interval contains
+\`x\` (inclusive of endpoints). Arrows can be shot at any real-valued \`x\`. Return the
+**minimum number of arrows** needed to burst all the balloons.`,
     examples: [
       {
         input: 'points = [[10, 16], [2, 8], [1, 6], [7, 12]]',
@@ -771,11 +743,7 @@ another arrow at the next interval's right edge.`,
 up and pay with a \`$5\`, \`$10\`, or \`$20\` bill (in the order given by \`bills\`). You
 start with **no change** and must give each customer the correct net change of \`$0\`,
 \`$5\`, or \`$15\` immediately after the sale. Return \`True\` if you can serve every
-customer, otherwise \`False\`.
-
-Because you only ever need to make change in units of \`$5\`, \`$10\`, and \`$20\`, the
-greedy rule is: when handing out \`$15\` of change, always prefer giving back a \`$10\` +
-\`$5\` pair before resorting to three \`$5\` bills — \`$10\` bills are otherwise useless.`,
+customer in line, otherwise \`False\`.`,
     examples: [
       {
         input: 'bills = [5, 5, 5, 10, 20]',
@@ -784,7 +752,7 @@ greedy rule is: when handing out \`$15\` of change, always prefer giving back a 
       {
         input: 'bills = [5, 5, 10, 10, 20]',
         output: 'False',
-        explanation: 'When the $20 arrives we only have one $5 and two $10 — cannot give $15.',
+        explanation: 'When the $20 arrives the till holds only one $5 and two $10, which cannot make $15 in change.',
       },
     ],
     constraints: [

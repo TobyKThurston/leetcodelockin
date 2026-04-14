@@ -12,11 +12,7 @@ export const BINARY_SEARCH_PROBLEMS: ProblemContent[] = [
     pattern: 'Binary Search',
     tags: ['array', 'binary-search'],
     descriptionMd: `Given a **sorted** integer array \`nums\` (ascending order, no duplicates) and a value
-\`target\`, return the **index** of \`target\` if it is in the array, or \`-1\` if it is not.
-
-Your solution should run in \`O(log n)\` time. The classic implementation maintains \`lo\` and
-\`hi\` bounds, computes \`mid\`, and shrinks the range based on how \`nums[mid]\` compares to
-\`target\`.`,
+\`target\`, return the **index** of \`target\` if it is in the array, or \`-1\` if it is not.`,
     examples: [
       {
         input: 'nums = [-3, 0, 4, 8, 11, 17], target = 8',
@@ -94,10 +90,7 @@ Your solution should run in \`O(log n)\` time. The classic implementation mainta
     tags: ['array', 'binary-search'],
     descriptionMd: `Given a sorted array of distinct integers \`nums\` and a target value \`target\`,
 return the index where \`target\` would be found if it exists, or the index where it would be
-**inserted to keep the array sorted** if it does not.
-
-Your solution must run in \`O(log n)\` time. This is a standard lower-bound binary search:
-at each step shrink the range based on whether \`nums[mid]\` is below or not below the target.`,
+**inserted to keep the array sorted** if it does not.`,
     examples: [
       {
         input: 'nums = [2, 4, 6, 8], target = 5',
@@ -178,8 +171,8 @@ you whether a specific version is bad, return the first bad version.
 
 On LeetCode the helper is an external \`isBadVersion(v)\` API. To keep this problem
 self-contained, our grader passes the true cutoff as a second argument \`bad\` and asks you
-to return the smallest version number \`v\` with \`v >= bad\`, using a **binary search**
-(not a linear scan — the judge times long runs out).`,
+to return the smallest version number \`v\` with \`v >= bad\`. You should minimize the number
+of calls made (the judge times out on long linear runs).`,
     examples: [
       {
         input: 'n = 10, bad = 5',
@@ -253,8 +246,7 @@ to return the smallest version number \`v\` with \`v >= bad\`, using a **binary 
     descriptionMd: `Given a non-negative integer \`x\`, return the **integer square root** of \`x\` —
 that is, the largest integer \`r\` such that \`r * r <= x\`.
 
-You must not use any built-in square-root function. The canonical solution is a binary search
-over the range \`[0, x]\` looking for the largest \`mid\` whose square does not exceed \`x\`.`,
+You must not use any built-in square-root function.`,
     examples: [
       {
         input: 'x = 9',
@@ -337,7 +329,7 @@ your guess is too high, too low, or correct. Find \`pick\`.
 
 On LeetCode the oracle is an external \`guess(num)\` API. To keep this problem
 self-contained, our grader passes \`pick\` as a second argument so your solution can compare
-directly. You must still use a **binary search** rather than a linear scan.`,
+directly. You should minimize the number of guesses made.`,
     examples: [
       {
         input: 'n = 10, pick = 6',
@@ -412,10 +404,7 @@ directly. You must still use a **binary search** rather than a linear scan.`,
     tags: ['array', 'binary-search'],
     descriptionMd: `Given an ascending sorted integer array \`nums\` (with possible duplicates) and a
 \`target\`, return a length-2 list \`[first, last]\` giving the first and last index where
-\`target\` appears. If \`target\` is not in \`nums\`, return \`[-1, -1]\`.
-
-Your solution must run in \`O(log n)\` time. The idiomatic approach is two binary searches —
-one for the left bound (lower bound) and one for the right bound (upper bound minus one).`,
+\`target\` appears. If \`target\` is not in \`nums\`, return \`[-1, -1]\`.`,
     examples: [
       {
         input: 'nums = [1, 2, 2, 2, 3, 4], target = 2',
@@ -511,11 +500,7 @@ one for the left bound (lower bound) and one for the right bound (upper bound mi
     descriptionMd: `You are given an integer array \`nums\` that was originally sorted in ascending order
 with distinct values, then rotated left by some unknown amount (so, e.g., \`[1,2,3,4,5]\`
 might now be \`[3,4,5,1,2]\`). Given a \`target\`, return the **index** of \`target\` in the
-rotated array, or \`-1\` if it is not present.
-
-Your solution must run in \`O(log n)\` time. The trick is that one of the two halves split
-by \`mid\` is still sorted — check which, decide whether \`target\` fits in the sorted half,
-and recurse into that half or the other.`,
+rotated array, or \`-1\` if it is not present.`,
     examples: [
       {
         input: 'nums = [6, 7, 8, 1, 2, 3, 4, 5], target = 3',
@@ -598,11 +583,7 @@ and recurse into that half or the other.`,
     tags: ['array', 'binary-search'],
     descriptionMd: `You are given an integer array \`nums\` of distinct values, originally sorted in
 ascending order, then rotated left by an unknown amount. Return the **minimum** value in the
-rotated array.
-
-Your solution must run in \`O(log n)\` time. At every step compare \`nums[mid]\` to
-\`nums[right]\`: if \`nums[mid] > nums[right]\` the minimum is strictly right of \`mid\`;
-otherwise it is at \`mid\` or to the left.`,
+rotated array.`,
     examples: [
       {
         input: 'nums = [6, 7, 8, 1, 2, 3, 4, 5]',
@@ -675,11 +656,7 @@ otherwise it is at \`mid\` or to the left.`,
     descriptionMd: `Koko has \`piles[i]\` bananas in pile \`i\` and exactly \`h\` hours to finish them
 all. Each hour she picks one pile and eats up to \`k\` bananas from it (if the pile has fewer
 than \`k\` she eats the whole pile that hour but still uses the hour). Return the **minimum
-\`k\`** such that Koko can finish every pile within \`h\` hours.
-
-This is the canonical "binary search on the answer" problem. The eating speed is
-monotone — if some speed \`k\` works, every larger speed also works — so you can binary
-search \`k\` over \`[1, max(piles)]\`.`,
+\`k\`** such that Koko can finish every pile within \`h\` hours.`,
     examples: [
       {
         input: 'piles = [5, 10, 15], h = 6',
@@ -765,11 +742,7 @@ search \`k\` over \`[1, max(piles)]\`.`,
     descriptionMd: `You are given an array \`weights\` representing the weights of packages that must be
 shipped **in the listed order**, and an integer \`days\`. Each day you pick the next prefix of
 remaining packages that fits within the boat's capacity. Return the **minimum boat capacity**
-that lets you ship every package within \`days\` days.
-
-This is another binary search on the answer: the capacity is monotone, so search the range
-\`[max(weights), sum(weights)]\`. The predicate is a greedy simulation of the day-by-day
-loading.`,
+that lets you ship every package within \`days\` days.`,
     examples: [
       {
         input: 'weights = [3, 2, 2, 4, 1, 4], days = 3',
@@ -864,11 +837,7 @@ loading.`,
     tags: ['array', 'binary-search', 'dp'],
     descriptionMd: `Given an integer array \`nums\` of non-negative values and an integer \`k\`, split
 \`nums\` into exactly \`k\` **non-empty contiguous** subarrays so as to **minimise the
-largest sum** among those subarrays. Return that minimised largest sum.
-
-Binary search the answer in the range \`[max(nums), sum(nums)]\`. The predicate "is it
-possible to split into at most \`k\` subarrays each with sum \`<= mid\`" is a linear greedy
-scan, which makes the whole algorithm \`O(n log(sum))\`.`,
+largest sum** among those subarrays. Return that minimised largest sum.`,
     examples: [
       {
         input: 'nums = [1, 2, 3, 4, 5], k = 2',
@@ -962,11 +931,7 @@ scan, which makes the whole algorithm \`O(n log(sum))\`.`,
     pattern: 'Binary Search',
     tags: ['array', 'binary-search'],
     descriptionMd: `Given two sorted integer arrays \`nums1\` and \`nums2\` of (possibly different)
-lengths, return the **median** of the combined sorted sequence as a floating-point number.
-
-Your solution must run in \`O(log(min(m, n)))\` time. The idiomatic approach is a binary
-search on a partition of the shorter array so that the combined left half has the right size
-and the \`max(left)\` is \`<= min(right)\`.`,
+lengths, return the **median** of the combined sorted sequence as a floating-point number.`,
     examples: [
       {
         input: 'nums1 = [1, 3], nums2 = [2]',

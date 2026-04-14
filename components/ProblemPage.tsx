@@ -140,10 +140,6 @@ function TopNav({ problem }: { problem: ProblemContent }) {
 
       {/* Problem breadcrumb */}
       <div className="flex items-center gap-2">
-        <span className="text-[11px] font-semibold tracking-[0.1em] uppercase text-zinc-600" style={SG}>
-          {problem.pattern}
-        </span>
-        <ChevronRight size={11} className="text-zinc-700" />
         <span className="text-[13px] font-medium text-zinc-200" style={SG}>
           {problem.title}
         </span>

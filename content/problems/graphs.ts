@@ -12,12 +12,11 @@ export const GRAPHS_PROBLEMS: ProblemContent[] = [
     pattern: 'DFS / BFS',
     tags: ['matrix', 'dfs', 'bfs'],
     descriptionMd: `You are given a 2D grid \`image\` of integer colours, a starting pixel at
-\`(sr, sc)\`, and a new \`color\`. Perform a **flood fill** from \`(sr, sc)\`: replace the
-colour of the starting pixel and every 4-connected neighbour that currently has the same
-original colour with the new \`color\`. Return the updated image.
+\`(sr, sc)\`, and a new \`color\`. Perform a **flood fill** on the image.
 
-> Edge case: if the starting pixel is already \`color\`, return the image unchanged —
-> otherwise a naive DFS will loop forever.`,
+Starting from the pixel at \`(sr, sc)\`, replace its colour along with the colour of
+every 4-directionally connected pixel that shares the same original colour with the new
+\`color\`. Return the modified image.`,
     examples: [
       {
         input: 'image = [[0, 0, 0], [0, 1, 1]], sr = 1, sc = 1, color = 5',
@@ -26,7 +25,6 @@ original colour with the new \`color\`. Return the updated image.
       {
         input: 'image = [[3]], sr = 0, sc = 0, color = 3',
         output: '[[3]]',
-        explanation: 'Already the target colour — no work to do.',
       },
     ],
     constraints: [
@@ -98,11 +96,11 @@ original colour with the new \`color\`. Return the updated image.
     difficulty: 'Medium',
     pattern: 'DFS / BFS',
     tags: ['matrix', 'dfs', 'bfs', 'union-find'],
-    descriptionMd: `Given an \`m x n\` grid of characters \`'1'\` (land) and \`'0'\` (water), return the
-number of islands — a group of 4-connected land cells counts as a single island.
+    descriptionMd: `Given an \`m x n\` 2D binary grid of characters \`'1'\` (land) and \`'0'\`
+(water), return the number of **islands**.
 
-A DFS or BFS from every unvisited \`'1'\` cell works; so does union-find over all
-horizontal/vertical pairs of land cells.`,
+An island is a group of land cells connected 4-directionally (horizontally or
+vertically). You may assume all four edges of the grid are surrounded by water.`,
     examples: [
       {
         input: 'grid = [["1","1","0","0"],["1","1","0","0"],["0","0","1","0"]]',
@@ -257,16 +255,16 @@ land.`,
     pattern: 'Grid',
     tags: ['matrix'],
     descriptionMd: `Given a grid with exactly one 4-connected island (cells of \`1\`) surrounded by
-water (cells of \`0\`), return the **perimeter** of the island. The perimeter is the number
-of edges that border either water or the edge of the grid.
+water (cells of \`0\`), return the **perimeter** of the island.
 
-The direct scan: for each land cell, add \`4\` minus twice the number of land neighbours
-(each shared edge is counted twice across the two cells).`,
+The perimeter is the total number of edges that border either water or the edge of the
+grid. The island has no lakes (water inside that isn't connected to the water around the
+island).`,
     examples: [
       {
         input: 'grid = [[0, 1, 0], [1, 1, 1], [0, 1, 0]]',
         output: '12',
-        explanation: 'A plus-shaped island with 5 cells, 4 internal edges: 20 - 2*4 = 12.',
+        explanation: 'A plus-shaped island of five cells has perimeter 12.',
       },
       {
         input: 'grid = [[1]]',
@@ -326,13 +324,15 @@ The direct scan: for each land cell, add \`4\` minus twice the number of land ne
     difficulty: 'Medium',
     pattern: 'BFS',
     tags: ['matrix', 'bfs'],
-    descriptionMd: `You are given an \`m x n\` grid where \`0\` is empty, \`1\` is a fresh orange, and
-\`2\` is a rotten orange. Every minute, every fresh orange that is 4-connected to at least
-one rotten orange becomes rotten. Return the **minimum number of minutes** until no fresh
-oranges remain, or \`-1\` if some fresh orange can never rot.
+    descriptionMd: `You are given an \`m x n\` grid where each cell holds one of the following:
 
-The canonical solution is a multi-source BFS from every initially-rotten orange, tracking
-levels as minutes.`,
+- \`0\` — an empty cell,
+- \`1\` — a fresh orange,
+- \`2\` — a rotten orange.
+
+Every minute, any fresh orange that is 4-directionally adjacent to a rotten orange also
+becomes rotten. Return the **minimum number of minutes** that must elapse until no cell
+has a fresh orange. If this is impossible, return \`-1\`.`,
     examples: [
       {
         input: 'grid = [[2, 1], [1, 1]]',
@@ -414,8 +414,8 @@ class Solution:
 1-indexed neighbours of the \`(i + 1)\`-th node. Return a **deep copy** of the graph,
 serialised in the same way.
 
-The two classic approaches are DFS with a hash map from original to cloned node, or BFS
-with the same kind of map.`,
+A deep copy means every node and every edge in the returned graph is a new object, not
+a reference back to the original graph.`,
     examples: [
       {
         input: 'adjList = [[2], [1]]',
@@ -475,7 +475,6 @@ class Solution:
         head = _to_graph(adjList)
 
         # ─── Produce a deep copy of the graph below ────────────────
-        # Hint: DFS with a dict[original_node, cloned_node].
         new_head = head  # TODO: replace with the cloned head
         # ───────────────────────────────────────────────────────────
 
@@ -527,15 +526,13 @@ class Solution:
     pattern: 'DFS',
     tags: ['matrix', 'dfs', 'bfs'],
     descriptionMd: `You are given an \`m x n\` integer grid \`heights\` where \`heights[i][j]\` is the
-height of the cell at position \`(i, j)\`. The Pacific Ocean touches the **top** and
-**left** edges of the grid; the Atlantic Ocean touches the **bottom** and **right** edges.
-Water can flow from a cell to any neighbouring cell with height **less than or equal** to
-its own. Return every cell from which water can reach **both** oceans, as a list of
-\`[r, c]\` pairs.
+height of the cell at position \`(i, j)\`. The **Pacific Ocean** touches the **top** and
+**left** edges of the grid; the **Atlantic Ocean** touches the **bottom** and **right**
+edges.
 
-The efficient solution reverses the flow: from each ocean's edge, run a DFS that only steps
-to a neighbour with **greater-or-equal** height, marking every reachable cell. The answer
-is the intersection of the two reachable sets.`,
+Water can flow from any cell to a 4-directionally neighbouring cell whose height is
+**less than or equal** to the current cell's height. Return every cell \`[r, c]\` from
+which water can flow to **both** oceans.`,
     examples: [
       {
         input: 'heights = [[1, 2], [3, 4]]',
@@ -611,19 +608,19 @@ is the intersection of the two reachable sets.`,
     difficulty: 'Medium',
     pattern: 'DFS',
     tags: ['matrix', 'dfs'],
-    descriptionMd: `Given an \`m x n\` matrix \`board\` of characters \`'X'\` and \`'O'\`, capture
-every region of \`'O'\` that is **completely surrounded** by \`'X'\`. Capturing means
-flipping those \`'O'\` cells to \`'X'\`. \`'O'\` regions that touch the **border** of the
-matrix remain as \`'O'\`.
+    descriptionMd: `Given an \`m x n\` matrix \`board\` of characters \`'X'\` and \`'O'\`, **capture**
+every region of \`'O'\` that is completely surrounded by \`'X'\`. A region is captured
+by flipping all its \`'O'\`s into \`'X'\`s.
 
-The canonical approach is the complement trick: DFS from every \`'O'\` on the border,
-marking reachable \`'O'\`s as \`'#'\` (safe), then scan the whole grid and flip the
-remaining \`'O'\`s to \`'X'\` and the \`'#'\`s back to \`'O'\`.`,
+A region is surrounded when none of its cells are on the border of the matrix — any
+\`'O'\` connected (4-directionally) to a border \`'O'\` is **not** captured.
+
+Return the updated board.`,
     examples: [
       {
         input: 'board = [["X","X","X","X"],["X","O","O","X"],["X","X","O","X"],["X","O","X","X"]]',
         output: '[["X","X","X","X"],["X","X","X","X"],["X","X","X","X"],["X","O","X","X"]]',
-        explanation: 'The interior O region is captured; the bottom-row O on the border stays.',
+        explanation: 'The interior O region flips to X; the O on the bottom border stays.',
       },
       {
         input: 'board = [["O"]]',
@@ -706,12 +703,16 @@ remaining \`'O'\`s to \`'X'\` and the \`'#'\`s back to \`'O'\`.`,
     difficulty: 'Medium',
     pattern: 'DFS / BFS',
     tags: ['graph', 'dfs', 'bfs'],
-    descriptionMd: `You start in room \`0\` of a building with \`n\` rooms. Each room \`i\` has a list
-\`rooms[i]\` of keys to other rooms. Return \`True\` if you can reach **every** room by
-walking from room to room along the keys you pick up; otherwise \`False\`.
+    descriptionMd: `There are \`n\` rooms labelled \`0\` through \`n - 1\`. All rooms are locked
+except for room \`0\`. Your goal is to visit all the rooms. You cannot enter a locked
+room without having its key.
 
-This is a textbook DFS/BFS over an implicit graph — treat rooms as nodes and keys as
-directed edges.`,
+When you visit a room, you may find a set of **distinct keys** in it. Each key has a
+number on it, denoting which room it unlocks, and you can take all of them with you to
+unlock other rooms. You are given \`rooms\` where \`rooms[i]\` is the list of keys
+available in room \`i\`.
+
+Return \`True\` if you can visit **all** the rooms, and \`False\` otherwise.`,
     examples: [
       {
         input: 'rooms = [[1], [2], [3], []]',
@@ -720,7 +721,7 @@ directed edges.`,
       {
         input: 'rooms = [[1, 3], [3, 0, 1], [2], [0]]',
         output: 'False',
-        explanation: 'Room 2 is isolated — you never pick up a key to it.',
+        explanation: 'No key to room 2 is ever picked up, so it cannot be entered.',
       },
     ],
     constraints: [
@@ -772,13 +773,16 @@ directed edges.`,
     difficulty: 'Medium',
     pattern: 'Union-Find',
     tags: ['graph', 'union-find', 'dfs'],
-    descriptionMd: `You are given an \`n x n\` matrix \`isConnected\` where \`isConnected[i][j] == 1\`
-means city \`i\` is directly connected to city \`j\` (and the matrix is symmetric with
-\`1\`s on the diagonal). A **province** is a maximal set of cities that are all
-(transitively) connected. Return the number of provinces.
+    descriptionMd: `There are \`n\` cities. Some of them are connected, while some are not. If
+city \`a\` is connected directly with city \`b\`, and city \`b\` is connected directly
+with city \`c\`, then city \`a\` is connected indirectly with city \`c\`.
 
-Either a DFS that marks each city's province, or a union-find that unions every connected
-pair, gives the count.`,
+A **province** is a group of directly or indirectly connected cities and no other cities
+outside of the group.
+
+You are given an \`n x n\` matrix \`isConnected\` where \`isConnected[i][j] == 1\` if
+the \`i\`-th city and the \`j\`-th city are directly connected, and \`isConnected[i][j]
+== 0\` otherwise. Return the total number of **provinces**.`,
     examples: [
       {
         input: 'isConnected = [[1, 0, 1], [0, 1, 0], [1, 0, 1]]',
@@ -874,12 +878,16 @@ pair, gives the count.`,
     pattern: 'BFS',
     tags: ['matrix', 'bfs'],
     descriptionMd: `Given an \`n x n\` binary matrix \`grid\`, return the length of the shortest
-**clear path** from the top-left cell \`(0, 0)\` to the bottom-right cell \`(n-1, n-1)\`.
-A clear path only walks through cells with value \`0\`, and can step to any of the **eight**
-neighbouring cells. If no such path exists, return \`-1\`. The path length is the number of
-cells visited (including both endpoints).
+**clear path** in the matrix. If there is no clear path, return \`-1\`.
 
-BFS from \`(0, 0)\` over the 8-neighbour lattice is the straightforward solution.`,
+A clear path in a binary matrix is a path from the top-left cell \`(0, 0)\` to the
+bottom-right cell \`(n - 1, n - 1)\` such that:
+
+- All the visited cells of the path are \`0\`.
+- All adjacent cells of the path are 8-directionally connected (they differ by at most
+  one in row or column, and are not the same cell).
+
+The length of a clear path is the number of visited cells of this path.`,
     examples: [
       {
         input: 'grid = [[0, 1], [1, 0]]',
@@ -888,7 +896,7 @@ BFS from \`(0, 0)\` over the 8-neighbour lattice is the straightforward solution
       {
         input: 'grid = [[1, 0], [0, 0]]',
         output: '-1',
-        explanation: 'The starting cell itself is blocked.',
+        explanation: 'The starting cell is blocked, so no clear path exists.',
       },
     ],
     constraints: [
@@ -952,18 +960,20 @@ class Solution:
     pattern: 'DFS / BFS',
     tags: ['graph', 'dfs', 'bfs'],
     descriptionMd: `You are given a list \`bombs\` where each \`bombs[i] = [xi, yi, ri]\` represents a
-bomb at position \`(xi, yi)\` with blast radius \`ri\`. Detonating a bomb triggers every
-bomb whose centre falls inside its blast radius (including on the boundary), which in turn
-may trigger more bombs in a chain reaction. Return the **maximum number of bombs** that can
-be detonated when you choose the best starting bomb.
+bomb placed at coordinate \`(xi, yi)\` with blast radius \`ri\`.
 
-Build a directed graph \`i -> j\` whenever bomb \`j\` is within bomb \`i\`'s radius, then
-run a BFS/DFS from every node and return the largest reachable-set size.`,
+You may choose to detonate a **single** bomb. When a bomb is detonated, it will detonate
+**all bombs** that lie in its range (another bomb \`j\` is in range of bomb \`i\` if the
+Euclidean distance between their centres is \`<= ri\`). These bombs may in turn detonate
+further bombs, producing a chain reaction.
+
+Return the **maximum number of bombs** that can be detonated if you are allowed to
+detonate only one bomb.`,
     examples: [
       {
         input: 'bombs = [[1, 1, 5], [4, 1, 2]]',
         output: '2',
-        explanation: 'Starting at bomb 0 triggers bomb 1 (distance 3 <= 5). Starting at bomb 1 covers only itself.',
+        explanation: 'Detonating bomb 0 also detonates bomb 1. Detonating bomb 1 only covers itself.',
       },
       {
         input: 'bombs = [[1, 1, 5], [10, 10, 5]]',
@@ -1042,9 +1052,8 @@ class Solution:
 \`0\` to \`n - 1\` and an edge list \`edges\` where each \`edges[i] = [u, v]\` represents
 an undirected edge between \`u\` and \`v\`. There are no self-loops or parallel edges.
 
-Return \`True\` if there exists a **valid path** from \`source\` to \`destination\`, and
-\`False\` otherwise. A BFS (or DFS) from \`source\` that stops when it reaches
-\`destination\` is the classic solution.`,
+You are also given two vertices \`source\` and \`destination\`. Return \`True\` if there
+exists a **valid path** from \`source\` to \`destination\`, and \`False\` otherwise.`,
     examples: [
       {
         input: 'n = 3, edges = [[0,1],[1,2],[2,0]], source = 0, destination = 2',
@@ -1116,18 +1125,18 @@ class Solution:
     pattern: 'Graph / Degree Counting',
     tags: ['graph', 'hash-map'],
     descriptionMd: `In a town of \`n\` people labelled \`1\` through \`n\`, rumour has it
-that one person is secretly the **town judge**. The judge is characterised by two
-properties:
+that one person is secretly the **town judge**. If the town judge exists, then:
 
-1. The judge **trusts nobody**.
-2. **Everybody (except the judge)** trusts the judge.
+1. The town judge trusts nobody.
+2. Everybody (except for the town judge) trusts the town judge.
+3. There is exactly one person that satisfies properties 1 and 2.
 
-You are given an array \`trust\` where \`trust[i] = [a, b]\` means person \`a\` trusts
-person \`b\`. Exactly one person can satisfy both properties — return that person, or
-return \`-1\` if no such person exists.
+You are given an array \`trust\` where \`trust[i] = [ai, bi]\` representing that the
+person labelled \`ai\` trusts the person labelled \`bi\`. If a trust relationship does
+not exist in \`trust\`, then such a trust relationship does not exist.
 
-The trick: compute \`indegree[p] - outdegree[p]\` for each person. The judge is the unique
-person with a net score of \`n - 1\`.`,
+Return the label of the town judge if the town judge exists and can be identified, or
+return \`-1\` otherwise.`,
     examples: [
       {
         input: 'n = 2, trust = [[1, 2]]',
@@ -1140,7 +1149,7 @@ person with a net score of \`n - 1\`.`,
       {
         input: 'n = 3, trust = [[1, 3], [2, 3], [3, 1]]',
         output: '-1',
-        explanation: 'Person 3 trusts somebody, so cannot be the judge.',
+        explanation: 'No person satisfies both judge properties.',
       },
     ],
     constraints: [

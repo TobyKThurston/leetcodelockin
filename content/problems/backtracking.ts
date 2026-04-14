@@ -14,11 +14,10 @@ export const BACKTRACKING_PROBLEMS: ProblemContent[] = [
     descriptionMd: `Given an array of **distinct** integers \`nums\`, return every possible subset (the
 power set). Each inner subset must be in the same order as it appears in \`nums\`.
 
-> To make grading deterministic, please **sort the outer list of subsets lexicographically**
-> before returning.
+The solution set must not contain duplicate subsets.
 
-The standard backtracking template walks \`nums\` and at each step either includes or
-excludes the current element.`,
+> To make grading deterministic, please **sort the outer list of subsets lexicographically**
+> before returning.`,
     examples: [
       {
         input: 'nums = [1, 2, 3]',
@@ -87,10 +86,7 @@ excludes the current element.`,
 subsets (the power set) **without any duplicate subsets**.
 
 > Please **sort \`nums\` first** so inner subsets are in non-decreasing order, and
-> **sort the outer list lexicographically** before returning.
-
-The idiomatic approach sorts \`nums\` and then backtracks, skipping a value \`nums[i]\` if
-\`i > start and nums[i] == nums[i - 1]\`.`,
+> **sort the outer list lexicographically** before returning.`,
     examples: [
       {
         input: 'nums = [1, 2, 2]',
@@ -158,10 +154,7 @@ The idiomatic approach sorts \`nums\` and then backtracks, skipping a value \`nu
     descriptionMd: `Given an array of **distinct** integers \`nums\`, return **all** their distinct
 permutations.
 
-> Please **sort the outer list of permutations lexicographically** before returning.
-
-The canonical solution swaps each remaining element into the current position and recurses,
-or equivalently maintains a "used" set and picks each unused element in turn.`,
+> Please **sort the outer list of permutations lexicographically** before returning.`,
     examples: [
       {
         input: 'nums = [7, 8]',
@@ -227,13 +220,9 @@ or equivalently maintains a "used" set and picks each unused element in turn.`,
     pattern: 'Backtracking',
     tags: ['backtracking'],
     descriptionMd: `Given an integer array \`nums\` that **may contain duplicates**, return all possible
-**unique** permutations.
+**unique** permutations in any order.
 
-> Please **sort the outer list of permutations lexicographically** before returning.
-
-The trick is to sort \`nums\`, use a "used" boolean array, and skip a candidate
-\`nums[i]\` when \`i > 0\` and \`nums[i] == nums[i - 1]\` **and** \`not used[i - 1]\` — this
-avoids picking the same value in the same position via a different "copy".`,
+> Please **sort the outer list of permutations lexicographically** before returning.`,
     examples: [
       {
         input: 'nums = [1, 1, 2]',
@@ -308,11 +297,10 @@ avoids picking the same value in the same position via a different "copy".`,
     descriptionMd: `Given two integers \`n\` and \`k\`, return every possible combination of exactly
 \`k\` distinct numbers chosen from the range \`[1, n]\`.
 
-> Please put each inner combination in ascending order and **sort the outer list
-> lexicographically** before returning.
+You may return the answer in any order.
 
-The standard backtracking template chooses a starting index and recurses over larger
-indices, only allowing values larger than the one just picked.`,
+> Please put each inner combination in ascending order and **sort the outer list
+> lexicographically** before returning.`,
     examples: [
       {
         input: 'n = 4, k = 2',
@@ -530,10 +518,10 @@ duplicates**) and a target number \`target\`, return every unique combination of
     descriptionMd: `Given a lowercase string \`s\`, partition \`s\` into contiguous substrings such that
 **every substring is a palindrome**. Return a list of every valid partitioning.
 
-> Please **sort the outer list lexicographically** before returning. Inner lists are in
-> left-to-right order as they appear in \`s\`.
+A string is a **palindrome** if it reads the same forward and backward.
 
-A DFS over starting positions plus an inline palindrome check is the idiomatic solution.`,
+> Please **sort the outer list lexicographically** before returning. Inner lists are in
+> left-to-right order as they appear in \`s\`.`,
     examples: [
       {
         input: 's = "abba"',
@@ -687,21 +675,21 @@ Return the empty list if \`digits\` is empty.
     pattern: 'Backtracking',
     tags: ['backtracking', 'matrix'],
     descriptionMd: `Given an \`m x n\` character grid \`board\` and a string \`word\`, return \`True\` if
-\`word\` can be assembled by walking from cell to adjacent cell (up / down / left / right)
-without reusing any cell twice. Return \`False\` otherwise.
+\`word\` exists in the grid. Return \`False\` otherwise.
 
-The standard backtracking approach runs a DFS from every cell, marking visited cells in
-place (e.g. overwriting with \`'#'\`) and restoring them on return.`,
+The word can be constructed from letters of sequentially adjacent cells, where adjacent
+cells are horizontally or vertically neighbouring. The same cell may not be used more
+than once.`,
     examples: [
       {
         input: 'board = [["a","b"],["c","d"]], word = "abdc"',
         output: 'True',
-        explanation: 'Path a(0,0) → b(0,1) → d(1,1) → c(1,0) traces the word.',
+        explanation: 'The letters a, b, d, c appear on adjacent cells forming the word.',
       },
       {
         input: 'board = [["a","b"],["c","d"]], word = "abcd"',
         output: 'False',
-        explanation: 'After "ab" there is no adjacent "c" to (0,1).',
+        explanation: 'No valid path of adjacent cells spells "abcd".',
       },
     ],
     constraints: [
@@ -766,14 +754,14 @@ place (e.g. overwriting with \`'#'\`) and restoring them on return.`,
     pattern: 'Backtracking',
     tags: ['backtracking'],
     descriptionMd: `The N-Queens puzzle asks you to place \`n\` queens on an \`n x n\` chessboard so
-that no two queens attack each other (same row, same column, or same diagonal). Return **all
-distinct solutions**, where each solution is a list of \`n\` strings of length \`n\`, each
-containing \`'Q'\` for a queen and \`'.'\` for an empty square.
+that no two queens attack each other. Two queens attack each other if they share a row,
+a column, or a diagonal.
 
-> Please **sort the outer list of solutions lexicographically** before returning.
+Return **all distinct solutions**. Each solution is a list of \`n\` strings of length
+\`n\`, where each string represents a row of the board. A \`'Q'\` marks a queen and a
+\`'.'\` marks an empty square.
 
-The classic approach is a row-by-row DFS that tracks which columns and which diagonals are
-already occupied by a queen.`,
+> Please **sort the outer list of solutions lexicographically** before returning.`,
     examples: [
       {
         input: 'n = 1',
@@ -868,10 +856,7 @@ the empty cells so the resulting board satisfies the standard sudoku rules:
 Return the completed board. The puzzle is guaranteed to have exactly one solution.
 
 > Note: our grader's test boards all have a unique solution. Internally LeetCode asks you to
-> mutate the board in place; you can still return the (mutated) board at the end.
-
-The classic backtracking solution walks empty cells in order, trying digits \`1\`..\`9\`,
-and backtracking whenever a digit would violate one of the three constraints.`,
+> mutate the board in place; you can still return the (mutated) board at the end.`,
     examples: [
       {
         input: 'board = an almost-solved grid with one "." at (0, 0)',

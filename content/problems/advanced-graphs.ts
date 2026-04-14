@@ -11,13 +11,12 @@ export const ADVANCED_GRAPHS_PROBLEMS: ProblemContent[] = [
     difficulty: 'Medium',
     pattern: 'Topological Sort',
     tags: ['graph', 'topological-sort'],
-    descriptionMd: `You have \`numCourses\` courses labelled \`0..numCourses - 1\`. Some courses have
-prerequisites represented as \`prerequisites[i] = [a, b]\`, meaning "to take course \`a\`
-you must first take course \`b\`". Return \`True\` if you can complete **every** course
-(i.e., the prerequisite graph has no cycle) and \`False\` otherwise.
+    descriptionMd: `There are a total of \`numCourses\` courses you have to take, labelled from
+\`0\` to \`numCourses - 1\`. You are given an array \`prerequisites\` where
+\`prerequisites[i] = [a, b]\` indicates that you **must** take course \`b\` first if you
+want to take course \`a\`.
 
-Either Kahn's BFS topological sort or a DFS with "visiting / visited" colours detects the
-cycle in linear time.`,
+Return \`True\` if you can finish **all** courses. Otherwise, return \`False\`.`,
     examples: [
       {
         input: 'numCourses = 2, prerequisites = [[1, 0]]',
@@ -114,14 +113,17 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Topological Sort',
     tags: ['graph', 'topological-sort'],
-    descriptionMd: `Given \`numCourses\` courses labelled \`0..numCourses - 1\` and a list of
-prerequisite pairs \`[a, b]\` meaning "course \`a\` requires course \`b\` first", return a
-**valid ordering** to take all of them. If no valid ordering exists (i.e. a cycle), return
-the empty list.
+    descriptionMd: `There are a total of \`numCourses\` courses you have to take, labelled from
+\`0\` to \`numCourses - 1\`. You are given an array \`prerequisites\` where
+\`prerequisites[i] = [a, b]\` indicates that you **must** take course \`b\` first if you
+want to take course \`a\`.
 
-> Because multiple valid orderings usually exist, our tests pick inputs whose topological
-> order is uniquely determined (e.g. linear chains), so any correct Kahn's / DFS solution
-> matches.`,
+Return the **ordering** of courses you should take to finish all courses. If there are
+many valid answers, return **any** of them. If it is impossible to finish all courses,
+return an empty array.
+
+> Because multiple valid orderings usually exist, our tests pick inputs whose ordering
+> is uniquely determined (e.g. linear chains), so any correct solution matches.`,
     examples: [
       {
         input: 'numCourses = 3, prerequisites = [[1, 0], [2, 1]]',
@@ -222,13 +224,16 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Union-Find',
     tags: ['graph', 'union-find'],
-    descriptionMd: `You are given an undirected graph that started as a tree on nodes \`1..n\` and had
-exactly one extra edge added. Return that extra edge as \`[a, b]\`. If more than one answer
-exists, return the one that appears **last** in \`edges\`.
+    descriptionMd: `In this problem, a tree is an undirected graph that is connected and has no
+cycles. You are given a graph that started as a tree with \`n\` nodes labelled from
+\`1\` to \`n\`, with one additional edge added. The added edge has two **different**
+vertices chosen from \`1\` to \`n\`, and was not an edge that already existed.
 
-Union-find makes this elegant: walk \`edges\` left to right, unioning each endpoint pair;
-the first edge whose endpoints are already in the same component is the redundant one
-(and because the problem guarantees exactly one extra edge, that's also the last such).`,
+The graph is represented as an array \`edges\` of length \`n\` where \`edges[i] = [ai,
+bi]\` indicates that there is an edge between nodes \`ai\` and \`bi\` in the graph.
+
+Return an edge that can be removed so that the resulting graph is a tree of \`n\` nodes.
+If there are multiple answers, return the edge that occurs **last** in the input.`,
     examples: [
       {
         input: 'edges = [[1, 2], [1, 3], [2, 3]]',
@@ -320,10 +325,11 @@ the first edge whose endpoints are already in the same component is the redundan
     difficulty: 'Medium',
     pattern: 'Union-Find',
     tags: ['graph', 'union-find', 'dfs'],
-    descriptionMd: `You are given an integer \`n\` (nodes labelled \`0..n-1\`) and a list of undirected
-\`edges\`. Return the number of **connected components** in the graph.
+    descriptionMd: `You have a graph of \`n\` nodes labelled \`0\` through \`n - 1\`. You are given
+an integer \`n\` and a list of \`edges\` where \`edges[i] = [ai, bi]\` indicates that
+there is an undirected edge between nodes \`ai\` and \`bi\` in the graph.
 
-Union-find runs in near-linear time. A plain DFS/BFS from every unvisited node also works.`,
+Return the number of **connected components** in the graph.`,
     examples: [
       {
         input: 'n = 5, edges = [[0, 1], [1, 2], [3, 4]]',
@@ -412,18 +418,18 @@ Union-find runs in near-linear time. A plain DFS/BFS from every unvisited node a
     difficulty: 'Medium',
     pattern: 'MST',
     tags: ['graph', 'mst', 'union-find'],
-    descriptionMd: `You are given \`n\` cities labelled \`1..n\` and a list of bidirectional
-\`connections\`, where each entry \`[a, b, cost]\` is a cable you can lay between cities
-\`a\` and \`b\` for \`cost\`. Return the **minimum total cost** to connect every city
-(i.e., the weight of a minimum spanning tree). If the cities can't all be connected, return
-\`-1\`.
+    descriptionMd: `There are \`n\` cities labelled from \`1\` to \`n\`. You are given the array
+\`connections\` where \`connections[i] = [ai, bi, costi]\` represents the cost to connect
+city \`ai\` and city \`bi\` (bidirectional connection).
 
-Classic MST problem — Kruskal's with union-find is the short solution.`,
+Return the **minimum cost** to connect all the \`n\` cities such that there is at least
+one path between each pair of cities. If it is impossible to connect all the \`n\`
+cities, return \`-1\`.`,
     examples: [
       {
         input: 'n = 3, connections = [[1, 2, 5], [1, 3, 6], [2, 3, 1]]',
         output: '6',
-        explanation: 'Take edges (2,3,1) and (1,2,5) — total 6.',
+        explanation: 'Connecting (2,3) at cost 1 and (1,2) at cost 5 links all cities for a total of 6.',
       },
       {
         input: 'n = 4, connections = [[1, 2, 3], [3, 4, 4]]',
@@ -489,18 +495,19 @@ Classic MST problem — Kruskal's with union-find is the short solution.`,
     difficulty: 'Medium',
     pattern: 'MST',
     tags: ['graph', 'mst'],
-    descriptionMd: `You are given an array \`points\` where \`points[i] = [xi, yi]\` is a point on a
-2D plane. The cost of connecting any two points is their **Manhattan distance**
-\`|xi - xj| + |yi - yj|\`. Return the **minimum total cost** to connect all the points
-into a single connected graph.
+    descriptionMd: `You are given an array \`points\` representing integer coordinates of some
+points on a 2D plane, where \`points[i] = [xi, yi]\`.
 
-Construct the complete graph of \`n\` points and run an MST algorithm (Prim's with a heap
-is \`O(n^2 log n)\`; union-find Kruskal's also works).`,
+The cost of connecting two points \`[xi, yi]\` and \`[xj, yj]\` is the **Manhattan
+distance** between them: \`|xi - xj| + |yi - yj|\`.
+
+Return the **minimum cost** to make all points connected. All points are connected if
+there is exactly one simple path between any two points.`,
     examples: [
       {
         input: 'points = [[0, 0], [2, 2], [3, 10]]',
         output: '13',
-        explanation: 'Connect (0,0)-(2,2) cost 4, then (2,2)-(3,10) cost 9 → total 13.',
+        explanation: 'The two edges (0,0)-(2,2) and (2,2)-(3,10) connect all points for a total cost of 13.',
       },
       {
         input: 'points = [[0, 0]]',
@@ -577,13 +584,14 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Dijkstra',
     tags: ['graph', 'dijkstra'],
-    descriptionMd: `You have \`n\` network nodes labelled \`1..n\`. A signal is sent from node \`k\`
-across weighted directed edges \`times[i] = [u, v, w]\` (edge \`u -> v\` with travel
-time \`w\`). Return the **minimum time** for the signal to reach **every** node, or \`-1\`
-if any node cannot receive it.
+    descriptionMd: `You are given a network of \`n\` nodes labelled from \`1\` to \`n\`. You are
+also given \`times\`, a list of travel times as directed edges where
+\`times[i] = [ui, vi, wi]\`, where \`ui\` is the source node, \`vi\` is the target node,
+and \`wi\` is the time it takes for a signal to travel from source to target.
 
-The textbook solution is Dijkstra's algorithm from \`k\`: the answer is the maximum of all
-shortest-path distances, or \`-1\` if any is infinite.`,
+We will send a signal from a given node \`k\`. Return the **minimum time** it takes for
+all the \`n\` nodes to receive the signal. If it is impossible for all the \`n\` nodes
+to receive the signal, return \`-1\`.`,
     examples: [
       {
         input: 'times = [[2, 1, 1], [2, 3, 1], [3, 4, 1]], n = 4, k = 2',
@@ -659,14 +667,13 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Bellman-Ford',
     tags: ['graph', 'bellman-ford', 'dp'],
-    descriptionMd: `There are \`n\` cities connected by directed \`flights[i] = [from, to, price]\`.
-Given a start city \`src\`, a destination city \`dst\`, and an integer \`k\`, return the
-cheapest price to travel from \`src\` to \`dst\` using **at most \`k\` stops** (i.e. at
-most \`k + 1\` edges). If no such path exists, return \`-1\`.
+    descriptionMd: `There are \`n\` cities connected by some number of flights. You are given an
+array \`flights\` where \`flights[i] = [fromi, toi, pricei]\` indicates that there is a
+flight from city \`fromi\` to city \`toi\` with cost \`pricei\`.
 
-Bounded-edge shortest path is a job for Bellman-Ford: run \`k + 1\` relaxation rounds,
-using a **snapshot** of distances each round so a newly-relaxed distance isn't propagated
-within the same round.`,
+You are also given three integers \`src\`, \`dst\`, and \`k\`. Return the **cheapest
+price** from \`src\` to \`dst\` with at most \`k\` stops. If there is no such route,
+return \`-1\`.`,
     examples: [
       {
         input: 'n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 1',
@@ -739,14 +746,15 @@ within the same round.`,
     difficulty: 'Medium',
     pattern: 'Dijkstra',
     tags: ['graph', 'dijkstra'],
-    descriptionMd: `You are given an undirected graph with \`n\` nodes and a list of bidirectional
-\`edges\`, where \`edges[i] = [u, v]\` has success probability \`succProb[i]\`. Return the
-maximum probability that a path from node \`start\` to node \`end\` succeeds, where the
-probability of a path is the **product** of its edge probabilities. If no path exists,
-return \`0\`.
+    descriptionMd: `You are given an undirected weighted graph of \`n\` nodes (0-indexed),
+represented by an edge list \`edges\` where \`edges[i] = [a, b]\` is an undirected edge
+connecting nodes \`a\` and \`b\` with a probability of success of traversing that edge
+\`succProb[i]\`.
 
-Dijkstra's algorithm applied to logarithms — or equivalently a max-heap keyed by
-probability — gives the answer in \`O((n + m) log n)\`.`,
+Given two nodes \`start\` and \`end\`, return the **maximum probability of success** to
+go from \`start\` to \`end\`. The probability of a path is the **product** of the
+success probabilities along its edges. If there is no path from \`start\` to \`end\`,
+return \`0\`.`,
     examples: [
       {
         input: 'n = 2, edges = [[0, 1]], succProb = [0.5], start = 0, end = 1',
@@ -836,16 +844,19 @@ class Solution:
     difficulty: 'Hard',
     pattern: 'Topological Sort',
     tags: ['graph', 'topological-sort', 'string'],
-    descriptionMd: `You are given a list of \`words\` from an alien language, sorted lexicographically
-according to the rules of that language's alphabet. Return a **string** of the letters in
-the order they appear in the alien alphabet. If the order cannot be determined (for example,
-because a prefix word appears **after** one of its extensions), return the empty string.
+    descriptionMd: `There is a new alien language that uses the English alphabet. However, the
+order among the letters is unknown to you.
 
-Build a directed graph of letter-before-letter constraints from adjacent word pairs, then
-run a topological sort (either Kahn's or DFS).
+You are given a list of \`words\` from the alien language's dictionary, where the words
+are **sorted lexicographically** by the rules of this new language. Return a **string**
+of the unique letters in the new alien language sorted in lexicographically increasing
+order by the new language's rules.
 
-> Because multiple valid orders often exist, our tests pick inputs whose topological order
-> is uniquely determined, so any correct topological-sort solution matches.`,
+If there is no solution — for example, because a word is a proper prefix of an earlier
+word — return \`""\`.
+
+> Because multiple valid orders often exist, our tests pick inputs whose ordering is
+> uniquely determined, so any correct solution matches.`,
     examples: [
       {
         input: 'words = ["a", "b", "c"]',
@@ -854,7 +865,7 @@ run a topological sort (either Kahn's or DFS).
       {
         input: 'words = ["abc", "ab"]',
         output: '""',
-        explanation: '"ab" is a proper prefix of "abc" but comes after it — invalid dictionary.',
+        explanation: '"ab" is a proper prefix of "abc" but comes after it, so no valid ordering exists.',
       },
     ],
     constraints: [
@@ -929,12 +940,13 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Union-Find',
     tags: ['union-find', 'graph'],
-    descriptionMd: `You are given a list of four-character \`equations\` like \`"a==b"\` or
-\`"b!=c"\`. Return \`True\` if it is possible to assign values to the involved single-letter
-variables so that **every** equation holds. Otherwise return \`False\`.
+    descriptionMd: `You are given an array of strings \`equations\` that represent relationships
+between variables where each string \`equations[i]\` is of length \`4\` and takes one of
+two different forms: \`"xi==yi"\` or \`"xi!=yi"\`. Here, \`xi\` and \`yi\` are
+lowercase letters (not necessarily different) that represent one-letter variable names.
 
-Union-find makes this simple: first union all variables appearing in \`==\` equations, then
-walk the \`!=\` equations and check that no pair is already in the same component.`,
+Return \`True\` if it is possible to assign integers to variable names so as to satisfy
+**all** the given equations, or \`False\` otherwise.`,
     examples: [
       {
         input: 'equations = ["b==a", "a==b"]',
@@ -1007,14 +1019,18 @@ walk the \`!=\` equations and check that no pair is already in the same componen
     difficulty: 'Medium',
     pattern: 'Dijkstra',
     tags: ['matrix', 'dijkstra', 'binary-search'],
-    descriptionMd: `You are given an \`m x n\` integer matrix \`heights\`. You start at the top-left
-cell \`(0, 0)\` and want to reach the bottom-right cell \`(m-1, n-1)\`. At every step you
-can move up / down / left / right. The **effort** of a path is the **maximum absolute
-difference** in heights between any two consecutive cells. Return the minimum effort of any
-valid path.
+    descriptionMd: `You are a hiker preparing for an upcoming hike. You are given \`heights\`, a
+\`m x n\` 0-indexed 2D array of size \`m x n\`, where \`heights[row][col]\` represents
+the height of cell \`(row, col)\`. You are situated in the top-left cell \`(0, 0)\`, and
+you hope to travel to the bottom-right cell \`(m - 1, n - 1)\` (i.e., 0-indexed). You
+can move **up, down, left, or right**, and you wish to find a route that requires the
+minimum **effort**.
 
-Either a Dijkstra-style search where each node's "distance" is the minimum max-edge cost
-seen so far, or a binary search on the effort value with a BFS/DFS predicate, works.`,
+A route's **effort** is the **maximum absolute difference** in heights between two
+consecutive cells of the route.
+
+Return the minimum **effort** required to travel from the top-left cell to the
+bottom-right cell.`,
     examples: [
       {
         input: 'heights = [[1, 2, 3]]',

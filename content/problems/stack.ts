@@ -13,10 +13,7 @@ export const STACK_PROBLEMS: ProblemContent[] = [
     tags: ['string', 'stack'],
     descriptionMd: `Given a string \`s\` containing only the bracket characters \`(\`, \`)\`, \`[\`, \`]\`,
 \`{\`, and \`}\`, return \`True\` if every opening bracket is closed by a matching bracket of
-the same type **and brackets are properly nested**. Otherwise return \`False\`.
-
-The standard approach uses a stack: push opening brackets as you see them and pop on every
-closing bracket, checking that the popped opener matches.`,
+the same type **and brackets are properly nested**. Otherwise return \`False\`.`,
     examples: [
       {
         input: 's = "([{}])"',
@@ -82,10 +79,7 @@ closing bracket, checking that the popped opener matches.`,
     pattern: 'Stack',
     tags: ['string', 'stack'],
     descriptionMd: `Given a lowercase string \`s\`, repeatedly remove any two **adjacent identical
-characters** until no more removals are possible, then return the resulting string.
-
-A stack makes this trivial: for each character, if it matches the top of the stack pop the
-top; otherwise push it. At the end the stack is the answer, in order.`,
+characters** until no more removals are possible, then return the resulting string.`,
     examples: [
       {
         input: 's = "azxxzy"',
@@ -152,9 +146,7 @@ one of:
 - \`"D"\`: record a new score equal to **double** the previous recorded score.
 - \`"C"\`: **invalidate** the previous recorded score and remove it.
 
-Return the **sum of all scores** still recorded after processing every operation.
-
-A stack of previously-recorded scores lets you implement each operation in constant time.`,
+Return the **sum of all scores** still recorded after processing every operation.`,
     examples: [
       {
         input: 'operations = ["3","4","+","C"]',
@@ -219,8 +211,7 @@ A stack of previously-recorded scores lets you implement each operation in const
     pattern: 'Design',
     tags: ['stack', 'queue', 'design'],
     descriptionMd: `Design a **FIFO queue** that internally uses only LIFO stacks as its storage. Your
-class should support \`push(x)\`, \`pop()\`, \`peek()\`, and \`empty()\` with amortized
-\`O(1)\` time per operation.
+class should support \`push(x)\`, \`pop()\`, \`peek()\`, and \`empty()\`.
 
 Because our grader calls a single Python method per test, please expose the class behaviour
 through a driver method \`runQueueOps(ops, vals)\` that:
@@ -351,11 +342,7 @@ class Solution:
     tags: ['string', 'stack', 'two-pointers'],
     descriptionMd: `You are given two strings \`s\` and \`t\`. Each \`'#'\` represents a backspace that
 deletes the previous character (if any). Return \`True\` if, after applying all backspaces,
-both strings contain the same final sequence of characters.
-
-The straightforward solution pushes characters onto a stack and pops on every \`'#'\`, then
-compares the two stacks. An advanced follow-up asks for \`O(1)\` extra memory using two
-reverse pointers, but either approach is fine.`,
+both strings contain the same final sequence of characters.`,
     examples: [
       {
         input: 's = "xy#z", t = "xz"',
@@ -365,7 +352,7 @@ reverse pointers, but either approach is fine.`,
       {
         input: 's = "a##c", t = "#c"',
         output: 'True',
-        explanation: 'Both reduce to "c" — extra backspaces on an empty stack do nothing.',
+        explanation: 'Both reduce to "c" after applying the backspaces.',
       },
       {
         input: 's = "a#b", t = "c"',
@@ -464,8 +451,7 @@ as a list of token strings. Each token is either an integer literal or one of th
 \`"+"\`, \`"-"\`, \`"*"\`, \`"/"\`. Evaluate the expression and return the resulting integer.
 
 Division between integers must **truncate toward zero** (so \`13 / 5\` is \`2\` and \`-7 / 2\`
-is \`-3\`). The canonical solution walks the tokens with a stack: push integers, and on an
-operator pop the top two operands, apply the operator, and push the result back.`,
+is \`-3\`).`,
     examples: [
       {
         input: 'tokens = ["4","13","5","/","+"]',
@@ -537,11 +523,8 @@ operator pop the top two operands, apply the operator, and push the result back.
     pattern: 'Design',
     tags: ['stack', 'design'],
     descriptionMd: `Design a stack that supports \`push(x)\`, \`pop()\`, \`top()\`, and
-\`getMin()\` — where **every operation runs in O(1) time**, including retrieving the current
+\`getMin()\` — where **every operation runs in constant time**, including retrieving the current
 minimum.
-
-The trick is to keep a parallel "minimum so far" stack alongside the data stack, pushing the
-new minimum on every \`push\` and popping it alongside every \`pop\`.
 
 Because our grader calls a single Python method per test, expose the class behaviour through
 a driver \`runMinStackOps(ops, vals)\` that instantiates your \`MinStack\`, runs each operation
@@ -657,11 +640,7 @@ class Solution:
     tags: ['array', 'stack', 'monotonic-stack'],
     descriptionMd: `Given a list of daily temperatures \`temperatures\`, return an array \`answer\`
 such that \`answer[i]\` is the **number of days you have to wait** after day \`i\` to see a
-strictly warmer temperature. If no such day exists, put \`0\` in that slot.
-
-The classic solution uses a monotonic decreasing stack of indices: for each new temperature,
-pop every index whose temperature is smaller than the current one and record the distance
-from that popped index to \`i\`.`,
+strictly warmer temperature. If no such day exists, put \`0\` in that slot.`,
     examples: [
       {
         input: 'temperatures = [60, 65, 63, 70]',
@@ -742,9 +721,6 @@ from that popped index to \`i\`.`,
     descriptionMd: `Design a \`StockSpanner\` class that supports \`next(price)\`. Each call returns
 the **span** of the price — that is, the maximum number of **consecutive days (including
 today, working backward)** for which the price was less than or equal to today's price.
-
-The monotonic-stack solution keeps pairs of \`(price, span)\` on a stack, collapsing any
-tail whose price is \`<= price\` and summing their spans.
 
 Because our grader calls a single Python method per test, expose the class behaviour through
 a driver \`runStockSpanOps(ops, vals)\` that instantiates your \`StockSpanner\`, runs each
@@ -839,11 +815,7 @@ class Solution:
     descriptionMd: `Given a non-negative integer represented as the string \`num\` and an integer
 \`k\`, remove exactly \`k\` digits from \`num\` so the resulting number is as **small as
 possible**. Return the result as a string with no leading zeros (except the number itself
-may be \`"0"\`).
-
-The monotonic-stack solution walks the digits left to right: while the top of the stack is
-greater than the current digit and there are still removals remaining, pop the top. At the
-end remove any remaining from the right, strip leading zeros, and return \`"0"\` if empty.`,
+may be \`"0"\`).`,
     examples: [
       {
         input: 'num = "10200", k = 1',
@@ -911,11 +883,7 @@ end remove any remaining from the right, strip leading zeros, and return \`"0"\`
     tags: ['string', 'stack'],
     descriptionMd: `Given an encoded string \`s\`, return its decoded form. The encoding rule is
 \`k[encoded_string]\` — the \`encoded_string\` inside the brackets is repeated \`k\` times.
-Encodings may nest.
-
-The standard stack-based solution keeps two stacks: one for the accumulated string before
-the current bracket and one for the multipliers. On \`'['\` push the current partial
-result and the current multiplier; on \`']'\` pop them and expand.`,
+Encodings may nest.`,
     examples: [
       {
         input: 's = "2[ab]"',
@@ -993,12 +961,7 @@ result and the current multiplier; on \`']'\` pop them and expand.`,
     tags: ['array', 'stack', 'monotonic-stack'],
     descriptionMd: `Given an array of non-negative integers \`heights\` representing bar heights of a
 histogram where every bar has width 1, return the **area of the largest rectangle** that fits
-entirely inside the histogram.
-
-The classic \`O(n)\` solution uses a monotonic increasing stack of indices. For each new bar
-strictly shorter than the stack top, pop the top and compute the area of the rectangle with
-that popped bar as the shortest bar inside it. A common trick is to append a sentinel
-\`0\` bar at the end so the stack flushes cleanly.`,
+entirely inside the histogram.`,
     examples: [
       {
         input: 'heights = [3, 2, 5, 4, 6]',
@@ -1088,9 +1051,7 @@ that popped bar as the shortest bar inside it. A common trick is to append a sen
 differ **only** in case — that is, the same letter with one lowercase and one uppercase.
 For example \`"aA"\` is bad, but \`"aa"\` and \`"aB"\` are fine.
 
-Repeatedly remove any such bad pair from \`s\` until it becomes good and return the result.
-The stack approach is the canonical one-pass solution: push each character onto a stack
-unless it would form a bad pair with the top of the stack, in which case pop instead.`,
+Repeatedly remove any such bad pair from \`s\` until it becomes good and return the result.`,
     examples: [
       {
         input: 's = "leEeetcode"',
@@ -1154,9 +1115,7 @@ special character \`*\`. In one operation, you can choose any star and remove bo
 **and** the closest non-star character to its left.
 
 Return the resulting string after every star has been removed. You may assume the
-operations always succeed (there is always a non-star character to the left of each star).
-
-A stack makes this trivial: push each letter, and pop whenever you see a \`*\`.`,
+operations always succeed (there is always a non-star character to the left of each star).`,
     examples: [
       {
         input: 's = "leet**cod*e"',

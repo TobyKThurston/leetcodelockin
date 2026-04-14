@@ -11,13 +11,11 @@ export const TRIES_PROBLEMS: ProblemContent[] = [
     difficulty: 'Easy',
     pattern: 'String',
     tags: ['string'],
-    descriptionMd: `Given a list of strings \`strs\`, return the longest string that is a prefix of
-**every** entry in \`strs\`. If there is no common prefix (including the empty list case),
-return the empty string \`""\`.
+    descriptionMd: `Write a function to find the longest common prefix string amongst an array
+of strings \`strs\`.
 
-The simplest solution is a vertical scan: at each column index \`i\`, check whether every
-string has the same character at position \`i\` and stop at the first disagreement or when
-some string runs out.`,
+If there is no common prefix (including the empty list case), return the empty string
+\`""\`.`,
     examples: [
       {
         input: 'strs = ["apple", "application", "app"]',
@@ -95,15 +93,19 @@ some string runs out.`,
     difficulty: 'Medium',
     pattern: 'Design',
     tags: ['trie', 'design'],
-    descriptionMd: `Design a **trie** (prefix tree) supporting three operations:
+    descriptionMd: `A **trie** (pronounced as "try") or prefix tree is a tree data structure used
+to efficiently store and retrieve keys in a dataset of strings. Implement the \`Trie\` class
+supporting three operations:
 
 - \`insert(word)\` — insert \`word\` into the trie.
-- \`search(word)\` — return \`True\` if the exact word is in the trie.
-- \`startsWith(prefix)\` — return \`True\` if any inserted word begins with \`prefix\`.
+- \`search(word)\` — return \`True\` if \`word\` is in the trie (i.e. was previously inserted
+  as an exact word), and \`False\` otherwise.
+- \`startsWith(prefix)\` — return \`True\` if there is a previously inserted word that has
+  \`prefix\` as a prefix, and \`False\` otherwise.
 
 Expose the class behaviour through a driver \`runTrieOps(ops, vals)\` that instantiates
-your \`Trie\`, runs each operation, and returns a list of results (using \`None\` for
-\`insert\`).`,
+your \`Trie\`, runs each operation in order, and returns a list of results (using \`None\`
+for \`insert\`).`,
     examples: [
       {
         input: 'ops = ["insert","search","search","startsWith","insert","search"], vals = [["apple"],["apple"],["app"],["app"],["app"],["app"]]',
@@ -215,14 +217,15 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Design',
     tags: ['trie', 'design', 'dfs'],
-    descriptionMd: `Design a \`WordDictionary\` that supports:
+    descriptionMd: `Design a data structure \`WordDictionary\` that supports adding new words
+and finding whether a string matches any previously added word:
 
-- \`addWord(word)\` — insert \`word\`.
-- \`search(word)\` — return \`True\` if \`word\` matches any inserted word. The search word
-  may contain the wildcard character \`'.'\` which matches any single letter.
+- \`addWord(word)\` — add \`word\` to the data structure.
+- \`search(word)\` — return \`True\` if any added word matches \`word\`. A search word may
+  contain the wildcard character \`'.'\`, which matches any single letter.
 
-A trie with DFS on the search is the idiomatic approach. Expose the class through a driver
-\`runWordDictOps(ops, vals)\` that records each op's result (with \`None\` for \`addWord\`).`,
+Expose the class through a driver \`runWordDictOps(ops, vals)\` that records each op's
+result (with \`None\` for \`addWord\`).`,
     examples: [
       {
         input: 'ops = ["addWord","addWord","addWord","search","search","search","search"], vals = [["bad"],["dad"],["mad"],["pad"],["bad"],[".ad"],["b.."]]',
@@ -326,14 +329,14 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Trie',
     tags: ['trie', 'string'],
-    descriptionMd: `You are given a list of short \`dictionary\` words (the "roots") and a
-space-separated \`sentence\`. Replace every word in \`sentence\` that has a dictionary root
-as a prefix with its **shortest** matching root. Words that have no matching root remain
-unchanged. Return the modified sentence.
+    descriptionMd: `In English, we have a concept called a **root**, which can be followed by
+some other word to form another longer word — for example, the root \`"help"\` followed by
+the word \`"ful"\` gives \`"helpful"\`.
 
-A trie built from \`dictionary\` lets you walk each input word letter by letter until you
-either hit a root marker (return the prefix) or fall off the trie (return the original
-word). Total time is \`O(total_input_letters)\`.`,
+You are given a \`dictionary\` of roots and a space-separated \`sentence\`. Replace every
+word in \`sentence\` that has any root in \`dictionary\` as a prefix with that root. If a
+word has more than one matching root, replace it with the **shortest** matching root. Words
+with no matching root remain unchanged. Return the modified sentence.`,
     examples: [
       {
         input: 'dictionary = ["go", "walk"], sentence = "going for a walk"',
@@ -429,11 +432,9 @@ word). Total time is \`O(total_input_letters)\`.`,
 
 - \`insert(key, val)\` — associate the integer \`val\` with the string \`key\`. If the key
   already exists, its value is **overwritten**.
-- \`sum(prefix)\` — return the sum of all values whose key has \`prefix\` as a prefix.
+- \`sum(prefix)\` — return the sum of all values whose key starts with \`prefix\`.
 
-A trie with a \`sum\` field at each node (maintaining the total of values below it) makes
-both operations \`O(len(key))\`. Expose the class behaviour via a driver
-\`runMapSumOps(ops, vals)\`.`,
+Expose the class behaviour via a driver \`runMapSumOps(ops, vals)\`.`,
     examples: [
       {
         input: 'ops = ["insert","sum","insert","sum"], vals = [["apple",3],["ap"],["app",2],["ap"]]',
@@ -524,15 +525,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Trie',
     tags: ['trie', 'string'],
-    descriptionMd: `Given an array of strings \`words\`, return the **longest** word that can be built
-**one letter at a time** by other words already present in \`words\`. That is, every prefix
-\`word[0..i]\` (for \`i\` from 1 up to \`len(word)\`) must also be in \`words\`.
+    descriptionMd: `Given an array of strings \`words\`, return the **longest** word in \`words\`
+that can be built **one character at a time** by other words in \`words\`. That is, every
+prefix \`word[0..i]\` (for \`i\` from 1 up to \`len(word)\`) must also be in \`words\`.
 
-If multiple candidates tie for longest, return the **lexicographically smallest** one. If no
-word qualifies, return \`""\`.
-
-A trie plus a DFS that only descends into children with an \`end-of-word\` marker finds the
-answer in one sweep. Alternatively, sort \`words\` and track built words in a set.`,
+If more than one word meets this condition, return the **lexicographically smallest** one.
+If no word qualifies, return \`""\`.`,
     examples: [
       {
         input: 'words = ["a", "ab", "abc", "ac"]',
@@ -593,27 +591,22 @@ answer in one sweep. Alternatively, sort \`words\` and track built words in a se
     difficulty: 'Medium',
     pattern: 'Trie',
     tags: ['trie', 'string'],
-    descriptionMd: `A **valid encoding** of an array of strings \`words\` is any string \`S\` together
-with an index array \`indices\` such that, for every \`i\`, reading \`S\` starting at
-\`indices[i]\` up to the next \`'#'\` yields \`words[i]\`.
+    descriptionMd: `A **valid encoding** of an array of strings \`words\` is any string \`S\`
+together with an index array \`indices\` such that, for every \`i\`, reading \`S\` starting
+at \`indices[i]\` up to the next \`'#'\` character yields \`words[i]\`.
 
-Return the **minimum possible length** of \`S\` across all valid encodings.
-
-Key insight: a word \`w\` can share its encoding with any other word that has \`w\` as a
-**suffix** — so you only need to encode the words that are not a suffix of some other word.
-The neat trick is to insert every word **reversed** into a trie; any word that becomes an
-interior node (non-leaf) in the reversed trie is redundant. The answer is the sum over all
-leaves of \`(depth + 1)\` (the \`+1\` is the trailing \`'#'\`).`,
+Given an array of \`words\`, return the **minimum possible length** of any valid encoding
+of \`words\`.`,
     examples: [
       {
         input: 'words = ["me", "time"]',
         output: '5',
-        explanation: '"me" is a suffix of "time", so "time#" suffices — length 5.',
+        explanation: 'The string "time#" is a valid encoding of length 5.',
       },
       {
         input: 'words = ["at", "it"]',
         output: '6',
-        explanation: 'No suffix sharing: "at#it#" has length 6.',
+        explanation: 'The string "at#it#" has length 6.',
       },
     ],
     constraints: [
@@ -691,16 +684,15 @@ leaves of \`(depth + 1)\` (the \`+1\` is the trailing \`'#'\`).`,
     difficulty: 'Medium',
     pattern: 'Trie',
     tags: ['trie', 'string', 'sorting'],
-    descriptionMd: `You are given a list of \`products\` and a \`searchWord\`. After every character the
-user types, your system should return up to **three lexicographically smallest** products
-from \`products\` whose name starts with what has been typed so far.
+    descriptionMd: `You are given an array of strings \`products\` and a string \`searchWord\`.
 
-Return a list of lists where the \`i\`-th inner list is the set of suggestions shown after
-the user has typed the first \`i + 1\` characters of \`searchWord\`.
+Design a system that suggests at most **three** product names from \`products\` after each
+character of \`searchWord\` is typed. Suggested products should have common prefix with the
+typed substring of \`searchWord\`. If there are more than three products with a common
+prefix, return the **three lexicographically smallest** ones.
 
-Either a sorted list + binary search over prefixes, or a trie that stores up to three
-lexicographically smallest words at each prefix, works. The sorted approach is simpler to
-implement.`,
+Return a list of lists where the \`i\`-th inner list is the suggestions shown after the user
+has typed the first \`i + 1\` characters of \`searchWord\`.`,
     examples: [
       {
         input: 'products = ["apple","app","application"], searchWord = "app"',
@@ -815,13 +807,9 @@ implement.`,
     difficulty: 'Medium',
     pattern: 'Bit Trie',
     tags: ['array', 'bit-manipulation', 'trie'],
-    descriptionMd: `Given an integer array \`nums\`, return the maximum value of \`nums[i] XOR
-nums[j]\` for any pair of indices \`i != j\`.
-
-The elegant \`O(n)\` solution builds a **binary trie** of the numbers (one child per bit,
-most-significant bit first). For each number, walk the trie greedily: at each level take the
-opposite bit if it exists, otherwise take the same bit. The accumulated value is the largest
-XOR pairing for that number.`,
+    descriptionMd: `Given an integer array \`nums\`, return the **maximum** result of
+\`nums[i] XOR nums[j]\` over all pairs of indices \`0 <= i, j < len(nums)\` with
+\`i != j\`.`,
     examples: [
       {
         input: 'nums = [1, 2, 3]',
@@ -919,13 +907,12 @@ XOR pairing for that number.`,
     difficulty: 'Hard',
     pattern: 'Trie + Backtracking',
     tags: ['trie', 'backtracking', 'matrix'],
-    descriptionMd: `You are given an \`m x n\` grid of characters \`board\` and a list \`words\`. Return
-all words from \`words\` that can be assembled by walking from cell to neighbouring cell
-(up/down/left/right) without reusing any cell more than once per word.
+    descriptionMd: `Given an \`m x n\` grid of characters \`board\` and a list of strings
+\`words\`, return all words from \`words\` that exist on the board.
 
-The idiomatic solution builds a trie from \`words\` and runs a DFS from every cell, descending
-into the trie one letter at a time. The trie cuts off dead branches early, turning what would
-be a per-word board scan into a single global sweep.`,
+Each word must be constructed from letters of **sequentially adjacent** cells, where
+adjacent cells are horizontally or vertically neighbouring. The **same letter cell may not
+be used more than once** in a single word.`,
     examples: [
       {
         input: 'board = [["a","b"],["c","d"]], words = ["ab","cb","abd"]',

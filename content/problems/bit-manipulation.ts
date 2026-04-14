@@ -11,11 +11,11 @@ export const BIT_MANIPULATION_PROBLEMS: ProblemContent[] = [
     difficulty: 'Easy',
     pattern: 'XOR',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given an integer array \`nums\` in which every value appears **exactly twice** except
-for one value that appears once, return the value that appears only once.
+    descriptionMd: `Given a **non-empty** array of integers \`nums\`, every element appears **twice**
+except for one. Find that single one.
 
-Your solution must run in linear time and use constant extra memory. The one-liner: XOR all
-the values together. Pairs cancel each other out, leaving the singleton.`,
+You must implement a solution with linear runtime complexity and use only constant extra
+space.`,
     examples: [
       { input: 'nums = [4, 1, 2, 1, 2]', output: '4' },
       { input: 'nums = [7]', output: '7' },
@@ -62,11 +62,8 @@ the values together. Pairs cancel each other out, leaving the singleton.`,
     difficulty: 'Easy',
     pattern: 'Bits',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given an unsigned integer \`n\`, return the number of \`1\` bits in its binary
-representation (the **Hamming weight**).
-
-The classic trick is \`n & (n - 1)\` which clears the lowest set bit — count how many
-times you can apply it before \`n\` becomes zero.`,
+    descriptionMd: `Write a function that takes an unsigned integer \`n\` and returns the number of
+\`1\` bits it has in its binary representation (also known as the **Hamming weight**).`,
     examples: [
       { input: 'n = 11', output: '3' },
       { input: 'n = 0', output: '0' },
@@ -113,11 +110,8 @@ times you can apply it before \`n\` becomes zero.`,
     pattern: 'DP + Bits',
     tags: ['bit-manipulation', 'dp'],
     descriptionMd: `Given an integer \`n\`, return an array \`out\` of length \`n + 1\` such that
-\`out[i]\` is the number of \`1\` bits in the binary representation of \`i\`, for
-\`i\` from 0 to \`n\`.
-
-The DP recurrence is \`out[i] = out[i >> 1] + (i & 1)\`: the count for \`i\` is the count
-for \`i\` shifted right by one bit, plus an extra 1 if the LSB of \`i\` is set.`,
+for each \`i\` (\`0 <= i <= n\`), \`out[i]\` is the number of \`1\` bits in the binary
+representation of \`i\`.`,
     examples: [
       { input: 'n = 5', output: '[0, 1, 1, 2, 1, 2]' },
       { input: 'n = 0', output: '[0]' },
@@ -162,10 +156,7 @@ for \`i\` shifted right by one bit, plus an extra 1 if the LSB of \`i\` is set.`
     difficulty: 'Easy',
     pattern: 'Bits',
     tags: ['bit-manipulation'],
-    descriptionMd: `Reverse the bits of a given 32-bit unsigned integer and return the result.
-
-Walk 32 iterations, in each one shifting the result left and OR-ing the LSB of the input
-(which you then shift right).`,
+    descriptionMd: `Reverse the bits of a given 32-bit unsigned integer and return the result.`,
     examples: [
       { input: 'n = 43261596', output: '964176192' },
       { input: 'n = 0', output: '0' },
@@ -211,12 +202,8 @@ Walk 32 iterations, in each one shifting the result left and OR-ing the LSB of t
     difficulty: 'Easy',
     pattern: 'XOR',
     tags: ['bit-manipulation', 'math'],
-    descriptionMd: `Given an array \`nums\` containing \`n\` distinct numbers taken from the range
-\`[0, n]\`, return the single number missing from the range.
-
-XOR solution: XOR together every value in \`nums\` and every value in \`0..n\`. Matching
-pairs cancel out, leaving only the missing value. A sum-formula solution (\`n*(n+1)/2 - sum(nums)\`)
-also works.`,
+    descriptionMd: `Given an array \`nums\` containing \`n\` distinct numbers in the range
+\`[0, n]\`, return the only number in the range that is missing from the array.`,
     examples: [
       { input: 'nums = [3, 0, 1]', output: '2' },
       { input: 'nums = [0]', output: '1' },
@@ -276,10 +263,10 @@ also works.`,
     difficulty: 'Easy',
     pattern: 'Bits',
     tags: ['bit-manipulation', 'math'],
-    descriptionMd: `Given an integer \`n\`, return \`True\` if it is a power of two (\`1\`, \`2\`, \`4\`,
-\`8\`, ...) and \`False\` otherwise.
+    descriptionMd: `Given an integer \`n\`, return \`True\` if it is a power of two, and \`False\`
+otherwise.
 
-A power of two has exactly one set bit, so \`n > 0 and n & (n - 1) == 0\`.`,
+An integer \`n\` is a power of two if there exists an integer \`x\` such that \`n == 2^x\`.`,
     examples: [
       { input: 'n = 16', output: 'True' },
       { input: 'n = 3', output: 'False' },
@@ -323,10 +310,9 @@ A power of two has exactly one set bit, so \`n > 0 and n & (n - 1) == 0\`.`,
     pattern: 'XOR',
     tags: ['bit-manipulation'],
     descriptionMd: `The **Hamming distance** between two integers is the number of positions at which
-their binary representations differ. Given two integers \`x\` and \`y\`, return their
-Hamming distance.
+the corresponding bits are different.
 
-One-liner: popcount of \`x XOR y\`.`,
+Given two integers \`x\` and \`y\`, return the Hamming distance between them.`,
     examples: [
       { input: 'x = 1, y = 4', output: '2' },
       { input: 'x = 3, y = 1', output: '1' },
@@ -373,13 +359,8 @@ One-liner: popcount of \`x XOR y\`.`,
     difficulty: 'Medium',
     pattern: 'Bits',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given two integers \`left\` and \`right\`, return the bitwise AND of all integers in
-the inclusive range \`[left, right]\`.
-
-The answer is the **common prefix** of the binary representations of \`left\` and
-\`right\`, because any bit that differs within the range gets zeroed once a \`0\` appears
-somewhere for it. Repeatedly shift both right until they're equal, then shift back by the
-same amount.`,
+    descriptionMd: `Given two integers \`left\` and \`right\` that represent the range
+\`[left, right]\`, return the bitwise AND of all numbers in this range, inclusive.`,
     examples: [
       { input: 'left = 5, right = 7', output: '4' },
       { input: 'left = 1, right = 1', output: '1' },
@@ -428,14 +409,12 @@ same amount.`,
     difficulty: 'Medium',
     pattern: 'XOR',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given an array \`nums\` where exactly two distinct values each appear once and
-every other value appears exactly twice, return those **two singleton values**. The result
-can be returned in any order.
+    descriptionMd: `Given an integer array \`nums\`, in which exactly two elements appear only
+**once** and all the other elements appear exactly **twice**, find the two elements that
+appear only once. You can return the answer in **any order**.
 
-Trick: the XOR of all values equals \`a XOR b\` (where \`a\` and \`b\` are the singletons).
-Pick any bit where \`a\` and \`b\` differ (e.g. the lowest set bit of \`a XOR b\`). Partition
-\`nums\` into the two groups according to that bit, and XOR each group to isolate \`a\`
-and \`b\`.`,
+You must write an algorithm that runs in linear runtime complexity and uses only constant
+extra space.`,
     examples: [
       { input: 'nums = [1, 2, 1, 3, 2, 5]', output: '[3, 5]' },
       { input: 'nums = [-1, 0]', output: '[-1, 0]' },
@@ -490,12 +469,12 @@ and \`b\`.`,
     difficulty: 'Medium',
     pattern: 'Bits',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given three positive integers \`a\`, \`b\`, and \`c\`, return the minimum number of
-bit flips required in \`a\` and \`b\` so that \`(a OR b) == c\`.
+    descriptionMd: `Given three positive integers \`a\`, \`b\`, and \`c\`, return the **minimum
+number of bit flips** required in some bits of \`a\` and \`b\` to make
+\`(a OR b) == c\`.
 
-Walk the bit positions: at each bit, look at \`ab = a_bit | b_bit\` and \`c_bit\`. If
-\`ab != c_bit\`, you need a flip — and if the target bit is 0 but both input bits are set,
-that's **two** flips.`,
+A flip operation consists of changing any single bit from \`1\` to \`0\` or from \`0\` to
+\`1\` in the binary representation of a number.`,
     examples: [
       { input: 'a = 2, b = 6, c = 5', output: '3' },
       { input: 'a = 4, b = 2, c = 7', output: '1' },
@@ -551,15 +530,8 @@ that's **two** flips.`,
     difficulty: 'Medium',
     pattern: 'Bits',
     tags: ['bit-manipulation', 'math'],
-    descriptionMd: `Given two integers \`a\` and \`b\`, return \`a + b\` **without using the \`+\` or
-\`-\` operators**.
-
-The bitwise trick:
-- \`a XOR b\` is the sum ignoring carries.
-- \`(a AND b) << 1\` is the carry.
-
-Repeat until the carry is zero. In Python, because integers are arbitrary precision, you
-need to mask to 32 bits each iteration and handle the sign at the end.`,
+    descriptionMd: `Given two integers \`a\` and \`b\`, return the sum of the two integers
+**without using the operators \`+\` and \`-\`**.`,
     examples: [
       { input: 'a = 1, b = 2', output: '3' },
       { input: 'a = 0, b = 0', output: '0' },
@@ -610,13 +582,11 @@ need to mask to 32 bits each iteration and handle the sign at the end.`,
     difficulty: 'Medium',
     pattern: 'Bits',
     tags: ['bit-manipulation'],
-    descriptionMd: `Given an integer array \`nums\` where every value appears **exactly three times**
-except for one value which appears once, return that singleton. You must run in linear time
-and constant extra memory.
+    descriptionMd: `Given an integer array \`nums\` where every element appears **three times**
+except for one, which appears **exactly once**, find the single element and return it.
 
-The elegant bit trick: for each bit position, the count of set bits modulo 3 gives the
-corresponding bit of the singleton. Simpler bookkeeping uses two state variables \`ones\`
-and \`twos\` that track bits seen once and twice (mod 3) respectively.`,
+You must implement a solution with a linear runtime complexity and use only constant extra
+space.`,
     examples: [
       { input: 'nums = [2, 2, 3, 2]', output: '3' },
       { input: 'nums = [0, 1, 0, 1, 0, 1, 99]', output: '99' },

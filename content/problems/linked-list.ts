@@ -20,12 +20,9 @@ export const LINKED_LIST_PROBLEMS: ProblemContent[] = [
 \`values\` (in head-to-tail order). Reverse the list and return the new sequence of values
 (from new head to new tail).
 
-We use Python lists for I/O so you can run the tests, but the **technique you should
-practice** is the in-place pointer reversal: walk the list once, flipping each node's
-\`next\` pointer to point at its previous node.
-
-The starter code includes \`ListNode\`, \`_to_list\`, and \`_from_list\` helpers so you can
-focus on the pointer rewiring inside \`reverseList\`.`,
+We use Python lists for I/O so you can run the tests. The starter code includes
+\`ListNode\`, \`_to_list\`, and \`_from_list\` helpers so you can build the linked list,
+operate on it, and return the result inside \`reverseList\`.`,
     examples: [
       {
         input: 'values = [1, 2, 3, 4, 5]',
@@ -47,8 +44,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Reverse the linked list below ─────────────────────────
-        # Hint: walk the list, flipping each node's .next to point
-        # at the previous node. Track prev, cur, and a temporary nxt.
         new_head = head  # TODO: replace with the reversed head
         # ───────────────────────────────────────────────────────────
 
@@ -97,12 +92,9 @@ class Solution:
 \`list1\` and \`list2\`. Merge them into a single sorted linked list and return the merged
 sequence of values (from head to tail).
 
-We use Python lists for I/O so you can run the tests, but the **technique you should
-practice** is the linked-list merge: walk both lists with two pointers, repeatedly attaching
-whichever current node is smaller to a growing result list.
-
-The starter code includes \`ListNode\`, \`_to_list\`, and \`_from_list\` helpers so you can
-focus on the merge logic inside \`mergeTwoLists\`.`,
+We use Python lists for I/O so you can run the tests. The starter code includes
+\`ListNode\`, \`_to_list\`, and \`_from_list\` helpers so you can build the linked lists,
+merge them, and return the result inside \`mergeTwoLists\`.`,
     examples: [
       {
         input: 'list1 = [1, 2, 4], list2 = [1, 3, 4]',
@@ -126,9 +118,6 @@ class Solution:
         b = _to_list(list2)
 
         # ─── Merge the two sorted linked lists below ──────────────
-        # Hint: use a dummy node and a tail pointer; at each step
-        # attach whichever of a, b has the smaller value, then
-        # advance that pointer.
         merged_head = a if a is not None else b  # TODO: replace
         # ───────────────────────────────────────────────────────────
 
@@ -180,10 +169,7 @@ class Solution:
     tags: ['linked-list'],
     descriptionMd: `Given the head of a **sorted** singly linked list (values given as the array
 \`values\` in head-to-tail order), remove every duplicate node so each value appears only
-once, and return the resulting sequence of values.
-
-A single forward walk is enough: whenever \`cur.next\` has the same value as \`cur\`, skip
-over it by setting \`cur.next = cur.next.next\`; otherwise advance.`,
+once, and return the resulting sequence of values.`,
     examples: [
       {
         input: 'values = [2, 2, 3, 3, 3, 4]',
@@ -206,7 +192,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Remove duplicate-value nodes below ────────────────────
-        # Hint: walk cur and cur.next; when values match, skip.
         new_head = head  # TODO: replace with the deduped head
         # ───────────────────────────────────────────────────────────
 
@@ -252,10 +237,7 @@ class Solution:
     tags: ['linked-list'],
     descriptionMd: `Given the head of a singly linked list (passed as the value array \`values\`) and
 an integer \`val\`, remove **every node** whose value equals \`val\` and return the resulting
-sequence of values.
-
-A dummy head node simplifies the edge case where the original head itself needs to be
-removed. Walk with a single pointer and relink around matching nodes.`,
+sequence of values.`,
     examples: [
       {
         input: 'values = [3, 3, 7, 3], val = 3',
@@ -277,7 +259,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Remove every node with value == val below ─────────────
-        # Hint: use a dummy node so you can remove the original head.
         new_head = head  # TODO: replace with the filtered head
         # ───────────────────────────────────────────────────────────
 
@@ -325,11 +306,7 @@ class Solution:
     descriptionMd: `You are given a linked list as the value array \`values\` together with an integer
 \`pos\`. After building the list head-to-tail, the \`.next\` pointer of the **tail node** is
 hooked back to the node at index \`pos\` (or left as \`None\` if \`pos == -1\`). Return
-\`True\` if the list contains a cycle and \`False\` otherwise.
-
-The canonical detection algorithm is Floyd's tortoise and hare: advance a \`slow\` pointer
-by one and a \`fast\` pointer by two. If they ever meet, there's a cycle; if \`fast\` falls
-off the end, there is not.`,
+\`True\` if the list contains a cycle and \`False\` otherwise.`,
     examples: [
       {
         input: 'values = [3, 2, 0, -4], pos = 1',
@@ -368,7 +345,6 @@ class Solution:
         head = _build_cyclic(values, pos)
 
         # ─── Detect whether the list has a cycle below ─────────────
-        # Hint: Floyd's tortoise and hare pointers.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -432,10 +408,7 @@ class Solution:
     tags: ['linked-list', 'fast-slow'],
     descriptionMd: `Given the head of a non-empty singly linked list (as the value array \`values\`),
 return the values from the **middle node** to the end of the list (inclusive). If the list
-has an even number of nodes, use the **second** middle.
-
-The fast/slow pointer trick finds the middle in a single pass: advance \`fast\` by two steps
-and \`slow\` by one, and when \`fast\` falls off the end \`slow\` will be at the middle.`,
+has an even number of nodes, use the **second** middle.`,
     examples: [
       {
         input: 'values = [1, 2, 3, 4, 5]',
@@ -458,7 +431,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Find the middle node below ────────────────────────────
-        # Hint: fast/slow pointers; fast moves by two, slow by one.
         mid = head  # TODO: replace with the middle node
         # ───────────────────────────────────────────────────────────
 
@@ -502,11 +474,7 @@ class Solution:
     pattern: 'Two Pointers',
     tags: ['linked-list', 'two-pointers'],
     descriptionMd: `You are given a singly linked list (as \`values\`) and a positive integer \`n\`.
-Remove the **nth-to-last** node of the list and return the resulting sequence of values.
-
-The classic one-pass approach uses two pointers separated by \`n\` nodes. Advance them
-together until the leading pointer reaches the end; the trailing pointer is then positioned
-immediately before the node to delete.`,
+Remove the **nth-to-last** node of the list and return the resulting sequence of values.`,
     examples: [
       {
         input: 'values = [1, 2, 3, 4, 5], n = 1',
@@ -529,7 +497,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Remove the nth-from-last node below ───────────────────
-        # Hint: use a dummy node and two pointers separated by n.
         new_head = head  # TODO: replace with the updated head
         # ───────────────────────────────────────────────────────────
 
@@ -600,10 +567,7 @@ class Solution:
     pattern: 'Fast / Slow',
     tags: ['linked-list', 'fast-slow'],
     descriptionMd: `Given the head of a singly linked list (as \`values\`), return \`True\` if the list
-reads the same forwards and backwards, \`False\` otherwise.
-
-The \`O(n)\` time / \`O(1)\` extra memory approach walks to the middle with fast/slow
-pointers, reverses the second half in place, then compares the two halves node by node.`,
+reads the same forwards and backwards, \`False\` otherwise.`,
     examples: [
       {
         input: 'values = [1, 2, 2, 1]',
@@ -625,7 +589,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Decide whether the list is a palindrome below ─────────
-        # Hint: fast/slow to the middle, reverse the second half, compare.
         pass
         # ───────────────────────────────────────────────────────────
 `,
@@ -704,10 +667,8 @@ sequence becomes:
 
 \`L0 → Ln → L1 → Ln-1 → L2 → Ln-2 → …\`
 
-and return the reordered sequence as a list of values.
-
-The three-step template is: (1) find the middle with fast/slow; (2) reverse the second half
-in place; (3) interleave the two halves one node at a time.`,
+and return the reordered sequence as a list of values. You must modify the list in place;
+do not simply build a new sequence of values.`,
     examples: [
       {
         input: 'values = [1, 2, 3, 4]',
@@ -729,7 +690,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Reorder the list in place below ───────────────────────
-        # Hint: find middle with fast/slow, reverse the second half, weave.
         new_head = head  # TODO: replace with the reordered head
         # ───────────────────────────────────────────────────────────
 
@@ -797,10 +757,7 @@ digit, the next node holds the **tens** digit, and so on. Return the sum as a li
 the same reversed form.
 
 For example, \`[9, 9]\` represents 99 and \`[1]\` represents 1, so \`[9, 9] + [1]\` is
-\`[0, 0, 1]\` (which represents 100).
-
-The school-book addition algorithm generalises directly: walk both lists with a running
-carry, emitting \`(a + b + carry) % 10\` at each step.`,
+\`[0, 0, 1]\` (which represents 100).`,
     examples: [
       {
         input: 'l1 = [9, 9], l2 = [1]',
@@ -825,7 +782,6 @@ class Solution:
         b = _to_list(l2)
 
         # ─── Add the two reversed-digit numbers below ──────────────
-        # Hint: walk both lists with a running carry, build a dummy head.
         sum_head = a if a is not None else b  # TODO: replace
         # ───────────────────────────────────────────────────────────
 
@@ -886,10 +842,7 @@ pointer, a \`random\` pointer that points to **any node in the list or \`None\`*
 The list is serialised as \`nodes\`, a list of \`[val, random_index]\` pairs (in head-to-tail
 order). \`random_index\` is the 0-based index of the node this node's random pointer points
 at, or \`null\` if it points to nothing. Your deep copy should be returned in the same
-serialised shape.
-
-The classic approaches are (a) a hash map from original node to new node, or (b) interleaving
-the cloned nodes into the original list in place and then splitting them back out.`,
+serialised shape.`,
     examples: [
       {
         input: 'nodes = [[3, null], [5, 0], [7, 1]]',
@@ -946,8 +899,6 @@ class Solution:
         head = _to_rand_list(nodes)
 
         # ─── Produce a deep copy of the list below ─────────────────
-        # Hint: a hash map from original node to new node makes the
-        # second pass that wires next/random trivial.
         new_head = head  # TODO: replace with the deep-copied head
         # ───────────────────────────────────────────────────────────
 
@@ -1004,7 +955,7 @@ remaining nodes at the end of the list number fewer than \`k\`, **leave them in 
 original order**.
 
 You should aim for \`O(1)\` extra memory beyond the input (no allocating auxiliary lists to
-hold the temporary order). Either a recursive or an iterative solution is fine.`,
+hold the temporary order).`,
     examples: [
       {
         input: 'values = [1, 2, 3, 4, 5], k = 2',
@@ -1027,7 +978,6 @@ class Solution:
         head = _to_list(values)
 
         # ─── Reverse nodes in groups of k below ────────────────────
-        # Hint: count k nodes ahead; if fewer than k remain, stop.
         new_head = head  # TODO: replace with the reordered head
         # ───────────────────────────────────────────────────────────
 

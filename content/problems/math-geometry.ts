@@ -11,12 +11,14 @@ export const MATH_GEOMETRY_PROBLEMS: ProblemContent[] = [
     difficulty: 'Easy',
     pattern: 'Math',
     tags: ['math'],
-    descriptionMd: `Given an integer \`x\`, return \`True\` if it reads the same forwards and backwards
-(i.e., is a palindrome), and \`False\` otherwise. Negative numbers are **not**
-palindromic because of the leading \`-\`.
+    descriptionMd: `Given an integer \`x\`, return \`True\` if \`x\` is a **palindrome**, and
+\`False\` otherwise.
 
-You are encouraged to solve this without converting to a string — the classic approach
-reverses the second half of the digits and compares to the first half.`,
+An integer is a palindrome when it reads the same forward and backward. For example,
+\`121\` is a palindrome while \`123\` is not. Negative numbers are not palindromes because
+of the leading \`-\`.
+
+**Follow up:** Could you solve it without converting the integer to a string?`,
     examples: [
       { input: 'x = 121', output: 'True' },
       { input: 'x = -121', output: 'False' },
@@ -78,12 +80,12 @@ reverses the second half of the digits and compares to the first half.`,
     difficulty: 'Easy',
     pattern: 'Array',
     tags: ['array', 'math'],
-    descriptionMd: `You are given a non-negative integer represented as the digit array \`digits\`
-(most-significant digit first). Add one to the number it represents and return the result as
-a digit array with no leading zeros.
+    descriptionMd: `You are given a **large integer** represented as an integer array \`digits\`,
+where each \`digits[i]\` is the \`i\`th digit of the integer. The digits are ordered from
+most significant to least significant in left-to-right order. The large integer does not
+contain any leading zero.
 
-Walk from the least-significant digit, adding one with carry; if the carry still exists
-when you fall off the left, prepend a \`1\`.`,
+Increment the large integer by one and return the resulting array of digits.`,
     examples: [
       { input: 'digits = [1, 2, 3]', output: '[1, 2, 4]' },
       { input: 'digits = [9, 9]', output: '[1, 0, 0]' },
@@ -137,12 +139,17 @@ when you fall off the left, prepend a \`1\`.`,
     difficulty: 'Easy',
     pattern: 'Math',
     tags: ['math', 'hash-set'],
-    descriptionMd: `A **happy number** is defined by the following process: starting with \`n\`, replace
-it with the sum of the squares of its digits; repeat. The number is happy if the process
-eventually reaches \`1\`, otherwise it loops forever.
+    descriptionMd: `Write an algorithm to determine if a number \`n\` is **happy**.
 
-Return \`True\` if \`n\` is happy. Either keep a set of seen values to detect the loop, or
-use Floyd's cycle-detection with two pointers.`,
+A happy number is a number defined by the following process:
+
+- Starting with any positive integer, replace the number by the sum of the squares of its
+  digits.
+- Repeat the process until the number equals \`1\` (where it will stay), or it **loops
+  endlessly in a cycle** which does not include \`1\`.
+- Those numbers for which this process **ends in 1** are happy.
+
+Return \`True\` if \`n\` is a happy number, and \`False\` if not.`,
     examples: [
       { input: 'n = 19', output: 'True' },
       { input: 'n = 2', output: 'False' },
@@ -193,11 +200,10 @@ use Floyd's cycle-detection with two pointers.`,
     difficulty: 'Easy',
     pattern: 'Math',
     tags: ['math'],
-    descriptionMd: `An **ugly number** is a positive integer whose prime factors are only \`2\`, \`3\`,
-or \`5\`. Given an integer \`n\`, return \`True\` if it is ugly.
+    descriptionMd: `An **ugly number** is a positive integer whose prime factors are limited to
+\`2\`, \`3\`, and \`5\`.
 
-Repeatedly divide \`n\` by \`2\`, \`3\`, and \`5\` while divisible; if the final value is
-\`1\` it is ugly, otherwise it has another prime factor.`,
+Given an integer \`n\`, return \`True\` if \`n\` is an ugly number.`,
     examples: [
       { input: 'n = 6', output: 'True' },
       { input: 'n = 14', output: 'False' },
@@ -245,12 +251,12 @@ Repeatedly divide \`n\` by \`2\`, \`3\`, and \`5\` while divisible; if the final
     difficulty: 'Medium',
     pattern: 'Matrix',
     tags: ['matrix'],
-    descriptionMd: `Given an \`n x n\` 2-D matrix \`matrix\` representing an image, rotate the image by
-**90 degrees clockwise** in place. Return the rotated matrix.
+    descriptionMd: `You are given an \`n x n\` 2D \`matrix\` representing an image. Rotate the image
+by **90 degrees** (clockwise).
 
-The classic trick is **transpose + reverse each row**. Transposing swaps \`matrix[i][j]\`
-with \`matrix[j][i]\` (for \`j > i\`), after which reversing every row gives the 90° CW
-rotation.`,
+You have to rotate the image **in place**, which means you have to modify the input 2D
+matrix directly. **Do not** allocate another 2D matrix and do the rotation. Return the
+rotated matrix.`,
     examples: [
       { input: 'matrix = [[1, 2], [3, 4]]', output: '[[3, 1], [4, 2]]' },
       { input: 'matrix = [[5]]', output: '[[5]]' },
@@ -305,12 +311,12 @@ rotation.`,
     difficulty: 'Medium',
     pattern: 'Matrix',
     tags: ['matrix'],
-    descriptionMd: `Given an \`m x n\` matrix, return all its elements in **spiral order** —
-right along the top, down the right edge, left along the bottom, up the left edge, then
-repeat for the inner submatrix.
+    descriptionMd: `Given an \`m x n\` \`matrix\`, return all elements of the matrix in **spiral
+order**.
 
-Keep four bounds (\`top\`, \`bottom\`, \`left\`, \`right\`) and shrink each after its edge is
-traversed.`,
+Spiral order traverses the outer ring of the matrix clockwise — right along the top, down
+the right edge, left along the bottom, up the left edge — then continues into the inner
+submatrix.`,
     examples: [
       { input: 'matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]', output: '[1, 2, 3, 6, 9, 8, 7, 4, 5]' },
       { input: 'matrix = [[1]]', output: '[1]' },
@@ -379,10 +385,9 @@ traversed.`,
     difficulty: 'Medium',
     pattern: 'Matrix',
     tags: ['matrix'],
-    descriptionMd: `Given a positive integer \`n\`, generate an \`n x n\` matrix filled with the values
-\`1\` through \`n^2\` in **spiral order**, starting at the top-left.
-
-Same four-boundary sweep as "Spiral Matrix", only writing values instead of reading them.`,
+    descriptionMd: `Given a positive integer \`n\`, generate an \`n x n\` \`matrix\` filled with
+elements from \`1\` to \`n^2\` in **spiral order**, starting at the top-left and moving
+clockwise.`,
     examples: [
       { input: 'n = 3', output: '[[1, 2, 3], [8, 9, 4], [7, 6, 5]]' },
       { input: 'n = 1', output: '[[1]]' },
@@ -447,12 +452,9 @@ Same four-boundary sweep as "Spiral Matrix", only writing values instead of read
     difficulty: 'Medium',
     pattern: 'Matrix',
     tags: ['matrix'],
-    descriptionMd: `Given an \`m x n\` integer matrix, if a cell contains \`0\`, set its entire row and
-column to \`0\`. Return the modified matrix.
-
-A simple approach records which rows and columns contain zero in two extra arrays and then
-walks the matrix a second time. An \`O(1)\` extra-memory approach uses the first row and
-first column themselves as the record.`,
+    descriptionMd: `Given an \`m x n\` integer matrix \`matrix\`, if an element is \`0\`, set its
+entire row and column to \`0\`. You must do it **in place**, then return the modified
+matrix.`,
     examples: [
       { input: 'matrix = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]', output: '[[1, 0, 1], [0, 0, 0], [1, 0, 1]]' },
       { input: 'matrix = [[0]]', output: '[[0]]' },
@@ -518,13 +520,11 @@ first column themselves as the record.`,
     difficulty: 'Medium',
     pattern: 'Math',
     tags: ['string', 'math'],
-    descriptionMd: `Given two non-negative integers \`num1\` and \`num2\` represented as strings, return
-their product also as a string. You must not use any built-in BigInteger or large-integer
-type — implement the multiplication digit-by-digit.
+    descriptionMd: `Given two non-negative integers \`num1\` and \`num2\` represented as strings,
+return the product of \`num1\` and \`num2\`, also represented as a string.
 
-The classical "schoolbook" algorithm: multiply each digit of \`num1\` by each digit of
-\`num2\`, accumulate into a buffer at the correct offset, then carry-propagate and strip
-leading zeros.`,
+**Note:** You must not use any built-in BigInteger library or convert the inputs to
+integers directly.`,
     examples: [
       { input: 'num1 = "2", num2 = "3"', output: '"6"' },
       { input: 'num1 = "123", num2 = "45"', output: '"5535"' },
@@ -582,12 +582,9 @@ leading zeros.`,
     difficulty: 'Hard',
     pattern: 'Geometry',
     tags: ['geometry', 'hash-map', 'math'],
-    descriptionMd: `Given an array of \`points\` on a 2D plane where \`points[i] = [xi, yi]\`, return
-the **maximum number of points** that lie on the same straight line.
-
-The canonical solution loops over each point \`p\` and groups the other points by the
-**slope** of the line through \`p\`. Use a reduced fraction as the hash key to dodge
-floating-point error, and handle vertical lines as a special slope.`,
+    descriptionMd: `Given an array of \`points\` where \`points[i] = [xi, yi]\` represents a point
+on the **X-Y** plane, return the **maximum number of points** that lie on the same
+straight line.`,
     examples: [
       { input: 'points = [[1, 1], [2, 2], [3, 3]]', output: '3' },
       { input: 'points = [[0, 0], [1, 1], [0, 1], [1, 0]]', output: '2' },
@@ -662,12 +659,12 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Geometry',
     tags: ['geometry', 'math'],
-    descriptionMd: `Given the corners of two axis-aligned rectangles — the first has bottom-left
-\`(ax1, ay1)\` and top-right \`(ax2, ay2)\`, the second has bottom-left \`(bx1, by1)\` and
-top-right \`(bx2, by2)\` — return the **total area** covered by the two rectangles (union).
+    descriptionMd: `Given the coordinates of two **axis-aligned** rectangles in a 2D plane,
+return the **total area** covered by the two rectangles.
 
-Compute the area of each rectangle, then subtract the area of their intersection
-(zero if they don't overlap).`,
+The first rectangle is defined by its bottom-left corner \`(ax1, ay1)\` and its top-right
+corner \`(ax2, ay2)\`. The second rectangle is defined similarly by \`(bx1, by1)\` and
+\`(bx2, by2)\`.`,
     examples: [
       {
         input: 'ax1 = -3, ay1 = 0, ax2 = 3, ay2 = 4, bx1 = 0, by1 = -1, bx2 = 9, by2 = 2',
@@ -736,14 +733,13 @@ Compute the area of each rectangle, then subtract the area of their intersection
     difficulty: 'Hard',
     pattern: 'Math',
     tags: ['matrix', 'math'],
-    descriptionMd: `Given an \`m x n\` grid where a \`1\` marks a friend's house and a \`0\` is empty,
-find the **minimum total Manhattan distance** that every friend needs to travel to meet at
-a single point on the grid.
+    descriptionMd: `Given an \`m x n\` binary \`grid\`, where each \`1\` marks the home of a friend,
+return the **minimum total travel distance** for all friends to meet at a single point on
+the grid.
 
-Key insight: Manhattan distances decompose into independent \`x\` and \`y\` coordinates,
-and the 1-D "minimum sum of absolute differences" meeting point is the **median**. Collect
-all row indices of the 1s and all column indices of the 1s, sort each, and the answer is
-the total distance from every friend to the median row and median column.`,
+The total travel distance is the sum of the Manhattan distances between every friend's
+home and the meeting point. The Manhattan distance between two points \`(p1, p2)\` and
+\`(q1, q2)\` is \`|p1 - q1| + |p2 - q2|\`.`,
     examples: [
       {
         input: 'grid = [[1, 0, 0, 0, 1], [0, 0, 0, 0, 0], [0, 0, 1, 0, 0]]',
@@ -881,14 +877,11 @@ the total distance from every friend to the median row and median column.`,
     difficulty: 'Easy',
     pattern: 'Math',
     tags: ['math'],
-    descriptionMd: `Given a non-negative integer \`num\`, repeatedly add **all of its
-digits** until the result has only **one digit**, and return that final digit (the
-**digital root**).
+    descriptionMd: `Given an integer \`num\`, repeatedly add all its digits until the result has
+only **one digit**, and return it.
 
-For example, \`num = 38\` → \`3 + 8 = 11\` → \`1 + 1 = 2\`, so the answer is \`2\`.
-
-The obvious solution is a loop, but there is a closed-form "digital root" identity:
-\`dr(num) = 0\` if \`num == 0\`, otherwise \`1 + (num - 1) % 9\`.`,
+For example, with \`num = 38\` the process is \`3 + 8 = 11\`, then \`1 + 1 = 2\`. Since
+\`2\` has only one digit, the answer is \`2\`.`,
     examples: [
       {
         input: 'num = 38',

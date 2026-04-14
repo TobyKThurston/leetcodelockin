@@ -13,10 +13,9 @@ export const INTERVALS_PROBLEMS: ProblemContent[] = [
     tags: ['intervals', 'sorting'],
     descriptionMd: `Given an array of meeting time intervals \`intervals\` where
 \`intervals[i] = [start, end]\`, return \`True\` if a **single** person could attend every
-meeting (i.e., no two meetings overlap).
+meeting and \`False\` otherwise.
 
-Sort by start time and walk forward: if any meeting starts before the previous one ends, the
-answer is \`False\`.`,
+Two meetings overlap if one starts before the other ends.`,
     examples: [
       {
         input: 'intervals = [[1, 3], [5, 8]]',
@@ -71,13 +70,9 @@ answer is \`False\`.`,
     difficulty: 'Medium',
     pattern: 'Heap',
     tags: ['intervals', 'heap', 'sorting'],
-    descriptionMd: `Given an array of meeting time intervals \`intervals\`, return the **minimum
-number of conference rooms** needed so that every meeting can take place.
-
-The elegant solution sorts by start time and uses a min-heap of current room end-times.
-When a new meeting starts, if it starts at or after the earliest-ending room's end, reuse
-that room (pop from heap); otherwise open a new room. Push the current meeting's end-time.
-The answer is the heap size at the end.`,
+    descriptionMd: `Given an array of meeting time intervals \`intervals\` where
+\`intervals[i] = [start, end]\`, return the **minimum number of conference rooms** needed
+so that every meeting can take place.`,
     examples: [
       {
         input: 'intervals = [[0, 30], [5, 10], [15, 20]]',
@@ -141,11 +136,11 @@ class Solution:
     pattern: 'Sort',
     tags: ['intervals', 'sorting'],
     descriptionMd: `Given an array \`intervals\` where \`intervals[i] = [start, end]\`, merge every
-pair of overlapping intervals (touching counts as overlapping) and return the resulting
-list of non-overlapping intervals in ascending order of start.
+pair of overlapping intervals and return an array of the non-overlapping intervals that
+cover all the input intervals.
 
-Sort by \`start\`, then walk and either extend the last merged interval's end or append a
-new interval.`,
+Two intervals are considered overlapping if they share at least one endpoint (touching
+counts as overlapping).`,
     examples: [
       {
         input: 'intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]',
@@ -207,13 +202,12 @@ new interval.`,
     difficulty: 'Medium',
     pattern: 'Sweep',
     tags: ['intervals'],
-    descriptionMd: `You are given a non-overlapping, sorted list \`intervals\` and a new interval
-\`newInterval\`. Insert \`newInterval\` into the list and merge any overlaps so the result
-is still non-overlapping and sorted.
+    descriptionMd: `You are given an array of non-overlapping intervals \`intervals\` sorted by
+start time, and a new interval \`newInterval\`. Insert \`newInterval\` into \`intervals\`
+such that the result is still sorted by start time and contains no overlapping intervals
+(merging where necessary).
 
-Single-pass sweep: copy intervals that end before the new interval starts, merge any that
-overlap the new interval (extending its endpoints), then copy intervals that start after the
-new interval ends.`,
+Return the resulting list of intervals.`,
     examples: [
       {
         input: 'intervals = [[1, 3], [6, 9]], newInterval = [2, 5]',
@@ -289,17 +283,15 @@ new interval ends.`,
     difficulty: 'Medium',
     pattern: 'Sort',
     tags: ['intervals', 'sorting'],
-    descriptionMd: `Given a list of \`intervals\`, remove every interval that is **covered** by
-another (covered means \`start >= other.start\` and \`end <= other.end\`). Return the
-number of remaining intervals.
+    descriptionMd: `Given a list of \`intervals\`, remove all intervals that are **covered** by
+another interval in the list, then return the number of remaining intervals.
 
-Sort by \`start\` ascending and, on ties, by \`end\` descending. Walk the list tracking the
-largest \`end\` seen so far: any interval whose end is \`<=\` that running max is covered.`,
+The interval \`[a, b]\` is covered by \`[c, d]\` if and only if \`c <= a\` and \`b <= d\`.`,
     examples: [
       {
         input: 'intervals = [[1, 4], [3, 6], [2, 8]]',
         output: '2',
-        explanation: '[3, 6] is covered by [2, 8]; the other two remain.',
+        explanation: '`[3, 6]` is covered by `[2, 8]`, so two intervals remain.',
       },
       {
         input: 'intervals = [[1, 2], [1, 4], [3, 4]]',
@@ -353,12 +345,13 @@ largest \`end\` seen so far: any interval whose end is \`<=\` that running max i
     difficulty: 'Medium',
     pattern: 'Two Pointers',
     tags: ['intervals', 'two-pointers'],
-    descriptionMd: `You are given two lists of intervals, \`firstList\` and \`secondList\`. Each list
-is **pairwise disjoint and sorted** by start time. Return the list of intersections of the
-two lists, in sorted order.
+    descriptionMd: `You are given two lists of closed intervals, \`firstList\` and \`secondList\`,
+where each list of intervals is **pairwise disjoint and sorted** by start time. Return the
+intersection of these two interval lists, in sorted order.
 
-The two-pointer sweep: compute the overlap of the current pair (\`max(starts), min(ends)\`).
-If it's non-empty, add it. Advance the pointer whose interval ends first.`,
+A closed interval \`[a, b]\` (with \`a <= b\`) denotes the set of real numbers \`x\` with
+\`a <= x <= b\`. The intersection of two closed intervals is a set of real numbers that is
+either empty or a closed interval.`,
     examples: [
       {
         input: 'firstList = [[0, 2], [5, 10]], secondList = [[1, 5], [8, 12]]',
@@ -432,12 +425,17 @@ If it's non-empty, add it. Advance the pointer whose interval ends first.`,
     difficulty: 'Medium',
     pattern: 'Design',
     tags: ['intervals', 'design'],
-    descriptionMd: `Design a class \`MyCalendar\` that supports \`book(start, end)\`, which adds a
-half-open interval \`[start, end)\` **only if** it doesn't overlap any previously-booked
-interval. Return \`True\` on success, \`False\` on conflict.
+    descriptionMd: `Implement a \`MyCalendar\` class that stores a collection of bookings without
+double-bookings. A new event causes a double booking when it has any non-empty intersection
+with an existing event.
 
-Expose the class behaviour through a driver \`runCalendarOps(ops, vals)\` that instantiates
-\`MyCalendar\` and runs every call in order, returning the list of booleans.`,
+Each event is represented as a half-open interval \`[start, end)\`, the range of real
+numbers \`x\` such that \`start <= x < end\`. Implement \`book(start, end)\`: if the event
+can be added without a double booking, add it and return \`True\`; otherwise return \`False\`
+without adding it.
+
+The driver \`runCalendarOps(ops, vals)\` instantiates \`MyCalendar\` and runs every call in
+order, returning the list of booleans.`,
     examples: [
       {
         input: 'ops = ["book","book","book"], vals = [[10,20],[15,25],[20,30]]',
@@ -518,14 +516,13 @@ class Solution:
     difficulty: 'Medium',
     pattern: 'Two Pointers',
     tags: ['intervals', 'two-pointers'],
-    descriptionMd: `Given two people's free-time lists \`slots1\` and \`slots2\` (each entry is a
-\`[start, end]\` interval) and an integer \`duration\`, return the earliest time interval
-\`[start, start + duration]\` that is **free for both people**. If no such slot exists,
-return the empty list.
+    descriptionMd: `You are given the availability time slots of two people \`slots1\` and
+\`slots2\`, where each slot is a \`[start, end]\` interval, and a meeting \`duration\`.
+Return the **earliest** time interval \`[start, start + duration]\` of length \`duration\`
+that works for both people.
 
-Sort both lists by start time, then sweep with two pointers: at every pair compute the
-overlap; if its length is \`>= duration\`, return \`[overlap_start, overlap_start + duration]\`.
-Otherwise advance the pointer whose interval ends first.`,
+If there is no common time slot of at least \`duration\` available, return the empty
+list.`,
     examples: [
       {
         input: 'slots1 = [[10,50],[60,120]], slots2 = [[0,15],[60,70]], duration = 8',
@@ -596,14 +593,12 @@ Otherwise advance the pointer whose interval ends first.`,
     pattern: 'Heap',
     tags: ['intervals', 'heap', 'sorting'],
     descriptionMd: `You are given a list of employee schedules \`schedule\`, where each
-\`schedule[i]\` is a list of disjoint sorted intervals representing employee \`i\`'s busy
-times. Return the list of **finite common free intervals** during which every employee is
-free, sorted in ascending order. The answer should not include the time before any employee
-has started working or after everyone has finished.
+\`schedule[i]\` is a list of disjoint, sorted intervals representing employee \`i\`'s busy
+times. Return the list of **finite intervals** representing the common free time for
+**all** employees, also in sorted order.
 
-The simplest implementation flattens every interval into a single list, sorts by start,
-then merges overlapping busy intervals — the gaps between adjacent merged intervals are
-the free slots. A heap-based approach is slightly more efficient but has the same result.`,
+The answer should not include the time before any employee has started working or after
+every employee has finished.`,
     examples: [
       {
         input: 'schedule = [[[1, 3], [6, 7]], [[2, 4]], [[2, 5], [9, 12]]]',
@@ -680,13 +675,15 @@ the free slots. A heap-based approach is slightly more efficient but has the sam
     difficulty: 'Medium',
     pattern: 'Sweep Line',
     tags: ['intervals', 'sweep-line', 'heap'],
-    descriptionMd: `Given a list of \`intervals\`, partition them into the **minimum number of
-groups** such that no two intervals in the same group overlap. Return the number of groups.
+    descriptionMd: `You are given a 2D integer array \`intervals\` where \`intervals[i] = [left, right]\`
+represents the inclusive interval \`[left, right]\`.
 
-Equivalent to: what is the **maximum number of intervals overlapping at a single point**?
-A sweep-line solves it: turn each interval into \`(start, +1)\` and \`(end + 1, -1)\`
-events, sort events by time, and track the running overlap count — the maximum is the
-answer.`,
+You have to divide the intervals into one or more **groups** such that each interval
+belongs to exactly one group, and no two intervals in the same group **intersect** each
+other. Return the **minimum number of groups** you need to make.
+
+Two intervals intersect if they have at least one common number. For example, \`[1, 5]\`
+and \`[5, 8]\` intersect.`,
     examples: [
       {
         input: 'intervals = [[5, 10], [6, 8], [1, 5], [2, 3], [1, 10]]',
@@ -747,16 +744,17 @@ answer.`,
     difficulty: 'Easy',
     pattern: 'Array Scan',
     tags: ['array', 'intervals'],
-    descriptionMd: `You are given a **sorted** array \`nums\` of **unique** integers.
-Return the smallest sorted list of ranges that **exactly covers** every value in the
-array, formatted as strings:
+    descriptionMd: `You are given a **sorted unique** integer array \`nums\`. A **range**
+\`[a, b]\` is the set of all integers from \`a\` to \`b\` (inclusive).
 
-- Use \`"a->b"\` when the range has more than one element (\`a\` and \`b\` are the
-  endpoints inclusive).
-- Use \`"a"\` when the range is a single element.
+Return the **smallest sorted** list of ranges that **cover all the numbers in the array
+exactly**. That is, each element of \`nums\` is covered by exactly one of the ranges, and
+there is no integer \`x\` such that \`x\` is in one of the ranges but not in \`nums\`.
 
-A single linear scan works: grow the current run while consecutive values keep
-appearing, then emit a range string whenever the run breaks.`,
+Each range \`[a, b]\` in the list should be output as:
+
+- \`"a->b"\` if \`a != b\`
+- \`"a"\` if \`a == b\``,
     examples: [
       {
         input: 'nums = [0, 1, 2, 4, 5, 7]',
