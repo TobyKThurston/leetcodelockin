@@ -1,5 +1,5 @@
 import { getSupabaseUser } from '@/lib/supabase';
-import { getUserSubscription } from '@/lib/subscription';
+import { getUserSubscription, syncStripeSubscription } from '@/lib/subscription';
 import {
   Card,
   CardHeader,
@@ -18,6 +18,16 @@ const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
 export default async function SettingsPage() {
   const user = await getSupabaseUser();
+  // Sync from Stripe before reading — catches renewals, cancellations, and
+  // failed payments even if the webhook never arrived. Swallow errors so a
+  // Stripe outage can't take down the settings page.
+  if (user) {
+    try {
+      await syncStripeSubscription(user.id);
+    } catch (err) {
+      console.error('settings page stripe sync failed:', err);
+    }
+  }
   const sub = user ? await getUserSubscription(user.id) : null;
   const name = (user?.user_metadata?.full_name as string | undefined) ?? '';
   const email = user?.email ?? '';

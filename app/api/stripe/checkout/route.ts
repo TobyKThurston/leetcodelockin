@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       client_reference_id: user.id,
       allow_promotion_codes: true,
-      success_url: `${origin}/settings?checkout=success`,
+      success_url: `${origin}/checkout/complete?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/settings`,
       subscription_data: {
         metadata: { supabase_user_id: user.id },

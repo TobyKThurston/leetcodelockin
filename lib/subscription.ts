@@ -1,3 +1,4 @@
+import type Stripe from 'stripe';
 import { getSupabase } from './supabase';
 import { getStripe } from './stripe';
 
@@ -129,6 +130,63 @@ export async function checkAiQuota(userId: string): Promise<QuotaResult> {
 }
 
 // ─── Stripe customer management ──────────────────────────────────────────────
+
+// In the dahlia API, current_period_end lives on SubscriptionItem, not Subscription.
+function getPeriodEndIso(subscription: Stripe.Subscription): string | null {
+  const item = subscription.items.data[0];
+  const epoch = item?.current_period_end;
+  if (!epoch) return null;
+  return new Date(epoch * 1000).toISOString();
+}
+
+// Pull the live Stripe subscription for a user and upsert it into Supabase.
+// Belt-and-suspenders for the webhook: called from the Stripe success redirect
+// so the DB reflects an active Pro subscription even if the webhook hasn't
+// arrived yet (or never does due to a config issue).
+export async function syncStripeSubscription(userId: string): Promise<boolean> {
+  const sb = getSupabase();
+  if (!sb) return false;
+
+  const { data: existing } = await sb
+    .from('subscriptions')
+    .select('stripe_customer_id')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const customerId = existing?.stripe_customer_id;
+  if (!customerId) return false;
+
+  const stripe = getStripe();
+  // Grab the most recent subscription (any status) so we can reflect canceled
+  // or past_due states here too, not just actives.
+  const subs = await stripe.subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 1,
+  });
+  const subscription = subs.data[0];
+  if (!subscription) return false;
+
+  const { error } = await sb.from('subscriptions').upsert(
+    {
+      user_id: userId,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscription.id,
+      status: subscription.status,
+      price_id: subscription.items.data[0]?.price.id ?? null,
+      current_period_end: getPeriodEndIso(subscription),
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id' },
+  );
+  if (error) {
+    console.error('syncStripeSubscription upsert error:', error);
+    return false;
+  }
+
+  return subscription.status === 'active' || subscription.status === 'trialing';
+}
 
 export async function getOrCreateStripeCustomer(userId: string, email: string): Promise<string> {
   const sb = getSupabase();
