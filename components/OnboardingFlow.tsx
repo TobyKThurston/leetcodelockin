@@ -91,7 +91,10 @@ export default function OnboardingFlow() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({
+          plan,
+          returnPath: window.location.pathname + window.location.search,
+        }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -512,7 +515,7 @@ function ProStep({
         {/* Free comparison */}
         <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.06]">
           <p className="text-[11px] text-slate-600">
-            Free includes 3 AI requests per day. All content and problems are free forever.
+            Free includes 5 AI tutor messages per week. All content and problems are free forever.
           </p>
         </div>
       </motion.div>

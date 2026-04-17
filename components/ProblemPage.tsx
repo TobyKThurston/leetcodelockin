@@ -1422,6 +1422,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [activeId, setActiveId]   = useState(initialActiveId);
   const [running, setRunning]     = useState(false);
   const [verdict, setVerdict]     = useState<'accepted' | 'wrong' | null>(null);
+  const [celebration, setCelebration] = useState<{ isFirst: boolean } | null>(null);
 
   // Resizable layout
   const [leftWidth, setLeftWidth]   = useState(560);
@@ -1531,6 +1532,19 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
             totalCount:  newResults.length,
           }),
         }).catch(() => { /* best-effort */ });
+
+        // Celebration on accepted submit. First-ever solve gets distinct copy;
+        // everything after is a quieter "Solved" reinforcement.
+        if (accepted) {
+          const isFirst = (() => {
+            try {
+              if (localStorage.getItem('lc-solved-once') === '1') return false;
+              localStorage.setItem('lc-solved-once', '1');
+              return true;
+            } catch { return false; }
+          })();
+          setCelebration({ isFirst });
+        }
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Runner error';
@@ -1621,6 +1635,84 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
           </EditorPanel>
         )}
       </div>
+
+      {celebration && (
+        <CelebrationOverlay
+          isFirst={celebration.isFirst}
+          onDismiss={() => setCelebration(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Celebration overlay ──────────────────────────────────────────────────────
+// Shown for ~3s after an accepted submit. First-ever solve gets distinct copy
+// — every solve after is a quieter reinforcement so the moment doesn't get noisy.
+
+function CelebrationOverlay({
+  isFirst,
+  onDismiss,
+}: {
+  isFirst: boolean;
+  onDismiss: () => void;
+}) {
+  useEffect(() => {
+    const t = setTimeout(onDismiss, 3200);
+    return () => clearTimeout(t);
+  }, [onDismiss]);
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center pt-24"
+      aria-live="polite"
+    >
+      <div
+        className="pointer-events-auto rounded-2xl px-7 py-5 max-w-md mx-4 backdrop-blur-md"
+        style={{
+          background: 'rgba(15, 23, 41, 0.92)',
+          border: '1px solid rgba(52,211,153,0.4)',
+          boxShadow: '0 20px 60px -15px rgba(16,185,129,0.5), 0 0 0 1px rgba(52,211,153,0.15)',
+          animation: 'lc-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div
+            className="shrink-0 mt-0.5 flex items-center justify-center w-8 h-8 rounded-full"
+            style={{ background: 'rgba(52,211,153,0.18)' }}
+          >
+            <span style={{ color: 'rgba(52,211,153,1)', fontSize: 18, lineHeight: 1 }}>✓</span>
+          </div>
+          <div>
+            <p
+              className="text-[15px] font-bold text-white tracking-tight"
+              style={SG}
+            >
+              {isFirst ? 'First solve. Locked in.' : 'Solved.'}
+            </p>
+            <p className="mt-0.5 text-[12.5px] text-slate-400 leading-relaxed">
+              {isFirst
+                ? "Your streak just started. Solve again tomorrow to keep it alive."
+                : "Streak extended. Keep going."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onDismiss}
+            aria-label="Dismiss"
+            className="shrink-0 -mt-1 -mr-1 text-slate-500 hover:text-white transition-colors p-1"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes lc-pop {
+          0%   { opacity: 0; transform: translateY(-12px) scale(0.96); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
     </div>
   );
 }

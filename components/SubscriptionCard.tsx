@@ -54,7 +54,10 @@ export default function SubscriptionCard({
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: 'monthly' }),
+        body: JSON.stringify({
+          plan: 'monthly',
+          returnPath: window.location.pathname + window.location.search,
+        }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -96,7 +99,7 @@ export default function SubscriptionCard({
                 <div>
                   <p className="text-[13px] font-semibold text-white" style={SG}>Pro Plan</p>
                   <p className="text-[12px] text-slate-400 mt-0.5" style={SG}>
-                    Unlimited AI tutor access
+                    Unlimited tutor, mock interviews, spaced review
                   </p>
                 </div>
                 <span className="px-2 py-0.5 rounded-md text-[10.5px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -129,7 +132,7 @@ export default function SubscriptionCard({
             <div className="rounded-lg bg-slate-800/40 border border-slate-700/60 px-4 py-3">
               <p className="text-[13px] font-semibold text-white" style={SG}>Free Plan</p>
               <p className="text-[12px] text-slate-400 mt-0.5" style={SG}>
-                5 AI tutor messages (lifetime)
+                5 AI tutor messages per week
               </p>
             </div>
             <Button

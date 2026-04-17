@@ -10,6 +10,7 @@ import type { WeaknessSpotlight } from '@/lib/weaknesses';
 import { CURRICULUM, type PathDef, type BlockDef, type CurriculumStep, type PracticeStepDef, isLesson, isPractice } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import ReviewDueWidget from '@/components/ReviewDueWidget';
+import DashboardUpgradeBanner from '@/components/DashboardUpgradeBanner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -35,9 +36,13 @@ type BlockWithStatus = CurriculumStep & { blockStatus: BlockStatus };
 
 export function computePathStatuses(completedIds: Set<string>): Record<string, PathStatus> {
   const result: Record<string, PathStatus> = {};
+  let prevComplete = true;
   for (const path of CURRICULUM) {
     const allDone = path.blocks.every(b => completedIds.has(b.id));
-    result[path.id] = allDone ? 'complete' : 'unlocked';
+    if (allDone) result[path.id] = 'complete';
+    else if (prevComplete) result[path.id] = 'unlocked';
+    else result[path.id] = 'locked';
+    prevComplete = allDone;
   }
   return result;
 }
@@ -2345,6 +2350,9 @@ function CenterPanel({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
         >
+          <div className="px-4 pt-4 max-w-4xl mx-auto">
+            <DashboardUpgradeBanner />
+          </div>
           <PathView
             path={path}
             pathStatus={pathStatus}
@@ -2557,6 +2565,91 @@ export function ProgressView({
       .filter(isLesson)
       .flatMap(b => b.skills),
   ));
+
+  // Empty state: kill the wall of zeros, replace with a focused "start here" view.
+  // The Overview/Strengths/Focus sections all read 0 for new users, which signals
+  // "nothing here" instead of "you have somewhere to start".
+  if (totalComplete === 0 && nextUp) {
+    return (
+      <div className="w-full max-w-[720px] mx-auto py-8 px-8 lg:px-12">
+        <PageHeader
+          eyebrow="Welcome"
+          title="Your first lock-in"
+          subtitle="One block at a time. Start here and the rest unlocks as you go."
+        />
+
+        <section className="mb-8">
+          <div
+            className="rounded-xl px-6 py-7 border border-blue-400/30"
+            style={{
+              background: `linear-gradient(135deg, ${pathColor(nextUp.path.order).bg.replace('0.06', '0.12')}, rgba(59,130,246,0.08))`,
+            }}
+          >
+            <p
+              className="text-[10px] font-bold tracking-[0.16em] uppercase mb-3"
+              style={{ color: pathColor(nextUp.path.order).accent }}
+            >
+              Start with {nextUp.path.title}
+            </p>
+            <p
+              className="text-[20px] font-semibold leading-snug text-white mb-2 tracking-[-0.01em]"
+              style={SG}
+            >
+              {nextUp.block.title}
+            </p>
+            {isLesson(nextUp.block) && (
+              <>
+                <p className="text-[13.5px] leading-relaxed text-slate-300 mb-4">
+                  {nextUp.block.subtitle}
+                </p>
+                <div className="flex items-center gap-4 mb-5 text-[12px] font-medium tabular-nums text-blue-200">
+                  <span className="flex items-center gap-1.5">
+                    <BookOpen size={12} strokeWidth={2.25} />
+                    {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Target size={12} strokeWidth={2.25} />
+                    {nextUp.block.problemCount} {nextUp.block.problemCount === 1 ? 'problem' : 'problems'}
+                  </span>
+                </div>
+              </>
+            )}
+            {isPractice(nextUp.block) && (
+              <p className="text-[13.5px] leading-relaxed text-slate-300 mb-4">
+                Practice problem · {nextUp.block.difficulty}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
+              className={cn(
+                'inline-flex items-center h-11 px-6 rounded-md text-[14px] font-semibold text-white',
+                'bg-blue-500 hover:bg-blue-400 border border-blue-400/60',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70',
+                'transition-colors',
+              )}
+              style={SG}
+            >
+              Start now
+            </button>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <SectionHeader>The roadmap ahead</SectionHeader>
+          <div className="space-y-2">
+            {stats.map(s => (
+              <ProgressPathCard
+                key={s.path.id}
+                stats={s}
+                onClick={() => onNavigateToPath(s.path.id)}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[720px] mx-auto py-8 px-8 lg:px-12">
@@ -2826,7 +2919,11 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
               return next;
             });
             for (const id of toSync) {
-              startTransition(() => { setBlockCompleted(id, true); });
+              startTransition(() => {
+                setBlockCompleted(id, true).catch(err => {
+                  console.error(`setBlockCompleted(${id}) catch-up sync failed:`, err);
+                });
+              });
             }
           }
         })
@@ -2848,7 +2945,9 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
         return next;
       });
       startTransition(() => {
-        setBlockCompleted(blockId, true);
+        setBlockCompleted(blockId, true).catch(err => {
+          console.error(`setBlockCompleted(${blockId}) failed:`, err);
+        });
       });
     }
     // Advance to the next block in the same path.

@@ -4,7 +4,7 @@
 // attacker can dodge limits by hitting multiple regions. This is intentionally a
 // speed bump, not a distributed SLA — the durable caps are:
 //   - Supabase RLS (who can read what)
-//   - lib/subscription.ts daily/lifetime AI quotas (how much each user can spend)
+//   - lib/subscription.ts daily/weekly AI quotas (how much each user can spend)
 //
 // What this layer DOES catch: runaway client loops, single-region scraping,
 // accidental self-DoS from a broken useEffect.

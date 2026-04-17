@@ -106,6 +106,13 @@ function LoadingSkeleton() {
   );
 }
 
+interface QuotaInfo {
+  used: number;
+  limit: number;
+  isPro: boolean;
+  period?: 'weekly' | 'daily';
+}
+
 export default function TutorApp() {
   const [problem, setProblem] = useState('');
   const [attempt, setAttempt] = useState('');
@@ -117,6 +124,7 @@ export default function TutorApp() {
   const [showSteps, setShowSteps] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [patterns, setPatterns] = useState<Record<string, number>>({});
+  const [quota, setQuota] = useState<QuotaInfo | null>(null);
 
   useEffect(() => {
     try {
@@ -124,6 +132,17 @@ export default function TutorApp() {
       if (stored) setPatterns(JSON.parse(stored));
     } catch {}
   }, []);
+
+  // Fetch quota on mount and after each successful solve so the chip reflects
+  // the current "X of 5 used this week" count without a page refresh.
+  const refreshQuota = async () => {
+    try {
+      const res = await fetch('/api/ai-usage');
+      if (res.ok) setQuota(await res.json());
+    } catch {}
+  };
+
+  useEffect(() => { refreshQuota(); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -151,6 +170,7 @@ export default function TutorApp() {
       if (!res.ok) throw new Error(data.error || 'Request failed');
 
       setResponse(data);
+      refreshQuota();
 
       // Track patterns in localStorage
       const normalized = data.pattern?.trim();
@@ -224,7 +244,7 @@ export default function TutorApp() {
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
             <Button type="submit" disabled={loading || !problem.trim()} className="flex-1 sm:flex-none">
               {loading ? 'Thinking...' : 'Analyze Problem'}
             </Button>
@@ -232,6 +252,17 @@ export default function TutorApp() {
               <Button type="button" variant="outline" onClick={reset}>
                 New Problem
               </Button>
+            )}
+            {quota && !quota.isPro && (
+              <span className="text-xs text-muted-foreground">
+                {Math.min(quota.used, quota.limit)} of {quota.limit} this week
+                {quota.used >= quota.limit ? '' : ' \u00b7 '}
+                {quota.used < quota.limit && (
+                  <a href="/checkout?plan=monthly&from=/tutor" className="underline hover:text-foreground transition-colors">
+                    Upgrade
+                  </a>
+                )}
+              </span>
             )}
           </div>
         </form>

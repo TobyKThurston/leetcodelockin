@@ -2,8 +2,9 @@ import type Stripe from 'stripe';
 import { getSupabase } from './supabase';
 import { getStripe } from './stripe';
 
-const FREE_LIFETIME_LIMIT = 5;
+const FREE_WEEKLY_LIMIT = 5;
 const PRO_DAILY_LIMIT = 50;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface SubscriptionInfo {
   isPro: boolean;
@@ -17,7 +18,7 @@ export interface QuotaResult {
   used: number;
   limit: number;
   isPro: boolean;
-  reason?: 'lifetime' | 'daily';
+  reason?: 'weekly' | 'daily';
 }
 
 // ─── Subscription status ─────────────────────────────────────────────────────
@@ -52,17 +53,20 @@ export async function getUserSubscription(userId: string): Promise<SubscriptionI
 
 // ─── AI usage tracking ───────────────────────────────────────────────────────
 
-export async function getLifetimeAiUsage(userId: string): Promise<number> {
+export async function getWeeklyAiUsage(userId: string): Promise<number> {
   const sb = getSupabase();
   if (!sb) return 0;
+
+  const since = new Date(Date.now() - WEEK_MS).toISOString();
 
   const { count, error } = await sb
     .from('ai_usage')
     .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .gte('used_at', since);
 
   if (error) {
-    console.error('getLifetimeAiUsage error:', error);
+    console.error('getWeeklyAiUsage error:', error);
     return 0;
   }
   return count ?? 0;
@@ -103,7 +107,7 @@ export async function recordAiUsage(userId: string, endpoint: string): Promise<v
 
 // ─── AI quota check (business cap) ───────────────────────────────────────────
 // Burst/abuse throttling lives in proxy.ts via lib/rate-limit.ts.
-// This function only enforces the billable cap: lifetime for free, daily for Pro.
+// This function only enforces the billable cap: weekly rolling for free, daily for Pro.
 
 export async function checkAiQuota(userId: string): Promise<QuotaResult> {
   const { isPro } = await getUserSubscription(userId);
@@ -119,13 +123,13 @@ export async function checkAiQuota(userId: string): Promise<QuotaResult> {
     };
   }
 
-  const used = await getLifetimeAiUsage(userId);
+  const used = await getWeeklyAiUsage(userId);
   return {
-    allowed: used < FREE_LIFETIME_LIMIT,
+    allowed: used < FREE_WEEKLY_LIMIT,
     used,
-    limit: FREE_LIFETIME_LIMIT,
+    limit: FREE_WEEKLY_LIMIT,
     isPro: false,
-    reason: used < FREE_LIFETIME_LIMIT ? undefined : 'lifetime',
+    reason: used < FREE_WEEKLY_LIMIT ? undefined : 'weekly',
   };
 }
 

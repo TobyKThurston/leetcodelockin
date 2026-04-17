@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseUser, getSupabase } from '@/lib/supabase';
+import { getUserSubscription } from '@/lib/subscription';
 
 export async function POST(req: NextRequest) {
   const user = await getSupabaseUser();
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { isPro } = await getUserSubscription(user.id);
+  if (!isPro) {
+    return NextResponse.json({ error: 'Spaced repetition is a Pro feature' }, { status: 403 });
   }
 
   let body: { cardId: string };

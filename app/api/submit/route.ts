@@ -5,6 +5,7 @@ import { generateReviewCards } from '@/lib/review';
 import { findPracticeStepsBySlug } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import { recordActivityForUser } from '@/lib/streaks';
+import { getUserSubscription } from '@/lib/subscription';
 
 interface SubmitRequestBody {
   slug: string;
@@ -57,12 +58,22 @@ export async function POST(req: NextRequest) {
   // Generate spaced repetition review cards for Pro users on accepted submissions
   if (status === 'accepted') {
     await recordActivityForUser(user.id);
-    await generateReviewCards(user.id, slug, code);
 
-    // Mark any curriculum practice steps that reference this problem as complete
+    // Spaced repetition cards are a Pro feature — skip the OpenAI call for free users.
+    const { isPro } = await getUserSubscription(user.id);
+    if (isPro) {
+      await generateReviewCards(user.id, slug, code);
+    }
+
+    // Mark any curriculum practice steps that reference this problem as complete.
+    // Don't fail the submission response if progress writes hiccup.
     const practiceStepIds = findPracticeStepsBySlug(slug);
     for (const stepId of practiceStepIds) {
-      await setBlockCompleted(stepId, true);
+      try {
+        await setBlockCompleted(stepId, true);
+      } catch (err) {
+        console.error(`setBlockCompleted(${stepId}) from /api/submit failed:`, err);
+      }
     }
   }
 

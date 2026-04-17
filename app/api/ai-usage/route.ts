@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 import { getSupabaseUser } from '@/lib/supabase';
 import {
   getUserSubscription,
-  getLifetimeAiUsage,
+  getWeeklyAiUsage,
   getDailyAiUsage,
 } from '@/lib/subscription';
 
 // Read-only usage counter. Abuse throttling lives in proxy.ts (READ_BURST bucket).
-const FREE_LIFETIME_LIMIT = 5;
+const FREE_WEEKLY_LIMIT = 5;
 const PRO_DAILY_LIMIT = 50;
 
 export async function GET() {
@@ -19,8 +19,8 @@ export async function GET() {
   const { isPro } = await getUserSubscription(user.id);
   if (isPro) {
     const used = await getDailyAiUsage(user.id);
-    return NextResponse.json({ used, limit: PRO_DAILY_LIMIT, isPro: true });
+    return NextResponse.json({ used, limit: PRO_DAILY_LIMIT, isPro: true, period: 'daily' });
   }
-  const used = await getLifetimeAiUsage(user.id);
-  return NextResponse.json({ used, limit: FREE_LIFETIME_LIMIT, isPro: false });
+  const used = await getWeeklyAiUsage(user.id);
+  return NextResponse.json({ used, limit: FREE_WEEKLY_LIMIT, isPro: false, period: 'weekly' });
 }

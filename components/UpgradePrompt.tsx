@@ -32,7 +32,10 @@ export default function UpgradePrompt({
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({
+          plan,
+          returnPath: window.location.pathname + window.location.search,
+        }),
       });
       const { url, error } = await res.json();
       if (url) {
@@ -70,7 +73,7 @@ export default function UpgradePrompt({
         <p className="text-[13px] text-zinc-400 leading-relaxed">
           You've used{' '}
           <span className="text-zinc-200 font-medium">{used}/{limit}</span>{' '}
-          free tutor messages. Go Pro for unlimited access.
+          free tutor messages this week. Resets in 7 days, or go Pro for unlimited access.
         </p>
       </div>
 

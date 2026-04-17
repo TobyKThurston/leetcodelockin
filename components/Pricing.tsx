@@ -9,25 +9,28 @@ import { cn } from '@/lib/utils';
 import {
   MONTHLY_PRICE_LABEL,
   YEARLY_PRICE_LABEL,
+  YEARLY_FULL_LABEL,
   YEARLY_SAVINGS_LABEL,
+  YEARLY_SAVINGS_PCT_LABEL,
   YEARLY_PER_MONTH_LABEL,
 } from '@/lib/pricing';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
 const FREE_FEATURES = [
-  '4 learning paths, 37 skill blocks',
+  'Full curriculum (4 paths, 37 blocks)',
   'Full problem library (212+ problems)',
   'Python code editor + execution',
-  'Progress tracking across paths',
-  '5 AI tutor messages (lifetime)',
+  'Progress tracking and streaks',
+  '5 AI tutor messages per week',
 ];
 
 const PRO_FEATURES = [
   'Everything in Free',
   'Unlimited AI Socratic tutor',
-  'Unlimited AI chat follow-ups',
-  'Priority when things get busy',
+  'Mock interviews with AI debrief',
+  'Spaced-repetition flashcards from your solutions',
+  'Streak freezes so a missed day doesn\u2019t reset you',
 ];
 
 export default function Pricing() {
@@ -59,7 +62,7 @@ export default function Pricing() {
             Free to learn. Pro to master.
           </h2>
           <p className="mt-3 text-slate-500 text-[15px]">
-            All content is free forever. Pro unlocks unlimited AI tutoring.
+            All curriculum stays free. Pro adds unlimited AI tutoring, mock interviews, and spaced-repetition review.
           </p>
         </div>
 
@@ -141,17 +144,20 @@ export default function Pricing() {
                   Pro Yearly
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
-                  Save {YEARLY_SAVINGS_LABEL}
+                  Save {YEARLY_SAVINGS_PCT_LABEL}
                 </span>
               </div>
-              <div className="mt-6 flex items-baseline gap-1.5">
+              <div className="mt-6 flex items-baseline gap-2">
+                <span className="text-lg text-slate-600 line-through" style={SG}>
+                  {YEARLY_FULL_LABEL}
+                </span>
                 <span className="text-5xl font-bold text-white" style={SG}>
                   {YEARLY_PRICE_LABEL}
                 </span>
                 <span className="text-lg text-slate-500">/year</span>
               </div>
               <p className="text-[13px] text-slate-500 mt-1.5">
-                That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span>
+                That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span> &middot; save {YEARLY_SAVINGS_LABEL}
               </p>
             </CardHeader>
             <CardContent className="px-8 pt-8 flex-1">
@@ -171,12 +177,56 @@ export default function Pricing() {
         </div>
 
         <p className="text-center text-[12px] text-slate-600 mt-8">
-          All content is free. Pro only gates AI tutor usage.
+          Cancel anytime from Settings. Curriculum stays free even after you cancel.
         </p>
+
+        {/* FAQ */}
+        <div className="max-w-3xl mx-auto mt-20">
+          <h3
+            className="text-center text-[18px] font-bold text-white tracking-tight mb-6"
+            style={SG}
+          >
+            Common questions
+          </h3>
+          <dl className="space-y-3">
+            {FAQ_ITEMS.map(item => (
+              <div
+                key={item.q}
+                className="rounded-xl border border-white/[0.06] bg-white/[0.015] px-5 py-4"
+              >
+                <dt className="text-[14px] font-semibold text-white" style={SG}>
+                  {item.q}
+                </dt>
+                <dd className="text-[13px] text-slate-400 leading-relaxed mt-1.5">
+                  {item.a}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </section>
   );
 }
+
+const FAQ_ITEMS: { q: string; a: string }[] = [
+  {
+    q: 'Is the curriculum really free?',
+    a: 'Yes. All 4 paths, 37 skill blocks, and 212+ problems are free forever. Pro adds AI tutoring, mock interviews with debriefs, and spaced-repetition flashcards from your solutions.',
+  },
+  {
+    q: 'What\u2019s the difference between Free and Pro day-to-day?',
+    a: 'Free gets you 5 AI tutor messages per week and the full curriculum. Pro gives you unlimited AI tutoring, timed mock interviews with AI feedback, personalized review cards generated from problems you\u2019ve solved, and streak freezes.',
+  },
+  {
+    q: 'Can I cancel anytime?',
+    a: 'Yes. One click from Settings, no email or call required. You keep Pro until the end of your billing period and the curriculum stays free after.',
+  },
+  {
+    q: 'Do you offer refunds?',
+    a: 'If Pro isn\u2019t working for you in the first 14 days, email hello@leetlockin.com and we\u2019ll refund you. No questions.',
+  },
+];
 
 function FeatureList({
   features,
