@@ -5,20 +5,27 @@ import { X } from 'lucide-react';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const DISMISSED_KEY = 'lc-dashboard-upgrade-dismissed';
+const MIN_SOLVED = 3;
 
-// Always-visible upgrade prompt for free users on the dashboard. Hidden for Pro
-// users, hidden for the rest of the session once dismissed. The whole point is
-// to surface Pro features (mock interviews, spaced rep) before users hit the
-// AI quota wall — it's the first place free users land that even mentions them.
+// Upgrade prompt for engaged free users on the dashboard. Gated on actual
+// problem-solving (>= 3 accepted submissions, sourced from /api/solved-slugs
+// which reads problem_submissions — onboarding skips write to `progress`, not
+// `problem_submissions`, so they're correctly excluded). Hidden for Pro users
+// and dismissed users. The point is to surface Pro features when users are
+// already invested, not as a first impression that gets dismiss-on-sight.
 export default function DashboardUpgradeBanner() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem(DISMISSED_KEY) === '1') return;
-    fetch('/api/ai-usage')
-      .then(r => (r.ok ? r.json() : null))
-      .then(data => {
-        if (data && data.isPro === false) setShow(true);
+    Promise.all([
+      fetch('/api/ai-usage').then(r => (r.ok ? r.json() : null)),
+      fetch('/api/solved-slugs').then(r => (r.ok ? r.json() : null)),
+    ])
+      .then(([usage, solved]) => {
+        const isFree = usage && usage.isPro === false;
+        const solvedCount = Array.isArray(solved?.slugs) ? solved.slugs.length : 0;
+        if (isFree && solvedCount >= MIN_SOLVED) setShow(true);
       })
       .catch(() => { /* signed-out users 401 — banner stays hidden */ });
   }, []);
