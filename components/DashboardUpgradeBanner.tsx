@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const DISMISSED_KEY = 'lc-dashboard-upgrade-dismissed';
@@ -37,12 +37,6 @@ export default function DashboardUpgradeBanner() {
         background: 'linear-gradient(90deg, rgba(59,130,246,0.08), rgba(139,92,246,0.05))',
       }}
     >
-      <div
-        className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg"
-        style={{ background: 'rgba(59,130,246,0.15)' }}
-      >
-        <Sparkles size={14} className="text-blue-300" />
-      </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold text-white" style={SG}>
           Unlock mock interviews + spaced-repetition review

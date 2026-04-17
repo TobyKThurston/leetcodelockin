@@ -36,13 +36,9 @@ type BlockWithStatus = CurriculumStep & { blockStatus: BlockStatus };
 
 export function computePathStatuses(completedIds: Set<string>): Record<string, PathStatus> {
   const result: Record<string, PathStatus> = {};
-  let prevComplete = true;
   for (const path of CURRICULUM) {
     const allDone = path.blocks.every(b => completedIds.has(b.id));
-    if (allDone) result[path.id] = 'complete';
-    else if (prevComplete) result[path.id] = 'unlocked';
-    else result[path.id] = 'locked';
-    prevComplete = allDone;
+    result[path.id] = allDone ? 'complete' : 'unlocked';
   }
   return result;
 }
