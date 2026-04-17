@@ -33,7 +33,7 @@ const PRO_FEATURES = [
   'Streak freezes so a missed day doesn\u2019t reset you',
 ];
 
-export default function Pricing() {
+export default function Pricing({ showFaq = false }: { showFaq?: boolean } = {}) {
   const [loading, setLoading] = useState<string | null>(null);
 
   function handleCheckout(plan: 'monthly' | 'yearly') {
@@ -180,30 +180,31 @@ export default function Pricing() {
           Cancel anytime from Settings. Curriculum stays free even after you cancel.
         </p>
 
-        {/* FAQ */}
-        <div className="max-w-3xl mx-auto mt-20">
-          <h3
-            className="text-center text-[18px] font-bold text-white tracking-tight mb-6"
-            style={SG}
-          >
-            Common questions
-          </h3>
-          <dl className="space-y-3">
-            {FAQ_ITEMS.map(item => (
-              <div
-                key={item.q}
-                className="rounded-xl border border-white/[0.06] bg-white/[0.015] px-5 py-4"
-              >
-                <dt className="text-[14px] font-semibold text-white" style={SG}>
-                  {item.q}
-                </dt>
-                <dd className="text-[13px] text-slate-400 leading-relaxed mt-1.5">
-                  {item.a}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        {showFaq && (
+          <div className="max-w-3xl mx-auto mt-20">
+            <h3
+              className="text-center text-[18px] font-bold text-white tracking-tight mb-6"
+              style={SG}
+            >
+              Common questions
+            </h3>
+            <dl className="space-y-3">
+              {FAQ_ITEMS.map(item => (
+                <div
+                  key={item.q}
+                  className="rounded-xl border border-white/[0.06] bg-white/[0.015] px-5 py-4"
+                >
+                  <dt className="text-[14px] font-semibold text-white" style={SG}>
+                    {item.q}
+                  </dt>
+                  <dd className="text-[13px] text-slate-400 leading-relaxed mt-1.5">
+                    {item.a}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
       </div>
     </section>
   );

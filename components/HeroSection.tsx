@@ -56,12 +56,6 @@ export default function HeroSection() {
           Stop memorizing solutions. Learn how to think through every problem,
           pattern by pattern.
         </p>
-        <p
-          className="mt-3 max-w-xl mx-auto text-[13px] text-slate-500 animate-fade-up"
-          style={{ animationDelay: '500ms' }}
-        >
-          37 skill blocks &middot; 212+ problems &middot; AI tutor that won&apos;t spoon-feed you
-        </p>
 
         {/* CTAs */}
         <div

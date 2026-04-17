@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <main className="min-h-dvh bg-[#0b1220]">
-      <Pricing />
+      <Pricing showFaq />
     </main>
   );
 }
