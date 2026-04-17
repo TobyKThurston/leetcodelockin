@@ -698,7 +698,10 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({
+          plan,
+          returnPath: window.location.pathname + window.location.search,
+        }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;

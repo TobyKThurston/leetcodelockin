@@ -54,7 +54,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  // Idempotency: Stripe retries on 5xx. Dedup via unique insert on event.id.
+  // Idempotency: Stripe retries on 5xx. Claim this event id via unique insert;
+  // if the handler fails we roll the claim back so retries can reprocess.
   const { error: insertErr } = await sb
     .from('stripe_webhook_events')
     .insert({ id: event.id });
@@ -63,6 +64,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true, duplicate: true });
     }
     console.error('stripe_webhook_events insert error:', insertErr);
+    return NextResponse.json({ error: 'dedup insert failed' }, { status: 500 });
   }
 
   try {
@@ -154,6 +156,14 @@ export async function POST(req: Request) {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error(`webhook handler failed for ${event.type}:`, message);
+    // Release the dedup claim so Stripe's retry can reprocess this event.
+    const { error: delErr } = await sb
+      .from('stripe_webhook_events')
+      .delete()
+      .eq('id', event.id);
+    if (delErr) {
+      console.error('stripe_webhook_events rollback failed:', delErr);
+    }
     return NextResponse.json({ error: message }, { status: 500 });
   }
 

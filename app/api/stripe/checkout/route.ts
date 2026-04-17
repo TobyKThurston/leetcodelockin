@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSupabaseUser } from '@/lib/supabase';
 import { getStripe } from '@/lib/stripe';
 import { getOrCreateStripeCustomer } from '@/lib/subscription';
+import { safeReturnPath } from '@/lib/safe-return-path';
 
 type Plan = 'monthly' | 'yearly';
 
@@ -14,8 +15,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Your account has no email on file' }, { status: 400 });
   }
 
-  const body = (await req.json().catch(() => ({}))) as { plan?: string };
+  const body = (await req.json().catch(() => ({}))) as {
+    plan?: string;
+    returnPath?: string;
+  };
   const plan: Plan = body.plan === 'yearly' ? 'yearly' : 'monthly';
+  const returnPath = safeReturnPath(body.returnPath) ?? '/settings';
 
   const priceId =
     plan === 'yearly'
@@ -46,7 +51,7 @@ export async function POST(req: Request) {
       client_reference_id: user.id,
       allow_promotion_codes: true,
       success_url: `${origin}/checkout/complete?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/settings`,
+      cancel_url: `${origin}${returnPath}`,
       subscription_data: {
         metadata: { supabase_user_id: user.id },
       },

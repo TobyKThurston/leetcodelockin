@@ -153,8 +153,8 @@ export default async function SignInPage({
       );
     }
 
-    // New sign-up always goes to onboarding
-    redirect('/onboarding');
+    const bypassOnboarding = nextUrl.startsWith('/checkout');
+    redirect(bypassOnboarding ? nextUrl : '/onboarding');
   }
 
   const isSignIn = mode === 'signin';

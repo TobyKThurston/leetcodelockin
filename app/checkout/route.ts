@@ -2,16 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseUser } from '@/lib/supabase';
 import { getStripe } from '@/lib/stripe';
 import { getOrCreateStripeCustomer } from '@/lib/subscription';
+import { safeReturnPath } from '@/lib/safe-return-path';
 
 type Plan = 'monthly' | 'yearly';
-
-// Only accept same-origin relative paths so `from` can't be turned into an
-// open-redirect. Strip any leading '//' (protocol-relative) defensively.
-function safeReturnPath(value: string | null): string | null {
-  if (!value) return null;
-  if (!value.startsWith('/') || value.startsWith('//')) return null;
-  return value;
-}
 
 // Resolve "where to send the user if anything goes wrong or they cancel".
 // Prefer the explicit `from` query param (set by the client), fall back to the

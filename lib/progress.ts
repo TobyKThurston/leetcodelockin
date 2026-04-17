@@ -81,13 +81,16 @@ export async function setBlockCompleted(blockId: string, complete: boolean): Pro
   const user = await getSupabaseUser();
   if (!user) return [];
 
-  // Read current state
-  const { data: row } = await db
+  const { data: row, error: readErr } = await db
     .from('progress')
     .select('completed')
     .eq('user_id', user.id)
     .eq('module_id', CURRICULUM_MODULE_ID)
-    .single();
+    .maybeSingle();
+
+  if (readErr) {
+    throw new Error(`setBlockCompleted read failed: ${readErr.message}`);
+  }
 
   const current = new Set<string>(((row?.completed as string[] | null) ?? []));
   if (complete) {
@@ -98,7 +101,7 @@ export async function setBlockCompleted(blockId: string, complete: boolean): Pro
   }
   const next = [...current];
 
-  await db.from('progress').upsert(
+  const { error: writeErr } = await db.from('progress').upsert(
     {
       user_id: user.id,
       module_id: CURRICULUM_MODULE_ID,
@@ -109,6 +112,10 @@ export async function setBlockCompleted(blockId: string, complete: boolean): Pro
     },
     { onConflict: 'user_id,module_id' }
   );
+
+  if (writeErr) {
+    throw new Error(`setBlockCompleted write failed: ${writeErr.message}`);
+  }
 
   return next;
 }
