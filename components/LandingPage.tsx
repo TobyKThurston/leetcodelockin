@@ -7,6 +7,7 @@ import Roadmap from './Roadmap';
 import HowItWorks from './HowItWorks';
 import Pricing from './Pricing';
 import FinalCTA from './FinalCTA';
+import FAQ from './FAQ';
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
@@ -138,6 +139,7 @@ export default function LandingPage() {
         <HowItWorks />
         <Pricing />
         <FinalCTA />
+        <FAQ />
       </main>
       <Footer />
     </div>
