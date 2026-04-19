@@ -2,7 +2,7 @@ import NavBar from '@/components/NavBar';
 import { Footer } from '@/components/LandingPage';
 
 export const metadata = {
-  title: 'Terms of Service — LeetLockin',
+  title: 'Terms of Service | LeetLockin',
   description: 'LeetLockin Terms of Service',
 };
 

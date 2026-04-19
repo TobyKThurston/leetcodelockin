@@ -2,7 +2,7 @@ import NavBar from '@/components/NavBar';
 import { Footer } from '@/components/LandingPage';
 
 export const metadata = {
-  title: 'Privacy Policy — LeetLockin',
+  title: 'Privacy Policy | LeetLockin',
   description: 'LeetLockin Privacy Policy',
 };
 

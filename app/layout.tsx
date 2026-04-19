@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteTitle,
-    template: '%s — LeetLockin',
+    template: '%s | LeetLockin',
   },
   description: siteDescription,
   applicationName: siteName,

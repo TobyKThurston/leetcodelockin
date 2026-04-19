@@ -1,7 +1,7 @@
 import MobileHandoffScreen from '@/components/mobile/MobileHandoffScreen';
 
 export const metadata = {
-  title: 'Welcome — Open on Desktop',
+  title: 'Welcome | Open on Desktop',
 };
 
 export default function WelcomeMobilePage() {
