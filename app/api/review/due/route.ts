@@ -54,21 +54,22 @@ export async function GET() {
     (problems ?? []).map(p => [p.slug, p]),
   );
 
-  const cards: ReviewCard[] = rows.map(r => {
+  const cards: ReviewCard[] = rows.flatMap(r => {
     const p = problemMap.get(r.problem_slug);
-    return {
+    if (!p) return [];
+    return [{
       id: r.id,
       problemSlug: r.problem_slug,
-      problemTitle: p?.title ?? r.problem_slug,
-      difficulty: p?.difficulty ?? 'Medium',
-      pattern: p?.pattern ?? '',
+      problemTitle: p.title,
+      difficulty: p.difficulty,
+      pattern: p.pattern ?? '',
       cardType: r.card_type as ReviewCard['cardType'],
       content: r.content as ReviewCard['content'],
       codeSnapshot: r.code_snapshot,
       reviewCount: r.review_count,
       intervalDays: r.interval_days,
       nextReview: r.next_review,
-    };
+    }];
   });
 
   return NextResponse.json({ cards, isPro: true, totalDue: count ?? 0 });
