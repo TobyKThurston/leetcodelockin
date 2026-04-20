@@ -13,6 +13,7 @@ import {
 import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
+import AppNav from '@/components/AppNav';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -57,6 +58,7 @@ interface Scorecard {
 }
 
 type Phase = 'intro' | 'starting' | 'active' | 'ending' | 'scorecard' | 'practice' | 'error';
+type MicState = 'unrequested' | 'requesting' | 'granted' | 'denied';
 
 interface Props {
   difficulty: 'easy-medium' | 'medium-hard';
@@ -119,6 +121,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [runStatus, setRunStatus] = useState<'idle' | 'running' | 'done'>('idle');
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
+  const [micState, setMicState] = useState<MicState>('unrequested');
 
   // Desktop gate
   const [isDesktop, setIsDesktop] = useState(true);
@@ -188,43 +191,45 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   const initMic = useCallback(async () => {
     if (streamRef.current) return;
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-    });
-    const audioCtx = new AudioContext();
-    const source = audioCtx.createMediaStreamSource(stream);
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
-    source.connect(analyser);
-    streamRef.current = stream;
-    audioCtxRef.current = audioCtx;
-    analyserRef.current = analyser;
+    setMicState('requesting');
+    setStartError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
+      const audioCtx = new AudioContext();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
+      streamRef.current = stream;
+      audioCtxRef.current = audioCtx;
+      analyserRef.current = analyser;
+      setMicState('granted');
 
-    // Volume meter only (no VAD / recording yet — that starts in active phase)
-    const buf = new Uint8Array(analyser.fftSize);
-    tickTimerRef.current = window.setInterval(() => {
-      if (!analyserRef.current) return;
-      analyserRef.current.getByteTimeDomainData(buf);
-      let sum = 0;
-      for (let i = 0; i < buf.length; i++) {
-        const v = (buf[i] - 128) / 128;
-        sum += v * v;
-      }
-      const rms = Math.sqrt(sum / buf.length);
-      setMicLevel(rms);
-    }, TICK_MS);
-  }, []);
-
-  // Try to init mic as soon as the intro phase mounts.
-  useEffect(() => {
-    if (phase !== 'intro') return;
-    initMic().catch(err => {
-      setStartError(err?.message === 'Permission denied' || err?.name === 'NotAllowedError'
-        ? 'Microphone access is required for a voice mock. Please allow mic access and retry.'
-        : 'Could not open your microphone. Please check your system settings and retry.',
+      // Volume meter only (no VAD / recording yet — that starts in active phase)
+      const buf = new Uint8Array(analyser.fftSize);
+      tickTimerRef.current = window.setInterval(() => {
+        if (!analyserRef.current) return;
+        analyserRef.current.getByteTimeDomainData(buf);
+        let sum = 0;
+        for (let i = 0; i < buf.length; i++) {
+          const v = (buf[i] - 128) / 128;
+          sum += v * v;
+        }
+        const rms = Math.sqrt(sum / buf.length);
+        setMicLevel(rms);
+      }, TICK_MS);
+    } catch (err) {
+      const e = err as Error & { name?: string };
+      setMicState('denied');
+      setStartError(
+        e?.name === 'NotAllowedError' || e?.message === 'Permission denied'
+          ? 'Microphone access was blocked. Allow it in your browser and click the button to retry.'
+          : 'Could not open your microphone. Check your system settings and retry.',
       );
-    });
-  }, [phase, initMic]);
+    }
+  }, []);
 
   // ─── Start session ─────────────────────────────────────────────────────────
 
@@ -557,9 +562,11 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         difficulty={difficulty}
         durationMin={durationMin}
         micLevel={micLevel}
-        canStart={phase === 'intro' && micLevel > 0.001}
+        micState={micState}
+        canStart={phase === 'intro' && micState === 'granted' && micLevel > 0.001}
         starting={phase === 'starting'}
         error={startError}
+        onRequestMic={initMic}
         onStart={beginSession}
       />
     );
@@ -815,94 +822,132 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 // ─── Intro phase ─────────────────────────────────────────────────────────────
 
 function IntroPhase({
-  difficulty, durationMin, micLevel, canStart, starting, error, onStart,
+  difficulty, durationMin, micLevel, micState, canStart, starting, error, onRequestMic, onStart,
 }: {
   difficulty: string;
   durationMin: number;
   micLevel: number;
+  micState: MicState;
   canStart: boolean;
   starting: boolean;
   error: string | null;
+  onRequestMic: () => void;
   onStart: () => void;
 }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#0b1220' }}>
-      <div className="max-w-md w-full space-y-6">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500 font-semibold" style={SG}>
-            Voice Mock Interview
-          </p>
-          <h1 className="text-[28px] font-bold text-white mt-2" style={SG}>
-            Let&apos;s run through one problem.
-          </h1>
-          <p className="text-[14px] text-slate-400 mt-2 leading-relaxed" style={SG}>
-            {difficulty === 'easy-medium' ? 'Medium' : 'Hard'} difficulty · {durationMin} minutes.
-            Your AI interviewer will stay mostly quiet while you think, and interject when it&apos;s time to push you.
-          </p>
-        </div>
+  const statusLabel =
+    micState === 'granted'
+      ? (micLevel > 0.001 ? 'Hearing you' : 'Ready')
+      : micState === 'requesting'
+        ? 'Requesting…'
+        : micState === 'denied'
+          ? 'Blocked'
+          : 'Not enabled';
+  const statusColor =
+    micState === 'granted' && micLevel > 0.001
+      ? '#34d399'
+      : micState === 'denied'
+        ? '#fca5a5'
+        : 'rgba(148,163,184,0.6)';
 
-        <div
-          className="rounded-xl p-5 space-y-3"
-          style={{ background: '#0f1729', border: '1px solid rgba(255,255,255,0.06)' }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] text-slate-400" style={SG}>Microphone</span>
-            <span
-              className="text-[11px] font-semibold"
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: '#0b1220' }}>
+      <AppNav activeTab="Interview" />
+      <div className="flex-1 flex items-center justify-center p-8" style={{ paddingTop: 48 }}>
+        <div className="max-w-md w-full space-y-6">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500 font-semibold" style={SG}>
+              Voice Mock Interview
+            </p>
+            <h1 className="text-[28px] font-bold text-white mt-2" style={SG}>
+              Let&apos;s run through one problem.
+            </h1>
+            <p className="text-[14px] text-slate-400 mt-2 leading-relaxed" style={SG}>
+              {difficulty === 'easy-medium' ? 'Medium' : 'Hard'} difficulty · {durationMin} minutes.
+              Your AI interviewer will stay mostly quiet while you think, and interject when it&apos;s time to push you.
+            </p>
+          </div>
+
+          <div
+            className="rounded-xl p-5 space-y-3"
+            style={{ background: '#0f1729', border: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-slate-400" style={SG}>Microphone</span>
+              <span className="text-[11px] font-semibold" style={{ ...SG, color: statusColor }}>
+                {statusLabel}
+              </span>
+            </div>
+            {micState === 'granted' ? (
+              <>
+                <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                  <div
+                    className="h-full transition-[width] duration-100"
+                    style={{
+                      width: `${Math.min(100, micLevel * 600)}%`,
+                      background: 'linear-gradient(90deg, #60a5fa, #3b82f6)',
+                    }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed" style={SG}>
+                  Say a few words — the bar should move.
+                </p>
+              </>
+            ) : (
+              <button
+                onClick={onRequestMic}
+                disabled={micState === 'requesting'}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-[13px] font-semibold text-white disabled:opacity-60"
+                style={{
+                  ...SG,
+                  background: 'rgba(59,130,246,0.12)',
+                  border: '1px solid rgba(96,165,250,0.4)',
+                }}
+              >
+                {micState === 'requesting'
+                  ? (<><Loader2 size={13} className="animate-spin" /> Requesting mic…</>)
+                  : micState === 'denied'
+                    ? (<><Mic size={13} /> Retry microphone access</>)
+                    : (<><Mic size={13} /> Enable microphone</>)
+                }
+              </button>
+            )}
+          </div>
+
+          {error && (
+            <div
+              className="flex items-start gap-2 rounded-lg p-3 text-[12px]"
               style={{
                 ...SG,
-                color: micLevel > 0.001 ? '#34d399' : 'rgba(148,163,184,0.5)',
+                background: 'rgba(239,68,68,0.06)',
+                border: '1px solid rgba(239,68,68,0.2)',
+                color: '#fca5a5',
               }}
             >
-              {micLevel > 0.001 ? 'Hearing you' : 'Waiting…'}
-            </span>
-          </div>
-          <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-            <div
-              className="h-full transition-[width] duration-100"
-              style={{
-                width: `${Math.min(100, micLevel * 600)}%`,
-                background: 'linear-gradient(90deg, #60a5fa, #3b82f6)',
-              }}
-            />
-          </div>
-          <p className="text-[11px] text-slate-600 leading-relaxed" style={SG}>
-            Say a few words — the bar should move. If nothing happens, check your browser&apos;s mic permission.
-          </p>
-        </div>
+              <AlertCircle size={14} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
 
-        {error && (
-          <div
-            className="flex items-start gap-2 rounded-lg p-3 text-[12px]"
+          <button
+            onClick={onStart}
+            disabled={!canStart || starting}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-[14px] font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               ...SG,
-              background: 'rgba(239,68,68,0.06)',
-              border: '1px solid rgba(239,68,68,0.2)',
-              color: '#fca5a5',
+              background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+              border: '1px solid rgba(147,197,253,0.55)',
+              boxShadow: '0 10px 24px -12px rgba(59,130,246,0.6)',
             }}
           >
-            <AlertCircle size={14} className="mt-0.5 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
+            {starting ? (<><Loader2 size={14} className="animate-spin" /> Starting…</>) : (<>Begin Interview <ArrowRight size={15} /></>)}
+          </button>
 
-        <button
-          onClick={onStart}
-          disabled={!canStart || starting}
-          className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-[14px] font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            ...SG,
-            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-            border: '1px solid rgba(147,197,253,0.55)',
-            boxShadow: '0 10px 24px -12px rgba(59,130,246,0.6)',
-          }}
-        >
-          {starting ? (<><Loader2 size={14} className="animate-spin" /> Starting…</>) : (<>Begin Interview <ArrowRight size={15} /></>)}
-        </button>
-
-        <p className="text-[11px] text-slate-600 text-center" style={SG}>
-          You&apos;ll hear a short intro, then your problem will appear.
-        </p>
+          <p className="text-[11px] text-slate-600 text-center" style={SG}>
+            {micState === 'granted'
+              ? 'You\u2019ll hear a short intro, then your problem will appear.'
+              : 'Enable your mic to continue.'}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -922,8 +967,9 @@ function ScorecardPhase({
   onContinueCoding: () => void;
 }) {
   return (
-    <div className="min-h-screen py-10 px-6" style={{ background: '#0b1220' }}>
-      <div className="max-w-3xl mx-auto space-y-6">
+    <div className="min-h-screen" style={{ background: '#0b1220' }}>
+      <AppNav activeTab="Interview" />
+      <div className="max-w-3xl mx-auto space-y-6 py-10 px-6" style={{ paddingTop: 76 }}>
         {isFreeTrial && (
           <div
             className="rounded-xl px-5 py-4 flex items-center justify-between gap-4"

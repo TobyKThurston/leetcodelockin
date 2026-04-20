@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import AppNav from '@/components/AppNav';
 import VoiceSession from '@/components/voice/VoiceSession';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
@@ -20,8 +21,10 @@ export default function VoiceInterviewPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6" style={{ background: '#0b1220' }}>
-      <div className="max-w-md w-full space-y-6">
+    <div className="min-h-screen flex flex-col" style={{ background: '#0b1220' }}>
+      <AppNav activeTab="Interview" />
+      <div className="flex-1 flex items-center justify-center px-6" style={{ paddingTop: 48 }}>
+        <div className="max-w-md w-full space-y-6">
         <div>
           <Link
             href="/interview"
@@ -109,6 +112,7 @@ export default function VoiceInterviewPage() {
         <p className="text-[11px] text-slate-600 text-center leading-relaxed" style={SG}>
           Desktop only · Free users get one trial · Pro users get 10 per month
         </p>
+        </div>
       </div>
     </div>
   );
