@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
 import type { SolveResponse } from '@/lib/types';
-import type { ProblemContent } from '@/lib/problem-types';
+import type { ProblemContent, ProblemTest } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import UpgradePrompt from '@/components/UpgradePrompt';
 
@@ -74,7 +74,59 @@ interface TestResult {
   actual: string;
   error?: string;
   errorLine?: number;
+  stdout?: string;
 }
+
+type PanelTab = 'cases' | 'console' | 'errors';
+
+type FailSource = 'visible' | 'hidden';
+
+type SubmitResultState =
+  | {
+      kind: 'accepted';
+      runtimeMs: number;
+      passedCount: number;
+      totalCount: number;
+      isFirst: boolean;
+    }
+  | {
+      kind: 'wrong';
+      source: FailSource;
+      label: string;
+      inputJson: string;
+      expectedJson: string;
+      actual: string;
+      runtimeMs: number;
+      passedCount: number;
+      totalCount: number;
+    }
+  | {
+      kind: 'runtime_error';
+      source: FailSource;
+      label: string;
+      inputJson: string;
+      error: string;
+      errorLine?: number;
+      runtimeMs: number;
+    };
+
+type RunStatus = 'idle' | 'running' | 'accepted' | 'wrong' | 'runtime_error';
+
+function deriveStatus(running: boolean, results: TestResult[]): RunStatus {
+  if (running) return 'running';
+  if (results.length === 0) return 'idle';
+  if (results.some(r => r.error)) return 'runtime_error';
+  if (results.every(r => r.passed)) return 'accepted';
+  return 'wrong';
+}
+
+const STATUS_STYLE: Record<RunStatus, { label: string; color: string; bg: string; border: string }> = {
+  idle:          { label: 'Ready',         color: 'rgba(148,163,184,0.8)', bg: 'rgba(148,163,184,0.06)', border: 'rgba(148,163,184,0.18)' },
+  running:       { label: 'Running…',      color: 'rgba(251,191,36,0.9)',  bg: 'rgba(251,191,36,0.06)',  border: 'rgba(251,191,36,0.2)' },
+  accepted:      { label: 'Accepted',      color: 'rgba(52,211,153,0.9)',  bg: 'rgba(16,185,129,0.07)',  border: 'rgba(52,211,153,0.22)' },
+  wrong:         { label: 'Wrong Answer',  color: 'rgba(251,146,60,0.95)', bg: 'rgba(249,115,22,0.07)',  border: 'rgba(251,146,60,0.22)' },
+  runtime_error: { label: 'Runtime Error', color: 'rgba(248,113,113,0.9)', bg: 'rgba(239,68,68,0.07)',   border: 'rgba(248,113,113,0.22)' },
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -1039,28 +1091,373 @@ function caseStatusColor(caseId: string, results: TestResult[]) {
   return r.passed ? 'rgba(52,211,153,0.75)' : 'rgba(248,113,113,0.75)';
 }
 
+function StatusPill({ status, passed, total }: { status: RunStatus; passed: number; total: number }) {
+  const s = STATUS_STYLE[status];
+  const showCount = status !== 'idle' && status !== 'running';
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-[3px] rounded-md"
+        style={{ ...SG, color: s.color, background: s.bg, border: `1px solid ${s.border}` }}
+      >
+        {status === 'running' && (
+          <span className="w-[5px] h-[5px] rounded-full animate-pulse" style={{ background: s.color }} />
+        )}
+        {s.label}
+      </span>
+      {showCount && (
+        <span className="text-[11.5px]" style={{ ...SG, color: '#6b7a8f' }}>
+          {passed}/{total} passed
+        </span>
+      )}
+    </div>
+  );
+}
+
+function TabButton({ label, active, onClick, badge }: { label: string; active: boolean; onClick: () => void; badge?: number }) {
+  return (
+    <button
+      onClick={onClick}
+      className="relative text-[11.5px] font-medium transition-colors"
+      style={{
+        ...SG,
+        height: 28,
+        padding: '0 10px',
+        color: active ? '#c9d1d9' : '#4a5a6e',
+        borderBottom: active ? '1px solid rgba(96,165,250,0.7)' : '1px solid transparent',
+        marginBottom: -1,
+      }}
+    >
+      <span className="inline-flex items-center gap-1.5">
+        {label}
+        {typeof badge === 'number' && badge > 0 && (
+          <span
+            className="text-[10px] font-semibold px-1.5 rounded-full"
+            style={{
+              background: 'rgba(248,113,113,0.14)',
+              color: 'rgba(248,113,113,0.95)',
+              lineHeight: '15px',
+            }}
+          >
+            {badge}
+          </span>
+        )}
+      </span>
+    </button>
+  );
+}
+
+function CasesView({
+  tests, results, activeId, onSelectCase, onAddCase, onDeleteCase, onUpdateInput, onUpdateExpected,
+}: Pick<TestCasePanelProps,
+  'tests' | 'results' | 'activeId' | 'onSelectCase' | 'onAddCase' | 'onDeleteCase' | 'onUpdateInput' | 'onUpdateExpected'
+>) {
+  const activeTest   = tests.find(t => t.id === activeId) ?? tests[0];
+  const activeResult = results.find(r => r.caseId === activeId);
+
+  return (
+    <div className="flex-1 flex flex-col min-h-0">
+      <div
+        className="flex items-center shrink-0 overflow-x-auto"
+        style={{ height: 36, paddingLeft: 12, paddingRight: 8, gap: 4, borderBottom: `1px solid ${BORDER}`, scrollbarWidth: 'none' }}
+      >
+        {tests.map(t => {
+          const dot      = caseStatusColor(t.id, results);
+          const isActive = t.id === activeId;
+          return (
+            <div
+              key={t.id}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && onSelectCase(t.id)}
+              className="flex items-center gap-1.5 shrink-0 select-none transition-colors"
+              style={{
+                height: 26,
+                paddingLeft: 9,
+                paddingRight: t.custom ? 4 : 9,
+                borderRadius: 6,
+                cursor: 'pointer',
+                background: isActive ? 'rgba(59,130,246,0.08)' : 'transparent',
+                border:     isActive ? '1px solid rgba(59,130,246,0.18)' : '1px solid transparent',
+              }}
+              onClick={() => onSelectCase(t.id)}
+            >
+              <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: dot }} />
+              <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#c9d1d9' : '#3a4a5c' }}>
+                {t.label}
+              </span>
+              {t.custom && (
+                <button
+                  className="ml-0.5 p-0.5 rounded hover:bg-white/10 transition-colors"
+                  style={{ color: '#3a4a5c' }}
+                  onClick={e => { e.stopPropagation(); onDeleteCase(t.id); }}
+                  aria-label="Delete case"
+                >
+                  <X size={9} />
+                </button>
+              )}
+            </div>
+          );
+        })}
+
+        <button
+          onClick={onAddCase}
+          className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded transition-colors ml-1 hover:bg-white/[0.04]"
+          style={{ color: '#3a4a5c' }}
+          aria-label="Add custom test case"
+        >
+          <Plus size={11} />
+        </button>
+      </div>
+
+      {activeTest && (
+        <div
+          className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
+        >
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Input</p>
+            <textarea
+              value={activeTest.inputJson}
+              onChange={e => onUpdateInput(activeTest.id, e.target.value)}
+              spellCheck={false}
+              rows={2}
+              className="w-full resize-none rounded-md px-2.5 py-1.5 text-[12px] outline-none transition-colors"
+              style={{
+                background: 'rgba(255,255,255,0.02)',
+                border: `1px solid ${BORDER}`,
+                color: '#c9d1d9',
+                ...MONO,
+              }}
+            />
+          </div>
+
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Expected</p>
+            {activeTest.custom ? (
+              <input
+                type="text"
+                value={activeTest.expectedJson}
+                onChange={e => onUpdateExpected(activeTest.id, e.target.value)}
+                placeholder="e.g. [0,1]"
+                className="w-full rounded-md px-2.5 py-1.5 text-[12px] outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: `1px solid ${BORDER}`,
+                  color: '#c9d1d9',
+                  ...MONO,
+                }}
+              />
+            ) : (
+              <span
+                className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]"
+                style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(96,165,250,0.7)', ...MONO }}
+              >
+                {activeTest.expectedJson || '—'}
+              </span>
+            )}
+          </div>
+
+          {activeResult && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                {activeResult.error ? 'Error' : 'Output'}
+              </p>
+              {activeResult.error ? (
+                <pre
+                  className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                  style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: 'rgba(248,113,113,0.9)', ...MONO }}
+                >
+                  {activeResult.error}
+                </pre>
+              ) : (
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]"
+                  style={{
+                    background: activeResult.passed ? 'rgba(16,185,129,0.06)' : 'rgba(239,68,68,0.06)',
+                    border: `1px solid ${activeResult.passed ? 'rgba(52,211,153,0.18)' : 'rgba(248,113,113,0.18)'}`,
+                    color: activeResult.passed ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)',
+                    ...MONO,
+                  }}
+                >
+                  {activeResult.actual || '—'}
+                </span>
+              )}
+            </div>
+          )}
+
+          {activeResult?.stdout && (
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                Stdout
+              </p>
+              <pre
+                className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}`, color: '#a8b3c7', ...MONO }}
+              >
+                {activeResult.stdout}
+              </pre>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConsoleView({ tests, results }: { tests: TestCase[]; results: TestResult[] }) {
+  const entries = tests
+    .map(t => {
+      const r = results.find(rr => rr.caseId === t.id);
+      const out = r?.stdout ?? '';
+      return { id: t.id, label: t.label, out, hasResult: Boolean(r) };
+    })
+    .filter(e => e.out.length > 0);
+
+  if (entries.length === 0) {
+    return (
+      <div className="flex-1 flex items-center justify-center px-6 text-center">
+        <p className="text-[12px]" style={{ ...SG, color: '#4a5a6e' }}>
+          No output — use <span style={MONO}>print()</span> inside your function to log values, then run.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex-1 overflow-y-auto px-4 py-3"
+      style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
+    >
+      <pre className="text-[11.5px] leading-relaxed whitespace-pre-wrap" style={{ ...MONO, color: '#c9d1d9' }}>
+        {entries.map((e, i) => (
+          <span key={e.id}>
+            <span style={{ color: '#4a5a6e' }}>
+              {i > 0 ? '\n' : ''}── {e.label} ──{'\n'}
+            </span>
+            {e.out.endsWith('\n') ? e.out : e.out + '\n'}
+          </span>
+        ))}
+      </pre>
+    </div>
+  );
+}
+
+function ErrorsView({
+  tests, results, onJumpToCase,
+}: {
+  tests: TestCase[];
+  results: TestResult[];
+  onJumpToCase: (id: string) => void;
+}) {
+  const rows = results
+    .map(r => {
+      if (r.passed) return null;
+      const t = tests.find(tt => tt.id === r.caseId);
+      if (!t) return null;
+      const isRuntime = Boolean(r.error);
+      return { r, t, isRuntime };
+    })
+    .filter((x): x is { r: TestResult; t: TestCase; isRuntime: boolean } => x !== null);
+
+  if (rows.length === 0) {
+    return (
+      <div className="flex-1 flex items-center justify-center px-6 text-center">
+        <p className="text-[12px]" style={{ ...SG, color: '#4a5a6e' }}>
+          No failing cases.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex-1 overflow-y-auto px-4 py-3 space-y-2"
+      style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
+    >
+      {rows.map(({ r, t, isRuntime }) => (
+        <button
+          key={r.caseId}
+          onClick={() => onJumpToCase(r.caseId)}
+          className="w-full text-left rounded-md px-3 py-2 transition-colors"
+          style={{
+            background: isRuntime ? 'rgba(239,68,68,0.04)' : 'rgba(249,115,22,0.04)',
+            border: `1px solid ${isRuntime ? 'rgba(248,113,113,0.18)' : 'rgba(251,146,60,0.2)'}`,
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.background = isRuntime
+              ? 'rgba(239,68,68,0.08)' : 'rgba(249,115,22,0.08)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.background = isRuntime
+              ? 'rgba(239,68,68,0.04)' : 'rgba(249,115,22,0.04)';
+          }}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="text-[10px] font-semibold uppercase tracking-[0.08em] px-1.5 py-[1px] rounded"
+              style={{
+                ...SG,
+                color: isRuntime ? 'rgba(248,113,113,0.95)' : 'rgba(251,146,60,0.95)',
+                background: isRuntime ? 'rgba(239,68,68,0.08)' : 'rgba(249,115,22,0.08)',
+              }}
+            >
+              {isRuntime ? 'Runtime Error' : 'Wrong Answer'}
+            </span>
+            <span className="text-[12px] font-medium" style={{ ...SG, color: '#c9d1d9' }}>
+              {t.label}
+            </span>
+            {r.errorLine && r.errorLine > 0 && (
+              <span className="text-[10.5px]" style={{ ...SG, color: '#6b7a8f' }}>
+                Line {r.errorLine}
+              </span>
+            )}
+          </div>
+          {isRuntime ? (
+            <pre className="text-[11px] leading-snug whitespace-pre-wrap" style={{ ...MONO, color: 'rgba(248,113,113,0.9)' }}>
+              {r.error}
+            </pre>
+          ) : (
+            <div className="text-[11px] leading-snug space-y-0.5" style={MONO}>
+              <div style={{ color: '#6b7a8f' }}>
+                Expected: <span style={{ color: 'rgba(96,165,250,0.85)' }}>{t.expectedJson || '—'}</span>
+              </div>
+              <div style={{ color: '#6b7a8f' }}>
+                Got: <span style={{ color: 'rgba(248,113,113,0.9)' }}>{r.actual || 'None'}</span>
+              </div>
+            </div>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function TestCasePanel({
   open, height, onResize, onToggle, tests, results, activeId, running,
   onSelectCase, onAddCase, onDeleteCase, onUpdateInput, onUpdateExpected,
 }: TestCasePanelProps) {
-  const activeTest   = tests.find(t => t.id === activeId) ?? tests[0];
-  const activeResult = results.find(r => r.caseId === activeId);
-  const passCount    = results.filter(r => r.passed).length;
-  const hasResults   = results.length > 0;
+  const [tab, setTab] = useState<PanelTab>('cases');
+  const passCount = results.filter(r => r.passed).length;
+  const status    = deriveStatus(running, results);
+  const errorCount = results.filter(r => !r.passed).length;
+
+  const jumpToCase = useCallback((id: string) => {
+    onSelectCase(id);
+    setTab('cases');
+  }, [onSelectCase]);
 
   return (
     <div
       className="shrink-0 flex flex-col"
       style={{ background: BG_PANEL }}
     >
-      {/* Resizer (only when open) */}
       {open ? (
         <VerticalResizer onDrag={(dy) => onResize(-dy)} />
       ) : (
         <div style={{ height: 1, background: BORDER }} />
       )}
 
-      {/* Header */}
       <div className="flex items-center justify-between px-4" style={{ height: 38 }}>
         <button
           onClick={onToggle}
@@ -1073,156 +1470,34 @@ function TestCasePanel({
           Test Cases
         </button>
 
-        {hasResults && !running && (
-          <span
-            className="text-[11.5px] font-medium"
-            style={{ ...SG, color: passCount === tests.length ? 'rgba(52,211,153,0.8)' : 'rgba(248,113,113,0.8)' }}
-          >
-            {passCount}/{tests.length} passed
-          </span>
-        )}
-        {running && (
-          <span className="text-[11.5px] animate-pulse" style={{ ...SG, color: 'rgba(59,130,246,0.6)' }}>
-            Running…
-          </span>
-        )}
+        <StatusPill status={status} passed={passCount} total={tests.length} />
       </div>
 
       {open && (
         <div style={{ height, borderTop: `1px solid ${BORDER}`, display: 'flex', flexDirection: 'column' }}>
-          {/* Case tab row */}
           <div
-            className="flex items-center shrink-0 overflow-x-auto"
-            style={{ height: 36, paddingLeft: 12, paddingRight: 8, gap: 4, borderBottom: `1px solid ${BORDER}`, scrollbarWidth: 'none' }}
+            className="flex items-center shrink-0"
+            style={{ paddingLeft: 8, paddingRight: 8, borderBottom: `1px solid ${BORDER}`, gap: 2 }}
           >
-            {tests.map(t => {
-              const dot      = caseStatusColor(t.id, results);
-              const isActive = t.id === activeId;
-              return (
-                <div
-                  key={t.id}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => e.key === 'Enter' && onSelectCase(t.id)}
-                  className="flex items-center gap-1.5 shrink-0 select-none transition-colors"
-                  style={{
-                    height: 26,
-                    paddingLeft: 9,
-                    paddingRight: t.custom ? 4 : 9,
-                    borderRadius: 6,
-                    cursor: 'pointer',
-                    background: isActive ? 'rgba(59,130,246,0.08)' : 'transparent',
-                    border:     isActive ? '1px solid rgba(59,130,246,0.18)' : '1px solid transparent',
-                  }}
-                  onClick={() => onSelectCase(t.id)}
-                >
-                  <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: dot }} />
-                  <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#c9d1d9' : '#3a4a5c' }}>
-                    {t.label}
-                  </span>
-                  {t.custom && (
-                    <button
-                      className="ml-0.5 p-0.5 rounded hover:bg-white/10 transition-colors"
-                      style={{ color: '#3a4a5c' }}
-                      onClick={e => { e.stopPropagation(); onDeleteCase(t.id); }}
-                      aria-label="Delete case"
-                    >
-                      <X size={9} />
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-
-            <button
-              onClick={onAddCase}
-              className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded transition-colors ml-1 hover:bg-white/[0.04]"
-              style={{ color: '#3a4a5c' }}
-              aria-label="Add custom test case"
-            >
-              <Plus size={11} />
-            </button>
+            <TabButton label="Test Cases" active={tab === 'cases'}   onClick={() => setTab('cases')} />
+            <TabButton label="Console"    active={tab === 'console'} onClick={() => setTab('console')} />
+            <TabButton label="Errors"     active={tab === 'errors'}  onClick={() => setTab('errors')} badge={errorCount} />
           </div>
 
-          {/* Body */}
-          {activeTest && (
-            <div
-              className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5"
-              style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
-            >
-              {/* Input */}
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Input</p>
-                <textarea
-                  value={activeTest.inputJson}
-                  onChange={e => onUpdateInput(activeTest.id, e.target.value)}
-                  spellCheck={false}
-                  rows={2}
-                  className="w-full resize-none rounded-md px-2.5 py-1.5 text-[12px] outline-none transition-colors"
-                  style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: `1px solid ${BORDER}`,
-                    color: '#c9d1d9',
-                    ...MONO,
-                  }}
-                />
-              </div>
-
-              {/* Expected */}
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Expected</p>
-                {activeTest.custom ? (
-                  <input
-                    type="text"
-                    value={activeTest.expectedJson}
-                    onChange={e => onUpdateExpected(activeTest.id, e.target.value)}
-                    placeholder="e.g. [0,1]"
-                    className="w-full rounded-md px-2.5 py-1.5 text-[12px] outline-none"
-                    style={{
-                      background: 'rgba(255,255,255,0.02)',
-                      border: `1px solid ${BORDER}`,
-                      color: '#c9d1d9',
-                      ...MONO,
-                    }}
-                  />
-                ) : (
-                  <span
-                    className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]"
-                    style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(96,165,250,0.7)', ...MONO }}
-                  >
-                    {activeTest.expectedJson || '—'}
-                  </span>
-                )}
-              </div>
-
-              {/* Output */}
-              {activeResult && (
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Output</p>
-                  {activeResult.error ? (
-                    <pre
-                      className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
-                      style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: 'rgba(248,113,113,0.9)', ...MONO }}
-                    >
-                      {activeResult.error}
-                    </pre>
-                  ) : (
-                    <span
-                      className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]"
-                      style={{
-                        background: activeResult.passed ? 'rgba(16,185,129,0.06)' : 'rgba(239,68,68,0.06)',
-                        border: `1px solid ${activeResult.passed ? 'rgba(52,211,153,0.18)' : 'rgba(248,113,113,0.18)'}`,
-                        color: activeResult.passed ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)',
-                        ...MONO,
-                      }}
-                    >
-                      {activeResult.actual || '—'}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
+          {tab === 'cases' && (
+            <CasesView
+              tests={tests}
+              results={results}
+              activeId={activeId}
+              onSelectCase={onSelectCase}
+              onAddCase={onAddCase}
+              onDeleteCase={onDeleteCase}
+              onUpdateInput={onUpdateInput}
+              onUpdateExpected={onUpdateExpected}
+            />
           )}
+          {tab === 'console' && <ConsoleView tests={tests} results={results} />}
+          {tab === 'errors'  && <ErrorsView  tests={tests} results={results} onJumpToCase={jumpToCase} />}
         </div>
       )}
     </div>
@@ -1241,7 +1516,7 @@ function TutorChat({ code, problem }: { code: string; problem: ProblemContent })
     {
       role: 'assistant',
       content:
-        "Hey — I'm your AI tutor. Ask me anything about this problem: what pattern to use, why your code isn't working, or how to reason through the edge cases. I won't hand you the solution.",
+        "hey, what's tripping you up on this one? throw me anything. stuck on the pattern, can't figure out why your code's blowing up on test 3, worried about some weird edge case, whatever. i won't spoil the answer but i'll nudge you til it clicks.",
     },
   ]);
   const [input, setInput]     = useState('');
@@ -1442,7 +1717,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [activeId, setActiveId]   = useState(initialActiveId);
   const [running, setRunning]     = useState(false);
   const [verdict, setVerdict]     = useState<'accepted' | 'wrong' | null>(null);
-  const [celebration, setCelebration] = useState<{ isFirst: boolean } | null>(null);
+  const [submitResult, setSubmitResult] = useState<SubmitResultState | null>(null);
   const [solved, setSolved]       = useState(false);
 
   // Fetch whether this problem has already been solved so the editor shows
@@ -1531,56 +1806,144 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
     localStorage.setItem(lsKey, starterPython);
   }
 
+  function recordSubmission(status: 'accepted' | 'wrong', passedCount: number, totalCount: number) {
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        slug: problem.slug, code, language: lang,
+        status, passedCount, totalCount,
+      }),
+    }).catch(() => { /* best-effort */ });
+  }
+
   async function execTests(showVerdict: boolean) {
     setRunning(true);
     setVerdict(null);
+    const startedAt = Date.now();
     try {
-      const { results: newResults } = await runTests({
+      const { results: visibleResults } = await runTests({
         code,
         tests,
         methodName:    problem.methodName,
         argKeys:       problem.argKeys,
         resultCompare: problem.resultCompare,
       });
-      setResults(newResults);
+      setResults(visibleResults);
       setPanelOpen(true);
-      const firstFail = newResults.find(r => !r.passed);
-      if (firstFail) setActiveId(firstFail.caseId);
+      const firstVisibleFail = visibleResults.find(r => !r.passed);
+      if (firstVisibleFail) setActiveId(firstVisibleFail.caseId);
       else setActiveId(tests[0]?.id ?? initialActiveId);
 
-      const accepted = newResults.length > 0 && newResults.every(r => r.passed);
-      if (showVerdict) setVerdict(accepted ? 'accepted' : 'wrong');
+      const visibleAccepted = visibleResults.length > 0 && visibleResults.every(r => r.passed);
 
-      // Fire-and-forget submission recording on submit.
-      if (showVerdict) {
-        const passedCount = newResults.filter(r => r.passed).length;
-        const status: 'accepted' | 'wrong' = accepted ? 'accepted' : 'wrong';
-        fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            slug:        problem.slug,
-            code,
-            language:    lang,
-            status,
-            passedCount,
-            totalCount:  newResults.length,
-          }),
-        }).catch(() => { /* best-effort */ });
+      // Plain Run: no modal, no submission recording.
+      if (!showVerdict) return;
 
-        // Celebration on accepted submit. First-ever solve gets distinct copy;
-        // everything after is a quieter "Solved" reinforcement.
-        if (accepted) {
-          setSolved(true);
-          const isFirst = (() => {
-            try {
-              if (localStorage.getItem('lc-solved-once') === '1') return false;
-              localStorage.setItem('lc-solved-once', '1');
-              return true;
-            } catch { return false; }
-          })();
-          setCelebration({ isFirst });
+      // Submit path — failed on a visible case: skip hidden fetch, show modal now.
+      if (!visibleAccepted) {
+        setVerdict('wrong');
+        const fail = firstVisibleFail!;
+        const failTest = tests.find(t => t.id === fail.caseId)!;
+        const runtimeMs = Date.now() - startedAt;
+        const passedCount = visibleResults.filter(r => r.passed).length;
+        if (fail.error) {
+          setSubmitResult({
+            kind: 'runtime_error', source: 'visible',
+            label: failTest.label, inputJson: failTest.inputJson,
+            error: fail.error, errorLine: fail.errorLine, runtimeMs,
+          });
+        } else {
+          setSubmitResult({
+            kind: 'wrong', source: 'visible',
+            label: failTest.label, inputJson: failTest.inputJson,
+            expectedJson: failTest.expectedJson, actual: fail.actual || 'None',
+            runtimeMs, passedCount, totalCount: visibleResults.length,
+          });
         }
+        recordSubmission('wrong', passedCount, visibleResults.length);
+        return;
+      }
+
+      // All visible passed — fetch the hidden test set and run it.
+      let hiddenDefs: ProblemTest[] = [];
+      try {
+        const res = await fetch(`/api/hidden-tests/${problem.slug}`, { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.tests)) hiddenDefs = data.tests as ProblemTest[];
+        }
+      } catch {
+        // Network blip — fall through as if there were no hidden tests.
+      }
+
+      const isFirst = (() => {
+        try {
+          if (localStorage.getItem('lc-solved-once') === '1') return false;
+          localStorage.setItem('lc-solved-once', '1');
+          return true;
+        } catch { return false; }
+      })();
+
+      if (hiddenDefs.length === 0) {
+        // No hidden tests authored — accept based on visible alone.
+        const runtimeMs = Date.now() - startedAt;
+        setVerdict('accepted');
+        setSolved(true);
+        setSubmitResult({
+          kind: 'accepted', runtimeMs,
+          passedCount: visibleResults.length, totalCount: visibleResults.length,
+          isFirst,
+        });
+        recordSubmission('accepted', visibleResults.length, visibleResults.length);
+        return;
+      }
+
+      const hiddenRunnerTests = hiddenDefs.map((t, i) => ({
+        id: `hidden-${i + 1}`,
+        inputJson: t.inputJson,
+        expectedJson: t.expectedJson,
+      }));
+      const { results: hiddenResults } = await runTests({
+        code,
+        tests: hiddenRunnerTests,
+        methodName:    problem.methodName,
+        argKeys:       problem.argKeys,
+        resultCompare: problem.resultCompare,
+      });
+      const runtimeMs = Date.now() - startedAt;
+      const hiddenFailIdx = hiddenResults.findIndex(r => !r.passed);
+      const hiddenPassedCount = hiddenResults.filter(r => r.passed).length;
+      const totalCount  = visibleResults.length + hiddenResults.length;
+      const passedCount = visibleResults.length + hiddenPassedCount;
+
+      if (hiddenFailIdx >= 0) {
+        setVerdict('wrong');
+        const fail = hiddenResults[hiddenFailIdx];
+        const failDef = hiddenDefs[hiddenFailIdx];
+        const label = failDef.label || `Hidden ${hiddenFailIdx + 1}`;
+        if (fail.error) {
+          setSubmitResult({
+            kind: 'runtime_error', source: 'hidden',
+            label, inputJson: failDef.inputJson,
+            error: fail.error, errorLine: fail.errorLine, runtimeMs,
+          });
+        } else {
+          setSubmitResult({
+            kind: 'wrong', source: 'hidden',
+            label, inputJson: failDef.inputJson,
+            expectedJson: failDef.expectedJson, actual: fail.actual || 'None',
+            runtimeMs, passedCount, totalCount,
+          });
+        }
+        recordSubmission('wrong', passedCount, totalCount);
+      } else {
+        setVerdict('accepted');
+        setSolved(true);
+        setSubmitResult({
+          kind: 'accepted', runtimeMs, passedCount, totalCount, isFirst,
+        });
+        recordSubmission('accepted', passedCount, totalCount);
       }
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Runner error';
@@ -1673,80 +2036,200 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
         )}
       </div>
 
-      {celebration && (
-        <CelebrationOverlay
-          isFirst={celebration.isFirst}
-          onDismiss={() => setCelebration(null)}
+      {submitResult && (
+        <SubmitResultModal
+          state={submitResult}
+          onDismiss={() => setSubmitResult(null)}
         />
       )}
     </div>
   );
 }
 
-// ─── Celebration overlay ──────────────────────────────────────────────────────
-// Shown for ~3s after an accepted submit. First-ever solve gets distinct copy
-// — every solve after is a quieter reinforcement so the moment doesn't get noisy.
+// ─── Submit result modal ──────────────────────────────────────────────────────
+// LeetCode-style popup shown after Submit. Three states:
+//   • Accepted          — green header, runtime + pass count, close button
+//   • Wrong Answer      — red header, failing case's Input / Expected / Got
+//   • Runtime Error     — red header, failing case's Input + traceback
+// Source ('visible' vs 'hidden') is surfaced as a chip so the user can tell
+// whether the failure is on a test they can see or one of the hidden ones.
 
-function CelebrationOverlay({
-  isFirst,
+function SubmitResultModal({
+  state,
   onDismiss,
 }: {
-  isFirst: boolean;
+  state: SubmitResultState;
   onDismiss: () => void;
 }) {
   useEffect(() => {
-    const t = setTimeout(onDismiss, 3200);
-    return () => clearTimeout(t);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onDismiss(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [onDismiss]);
+
+  const isAccepted = state.kind === 'accepted';
+  const accent = isAccepted
+    ? { bg: 'rgba(16,185,129,0.14)', glyph: 'rgba(52,211,153,1)', border: 'rgba(52,211,153,0.4)', shadow: 'rgba(16,185,129,0.45)' }
+    : { bg: 'rgba(239,68,68,0.14)',  glyph: 'rgba(248,113,113,1)', border: 'rgba(248,113,113,0.4)', shadow: 'rgba(239,68,68,0.45)' };
+
+  const headline =
+    state.kind === 'accepted'      ? 'Accepted'
+    : state.kind === 'wrong'       ? 'Wrong Answer'
+    :                                'Runtime Error';
 
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center pt-24"
-      aria-live="polite"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}
+      onClick={onDismiss}
+      aria-modal="true"
+      role="dialog"
     >
       <div
-        className="pointer-events-auto rounded-2xl px-7 py-5 max-w-md mx-4 backdrop-blur-md"
+        className="w-full max-w-[480px] rounded-2xl"
+        onClick={e => e.stopPropagation()}
         style={{
-          background: 'rgba(15, 23, 41, 0.92)',
-          border: '1px solid rgba(52,211,153,0.4)',
-          boxShadow: '0 20px 60px -15px rgba(16,185,129,0.5), 0 0 0 1px rgba(52,211,153,0.15)',
-          animation: 'lc-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          background: 'rgba(15, 23, 41, 0.98)',
+          border: `1px solid ${accent.border}`,
+          boxShadow: `0 24px 70px -16px ${accent.shadow}, 0 0 0 1px rgba(255,255,255,0.03)`,
+          animation: 'lc-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
-        <div className="flex items-start gap-3">
-          <div
-            className="shrink-0 mt-0.5 flex items-center justify-center w-8 h-8 rounded-full"
-            style={{ background: 'rgba(52,211,153,0.18)' }}
-          >
-            <span style={{ color: 'rgba(52,211,153,1)', fontSize: 18, lineHeight: 1 }}>✓</span>
-          </div>
-          <div>
-            <p
-              className="text-[15px] font-bold text-white tracking-tight"
-              style={SG}
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 pt-5 pb-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="shrink-0 flex items-center justify-center w-9 h-9 rounded-full"
+              style={{ background: accent.bg }}
             >
-              {isFirst ? 'First solve. Locked in.' : 'Solved.'}
-            </p>
-            <p className="mt-0.5 text-[12.5px] text-slate-400 leading-relaxed">
-              {isFirst
-                ? "Your streak just started. Solve again tomorrow to keep it alive."
-                : "Streak extended. Keep going."}
-            </p>
+              <span style={{ color: accent.glyph, fontSize: 20, lineHeight: 1 }}>
+                {isAccepted ? '✓' : '✕'}
+              </span>
+            </div>
+            <div>
+              <p className="text-[17px] font-bold tracking-tight" style={{ ...SG, color: accent.glyph }}>
+                {headline}
+              </p>
+              <p className="mt-0.5 text-[12px]" style={{ ...SG, color: '#6b7a8f' }}>
+                {state.kind === 'accepted'
+                  ? (state.isFirst
+                      ? `First solve. ${state.passedCount}/${state.totalCount} testcases passed · ${state.runtimeMs} ms`
+                      : `${state.passedCount}/${state.totalCount} testcases passed · ${state.runtimeMs} ms`)
+                  : state.kind === 'wrong'
+                    ? `${state.passedCount}/${state.totalCount} testcases passed · ${state.runtimeMs} ms`
+                    : `Crashed after ${state.runtimeMs} ms`}
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onDismiss}
-            aria-label="Dismiss"
-            className="shrink-0 -mt-1 -mr-1 text-slate-500 hover:text-white transition-colors p-1"
+            aria-label="Close"
+            className="shrink-0 -mt-1 -mr-2 p-1.5 rounded hover:bg-white/5 transition-colors"
+            style={{ color: '#6b7a8f' }}
           >
             <X size={14} />
+          </button>
+        </div>
+
+        {/* Body */}
+        {state.kind !== 'accepted' && (
+          <div className="px-6 pb-5 space-y-3" style={{ borderTop: `1px solid ${BORDER}`, paddingTop: 14 }}>
+            <div className="flex items-center gap-2">
+              <span
+                className="text-[10px] font-semibold uppercase tracking-[0.08em] px-1.5 py-[1px] rounded"
+                style={{
+                  ...SG,
+                  color: state.source === 'hidden' ? 'rgba(167,139,250,0.95)' : 'rgba(148,163,184,0.9)',
+                  background: state.source === 'hidden' ? 'rgba(139,92,246,0.1)' : 'rgba(148,163,184,0.08)',
+                }}
+              >
+                {state.source === 'hidden' ? 'Hidden Test' : 'Visible Test'}
+              </span>
+              <span className="text-[12px] font-medium" style={{ ...SG, color: '#c9d1d9' }}>
+                {state.label}
+              </span>
+              {state.kind === 'runtime_error' && state.errorLine && state.errorLine > 0 && (
+                <span className="text-[10.5px]" style={{ ...SG, color: '#6b7a8f' }}>
+                  Line {state.errorLine}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                Input
+              </p>
+              <pre
+                className="text-[11.5px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}`, color: '#c9d1d9', ...MONO }}
+              >
+                {state.inputJson}
+              </pre>
+            </div>
+
+            {state.kind === 'wrong' ? (
+              <>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                    Expected
+                  </p>
+                  <pre
+                    className="text-[11.5px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                    style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(52,211,153,0.18)', color: 'rgba(52,211,153,0.95)', ...MONO }}
+                  >
+                    {state.expectedJson || '—'}
+                  </pre>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                    Got
+                  </p>
+                  <pre
+                    className="text-[11.5px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                    style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(248,113,113,0.2)', color: 'rgba(248,113,113,0.95)', ...MONO }}
+                  >
+                    {state.actual}
+                  </pre>
+                </div>
+              </>
+            ) : (
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>
+                  Error
+                </p>
+                <pre
+                  className="text-[11.5px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap"
+                  style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(248,113,113,0.2)', color: 'rgba(248,113,113,0.95)', ...MONO }}
+                >
+                  {state.error}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="px-6 pb-5 flex items-center justify-end gap-2" style={{ paddingTop: state.kind === 'accepted' ? 4 : 0 }}>
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="text-[12px] font-medium px-3.5 py-1.5 rounded-md transition-colors"
+            style={{
+              ...SG,
+              background: isAccepted ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.04)',
+              color:       isAccepted ? 'rgba(52,211,153,0.95)' : '#c9d1d9',
+              border: `1px solid ${isAccepted ? 'rgba(52,211,153,0.3)' : BORDER_MED}`,
+            }}
+          >
+            {isAccepted ? 'Keep going' : 'Back to editor'}
           </button>
         </div>
       </div>
 
       <style>{`
         @keyframes lc-pop {
-          0%   { opacity: 0; transform: translateY(-12px) scale(0.96); }
+          0%   { opacity: 0; transform: translateY(-8px) scale(0.97); }
           100% { opacity: 1; transform: translateY(0) scale(1); }
         }
       `}</style>
