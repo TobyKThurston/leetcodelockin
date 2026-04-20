@@ -3013,6 +3013,33 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
         />
       }
     >
+      {/* Mobile-only gate — blocks dashboard on small screens, desktop untouched */}
+      <div
+        className="fixed inset-0 z-[100] md:hidden flex flex-col items-center justify-center px-6 text-center"
+        style={{ background: C.bg }}
+      >
+        <div
+          className="w-full max-w-sm rounded-xl border p-6"
+          style={{ background: C.cardBg, borderColor: C.borderMid }}
+        >
+          <AlertTriangle size={28} className="mx-auto text-amber-400 mb-3" />
+          <h3 className="text-[17px] font-semibold text-white mb-2" style={SG}>
+            Desktop only
+          </h3>
+          <p className="text-[13.5px] text-slate-400 mb-5 leading-relaxed" style={SG}>
+            The dashboard needs more room than a phone screen can give it. Hop on a laptop or desktop to continue.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold transition-colors w-full"
+            style={SG}
+          >
+            <ChevronLeft size={16} strokeWidth={2.5} />
+            Back to home
+          </button>
+        </div>
+      </div>
       <CenterPanel
         path={viewingPath}
         pathStatus={viewingStatus}
