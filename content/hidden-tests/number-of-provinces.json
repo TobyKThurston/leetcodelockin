@@ -1,0 +1,8 @@
+[
+  { "label": "All isolated", "inputJson": "{\"isConnected\":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}" },
+  { "label": "All connected", "inputJson": "{\"isConnected\":[[1,1,1],[1,1,1],[1,1,1]]}" },
+  { "label": "Chain of connections", "inputJson": "{\"isConnected\":[[1,1,0,0],[1,1,1,0],[0,1,1,1],[0,0,1,1]]}" },
+  { "label": "Two pairs plus singleton", "inputJson": "{\"isConnected\":[[1,1,0,0,0],[1,1,0,0,0],[0,0,1,1,0],[0,0,1,1,0],[0,0,0,0,1]]}" },
+  { "label": "Fully connected K4", "inputJson": "{\"isConnected\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]}" },
+  { "label": "Indirect triangle plus isolated", "inputJson": "{\"isConnected\":[[1,1,0,0],[1,1,1,0],[0,1,1,0],[0,0,0,1]]}" }
+]

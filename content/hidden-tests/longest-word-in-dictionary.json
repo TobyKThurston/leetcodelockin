@@ -1,0 +1,8 @@
+[
+  { "label": "Missing prefix breaks chain", "inputJson": "{\"words\":[\"w\",\"wo\",\"wor\",\"worl\",\"world\"]}" },
+  { "label": "Broken chain midway", "inputJson": "{\"words\":[\"a\",\"ab\",\"abcd\"]}" },
+  { "label": "Tie-break smaller wins", "inputJson": "{\"words\":[\"a\",\"b\",\"ab\",\"ba\"]}" },
+  { "label": "Single one-char word", "inputJson": "{\"words\":[\"x\"]}" },
+  { "label": "All single chars", "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
+  { "label": "Two parallel chains", "inputJson": "{\"words\":[\"a\",\"ap\",\"app\",\"appl\",\"apple\",\"b\",\"ba\",\"ban\"]}" }
+]

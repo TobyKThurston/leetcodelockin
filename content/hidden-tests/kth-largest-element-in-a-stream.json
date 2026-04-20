@@ -1,0 +1,8 @@
+[
+  { "label": "k=1 with negatives", "inputJson": "{\"k\":1,\"nums\":[-3,-1,-4],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[-5],[0],[-2]]}" },
+  { "label": "k equals initial length", "inputJson": "{\"k\":4,\"nums\":[4,5,8,2],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[3],[5],[10]]}" },
+  { "label": "Duplicates at boundary", "inputJson": "{\"k\":2,\"nums\":[7,7,7],\"ops\":[\"add\",\"add\",\"add\",\"add\"],\"vals\":[[7],[7],[6],[8]]}" },
+  { "label": "Seed shorter than k", "inputJson": "{\"k\":5,\"nums\":[1,2],\"ops\":[\"add\",\"add\",\"add\",\"add\"],\"vals\":[[3],[4],[5],[6]]}" },
+  { "label": "Descending adds", "inputJson": "{\"k\":3,\"nums\":[],\"ops\":[\"add\",\"add\",\"add\",\"add\",\"add\"],\"vals\":[[10],[9],[8],[7],[6]]}" },
+  { "label": "Extremes", "inputJson": "{\"k\":2,\"nums\":[-10000,10000],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[-10000],[10000],[0]]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Start at last index", "inputJson": "{\"gas\":[1,1,1,1,5],\"cost\":[2,2,2,2,2]}" },
+  { "label": "Zero gas everywhere", "inputJson": "{\"gas\":[0,0,0],\"cost\":[0,0,0]}" },
+  { "label": "Only one station can start", "inputJson": "{\"gas\":[3,1,1],\"cost\":[1,2,2]}" },
+  { "label": "Equal totals but blocked path", "inputJson": "{\"gas\":[1,2,3],\"cost\":[3,2,1]}" },
+  { "label": "All zero cost", "inputJson": "{\"gas\":[1,2,3],\"cost\":[0,0,0]}" },
+  { "label": "Single impossible", "inputJson": "{\"gas\":[3],\"cost\":[5]}" }
+]

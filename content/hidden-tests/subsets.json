@@ -1,0 +1,8 @@
+[
+  { "label": "Two distinct", "inputJson": "{\"nums\":[0,1]}" },
+  { "label": "Negatives mixed", "inputJson": "{\"nums\":[-1,2,-3]}" },
+  { "label": "Unsorted order kept", "inputJson": "{\"nums\":[3,1,2]}" },
+  { "label": "Zero only", "inputJson": "{\"nums\":[0]}" },
+  { "label": "Four distinct", "inputJson": "{\"nums\":[1,2,3,4]}" },
+  { "label": "Negative single", "inputJson": "{\"nums\":[-10]}" }
+]

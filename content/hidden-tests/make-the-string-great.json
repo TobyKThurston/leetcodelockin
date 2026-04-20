@@ -1,0 +1,8 @@
+[
+  { "label": "Nested case cancels", "inputJson": "{\"s\":\"aAbBcC\"}" },
+  { "label": "Survives outer pair", "inputJson": "{\"s\":\"xXyzZy\"}" },
+  { "label": "All same lowercase", "inputJson": "{\"s\":\"aaaaa\"}" },
+  { "label": "Mixed case no bad pair", "inputJson": "{\"s\":\"aBcDeF\"}" },
+  { "label": "Cascades then stops", "inputJson": "{\"s\":\"RLlrRLlr\"}" },
+  { "label": "Adjacent same letter same case", "inputJson": "{\"s\":\"AAaa\"}" }
+]

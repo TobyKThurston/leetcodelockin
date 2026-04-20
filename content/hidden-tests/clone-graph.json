@@ -1,0 +1,7 @@
+[
+  { "label": "Single node no edges", "inputJson": "{\"adjList\":[[]]}" },
+  { "label": "Triangle cycle", "inputJson": "{\"adjList\":[[2,3],[1,3],[1,2]]}" },
+  { "label": "Linear chain five", "inputJson": "{\"adjList\":[[2],[1,3],[2,4],[3,5],[4]]}" },
+  { "label": "Star graph", "inputJson": "{\"adjList\":[[2,3,4,5],[1],[1],[1],[1]]}" },
+  { "label": "Complete K4", "inputJson": "{\"adjList\":[[2,3,4],[1,3,4],[1,2,4],[1,2,3]]}" }
+]

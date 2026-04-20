@@ -1,0 +1,8 @@
+[
+  { "label": "Collinear points",            "inputJson": "{\"points\":[[0,0],[1,0],[2,0],[3,0]]}" },
+  { "label": "Negative coordinates",        "inputJson": "{\"points\":[[-2,-3],[0,0],[3,4]]}" },
+  { "label": "Duplicate points",            "inputJson": "{\"points\":[[1,1],[1,1],[1,1]]}" },
+  { "label": "Square corners",              "inputJson": "{\"points\":[[0,0],[0,5],[5,0],[5,5]]}" },
+  { "label": "Clustered and outlier",       "inputJson": "{\"points\":[[0,0],[1,0],[0,1],[1,1],[20,20]]}" },
+  { "label": "Two identical points",        "inputJson": "{\"points\":[[7,7],[7,7]]}" }
+]

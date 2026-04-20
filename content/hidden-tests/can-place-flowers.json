@@ -1,0 +1,8 @@
+[
+  { "label": "All occupied", "inputJson": "{\"flowerbed\":[1,1,1,1,1],\"n\":1}" },
+  { "label": "Single empty cell", "inputJson": "{\"flowerbed\":[0],\"n\":1}" },
+  { "label": "Single occupied zero ask", "inputJson": "{\"flowerbed\":[1],\"n\":0}" },
+  { "label": "Leading zeros only", "inputJson": "{\"flowerbed\":[0,0,1,0,0],\"n\":2}" },
+  { "label": "Two-zero gap too tight", "inputJson": "{\"flowerbed\":[1,0,0,1],\"n\":1}" },
+  { "label": "Long empty bed", "inputJson": "{\"flowerbed\":[0,0,0,0,0,0,0],\"n\":4}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Single interval", "inputJson": "{\"intervals\":[[1,1000000]]}" },
+  { "label": "All identical", "inputJson": "{\"intervals\":[[5,10],[5,10],[5,10],[5,10]]}" },
+  { "label": "Chain touching endpoints", "inputJson": "{\"intervals\":[[1,3],[3,5],[5,7],[7,9]]}" },
+  { "label": "Fully nested peak", "inputJson": "{\"intervals\":[[1,100],[10,90],[20,80],[30,70],[40,60]]}" },
+  { "label": "Point intervals", "inputJson": "{\"intervals\":[[5,5],[5,5],[5,5]]}" },
+  { "label": "Two busy clusters", "inputJson": "{\"intervals\":[[1,5],[2,6],[3,7],[100,105],[101,106]]}" }
+]

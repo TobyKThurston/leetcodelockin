@@ -1,0 +1,8 @@
+[
+  { "label": "Zero with no coins", "inputJson": "{\"amount\":0,\"coins\":[2,3,5]}" },
+  { "label": "Exact single coin", "inputJson": "{\"amount\":5,\"coins\":[5]}" },
+  { "label": "Amount smaller than coins", "inputJson": "{\"amount\":1,\"coins\":[2,3,4]}" },
+  { "label": "All ones", "inputJson": "{\"amount\":4,\"coins\":[1]}" },
+  { "label": "Two coins classic", "inputJson": "{\"amount\":10,\"coins\":[2,5]}" },
+  { "label": "Larger denom set", "inputJson": "{\"amount\":12,\"coins\":[1,2,5]}" }
+]

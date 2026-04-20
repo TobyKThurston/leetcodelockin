@@ -1,0 +1,8 @@
+[
+  { "label": "All same", "inputJson": "{\"nums\":[2,2,2]}" },
+  { "label": "Single", "inputJson": "{\"nums\":[7]}" },
+  { "label": "Two pairs", "inputJson": "{\"nums\":[1,1,2,2]}" },
+  { "label": "Distinct three", "inputJson": "{\"nums\":[1,2,3]}" },
+  { "label": "Negatives with dup", "inputJson": "{\"nums\":[-1,-1,0]}" },
+  { "label": "Unsorted with dup", "inputJson": "{\"nums\":[3,1,3]}" }
+]

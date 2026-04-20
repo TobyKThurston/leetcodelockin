@@ -1,0 +1,8 @@
+[
+  { "label": "Singleton equal", "inputJson": "{\"nums\":[5],\"target\":5}" },
+  { "label": "Singleton smaller target", "inputJson": "{\"nums\":[5],\"target\":2}" },
+  { "label": "Singleton larger target", "inputJson": "{\"nums\":[5],\"target\":9}" },
+  { "label": "Insert at zero", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":-10000}" },
+  { "label": "Insert at end", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":10000}" },
+  { "label": "Found middle", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":0}" }
+]

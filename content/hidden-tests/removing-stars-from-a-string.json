@@ -1,0 +1,8 @@
+[
+  { "label": "Alternating letter star", "inputJson": "{\"s\":\"a*b*c*d*\"}" },
+  { "label": "Stars at end wipe tail", "inputJson": "{\"s\":\"abcdef***\"}" },
+  { "label": "Single letter single star", "inputJson": "{\"s\":\"a*\"}" },
+  { "label": "Run then stars", "inputJson": "{\"s\":\"aaaaa****\"}" },
+  { "label": "Interleaved deletes", "inputJson": "{\"s\":\"ab*cd*ef*gh*\"}" },
+  { "label": "Long no stars", "inputJson": "{\"s\":\"abcdefghijklmnop\"}" }
+]

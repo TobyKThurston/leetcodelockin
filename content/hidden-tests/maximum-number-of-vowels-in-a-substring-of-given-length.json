@@ -1,0 +1,8 @@
+[
+  { "label": "k equals 1 with vowel", "inputJson": "{\"s\":\"abcde\",\"k\":1}" },
+  { "label": "k equals length",       "inputJson": "{\"s\":\"leetcode\",\"k\":8}" },
+  { "label": "All consonants",        "inputJson": "{\"s\":\"bcdfghjklmnpqrstvwxyz\",\"k\":5}" },
+  { "label": "All vowels short",      "inputJson": "{\"s\":\"aaeeiioouu\",\"k\":3}" },
+  { "label": "Vowels clustered late", "inputJson": "{\"s\":\"bcdfghjklaeiou\",\"k\":5}" },
+  { "label": "Single char string",    "inputJson": "{\"s\":\"a\",\"k\":1}" }
+]

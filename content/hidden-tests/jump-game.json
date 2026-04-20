@@ -1,0 +1,8 @@
+[
+  { "label": "First is zero multi", "inputJson": "{\"nums\":[0,1,2,3]}" },
+  { "label": "All zeros except first huge", "inputJson": "{\"nums\":[5,0,0,0,0,0]}" },
+  { "label": "Just barely reaches", "inputJson": "{\"nums\":[2,0,0]}" },
+  { "label": "Falls one short", "inputJson": "{\"nums\":[1,0,1,0]}" },
+  { "label": "Large jump over zeros", "inputJson": "{\"nums\":[4,0,0,0,1]}" },
+  { "label": "Trailing zero ok", "inputJson": "{\"nums\":[2,3,0,0,0]}" }
+]

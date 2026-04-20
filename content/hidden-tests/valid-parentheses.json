@@ -1,0 +1,8 @@
+[
+  { "label": "Deeply nested all types", "inputJson": "{\"s\":\"({[({[({[]})]})]})\"}" },
+  { "label": "Single opener", "inputJson": "{\"s\":\"[\"}" },
+  { "label": "Mismatched closers only", "inputJson": "{\"s\":\"}])\"}" },
+  { "label": "Alternating balanced pairs", "inputJson": "{\"s\":\"()[]{}()[]{}\"}" },
+  { "label": "Correct kinds wrong order", "inputJson": "{\"s\":\"([)]\"}" },
+  { "label": "Long run of same type", "inputJson": "{\"s\":\"(((((())))))\"}" }
+]

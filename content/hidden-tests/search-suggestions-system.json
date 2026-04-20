@@ -1,0 +1,8 @@
+[
+  { "label": "No prefix match", "inputJson": "{\"products\":[\"apple\",\"banana\",\"cherry\"],\"searchWord\":\"xyz\"}" },
+  { "label": "Exactly three matches", "inputJson": "{\"products\":[\"mobile\",\"moneypot\",\"monitor\",\"mouse\",\"mousepad\"],\"searchWord\":\"mouse\"}" },
+  { "label": "Partial fall off mid-type", "inputJson": "{\"products\":[\"abc\",\"abd\"],\"searchWord\":\"abx\"}" },
+  { "label": "Single-char search", "inputJson": "{\"products\":[\"alpha\",\"apple\",\"ant\",\"arc\",\"bat\"],\"searchWord\":\"a\"}" },
+  { "label": "Duplicate products", "inputJson": "{\"products\":[\"cat\",\"cat\",\"car\",\"care\",\"cart\"],\"searchWord\":\"ca\"}" },
+  { "label": "Long search word full match", "inputJson": "{\"products\":[\"havana\"],\"searchWord\":\"tatiana\"}" }
+]

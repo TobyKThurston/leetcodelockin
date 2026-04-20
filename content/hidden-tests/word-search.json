@@ -1,0 +1,8 @@
+[
+  { "label": "Prefix but no extend", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"word\":\"abx\"}" },
+  { "label": "Classic found", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\",\"e\"],[\"s\",\"f\",\"c\",\"s\"],[\"a\",\"d\",\"e\",\"e\"]],\"word\":\"abcced\"}" },
+  { "label": "Cannot reuse cell", "inputJson": "{\"board\":[[\"a\",\"a\"]],\"word\":\"aaa\"}" },
+  { "label": "Single row path", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\",\"d\"]],\"word\":\"abcd\"}" },
+  { "label": "Winding path", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\"],[\"d\",\"e\",\"f\"],[\"g\",\"h\",\"i\"]],\"word\":\"abedh\"}" },
+  { "label": "Char not on board", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"word\":\"z\"}" }
+]

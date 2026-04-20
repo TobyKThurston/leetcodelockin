@@ -1,0 +1,8 @@
+[
+  { "label": "Two zeros at end", "inputJson": "{\"cost\":[1,100,1,1,1,100,1,1,100,1]}" },
+  { "label": "All same", "inputJson": "{\"cost\":[5,5,5,5,5,5]}" },
+  { "label": "Ascending", "inputJson": "{\"cost\":[1,2,3,4,5,6,7,8,9,10]}" },
+  { "label": "Descending", "inputJson": "{\"cost\":[10,9,8,7,6,5,4,3,2,1]}" },
+  { "label": "Pair with zero", "inputJson": "{\"cost\":[999,0]}" },
+  { "label": "Max value pair", "inputJson": "{\"cost\":[999,999]}" }
+]

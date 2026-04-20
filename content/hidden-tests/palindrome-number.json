@@ -1,0 +1,8 @@
+[
+  { "label": "Single digit 7", "inputJson": "{\"x\":7}" },
+  { "label": "Two-digit palindrome", "inputJson": "{\"x\":11}" },
+  { "label": "Two-digit non-palindrome", "inputJson": "{\"x\":12}" },
+  { "label": "Max int32", "inputJson": "{\"x\":2147483647}" },
+  { "label": "Min int32", "inputJson": "{\"x\":-2147483648}" },
+  { "label": "Large even-length palindrome", "inputJson": "{\"x\":1234554321}" }
+]

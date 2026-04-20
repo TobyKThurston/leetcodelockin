@@ -1,0 +1,8 @@
+[
+  { "label": "Both targets on right", "inputJson": "{\"root\":[5,3,7,1,4,6,8],\"p\":6,\"q\":8}" },
+  { "label": "Root is ancestor q", "inputJson": "{\"root\":[6,2,8,0,4,7,9],\"p\":8,\"q\":0}" },
+  { "label": "p is ancestor of q", "inputJson": "{\"root\":[6,2,8,0,4,7,9,null,null,3,5],\"p\":2,\"q\":5}" },
+  { "label": "Deep BST split far down", "inputJson": "{\"root\":[20,10,30,5,15,25,35,3,7,12,17],\"p\":12,\"q\":17}" },
+  { "label": "Negative values split at root", "inputJson": "{\"root\":[0,-5,5,-10,-1,1,10],\"p\":-10,\"q\":10}" },
+  { "label": "Two-node tree", "inputJson": "{\"root\":[1,null,2],\"p\":1,\"q\":2}" }
+]

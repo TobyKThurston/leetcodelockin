@@ -1,0 +1,8 @@
+[
+  { "label": "Two nodes", "inputJson": "{\"values\":[1,2]}" },
+  { "label": "Three nodes", "inputJson": "{\"values\":[1,2,3]}" },
+  { "label": "Six even", "inputJson": "{\"values\":[1,2,3,4,5,6]}" },
+  { "label": "Seven odd", "inputJson": "{\"values\":[1,2,3,4,5,6,7]}" },
+  { "label": "All duplicates", "inputJson": "{\"values\":[5,5,5,5,5]}" },
+  { "label": "Descending long", "inputJson": "{\"values\":[10,9,8,7,6,5,4,3,2,1]}" }
+]

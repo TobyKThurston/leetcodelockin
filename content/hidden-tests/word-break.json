@@ -1,0 +1,8 @@
+[
+  { "label": "Repeated prefix trap", "inputJson": "{\"s\":\"aaaaaaa\",\"wordDict\":[\"aaaa\",\"aaa\"]}" },
+  { "label": "Cannot segment last char", "inputJson": "{\"s\":\"aaaaab\",\"wordDict\":[\"aa\",\"aaa\"]}" },
+  { "label": "Dict unused", "inputJson": "{\"s\":\"abc\",\"wordDict\":[\"xyz\",\"def\"]}" },
+  { "label": "Exact single word", "inputJson": "{\"s\":\"leetcode\",\"wordDict\":[\"leet\",\"code\"]}" },
+  { "label": "Overlapping options", "inputJson": "{\"s\":\"bbbbbbb\",\"wordDict\":[\"b\",\"bb\",\"bbb\"]}" },
+  { "label": "Single missing letter", "inputJson": "{\"s\":\"a\",\"wordDict\":[\"b\"]}" }
+]

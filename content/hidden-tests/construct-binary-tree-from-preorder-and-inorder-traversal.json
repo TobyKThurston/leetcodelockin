@@ -1,0 +1,8 @@
+[
+  { "label": "Left skew", "inputJson": "{\"preorder\":[1,2,3,4],\"inorder\":[4,3,2,1]}" },
+  { "label": "Right skew", "inputJson": "{\"preorder\":[1,2,3,4],\"inorder\":[1,2,3,4]}" },
+  { "label": "Perfect depth 3", "inputJson": "{\"preorder\":[4,2,1,3,6,5,7],\"inorder\":[1,2,3,4,5,6,7]}" },
+  { "label": "Zigzag asymmetric", "inputJson": "{\"preorder\":[1,2,4,5,3,6,7],\"inorder\":[4,2,5,1,6,3,7]}" },
+  { "label": "Negative values", "inputJson": "{\"preorder\":[-10,-20,-30,-15,-7],\"inorder\":[-30,-20,-10,-15,-7]}" },
+  { "label": "Two nodes left", "inputJson": "{\"preorder\":[1,2],\"inorder\":[2,1]}" }
+]

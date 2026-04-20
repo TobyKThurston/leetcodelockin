@@ -1,0 +1,8 @@
+[
+  { "label": "Single element", "inputJson": "{\"nums\":[1]}" },
+  { "label": "Two different", "inputJson": "{\"nums\":[1,2]}" },
+  { "label": "All same even count", "inputJson": "{\"nums\":[3,3,3,3]}" },
+  { "label": "All same odd count", "inputJson": "{\"nums\":[2,2,2]}" },
+  { "label": "Odd sum fails", "inputJson": "{\"nums\":[1,1,1,1,1]}" },
+  { "label": "Large near even", "inputJson": "{\"nums\":[100,50,50,25,25,50]}" }
+]

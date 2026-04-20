@@ -1,0 +1,8 @@
+[
+  { "label": "Strictly descending", "inputJson": "{\"temperatures\":[75,74,73,72,71]}" },
+  { "label": "Last then global max first", "inputJson": "{\"temperatures\":[80,70,60,50,90]}" },
+  { "label": "Plateau with spike at end", "inputJson": "{\"temperatures\":[50,50,50,50,51]}" },
+  { "label": "Min-max boundary values", "inputJson": "{\"temperatures\":[-50,150,-50,150]}" },
+  { "label": "Zigzag pattern", "inputJson": "{\"temperatures\":[70,60,70,60,70,60]}" },
+  { "label": "Duplicates not strictly warmer", "inputJson": "{\"temperatures\":[73,73,73,74,73,74]}" }
+]

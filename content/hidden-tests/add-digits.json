@@ -1,0 +1,8 @@
+[
+  { "label": "Eighteen -> nine", "inputJson": "{\"num\":18}" },
+  { "label": "Ninety-nine deep chain", "inputJson": "{\"num\":99}" },
+  { "label": "Multiple-of-nine boundary", "inputJson": "{\"num\":9999}" },
+  { "label": "Max int32", "inputJson": "{\"num\":2147483647}" },
+  { "label": "All nines five digits", "inputJson": "{\"num\":99999}" },
+  { "label": "Ten", "inputJson": "{\"num\":10}" }
+]

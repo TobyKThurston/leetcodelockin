@@ -1,0 +1,8 @@
+[
+  { "label": "Negative number", "inputJson": "{\"n\":-16}" },
+  { "label": "Most negative int", "inputJson": "{\"n\":-2147483648}" },
+  { "label": "Largest power in range", "inputJson": "{\"n\":1073741824}" },
+  { "label": "Max int minus one (all ones)", "inputJson": "{\"n\":2147483647}" },
+  { "label": "Power-of-two plus one", "inputJson": "{\"n\":1025}" },
+  { "label": "Power of two (mid)", "inputJson": "{\"n\":1024}" }
+]

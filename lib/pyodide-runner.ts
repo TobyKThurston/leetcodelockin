@@ -27,6 +27,7 @@ export interface RunnerResult {
   actual: string;
   error?: string;
   errorLine?: number;
+  stdout?: string;
 }
 
 interface RunArgs {
@@ -42,6 +43,7 @@ interface RawCaseResult {
   val?: unknown;
   err?: string;
   line?: number;
+  stdout?: string;
 }
 
 // ─── Worker lifecycle ─────────────────────────────────────────────────────────
@@ -177,6 +179,7 @@ async function runTestsInternal({
     if (!raw) {
       return { caseId: t.id, passed: false, actual: '', error: 'No output for this case' };
     }
+    const stdout = raw.stdout || undefined;
     if (!raw.ok) {
       return {
         caseId: t.id,
@@ -184,6 +187,7 @@ async function runTestsInternal({
         actual: '',
         error: raw.err ?? 'Runtime error',
         errorLine: raw.line && raw.line > 0 ? raw.line : undefined,
+        stdout,
       };
     }
     const actual   = toComparable(raw.val, resultCompare);
@@ -192,6 +196,7 @@ async function runTestsInternal({
       caseId: t.id,
       passed: actual === expected,
       actual: JSON.stringify(raw.val),
+      stdout,
     };
   });
   return { results };

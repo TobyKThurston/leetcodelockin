@@ -1,0 +1,8 @@
+[
+  { "label": "All negatives even count", "inputJson": "{\"nums\":[-2,-3,-4,-5]}" },
+  { "label": "All negatives odd count", "inputJson": "{\"nums\":[-2,-3,-4]}" },
+  { "label": "Single negative", "inputJson": "{\"nums\":[-5]}" },
+  { "label": "Zero and negatives", "inputJson": "{\"nums\":[0,-3,-2,0,-4,-5]}" },
+  { "label": "Ones and negatives", "inputJson": "{\"nums\":[1,-1,1,-1,1,-1]}" },
+  { "label": "Mixed with zero splitter", "inputJson": "{\"nums\":[2,3,-2,4,0,6,7]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Single interval", "inputJson": "{\"intervals\":[[1,5]]}" },
+  { "label": "All identical", "inputJson": "{\"intervals\":[[2,7],[2,7],[2,7]]}" },
+  { "label": "Chain of covers", "inputJson": "{\"intervals\":[[1,10],[2,9],[3,8],[4,7]]}" },
+  { "label": "Same start different ends", "inputJson": "{\"intervals\":[[1,4],[1,6],[1,8],[1,2]]}" },
+  { "label": "None covered all distinct", "inputJson": "{\"intervals\":[[1,3],[2,5],[4,7],[6,9]]}" },
+  { "label": "Mixed covers and overlaps", "inputJson": "{\"intervals\":[[0,10],[5,12],[6,8],[11,15],[14,20]]}" }
+]

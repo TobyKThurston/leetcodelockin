@@ -1,0 +1,8 @@
+[
+  { "label": "All identical",       "inputJson": "{\"prices\":[7,7,7,7,7,7]}" },
+  { "label": "Strictly increasing", "inputJson": "{\"prices\":[1,2,3,4,5,6,7,8,9,10]}" },
+  { "label": "Dip then peak",       "inputJson": "{\"prices\":[5,4,3,2,1,100]}" },
+  { "label": "Peak early then sink","inputJson": "{\"prices\":[9,10,0,1,2]}" },
+  { "label": "All zeros",           "inputJson": "{\"prices\":[0,0,0,0]}" },
+  { "label": "Max swing at bounds", "inputJson": "{\"prices\":[10000,1,1,1,0,10000]}" }
+]

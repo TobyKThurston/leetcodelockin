@@ -1,0 +1,8 @@
+[
+  { "label": "Two houses", "inputJson": "{\"nums\":[3,7]}" },
+  { "label": "All zeros", "inputJson": "{\"nums\":[0,0,0,0]}" },
+  { "label": "Large first and last", "inputJson": "{\"nums\":[1000,1,1,1000]}" },
+  { "label": "Five houses", "inputJson": "{\"nums\":[2,7,9,3,1]}" },
+  { "label": "All equal six", "inputJson": "{\"nums\":[5,5,5,5,5,5]}" },
+  { "label": "Two equal", "inputJson": "{\"nums\":[4,4]}" }
+]

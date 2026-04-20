@@ -1,0 +1,8 @@
+[
+  { "label": "Single close", "inputJson": "{\"s\":\")\"}" },
+  { "label": "All stars", "inputJson": "{\"s\":\"****\"}" },
+  { "label": "Stars cannot rescue", "inputJson": "{\"s\":\"(((*\"}" },
+  { "label": "Right-leaning stars", "inputJson": "{\"s\":\"(((***)))\"}" },
+  { "label": "Closing before opening", "inputJson": "{\"s\":\"*)(*\"}" },
+  { "label": "Nested balanced", "inputJson": "{\"s\":\"((*)(*))\"}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "k equals 1",         "inputJson": "{\"nums\":[3,-1,4,-1,5,-9,2,6],\"k\":1}" },
+  { "label": "Single element",     "inputJson": "{\"nums\":[7],\"k\":1}" },
+  { "label": "Extreme bounds",     "inputJson": "{\"nums\":[10000,-10000,10000,-10000,10000],\"k\":3}" },
+  { "label": "All identical",      "inputJson": "{\"nums\":[4,4,4,4,4,4],\"k\":3}" },
+  { "label": "Best at tail",       "inputJson": "{\"nums\":[-5,-4,-3,-2,-1,10,10,10],\"k\":3}" },
+  { "label": "Whole array negative","inputJson": "{\"nums\":[-1,-2,-3,-4,-5,-6],\"k\":6}" }
+]

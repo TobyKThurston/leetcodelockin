@@ -1,0 +1,8 @@
+[
+  { "label": "All land", "inputJson": "{\"grid\":[[\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\"]]}" },
+  { "label": "Single land cell", "inputJson": "{\"grid\":[[\"1\"]]}" },
+  { "label": "Thin row disconnected", "inputJson": "{\"grid\":[[\"1\",\"0\",\"1\",\"0\",\"1\"]]}" },
+  { "label": "Thin column connected", "inputJson": "{\"grid\":[[\"1\"],[\"1\"],[\"1\"],[\"1\"]]}" },
+  { "label": "Diagonal not connected", "inputJson": "{\"grid\":[[\"1\",\"0\",\"0\"],[\"0\",\"1\",\"0\"],[\"0\",\"0\",\"1\"]]}" },
+  { "label": "Ring island", "inputJson": "{\"grid\":[[\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\"],[\"1\",\"0\",\"0\",\"1\"],[\"1\",\"1\",\"1\",\"1\"]]}" }
+]

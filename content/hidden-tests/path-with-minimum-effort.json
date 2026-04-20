@@ -1,0 +1,8 @@
+[
+  { "label": "Single column",                  "inputJson": "{\"heights\":[[1],[5],[3],[8]]}" },
+  { "label": "Uniform grid no effort",         "inputJson": "{\"heights\":[[7,7,7],[7,7,7],[7,7,7]]}" },
+  { "label": "Detour around high ridge",       "inputJson": "{\"heights\":[[1,2,1,1,1],[1,100,100,100,1],[1,1,1,1,1]]}" },
+  { "label": "Monotonic diagonal",             "inputJson": "{\"heights\":[[1,3,5],[2,4,6],[3,5,7]]}" },
+  { "label": "Large spike blocks straight",    "inputJson": "{\"heights\":[[1,1,1,1],[1,99,99,1],[1,1,1,1]]}" },
+  { "label": "Two by two cliff",               "inputJson": "{\"heights\":[[5,1],[1,5]]}" }
+]

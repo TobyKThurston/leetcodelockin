@@ -2,6 +2,8 @@
 
 import { LIBRARY, type ProblemDef, type Difficulty } from './library';
 
+export type InterviewMode = 'silent' | 'voice';
+
 export type InterviewDifficulty = 'easy-medium' | 'medium-hard';
 
 export type InterviewStatus = 'in_progress' | 'completed' | 'abandoned';
@@ -140,6 +142,47 @@ export function pickInterviewProblems(
   const p2 = pickOne(pools[diff2], new Set([p1.slug]), p1.categoryId);
 
   return [p1, p2];
+}
+
+/**
+ * Pick ONE problem for a voice mock (1-problem format).
+ *
+ * Voice mocks are always a single problem at the HARDER tier of the picker:
+ *   - easy-medium → Medium
+ *   - medium-hard → Hard
+ *
+ * This keeps the existing difficulty selector meaningful (harder label = harder
+ * problem) without the 2-problem pacing. Avoids recent + solved; falls back to
+ * any problem if the preferred pool is exhausted.
+ */
+export function pickVoiceInterviewProblem(
+  difficulty: InterviewDifficulty,
+  solvedSlugs: Set<string>,
+  recentInterviewSlugs: string[],
+  publishedSlugs: Set<string>,
+): ProblemDef {
+  const seen = new Set<string>();
+  const all: (ProblemDef & { categoryId: string })[] = [];
+  for (const cat of LIBRARY) {
+    for (const p of cat.problems) {
+      if (!seen.has(p.slug) && publishedSlugs.has(p.slug)) {
+        seen.add(p.slug);
+        all.push({ ...p, categoryId: cat.id });
+      }
+    }
+  }
+
+  const target: Difficulty = difficulty === 'easy-medium' ? 'Medium' : 'Hard';
+  const pool = all.filter(p => p.difficulty === target);
+  const recentSet = new Set(recentInterviewSlugs);
+
+  // Prefer not-recent AND not-solved.
+  let candidates = pool.filter(p => !recentSet.has(p.slug) && !solvedSlugs.has(p.slug));
+  if (candidates.length === 0) candidates = pool.filter(p => !recentSet.has(p.slug));
+  if (candidates.length === 0) candidates = pool;
+  if (candidates.length === 0) candidates = all; // last-resort: any published problem
+
+  return shuffle(candidates)[0];
 }
 
 // ─── Supabase row conversion ─────────────────────────────────────────────────

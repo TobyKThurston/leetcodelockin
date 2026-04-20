@@ -1,0 +1,8 @@
+[
+  { "label": "Self-equality trivial",          "inputJson": "{\"equations\":[\"a==a\"]}" },
+  { "label": "Self-inequality contradiction",  "inputJson": "{\"equations\":[\"a!=a\"]}" },
+  { "label": "Long transitive chain ok",       "inputJson": "{\"equations\":[\"a==b\",\"b==c\",\"c==d\",\"d==e\",\"a==e\"]}" },
+  { "label": "Chain then opposite negation",   "inputJson": "{\"equations\":[\"a==b\",\"b==c\",\"c==d\",\"a!=d\"]}" },
+  { "label": "Many independent inequalities",  "inputJson": "{\"equations\":[\"a!=b\",\"b!=c\",\"c!=d\",\"d!=e\"]}" },
+  { "label": "Inequality then equality order", "inputJson": "{\"equations\":[\"a!=b\",\"b==c\",\"c==a\"]}" }
+]

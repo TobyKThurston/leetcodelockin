@@ -1,0 +1,8 @@
+[
+  { "label": "Single row", "inputJson": "{\"grid\":[[1,2,3,4,5]]}" },
+  { "label": "Single column", "inputJson": "{\"grid\":[[2],[3],[5],[1]]}" },
+  { "label": "All zeros", "inputJson": "{\"grid\":[[0,0,0],[0,0,0],[0,0,0]]}" },
+  { "label": "Cheap diagonal", "inputJson": "{\"grid\":[[1,100,100],[1,1,100],[100,1,1]]}" },
+  { "label": "Uniform 4x4", "inputJson": "{\"grid\":[[5,5,5,5],[5,5,5,5],[5,5,5,5],[5,5,5,5]]}" },
+  { "label": "Big values rect", "inputJson": "{\"grid\":[[100,100,100,100],[100,1,1,100],[100,100,1,1]]}" }
+]

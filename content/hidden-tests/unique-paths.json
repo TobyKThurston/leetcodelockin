@@ -1,0 +1,8 @@
+[
+  { "label": "Tall column", "inputJson": "{\"m\":7,\"n\":1}" },
+  { "label": "Wide row", "inputJson": "{\"m\":1,\"n\":10}" },
+  { "label": "Square 4x4", "inputJson": "{\"m\":4,\"n\":4}" },
+  { "label": "Rectangular 5x3", "inputJson": "{\"m\":5,\"n\":3}" },
+  { "label": "Two by ten", "inputJson": "{\"m\":2,\"n\":10}" },
+  { "label": "7x8 rectangle", "inputJson": "{\"m\":7,\"n\":8}" }
+]

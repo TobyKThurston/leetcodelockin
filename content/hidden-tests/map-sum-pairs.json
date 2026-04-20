@@ -1,0 +1,8 @@
+[
+  { "label": "Prefix no matches", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"sum\",\"sum\"],\"vals\":[[\"apple\",3],[\"app\",2],[\"z\",0],[\"b\"]]}" },
+  { "label": "Empty prefix sums all", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"insert\",\"sum\"],\"vals\":[[\"a\",1],[\"b\",2],[\"c\",3],[\"\"]]}" },
+  { "label": "Overwrite changes sum", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"sum\",\"insert\",\"sum\"],\"vals\":[[\"apple\",3],[\"app\",2],[\"ap\"],[\"apple\",7],[\"ap\"]]}" },
+  { "label": "Prefix equals full key", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"sum\",\"sum\"],\"vals\":[[\"abc\",10],[\"abcd\",5],[\"abc\"],[\"abcd\"]]}" },
+  { "label": "Deeply nested keys", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"insert\",\"sum\",\"sum\"],\"vals\":[[\"abcdef\",1],[\"abcxyz\",2],[\"abc\",4],[\"abc\"],[\"abcd\"]]}" },
+  { "label": "Sum before insert", "inputJson": "{\"ops\":[\"sum\",\"insert\",\"sum\"],\"vals\":[[\"a\"],[\"apple\",9],[\"a\"]]}" }
+]

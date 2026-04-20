@@ -1,0 +1,8 @@
+[
+  { "label": "Single char match", "inputJson": "{\"text1\":\"a\",\"text2\":\"a\"}" },
+  { "label": "Single char mismatch", "inputJson": "{\"text1\":\"a\",\"text2\":\"b\"}" },
+  { "label": "Substring contained", "inputJson": "{\"text1\":\"abcdef\",\"text2\":\"cde\"}" },
+  { "label": "Reversed strings", "inputJson": "{\"text1\":\"abcde\",\"text2\":\"edcba\"}" },
+  { "label": "Repeated characters", "inputJson": "{\"text1\":\"aaaa\",\"text2\":\"aa\"}" },
+  { "label": "Interleaved letters", "inputJson": "{\"text1\":\"abcbdab\",\"text2\":\"bdcaba\"}" }
+]

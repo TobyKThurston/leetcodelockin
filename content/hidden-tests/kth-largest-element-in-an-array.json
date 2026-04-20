@@ -1,0 +1,8 @@
+[
+  { "label": "k equals length (minimum)", "inputJson": "{\"nums\":[3,2,1,5,6,4],\"k\":6}" },
+  { "label": "k=1 (maximum)", "inputJson": "{\"nums\":[3,2,1,5,6,4],\"k\":1}" },
+  { "label": "Negatives only", "inputJson": "{\"nums\":[-1,-5,-2,-10,-3],\"k\":2}" },
+  { "label": "Duplicates around k", "inputJson": "{\"nums\":[5,5,5,3,3,3,1],\"k\":4}" },
+  { "label": "Already sorted ascending", "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8,9,10],\"k\":3}" },
+  { "label": "Mix of extremes", "inputJson": "{\"nums\":[-10000,10000,0,-10000,10000],\"k\":3}" }
+]

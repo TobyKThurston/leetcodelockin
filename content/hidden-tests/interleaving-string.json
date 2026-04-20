@@ -1,0 +1,8 @@
+[
+  { "label": "All empty", "inputJson": "{\"s1\":\"\",\"s2\":\"\",\"s3\":\"\"}" },
+  { "label": "One empty valid", "inputJson": "{\"s1\":\"\",\"s2\":\"abc\",\"s3\":\"abc\"}" },
+  { "label": "One empty invalid", "inputJson": "{\"s1\":\"\",\"s2\":\"abc\",\"s3\":\"acb\"}" },
+  { "label": "Duplicates tricky", "inputJson": "{\"s1\":\"aabcc\",\"s2\":\"dbbca\",\"s3\":\"aadbbcbcac\"}" },
+  { "label": "Duplicates fail", "inputJson": "{\"s1\":\"aabcc\",\"s2\":\"dbbca\",\"s3\":\"aadbbbaccc\"}" },
+  { "label": "Same char repeated", "inputJson": "{\"s1\":\"aaa\",\"s2\":\"aaa\",\"s3\":\"aaaaaa\"}" }
+]

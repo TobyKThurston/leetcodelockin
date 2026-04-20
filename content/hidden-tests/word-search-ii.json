@@ -1,0 +1,8 @@
+[
+  { "label": "Word longer than grid", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"words\":[\"abcde\"]}" },
+  { "label": "Cannot reuse cell", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"words\":[\"aba\"]}" },
+  { "label": "Diagonal not allowed", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"words\":[\"ad\"]}" },
+  { "label": "Word prefix of another", "inputJson": "{\"board\":[[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]],\"words\":[\"oath\",\"oat\",\"pea\",\"eat\",\"rain\"]}" },
+  { "label": "Single row snake", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\",\"d\",\"e\"]],\"words\":[\"abcde\",\"edcba\",\"bcd\",\"ace\"]}" },
+  { "label": "All same letter grid", "inputJson": "{\"board\":[[\"a\",\"a\"],[\"a\",\"a\"]],\"words\":[\"aaaa\",\"aaaaa\",\"ab\"]}" }
+]

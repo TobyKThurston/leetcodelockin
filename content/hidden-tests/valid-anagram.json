@@ -1,0 +1,8 @@
+[
+  { "label": "Single char match",    "inputJson": "{\"s\":\"a\",\"t\":\"a\"}" },
+  { "label": "Single char mismatch", "inputJson": "{\"s\":\"a\",\"t\":\"b\"}" },
+  { "label": "Repeated letters",     "inputJson": "{\"s\":\"aabbcc\",\"t\":\"bcacba\"}" },
+  { "label": "Same letters diff counts", "inputJson": "{\"s\":\"aabb\",\"t\":\"abbb\"}" },
+  { "label": "Long anagram",         "inputJson": "{\"s\":\"listen\",\"t\":\"silent\"}" },
+  { "label": "Nearly equal",         "inputJson": "{\"s\":\"abcde\",\"t\":\"abced\"}" }
+]

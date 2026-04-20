@@ -1,0 +1,8 @@
+[
+  { "label": "Word is prefix of another", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"search\",\"search\",\"startsWith\"],\"vals\":[[\"app\"],[\"apple\"],[\"app\"],[\"appl\"],[\"appl\"]]}" },
+  { "label": "Prefix search not inserted", "inputJson": "{\"ops\":[\"insert\",\"search\",\"startsWith\",\"startsWith\"],\"vals\":[[\"hello\"],[\"hell\"],[\"hell\"],[\"help\"]]}" },
+  { "label": "Single-char words", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"search\",\"search\",\"startsWith\"],\"vals\":[[\"a\"],[\"b\"],[\"a\"],[\"c\"],[\"a\"]]}" },
+  { "label": "Duplicate insert", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"search\",\"startsWith\"],\"vals\":[[\"dog\"],[\"dog\"],[\"dog\"],[\"do\"]]}" },
+  { "label": "Disjoint branches", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"startsWith\",\"startsWith\",\"search\"],\"vals\":[[\"cat\"],[\"dog\"],[\"ca\"],[\"do\"],[\"ca\"]]}" },
+  { "label": "Long word search short prefix", "inputJson": "{\"ops\":[\"insert\",\"startsWith\",\"search\",\"search\"],\"vals\":[[\"abcdefghij\"],[\"abcde\"],[\"abcde\"],[\"abcdefghij\"]]}" }
+]

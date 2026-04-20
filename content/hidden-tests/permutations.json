@@ -1,0 +1,7 @@
+[
+  { "label": "Four distinct", "inputJson": "{\"nums\":[1,2,3,4]}" },
+  { "label": "Negatives", "inputJson": "{\"nums\":[-1,0,1]}" },
+  { "label": "Descending order", "inputJson": "{\"nums\":[3,2,1]}" },
+  { "label": "Two negatives", "inputJson": "{\"nums\":[-2,-1]}" },
+  { "label": "Single zero", "inputJson": "{\"nums\":[0]}" }
+]

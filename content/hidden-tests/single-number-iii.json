@@ -1,0 +1,8 @@
+[
+  { "label": "Two singletons only", "inputJson": "{\"nums\":[7,13]}" },
+  { "label": "Includes zero singleton", "inputJson": "{\"nums\":[5,5,3,3,0,9]}" },
+  { "label": "Both negative", "inputJson": "{\"nums\":[-2,-2,-3,-5,1,1]}" },
+  { "label": "Max int boundary", "inputJson": "{\"nums\":[2147483647,-2147483648,1,1,2,2]}" },
+  { "label": "Singletons differ by one bit", "inputJson": "{\"nums\":[1,2,1,2,8,9]}" },
+  { "label": "Many duplicates plus two", "inputJson": "{\"nums\":[10,20,30,10,20,30,100,200]}" }
+]

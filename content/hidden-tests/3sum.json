@@ -1,0 +1,8 @@
+[
+  { "label": "No negative values",      "inputJson": "{\"nums\":[0,1,2,3,4]}" },
+  { "label": "Minimum size none",       "inputJson": "{\"nums\":[1,2,3]}" },
+  { "label": "Minimum size hit",        "inputJson": "{\"nums\":[-1,0,1]}" },
+  { "label": "Many zeros",              "inputJson": "{\"nums\":[0,0,0,0,0,0]}" },
+  { "label": "Many duplicates",         "inputJson": "{\"nums\":[-2,-2,-2,0,0,2,2,2,4]}" },
+  { "label": "Symmetric around zero",   "inputJson": "{\"nums\":[-4,-2,-1,0,1,2,4]}" }
+]

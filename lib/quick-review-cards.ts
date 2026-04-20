@@ -4,6 +4,25 @@ export type QuickCardType = 'big_o' | 'pattern' | 'code_reading';
 
 export type InteractionMode = 'mcq' | 'type_answer' | 'reveal';
 
+export type QuickCardTopic =
+  | 'arrays'
+  | 'hash'
+  | 'linked_list'
+  | 'stacks_queues'
+  | 'heaps'
+  | 'trees'
+  | 'graphs'
+  | 'two_pointer'
+  | 'sliding_window'
+  | 'dp'
+  | 'sorting'
+  | 'binary_search'
+  | 'strings'
+  | 'backtracking'
+  | 'greedy'
+  | 'design'
+  | 'math';
+
 export interface QuickCard {
   id: string;
   type: QuickCardType;
@@ -1315,3 +1334,186 @@ export const QUICK_CARDS: QuickCard[] = [
     acceptableAnswers: ['2'],
   },
 ];
+
+// ─── Topic mapping ──────────────────────────────────────────────────────────
+// Topic is derived from card id. Lets the deck filter by subject (graphs,
+// trees, dp, etc.) independently of the question format (big_o / pattern /
+// code_reading). Any new card id added above must also be assigned a topic
+// here — getCardTopic falls back to 'design' for safety.
+
+export const CARD_TOPICS: Record<string, QuickCardTopic> = {
+  // Big-O
+  'qr-bigo-1': 'arrays',
+  'qr-bigo-2': 'arrays',
+  'qr-bigo-3': 'arrays',
+  'qr-bigo-4': 'hash',
+  'qr-bigo-5': 'sorting',
+  'qr-bigo-6': 'binary_search',
+  'qr-bigo-7': 'graphs',
+  'qr-bigo-10': 'linked_list',
+  'qr-bigo-11': 'linked_list',
+  'qr-bigo-12': 'linked_list',
+  'qr-bigo-13': 'stacks_queues',
+  'qr-bigo-14': 'stacks_queues',
+  'qr-bigo-15': 'heaps',
+  'qr-bigo-16': 'heaps',
+  'qr-bigo-17': 'heaps',
+  'qr-bigo-18': 'trees',
+  'qr-bigo-19': 'trees',
+  'qr-bigo-20': 'trees',
+  'qr-bigo-21': 'arrays',
+  'qr-bigo-30': 'sorting',
+  'qr-bigo-31': 'hash',
+  'qr-bigo-32': 'backtracking',
+  'qr-bigo-33': 'backtracking',
+  'qr-bigo-34': 'math',
+  'qr-bigo-35': 'sorting',
+  'qr-bigo-36': 'graphs',
+  'qr-bigo-37': 'arrays',
+  'qr-bigo-38': 'graphs',
+  'qr-bigo-39': 'trees',
+  'qr-bigo-40': 'sorting',
+  'qr-bigo-41': 'strings',
+  'qr-bigo-42': 'math',
+  'qr-bigo-43': 'math',
+
+  // Patterns
+  'qr-pattern-1': 'two_pointer',
+  'qr-pattern-2': 'sliding_window',
+  'qr-pattern-3': 'graphs',
+  'qr-pattern-4': 'dp',
+  'qr-pattern-5': 'stacks_queues',
+  'qr-pattern-10': 'linked_list',
+  'qr-pattern-11': 'graphs',
+  'qr-pattern-12': 'graphs',
+  'qr-pattern-13': 'hash',
+  'qr-pattern-14': 'backtracking',
+  'qr-pattern-15': 'dp',
+  'qr-pattern-16': 'greedy',
+  'qr-pattern-17': 'heaps',
+  'qr-pattern-18': 'heaps',
+  'qr-pattern-19': 'two_pointer',
+  'qr-pattern-20': 'backtracking',
+  'qr-pattern-21': 'two_pointer',
+  'qr-pattern-30': 'dp',
+  'qr-pattern-31': 'arrays',
+  'qr-pattern-32': 'arrays',
+  'qr-pattern-33': 'arrays',
+  'qr-pattern-34': 'dp',
+  'qr-pattern-35': 'binary_search',
+  'qr-pattern-36': 'graphs',
+  'qr-pattern-37': 'dp',
+  'qr-pattern-38': 'trees',
+  'qr-pattern-39': 'graphs',
+  'qr-pattern-40': 'graphs',
+  'qr-pattern-41': 'dp',
+  'qr-pattern-42': 'graphs',
+  'qr-pattern-43': 'dp',
+  'qr-pattern-44': 'arrays',
+  'qr-pattern-45': 'sliding_window',
+
+  // Concept (uses qr-concept ids, type 'pattern')
+  'qr-concept-1': 'design',
+  'qr-concept-2': 'design',
+  'qr-concept-3': 'graphs',
+  'qr-concept-4': 'sorting',
+  'qr-concept-5': 'graphs',
+  'qr-concept-6': 'heaps',
+  'qr-concept-7': 'design',
+  'qr-concept-8': 'hash',
+  'qr-concept-9': 'stacks_queues',
+
+  // Code reading
+  'qr-code-1': 'hash',
+  'qr-code-2': 'sliding_window',
+  'qr-code-3': 'heaps',
+  'qr-code-4': 'binary_search',
+  'qr-code-5': 'linked_list',
+  'qr-code-6': 'graphs',
+  'qr-code-7': 'two_pointer',
+  'qr-code-8': 'graphs',
+  'qr-code-9': 'graphs',
+  'qr-code-10': 'dp',
+  'qr-code-11': 'stacks_queues',
+  'qr-code-12': 'arrays',
+  'qr-code-13': 'arrays',
+  'qr-code-14': 'graphs',
+  'qr-code-15': 'strings',
+  'qr-code-16': 'arrays',
+  'qr-code-20': 'arrays',
+  'qr-code-21': 'arrays',
+  'qr-code-22': 'binary_search',
+  'qr-code-23': 'dp',
+  'qr-code-24': 'arrays',
+  'qr-code-25': 'hash',
+  'qr-code-26': 'trees',
+  'qr-code-27': 'binary_search',
+  'qr-code-28': 'hash',
+  'qr-code-29': 'stacks_queues',
+  'qr-code-30': 'trees',
+  'qr-code-31': 'backtracking',
+  'qr-code-32': 'graphs',
+  'qr-code-33': 'greedy',
+  'qr-code-34': 'binary_search',
+  'qr-code-35': 'sorting',
+  'qr-code-36': 'math',
+  'qr-code-37': 'dp',
+  'qr-code-38': 'dp',
+  'qr-code-39': 'math',
+
+  // Advanced
+  'qr-adv-1': 'graphs',
+  'qr-adv-2': 'dp',
+  'qr-adv-3': 'trees',
+  'qr-adv-4': 'dp',
+  'qr-adv-5': 'math',
+  'qr-adv-6': 'graphs',
+  'qr-adv-7': 'strings',
+  'qr-adv-8': 'math',
+  'qr-adv-9': 'design',
+  'qr-adv-10': 'arrays',
+};
+
+export const ALL_TOPICS: QuickCardTopic[] = [
+  'arrays',
+  'hash',
+  'linked_list',
+  'stacks_queues',
+  'heaps',
+  'trees',
+  'graphs',
+  'two_pointer',
+  'sliding_window',
+  'dp',
+  'sorting',
+  'binary_search',
+  'strings',
+  'backtracking',
+  'greedy',
+  'design',
+  'math',
+];
+
+export const TOPIC_LABEL: Record<QuickCardTopic, string> = {
+  arrays: 'Arrays',
+  hash: 'Hash maps',
+  linked_list: 'Linked lists',
+  stacks_queues: 'Stacks & queues',
+  heaps: 'Heaps',
+  trees: 'Trees',
+  graphs: 'Graphs',
+  two_pointer: 'Two pointers',
+  sliding_window: 'Sliding window',
+  dp: 'Dynamic programming',
+  sorting: 'Sorting',
+  binary_search: 'Binary search',
+  strings: 'Strings',
+  backtracking: 'Backtracking',
+  greedy: 'Greedy',
+  design: 'Design',
+  math: 'Math & bits',
+};
+
+export function getCardTopic(card: QuickCard): QuickCardTopic {
+  return CARD_TOPICS[card.id] ?? 'design';
+}

@@ -1,0 +1,8 @@
+[
+  { "label": "Repeated letters in t", "inputJson": "{\"s\":\"ADOBECODEBANC\",\"t\":\"ABC\"}" },
+  { "label": "Need doubled char",     "inputJson": "{\"s\":\"aaflslflsldkalskaaa\",\"t\":\"aaa\"}" },
+  { "label": "t equals s",            "inputJson": "{\"s\":\"abc\",\"t\":\"abc\"}" },
+  { "label": "Case sensitive miss",   "inputJson": "{\"s\":\"abc\",\"t\":\"A\"}" },
+  { "label": "No match at all",       "inputJson": "{\"s\":\"xyzxyz\",\"t\":\"abc\"}" },
+  { "label": "Window at very end",    "inputJson": "{\"s\":\"zzzzzabc\",\"t\":\"abc\"}" }
+]

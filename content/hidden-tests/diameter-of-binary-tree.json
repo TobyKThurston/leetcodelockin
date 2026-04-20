@@ -1,0 +1,8 @@
+[
+  { "label": "Left-skewed chain", "inputJson": "{\"root\":[1,2,null,3,null,4,null,5]}" },
+  { "label": "Diameter not through root", "inputJson": "{\"root\":[1,2,3,4,5,null,null,6,null,null,7]}" },
+  { "label": "Perfect balanced depth 4", "inputJson": "{\"root\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}" },
+  { "label": "Two nodes", "inputJson": "{\"root\":[1,2]}" },
+  { "label": "Negative values", "inputJson": "{\"root\":[-1,-2,-3,-4,-5]}" },
+  { "label": "Right skew then fork", "inputJson": "{\"root\":[1,null,2,3,4]}" }
+]

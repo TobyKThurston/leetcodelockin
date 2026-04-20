@@ -1,0 +1,8 @@
+[
+  { "label": "Prefer shortest root", "inputJson": "{\"dictionary\":[\"catt\",\"cat\",\"bat\"],\"sentence\":\"the cattle was rattled by the battery\"}" },
+  { "label": "No replacements", "inputJson": "{\"dictionary\":[\"xyz\",\"pqr\"],\"sentence\":\"hello world foo bar\"}" },
+  { "label": "Root equals word", "inputJson": "{\"dictionary\":[\"cat\"],\"sentence\":\"cat cats category\"}" },
+  { "label": "Single-char roots", "inputJson": "{\"dictionary\":[\"a\"],\"sentence\":\"apple alligator ant banana\"}" },
+  { "label": "Single-word sentence", "inputJson": "{\"dictionary\":[\"run\"],\"sentence\":\"running\"}" },
+  { "label": "Empty dictionary", "inputJson": "{\"dictionary\":[],\"sentence\":\"nothing should change here\"}" }
+]

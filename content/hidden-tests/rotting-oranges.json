@@ -1,0 +1,8 @@
+[
+  { "label": "All rotten at start", "inputJson": "{\"grid\":[[2,2],[2,2]]}" },
+  { "label": "No rotten, fresh exist", "inputJson": "{\"grid\":[[1,1],[1,1]]}" },
+  { "label": "Isolated fresh behind wall", "inputJson": "{\"grid\":[[2,1,0,1]]}" },
+  { "label": "Long horizontal line", "inputJson": "{\"grid\":[[2,1,1,1,1,1]]}" },
+  { "label": "Empty cells only", "inputJson": "{\"grid\":[[0,0,0],[0,0,0]]}" },
+  { "label": "Two rotten sources converging", "inputJson": "{\"grid\":[[2,1,1,1,2]]}" }
+]

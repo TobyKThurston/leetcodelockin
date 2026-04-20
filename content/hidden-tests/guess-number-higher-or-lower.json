@@ -1,0 +1,8 @@
+[
+  { "label": "Max n pick one", "inputJson": "{\"n\":2147483647,\"pick\":1}" },
+  { "label": "Max n pick max", "inputJson": "{\"n\":2147483647,\"pick\":2147483647}" },
+  { "label": "Max n pick middle", "inputJson": "{\"n\":2147483647,\"pick\":1073741823}" },
+  { "label": "Small n low pick", "inputJson": "{\"n\":2,\"pick\":1}" },
+  { "label": "Small n high pick", "inputJson": "{\"n\":2,\"pick\":2}" },
+  { "label": "Arbitrary mid", "inputJson": "{\"n\":100,\"pick\":37}" }
+]

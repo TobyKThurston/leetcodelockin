@@ -1,0 +1,8 @@
+[
+  { "label": "Both empty", "inputJson": "{\"s\":\"\",\"t\":\"\"}" },
+  { "label": "Equal strings", "inputJson": "{\"s\":\"abc\",\"t\":\"abc\"}" },
+  { "label": "Longer than t", "inputJson": "{\"s\":\"abcd\",\"t\":\"abc\"}" },
+  { "label": "Single match", "inputJson": "{\"s\":\"b\",\"t\":\"abcde\"}" },
+  { "label": "Repeated chars in t", "inputJson": "{\"s\":\"aaa\",\"t\":\"ababab\"}" },
+  { "label": "Duplicates need order", "inputJson": "{\"s\":\"abb\",\"t\":\"acbcb\"}" }
+]

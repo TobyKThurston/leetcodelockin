@@ -1,0 +1,8 @@
+[
+  { "label": "Single nine cascade", "inputJson": "{\"digits\":[9]}" },
+  { "label": "Triple nine cascade", "inputJson": "{\"digits\":[9,9,9]}" },
+  { "label": "Middle nines no carry out", "inputJson": "{\"digits\":[1,9,9]}" },
+  { "label": "Leading one all zeros", "inputJson": "{\"digits\":[1,0,0,0]}" },
+  { "label": "Long no carry", "inputJson": "{\"digits\":[4,3,2,1]}" },
+  { "label": "Long cascade", "inputJson": "{\"digits\":[1,2,9,9,9]}" }
+]

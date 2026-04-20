@@ -1,0 +1,8 @@
+[
+  { "label": "Descending adds", "inputJson": "{\"ops\":[\"addNum\",\"findMedian\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"],\"vals\":[[5],[],[4],[],[3],[]]}" },
+  { "label": "Negatives and zero", "inputJson": "{\"ops\":[\"addNum\",\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"],\"vals\":[[-1],[0],[1],[],[-2],[]]}" },
+  { "label": "Repeated median queries", "inputJson": "{\"ops\":[\"addNum\",\"findMedian\",\"findMedian\",\"addNum\",\"findMedian\",\"findMedian\"],\"vals\":[[42],[],[],[42],[],[]]}" },
+  { "label": "All same value", "inputJson": "{\"ops\":[\"addNum\",\"addNum\",\"addNum\",\"addNum\",\"findMedian\"],\"vals\":[[7],[7],[7],[7],[]]}" },
+  { "label": "Extremes", "inputJson": "{\"ops\":[\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"],\"vals\":[[-100000],[100000],[],[0],[]]}" },
+  { "label": "Mixed interleaved", "inputJson": "{\"ops\":[\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"],\"vals\":[[6],[10],[],[2],[6],[],[5],[]]}" }
+]

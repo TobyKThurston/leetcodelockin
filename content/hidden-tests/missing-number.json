@@ -1,0 +1,8 @@
+[
+  { "label": "Missing at end (n)", "inputJson": "{\"nums\":[0,1,2,3,4]}" },
+  { "label": "Missing at start (0)", "inputJson": "{\"nums\":[4,3,2,1]}" },
+  { "label": "Missing in middle", "inputJson": "{\"nums\":[0,1,2,4,5,6,7,8,9]}" },
+  { "label": "Single element array, missing 0", "inputJson": "{\"nums\":[1]}" },
+  { "label": "Reverse-sorted with gap", "inputJson": "{\"nums\":[9,6,4,2,3,5,7,0,1]}" },
+  { "label": "Missing 5 out of 10", "inputJson": "{\"nums\":[0,1,2,3,4,6,7,8,9,10]}" }
+]

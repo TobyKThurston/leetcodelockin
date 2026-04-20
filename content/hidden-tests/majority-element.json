@@ -1,0 +1,8 @@
+[
+  { "label": "All identical",        "inputJson": "{\"nums\":[4,4,4,4,4]}" },
+  { "label": "Majority at end",      "inputJson": "{\"nums\":[1,2,3,9,9,9,9]}" },
+  { "label": "Majority at start",    "inputJson": "{\"nums\":[8,8,8,8,1,2,3]}" },
+  { "label": "Negative majority",    "inputJson": "{\"nums\":[-5,-5,1,-5,2]}" },
+  { "label": "Zero majority",        "inputJson": "{\"nums\":[0,0,0,1,2]}" },
+  { "label": "Adversarial ordering", "inputJson": "{\"nums\":[1,7,1,7,1,7,1]}" }
+]

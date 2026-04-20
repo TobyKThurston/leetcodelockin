@@ -1,0 +1,8 @@
+[
+  { "label": "Single node no edges",        "inputJson": "{\"n\":1,\"edges\":[]}" },
+  { "label": "All isolated",                "inputJson": "{\"n\":6,\"edges\":[]}" },
+  { "label": "Single chain across all",     "inputJson": "{\"n\":6,\"edges\":[[0,1],[1,2],[2,3],[3,4],[4,5]]}" },
+  { "label": "Three pairs",                 "inputJson": "{\"n\":6,\"edges\":[[0,1],[2,3],[4,5]]}" },
+  { "label": "Duplicate edges",             "inputJson": "{\"n\":4,\"edges\":[[0,1],[0,1],[2,3]]}" },
+  { "label": "Cycle plus isolated",         "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[2,0]]}" }
+]

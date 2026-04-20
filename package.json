@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "db:seed:problems": "dotenv -e .env.local -- tsx scripts/seed-problems.ts",
-    "db:verify:problems": "tsx scripts/verify-problems.ts"
+    "db:verify:problems": "tsx scripts/verify-problems.ts",
+    "db:generate:hidden-tests": "tsx scripts/generate-hidden-tests.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.51",

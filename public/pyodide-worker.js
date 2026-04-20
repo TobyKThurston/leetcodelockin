@@ -28,7 +28,7 @@ function getPyodide() {
 // number is surfaced back to the main thread as `line`, which drives both the
 // "Line N — " prefix in the test panel and the Monaco gutter marker.
 const HARNESS = `
-import json as _j, traceback as _tb
+import json as _j, traceback as _tb, io as _io, contextlib as _cl
 _ts = _j.loads(_tests_json)
 
 def _user_line(_exc):
@@ -47,24 +47,29 @@ try:
 except SyntaxError as _e:
     _ln = _e.lineno or 0
     _err = _fmt(_e, _ln)
-    _rs = [{"ok": False, "err": _err, "line": _ln} for _ in _ts]
+    _rs = [{"ok": False, "err": _err, "line": _ln, "stdout": ""} for _ in _ts]
 else:
+    _mod_buf = _io.StringIO()
     try:
-        exec(_user_code_obj, globals())
+        with _cl.redirect_stdout(_mod_buf):
+            exec(_user_code_obj, globals())
     except Exception as _e:
         _ln = _user_line(_e)
         _err = _fmt(_e, _ln)
-        _rs = [{"ok": False, "err": _err, "line": _ln} for _ in _ts]
+        _mod_out = _mod_buf.getvalue()
+        _rs = [{"ok": False, "err": _err, "line": _ln, "stdout": _mod_out} for _ in _ts]
     else:
         _rs = []
         for _t in _ts:
+            _buf = _io.StringIO()
             try:
-                _args = [_t[_k] for _k in _arg_keys]
-                _r = getattr(Solution(), _method_name)(*_args)
-                _rs.append({"ok": True, "val": _r})
+                with _cl.redirect_stdout(_buf):
+                    _args = [_t[_k] for _k in _arg_keys]
+                    _r = getattr(Solution(), _method_name)(*_args)
+                _rs.append({"ok": True, "val": _r, "stdout": _buf.getvalue()})
             except Exception as _e:
                 _ln = _user_line(_e)
-                _rs.append({"ok": False, "err": _fmt(_e, _ln), "line": _ln})
+                _rs.append({"ok": False, "err": _fmt(_e, _ln), "line": _ln, "stdout": _buf.getvalue()})
 _result_json = _j.dumps(_rs)
 `;
 

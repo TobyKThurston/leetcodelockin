@@ -1,0 +1,8 @@
+[
+  { "label": "Two nodes both point to head", "inputJson": "{\"nodes\":[[1,0],[2,0]]}" },
+  { "label": "Two nodes both null random", "inputJson": "{\"nodes\":[[7,null],[8,null]]}" },
+  { "label": "Chain pointing to self", "inputJson": "{\"nodes\":[[1,0],[2,1],[3,2]]}" },
+  { "label": "Random points forward only", "inputJson": "{\"nodes\":[[10,3],[20,3],[30,3],[40,null]]}" },
+  { "label": "Mixed null and indexed randoms", "inputJson": "{\"nodes\":[[1,null],[2,0],[3,null],[4,2],[5,0]]}" },
+  { "label": "All random to last node", "inputJson": "{\"nodes\":[[5,3],[6,3],[7,3],[8,3]]}" }
+]

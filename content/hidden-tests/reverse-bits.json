@@ -1,0 +1,8 @@
+[
+  { "label": "Max uint32 (all ones)", "inputJson": "{\"n\":4294967295}" },
+  { "label": "MSB only", "inputJson": "{\"n\":2147483648}" },
+  { "label": "Low byte full", "inputJson": "{\"n\":255}" },
+  { "label": "Alternating 0x55555555", "inputJson": "{\"n\":1431655765}" },
+  { "label": "Alternating 0xAAAAAAAA", "inputJson": "{\"n\":2863311530}" },
+  { "label": "Palindromic bits", "inputJson": "{\"n\":2147483649}" }
+]

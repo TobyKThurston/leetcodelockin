@@ -1,0 +1,8 @@
+[
+  { "label": "All same values", "inputJson": "{\"nums\":[5,5,5,5]}" },
+  { "label": "Contains zero", "inputJson": "{\"nums\":[0,7]}" },
+  { "label": "Powers of two", "inputJson": "{\"nums\":[1,2,4,8,16]}" },
+  { "label": "Two max-range values", "inputJson": "{\"nums\":[2147483647,0]}" },
+  { "label": "Large mixed set", "inputJson": "{\"nums\":[3,10,5,25,2,8]}" },
+  { "label": "Two zeros", "inputJson": "{\"nums\":[0,0]}" }
+]

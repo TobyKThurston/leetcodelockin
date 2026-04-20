@@ -1,0 +1,8 @@
+[
+  { "label": "All identical", "inputJson": "{\"intervals\":[[2,5],[2,5],[2,5]]}" },
+  { "label": "Fully nested", "inputJson": "{\"intervals\":[[1,10],[2,3],[4,5],[6,9]]}" },
+  { "label": "Chain merges into one", "inputJson": "{\"intervals\":[[1,2],[2,3],[3,4],[4,5],[5,6]]}" },
+  { "label": "Reverse sorted", "inputJson": "{\"intervals\":[[10,12],[7,9],[3,5],[0,1]]}" },
+  { "label": "Zero-width intervals", "inputJson": "{\"intervals\":[[0,0],[1,1],[2,2]]}" },
+  { "label": "Mixed overlap and gaps", "inputJson": "{\"intervals\":[[1,4],[0,2],[3,5],[7,8],[6,9],[10,10]]}" }
+]

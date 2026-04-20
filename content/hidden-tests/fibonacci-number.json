@@ -1,0 +1,7 @@
+[
+  { "label": "n = 2", "inputJson": "{\"n\":2}" },
+  { "label": "n = 5", "inputJson": "{\"n\":5}" },
+  { "label": "n = 15", "inputJson": "{\"n\":15}" },
+  { "label": "n = 20", "inputJson": "{\"n\":20}" },
+  { "label": "n = 29", "inputJson": "{\"n\":29}" }
+]

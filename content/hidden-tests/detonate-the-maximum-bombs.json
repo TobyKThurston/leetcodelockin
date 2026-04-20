@@ -1,0 +1,8 @@
+[
+  { "label": "Single bomb", "inputJson": "{\"bombs\":[[0,0,1]]}" },
+  { "label": "All isolated bombs", "inputJson": "{\"bombs\":[[0,0,1],[100,100,1],[200,200,1],[300,300,1]]}" },
+  { "label": "Asymmetric triggering one-way", "inputJson": "{\"bombs\":[[0,0,10],[5,0,1],[20,0,1]]}" },
+  { "label": "Chain reaction line", "inputJson": "{\"bombs\":[[0,0,2],[2,0,2],[4,0,2],[6,0,2],[8,0,2]]}" },
+  { "label": "Two clusters", "inputJson": "{\"bombs\":[[0,0,2],[1,1,2],[100,100,2],[101,101,2],[102,102,2]]}" },
+  { "label": "Distance equals radius boundary", "inputJson": "{\"bombs\":[[0,0,5],[3,4,1],[10,0,3]]}" }
+]

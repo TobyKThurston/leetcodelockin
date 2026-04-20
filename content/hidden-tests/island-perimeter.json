@@ -1,0 +1,8 @@
+[
+  { "label": "Thin horizontal island", "inputJson": "{\"grid\":[[1,1,1,1]]}" },
+  { "label": "Thin vertical island", "inputJson": "{\"grid\":[[1],[1],[1],[1]]}" },
+  { "label": "Full grid is island", "inputJson": "{\"grid\":[[1,1],[1,1]]}" },
+  { "label": "L-shaped island", "inputJson": "{\"grid\":[[1,0,0],[1,0,0],[1,1,1]]}" },
+  { "label": "Single cell in larger grid", "inputJson": "{\"grid\":[[0,0,0],[0,1,0],[0,0,0]]}" },
+  { "label": "Snake pattern", "inputJson": "{\"grid\":[[1,1,1],[0,0,1],[1,1,1],[1,0,0]]}" }
+]

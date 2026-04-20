@@ -1,0 +1,8 @@
+[
+  { "label": "Two cities one edge",            "inputJson": "{\"n\":2,\"connections\":[[1,2,7]]}" },
+  { "label": "Complete graph choose cheapest", "inputJson": "{\"n\":4,\"connections\":[[1,2,1],[2,3,1],[3,4,1],[1,3,10],[2,4,10],[1,4,10]]}" },
+  { "label": "All same weight tie-break",      "inputJson": "{\"n\":4,\"connections\":[[1,2,5],[2,3,5],[3,4,5],[1,4,5]]}" },
+  { "label": "Already a tree",                 "inputJson": "{\"n\":5,\"connections\":[[1,2,3],[2,3,2],[3,4,4],[4,5,1]]}" },
+  { "label": "Isolated city impossible",       "inputJson": "{\"n\":5,\"connections\":[[1,2,1],[2,3,2],[3,4,3]]}" },
+  { "label": "Parallel edges pick cheapest",   "inputJson": "{\"n\":3,\"connections\":[[1,2,9],[1,2,2],[2,3,3],[2,3,8]]}" }
+]

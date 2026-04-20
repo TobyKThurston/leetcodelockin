@@ -1,0 +1,8 @@
+[
+  { "label": "n=0 no cooldown", "inputJson": "{\"tasks\":[\"A\",\"B\",\"C\",\"D\",\"E\"],\"n\":0}" },
+  { "label": "All same task long cooldown", "inputJson": "{\"tasks\":[\"A\",\"A\",\"A\",\"A\"],\"n\":3}" },
+  { "label": "Many ties at max count", "inputJson": "{\"tasks\":[\"A\",\"A\",\"B\",\"B\",\"C\",\"C\"],\"n\":2}" },
+  { "label": "Cooldown fills itself", "inputJson": "{\"tasks\":[\"A\",\"A\",\"A\",\"B\",\"B\",\"B\",\"C\",\"C\",\"C\",\"D\",\"D\",\"E\"],\"n\":2}" },
+  { "label": "Max cooldown n=100", "inputJson": "{\"tasks\":[\"A\",\"A\",\"A\"],\"n\":100}" },
+  { "label": "Varied with large n", "inputJson": "{\"tasks\":[\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"],\"n\":50}" }
+]

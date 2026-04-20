@@ -1,0 +1,8 @@
+[
+  { "label": "Impossible majority", "inputJson": "{\"s\":\"aaaaabc\"}" },
+  { "label": "All same char impossible", "inputJson": "{\"s\":\"zzzz\"}" },
+  { "label": "Borderline majority", "inputJson": "{\"s\":\"aaabc\"}" },
+  { "label": "Two chars equal counts", "inputJson": "{\"s\":\"abab\"}" },
+  { "label": "Many distinct chars", "inputJson": "{\"s\":\"abcdef\"}" },
+  { "label": "Majority exactly half-plus-one", "inputJson": "{\"s\":\"aaabb\"}" }
+]

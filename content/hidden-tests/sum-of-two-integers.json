@@ -1,0 +1,8 @@
+[
+  { "label": "Both negative", "inputJson": "{\"a\":-500,\"b\":-500}" },
+  { "label": "Negative larger magnitude", "inputJson": "{\"a\":-1000,\"b\":5}" },
+  { "label": "At boundary lower", "inputJson": "{\"a\":-1000,\"b\":-1}" },
+  { "label": "At boundary upper", "inputJson": "{\"a\":1000,\"b\":1000}" },
+  { "label": "Mixed sign cancel", "inputJson": "{\"a\":-7,\"b\":7}" },
+  { "label": "One zero one negative", "inputJson": "{\"a\":0,\"b\":-1000}" }
+]

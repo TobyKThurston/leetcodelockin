@@ -1,0 +1,8 @@
+[
+  { "label": "End blocked", "inputJson": "{\"grid\":[[0,0],[0,1]]}" },
+  { "label": "All zeros 3x3 diagonal", "inputJson": "{\"grid\":[[0,0,0],[0,0,0],[0,0,0]]}" },
+  { "label": "Single blocked cell", "inputJson": "{\"grid\":[[1]]}" },
+  { "label": "Path requires winding", "inputJson": "{\"grid\":[[0,0,0],[1,1,0],[1,1,0]]}" },
+  { "label": "All ones except corners unreachable", "inputJson": "{\"grid\":[[0,1,1],[1,1,1],[1,1,0]]}" },
+  { "label": "Forces detour around wall", "inputJson": "{\"grid\":[[0,0,0,0],[1,1,1,0],[0,0,0,0],[0,1,1,1],[0,0,0,0]]}" }
+]

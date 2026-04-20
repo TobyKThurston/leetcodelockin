@@ -1,0 +1,8 @@
+[
+  { "label": "Src equals dst",                   "inputJson": "{\"n\":3,\"flights\":[[0,1,50],[1,2,50]],\"src\":0,\"dst\":0,\"k\":0}" },
+  { "label": "Exactly k stops needed",           "inputJson": "{\"n\":4,\"flights\":[[0,1,1],[1,2,1],[2,3,1],[0,3,100]],\"src\":0,\"dst\":3,\"k\":2}" },
+  { "label": "k too small for detour",           "inputJson": "{\"n\":4,\"flights\":[[0,1,1],[1,2,1],[2,3,1]],\"src\":0,\"dst\":3,\"k\":1}" },
+  { "label": "Cycle avoided",                    "inputJson": "{\"n\":4,\"flights\":[[0,1,5],[1,0,5],[1,2,5],[2,3,5]],\"src\":0,\"dst\":3,\"k\":3}" },
+  { "label": "Direct flight cheapest",           "inputJson": "{\"n\":3,\"flights\":[[0,1,1],[1,2,1],[0,2,2]],\"src\":0,\"dst\":2,\"k\":0}" },
+  { "label": "Disconnected destination",         "inputJson": "{\"n\":4,\"flights\":[[0,1,10],[1,2,10]],\"src\":0,\"dst\":3,\"k\":3}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "No edges different nodes", "inputJson": "{\"n\":3,\"edges\":[],\"source\":0,\"destination\":2}" },
+  { "label": "Linear chain far ends", "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[2,3],[3,4]],\"source\":0,\"destination\":4}" },
+  { "label": "Disconnected components", "inputJson": "{\"n\":5,\"edges\":[[0,1],[2,3],[3,4]],\"source\":1,\"destination\":4}" },
+  { "label": "Cycle reaches all", "inputJson": "{\"n\":4,\"edges\":[[0,1],[1,2],[2,3],[3,0]],\"source\":0,\"destination\":2}" },
+  { "label": "Star graph", "inputJson": "{\"n\":5,\"edges\":[[0,1],[0,2],[0,3],[0,4]],\"source\":2,\"destination\":4}" },
+  { "label": "Same source and destination with edges", "inputJson": "{\"n\":3,\"edges\":[[0,1],[1,2]],\"source\":1,\"destination\":1}" }
+]

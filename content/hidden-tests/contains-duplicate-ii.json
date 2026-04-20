@@ -1,0 +1,8 @@
+[
+  { "label": "k equals zero",        "inputJson": "{\"nums\":[1,2,3,1],\"k\":0}" },
+  { "label": "Adjacent duplicate",   "inputJson": "{\"nums\":[1,0,1,1],\"k\":1}" },
+  { "label": "Large k covers all",   "inputJson": "{\"nums\":[1,2,3,4,5,1],\"k\":100000}" },
+  { "label": "Extreme negatives",    "inputJson": "{\"nums\":[-1000000000,1000000000,-1000000000],\"k\":2}" },
+  { "label": "Single element",       "inputJson": "{\"nums\":[7],\"k\":3}" },
+  { "label": "Duplicates just out",  "inputJson": "{\"nums\":[9,8,7,6,5,9],\"k\":4}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "All overlap on a point", "inputJson": "{\"points\":[[1,10],[2,9],[3,8],[4,7],[5,6]]}" },
+  { "label": "Touch endpoints burst together", "inputJson": "{\"points\":[[1,2],[2,3],[3,4],[4,5]]}" },
+  { "label": "Disjoint intervals", "inputJson": "{\"points\":[[1,2],[3,4],[5,6],[7,8]]}" },
+  { "label": "Large spread values", "inputJson": "{\"points\":[[-2147483648,2147483647]]}" },
+  { "label": "Two clusters", "inputJson": "{\"points\":[[1,5],[2,4],[10,14],[11,13]]}" },
+  { "label": "Shuffled equal ends", "inputJson": "{\"points\":[[5,10],[1,10],[3,10],[7,10]]}" }
+]

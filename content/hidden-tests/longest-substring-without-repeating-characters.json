@@ -1,0 +1,8 @@
+[
+  { "label": "Single char",           "inputJson": "{\"s\":\"z\"}" },
+  { "label": "Two repeating",         "inputJson": "{\"s\":\"abba\"}" },
+  { "label": "Window resets mid way", "inputJson": "{\"s\":\"pwwkew\"}" },
+  { "label": "Mixed case distinct",   "inputJson": "{\"s\":\"aAbBcC\"}" },
+  { "label": "Printable punctuation", "inputJson": "{\"s\":\"a b!a b!\"}" },
+  { "label": "Long with late repeat", "inputJson": "{\"s\":\"abcdefghijklmnoa\"}" }
+]

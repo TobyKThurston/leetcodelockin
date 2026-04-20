@@ -1,0 +1,8 @@
+[
+  { "label": "Single five", "inputJson": "{\"bills\":[5]}" },
+  { "label": "Single ten no change", "inputJson": "{\"bills\":[10]}" },
+  { "label": "Three fives then twenty", "inputJson": "{\"bills\":[5,5,5,20]}" },
+  { "label": "Ten before any five", "inputJson": "{\"bills\":[5,10,5,20,5,10]}" },
+  { "label": "Prefer ten-plus-five for twenty", "inputJson": "{\"bills\":[5,5,5,5,10,20,5,10,5,20]}" },
+  { "label": "Two twenties in a row impossible", "inputJson": "{\"bills\":[5,5,5,10,5,20,20,20]}" }
+]

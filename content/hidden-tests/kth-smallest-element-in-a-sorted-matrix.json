@@ -1,0 +1,8 @@
+[
+  { "label": "k=1 returns top-left", "inputJson": "{\"matrix\":[[1,5,9],[10,11,13],[12,13,15]],\"k\":1}" },
+  { "label": "k=n*n returns bottom-right", "inputJson": "{\"matrix\":[[1,5,9],[10,11,13],[12,13,15]],\"k\":9}" },
+  { "label": "Duplicates in matrix", "inputJson": "{\"matrix\":[[1,2],[1,3]],\"k\":2}" },
+  { "label": "Negative values", "inputJson": "{\"matrix\":[[-5,-4],[-3,-2]],\"k\":3}" },
+  { "label": "All same value", "inputJson": "{\"matrix\":[[7,7,7],[7,7,7],[7,7,7]],\"k\":5}" },
+  { "label": "Classic eight pick", "inputJson": "{\"matrix\":[[1,5,9],[10,11,13],[12,13,15]],\"k\":8}" }
+]

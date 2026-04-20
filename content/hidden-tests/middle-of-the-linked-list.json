@@ -1,0 +1,8 @@
+[
+  { "label": "Two nodes", "inputJson": "{\"values\":[1,2]}" },
+  { "label": "Three nodes", "inputJson": "{\"values\":[1,2,3]}" },
+  { "label": "Four nodes", "inputJson": "{\"values\":[10,20,30,40]}" },
+  { "label": "Long odd", "inputJson": "{\"values\":[1,2,3,4,5,6,7,8,9]}" },
+  { "label": "Long even", "inputJson": "{\"values\":[1,2,3,4,5,6,7,8,9,10]}" },
+  { "label": "Negatives even", "inputJson": "{\"values\":[-100,-50,0,50,100,-1]}" }
+]

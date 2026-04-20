@@ -1,0 +1,8 @@
+[
+  { "label": "Bad at one in large n", "inputJson": "{\"n\":2147483647,\"bad\":1}" },
+  { "label": "Bad at last in large n", "inputJson": "{\"n\":2147483647,\"bad\":2147483647}" },
+  { "label": "Bad in middle large", "inputJson": "{\"n\":2147483647,\"bad\":1073741824}" },
+  { "label": "Small range bad first", "inputJson": "{\"n\":2,\"bad\":1}" },
+  { "label": "Small range bad last", "inputJson": "{\"n\":2,\"bad\":2}" },
+  { "label": "Moderate n bad near end", "inputJson": "{\"n\":50,\"bad\":49}" }
+]

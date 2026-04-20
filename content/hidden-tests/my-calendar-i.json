@@ -1,0 +1,8 @@
+[
+  { "label": "Single booking", "inputJson": "{\"ops\":[\"book\"],\"vals\":[[0,1000000000]]}" },
+  { "label": "Exact duplicate rejected", "inputJson": "{\"ops\":[\"book\",\"book\"],\"vals\":[[10,20],[10,20]]}" },
+  { "label": "Nested inside rejected", "inputJson": "{\"ops\":[\"book\",\"book\",\"book\"],\"vals\":[[0,100],[10,20],[50,60]]}" },
+  { "label": "Chain of touching ok", "inputJson": "{\"ops\":[\"book\",\"book\",\"book\",\"book\"],\"vals\":[[0,5],[5,10],[10,15],[15,20]]}" },
+  { "label": "Rejected then accepted", "inputJson": "{\"ops\":[\"book\",\"book\",\"book\",\"book\"],\"vals\":[[10,20],[14,16],[20,25],[5,10]]}" },
+  { "label": "Overlap at single moment", "inputJson": "{\"ops\":[\"book\",\"book\",\"book\"],\"vals\":[[5,15],[15,25],[14,20]]}" }
+]

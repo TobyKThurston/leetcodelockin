@@ -1,0 +1,8 @@
+[
+  { "label": "p longer than s",       "inputJson": "{\"s\":\"abc\",\"p\":\"abcd\"}" },
+  { "label": "Classic overlap",       "inputJson": "{\"s\":\"cbaebabacd\",\"p\":\"abc\"}" },
+  { "label": "Equal length match",    "inputJson": "{\"s\":\"bca\",\"p\":\"abc\"}" },
+  { "label": "Equal length no match", "inputJson": "{\"s\":\"abcd\",\"p\":\"efgh\"}" },
+  { "label": "Repeated letters in p", "inputJson": "{\"s\":\"aaaaaa\",\"p\":\"aa\"}" },
+  { "label": "Match at last index",   "inputJson": "{\"s\":\"zzzzabc\",\"p\":\"cab\"}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "All X", "inputJson": "{\"board\":[[\"X\",\"X\"],[\"X\",\"X\"]]}" },
+  { "label": "All O", "inputJson": "{\"board\":[[\"O\",\"O\"],[\"O\",\"O\"]]}" },
+  { "label": "Single row with interior would be border", "inputJson": "{\"board\":[[\"X\",\"O\",\"O\",\"X\"]]}" },
+  { "label": "Interior O connected to border via chain", "inputJson": "{\"board\":[[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"O\"],[\"X\",\"O\",\"X\",\"X\"],[\"X\",\"X\",\"X\",\"X\"]]}" },
+  { "label": "Two interior pockets one captured one not", "inputJson": "{\"board\":[[\"X\",\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"X\",\"O\",\"X\"],[\"X\",\"X\",\"X\",\"O\",\"X\"],[\"X\",\"X\",\"X\",\"X\",\"O\"]]}" },
+  { "label": "Single column", "inputJson": "{\"board\":[[\"X\"],[\"O\"],[\"O\"],[\"X\"]]}" }
+]

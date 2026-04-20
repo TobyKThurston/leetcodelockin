@@ -1,0 +1,8 @@
+[
+  { "label": "Empty list", "inputJson": "{\"values\":[]}" },
+  { "label": "Two same", "inputJson": "{\"values\":[4,4]}" },
+  { "label": "Two different", "inputJson": "{\"values\":[3,7]}" },
+  { "label": "Long even palindrome", "inputJson": "{\"values\":[1,2,3,4,4,3,2,1]}" },
+  { "label": "Long odd palindrome", "inputJson": "{\"values\":[9,8,7,6,7,8,9]}" },
+  { "label": "Near palindrome fails", "inputJson": "{\"values\":[1,2,3,2,2]}" }
+]

@@ -85,6 +85,30 @@ export default function HeroSection() {
             View Roadmap
           </Link>
         </div>
+
+        {/* Voice mock secondary CTA */}
+        <div
+          className="mt-4 flex items-center justify-center animate-fade-up"
+          style={{ animationDelay: '720ms' }}
+        >
+          <Link
+            href="/sign-in?next=%2Finterview%2Fvoice"
+            className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-200 transition-colors"
+          >
+            <span
+              className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-[0.1em]"
+              style={{
+                color: 'rgba(216,180,254,0.95)',
+                background: 'rgba(168,85,247,0.15)',
+                border: '1px solid rgba(168,85,247,0.3)',
+              }}
+            >
+              New
+            </span>
+            Try a free AI mock interview
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     </section>
   );

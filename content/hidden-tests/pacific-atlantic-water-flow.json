@@ -1,0 +1,8 @@
+[
+  { "label": "Flat grid all equal", "inputJson": "{\"heights\":[[3,3,3],[3,3,3],[3,3,3]]}" },
+  { "label": "Single row", "inputJson": "{\"heights\":[[1,2,3,4,5]]}" },
+  { "label": "Single column", "inputJson": "{\"heights\":[[5],[4],[3],[2],[1]]}" },
+  { "label": "Strictly decreasing from top-left", "inputJson": "{\"heights\":[[9,8,7],[8,7,6],[7,6,5]]}" },
+  { "label": "Peak in middle", "inputJson": "{\"heights\":[[1,1,1],[1,9,1],[1,1,1]]}" },
+  { "label": "Classic example", "inputJson": "{\"heights\":[[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]}" }
+]

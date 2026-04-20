@@ -1,0 +1,8 @@
+[
+  { "label": "Single element hits",   "inputJson": "{\"target\":4,\"nums\":[1,4,4]}" },
+  { "label": "Whole array needed",    "inputJson": "{\"target\":15,\"nums\":[1,2,3,4,5]}" },
+  { "label": "Impossible all ones",   "inputJson": "{\"target\":1000000000,\"nums\":[1,1,1,1,1,1,1,1]}" },
+  { "label": "Exact at end",          "inputJson": "{\"target\":7,\"nums\":[2,3,1,2,4,3]}" },
+  { "label": "Tiny first element",    "inputJson": "{\"target\":1,\"nums\":[1,4,4]}" },
+  { "label": "Large window required", "inputJson": "{\"target\":20,\"nums\":[3,3,3,3,3,3,3,3,3,3]}" }
+]

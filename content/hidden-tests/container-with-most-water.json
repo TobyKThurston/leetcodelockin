@@ -1,0 +1,8 @@
+[
+  { "label": "Strictly increasing",     "inputJson": "{\"height\":[1,2,3,4,5,6,7,8,9]}" },
+  { "label": "Strictly decreasing",     "inputJson": "{\"height\":[9,8,7,6,5,4,3,2,1]}" },
+  { "label": "All zeros",               "inputJson": "{\"height\":[0,0,0,0]}" },
+  { "label": "One tall in middle",      "inputJson": "{\"height\":[1,1,10000,1,1]}" },
+  { "label": "Zero endpoints",          "inputJson": "{\"height\":[0,5,5,5,0]}" },
+  { "label": "Classic LC example",      "inputJson": "{\"height\":[1,8,6,2,5,4,8,3,7]}" }
+]

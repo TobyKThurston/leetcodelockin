@@ -1,0 +1,8 @@
+[
+  { "label": "n = 1", "inputJson": "{\"n\":1}" },
+  { "label": "n = 7 (all three-bit values)", "inputJson": "{\"n\":7}" },
+  { "label": "n = 8 (power of two boundary)", "inputJson": "{\"n\":8}" },
+  { "label": "n = 15 (nibble full)", "inputJson": "{\"n\":15}" },
+  { "label": "n = 16 (next power)", "inputJson": "{\"n\":16}" },
+  { "label": "n = 31", "inputJson": "{\"n\":31}" }
+]

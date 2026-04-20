@@ -1,0 +1,8 @@
+[
+  { "label": "Single word single char",          "inputJson": "{\"words\":[\"a\"]}" },
+  { "label": "Repeated same word",               "inputJson": "{\"words\":[\"z\",\"z\"]}" },
+  { "label": "Prefix violation invalid",         "inputJson": "{\"words\":[\"abcd\",\"abc\"]}" },
+  { "label": "Cycle between two letters",        "inputJson": "{\"words\":[\"ba\",\"ab\"]}" },
+  { "label": "Linear chain of four letters",     "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
+  { "label": "Chain forcing all letters",        "inputJson": "{\"words\":[\"ab\",\"bc\",\"cd\"]}" }
+]

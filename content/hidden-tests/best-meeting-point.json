@@ -1,0 +1,8 @@
+[
+  { "label": "All zeros except corners", "inputJson": "{\"grid\":[[1,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,1]]}" },
+  { "label": "Column of friends", "inputJson": "{\"grid\":[[1],[0],[1],[0],[1]]}" },
+  { "label": "Four corners", "inputJson": "{\"grid\":[[1,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,1]]}" },
+  { "label": "Even count friends", "inputJson": "{\"grid\":[[1,0,1,0,1,0,1]]}" },
+  { "label": "Dense cluster", "inputJson": "{\"grid\":[[1,1,1],[1,1,1],[1,1,1]]}" },
+  { "label": "Diagonal spread", "inputJson": "{\"grid\":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}" }
+]

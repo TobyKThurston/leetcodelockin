@@ -1,0 +1,8 @@
+[
+  { "label": "Same length match",      "inputJson": "{\"s1\":\"abc\",\"s2\":\"bca\"}" },
+  { "label": "Same length no match",   "inputJson": "{\"s1\":\"abc\",\"s2\":\"abd\"}" },
+  { "label": "Single char match",      "inputJson": "{\"s1\":\"a\",\"s2\":\"zzzzzaz\"}" },
+  { "label": "Repeated letters",       "inputJson": "{\"s1\":\"aab\",\"s2\":\"eidboaaoo\"}" },
+  { "label": "Match at very end",      "inputJson": "{\"s1\":\"xyz\",\"s2\":\"aaaaaaaayxz\"}" },
+  { "label": "s1 longer than s2",      "inputJson": "{\"s1\":\"abcdef\",\"s2\":\"abc\"}" }
+]

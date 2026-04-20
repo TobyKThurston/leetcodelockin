@@ -1,0 +1,8 @@
+[
+  { "label": "Single char", "inputJson": "{\"s\":\"z\"}" },
+  { "label": "Two distinct blocks", "inputJson": "{\"s\":\"aabbcc\"}" },
+  { "label": "Full overlap one part", "inputJson": "{\"s\":\"abcabcabc\"}" },
+  { "label": "Long tail single letter", "inputJson": "{\"s\":\"abacdddddd\"}" },
+  { "label": "Alternating letters", "inputJson": "{\"s\":\"abababab\"}" },
+  { "label": "Chained overlaps", "inputJson": "{\"s\":\"eaabbcdceefgghh\"}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "All wildcards", "inputJson": "{\"ops\":[\"addWord\",\"addWord\",\"search\",\"search\"],\"vals\":[[\"cat\"],[\"dog\"],[\"...\"],[\"....\"]]}" },
+  { "label": "Leading wildcard miss", "inputJson": "{\"ops\":[\"addWord\",\"search\",\"search\"],\"vals\":[[\"hello\"],[\".ello\"],[\".ell\"]]}" },
+  { "label": "Trailing wildcard match", "inputJson": "{\"ops\":[\"addWord\",\"addWord\",\"search\",\"search\"],\"vals\":[[\"abc\"],[\"abd\"],[\"ab.\"],[\"a..\"]]}" },
+  { "label": "Wildcard on empty trie", "inputJson": "{\"ops\":[\"search\",\"search\"],\"vals\":[[\"a\"],[\".\"]]}" },
+  { "label": "Word length mismatch", "inputJson": "{\"ops\":[\"addWord\",\"search\",\"search\"],\"vals\":[[\"hi\"],[\"hi.\"],[\"h\"]]}" },
+  { "label": "Same word via wildcards", "inputJson": "{\"ops\":[\"addWord\",\"addWord\",\"search\",\"search\",\"search\"],\"vals\":[[\"abc\"],[\"abcd\"],[\"a.c\"],[\"a.cd\"],[\"....\"]]}" }
+]

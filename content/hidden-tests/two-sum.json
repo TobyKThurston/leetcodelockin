@@ -1,0 +1,8 @@
+[
+  { "label": "Pair at start",       "inputJson": "{\"nums\":[2,7,11,15],\"target\":9}" },
+  { "label": "Pair at end",         "inputJson": "{\"nums\":[1,2,3,4,5,8],\"target\":13}" },
+  { "label": "Negatives sum to zero","inputJson": "{\"nums\":[-3,4,3,90],\"target\":0}" },
+  { "label": "Duplicate values",     "inputJson": "{\"nums\":[3,3],\"target\":6}" },
+  { "label": "Large negative target","inputJson": "{\"nums\":[-1000000000,500,-500,1000000000],\"target\":0}" },
+  { "label": "Mixed signs",          "inputJson": "{\"nums\":[-10,-40,20,30],\"target\":-20}" }
+]

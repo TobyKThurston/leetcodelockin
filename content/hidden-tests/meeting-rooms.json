@@ -1,0 +1,8 @@
+[
+  { "label": "Single meeting", "inputJson": "{\"intervals\":[[0,1000000]]}" },
+  { "label": "Touching endpoints", "inputJson": "{\"intervals\":[[1,4],[4,7],[7,10]]}" },
+  { "label": "Unsorted no conflict", "inputJson": "{\"intervals\":[[7,10],[1,4],[4,7]]}" },
+  { "label": "Identical intervals", "inputJson": "{\"intervals\":[[3,5],[3,5]]}" },
+  { "label": "Nested conflict", "inputJson": "{\"intervals\":[[0,100],[10,20]]}" },
+  { "label": "Last pair overlaps", "inputJson": "{\"intervals\":[[1,2],[3,4],[5,9],[8,10]]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "k equals 1 identity", "inputJson": "{\"values\":[1,2,3,4,5],\"k\":1}" },
+  { "label": "k equals length", "inputJson": "{\"values\":[1,2,3,4,5,6],\"k\":6}" },
+  { "label": "Even length k equals two", "inputJson": "{\"values\":[1,2,3,4,5,6],\"k\":2}" },
+  { "label": "Leftover of two with k three", "inputJson": "{\"values\":[1,2,3,4,5,6,7,8],\"k\":3}" },
+  { "label": "Two groups of four", "inputJson": "{\"values\":[1,2,3,4,5,6,7,8],\"k\":4}" },
+  { "label": "Duplicates groups of three", "inputJson": "{\"values\":[7,7,7,7,7,7,7],\"k\":3}" }
+]

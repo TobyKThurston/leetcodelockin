@@ -1,0 +1,8 @@
+[
+  { "label": "All zeros",             "inputJson": "{\"nums\":[0,0,0,0]}" },
+  { "label": "Single zero",           "inputJson": "{\"nums\":[0]}" },
+  { "label": "Single non-zero",       "inputJson": "{\"nums\":[7]}" },
+  { "label": "Trailing zeros kept",   "inputJson": "{\"nums\":[1,2,3,0,0]}" },
+  { "label": "Negative values",       "inputJson": "{\"nums\":[-1,0,-2,0,-3]}" },
+  { "label": "Int boundaries",        "inputJson": "{\"nums\":[-2147483648,0,2147483647,0,0,1]}" }
+]

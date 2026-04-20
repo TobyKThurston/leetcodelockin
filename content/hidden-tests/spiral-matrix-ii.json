@@ -1,0 +1,7 @@
+[
+  { "label": "n = 4", "inputJson": "{\"n\":4}" },
+  { "label": "n = 5", "inputJson": "{\"n\":5}" },
+  { "label": "n = 6", "inputJson": "{\"n\":6}" },
+  { "label": "n = 10", "inputJson": "{\"n\":10}" },
+  { "label": "n = 20 max", "inputJson": "{\"n\":20}" }
+]

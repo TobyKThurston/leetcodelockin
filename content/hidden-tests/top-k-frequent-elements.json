@@ -1,0 +1,8 @@
+[
+  { "label": "K equals distinct",    "inputJson": "{\"nums\":[1,2,3,4],\"k\":4}" },
+  { "label": "Negatives mix",        "inputJson": "{\"nums\":[-1,-1,-1,2,2,3],\"k\":2}" },
+  { "label": "All same value",       "inputJson": "{\"nums\":[9,9,9,9,9,9],\"k\":1}" },
+  { "label": "Zeros most frequent",  "inputJson": "{\"nums\":[0,0,0,1,1,2,3,3,3,3],\"k\":2}" },
+  { "label": "Boundary values",      "inputJson": "{\"nums\":[10000,-10000,10000,-10000,10000,5],\"k\":2}" },
+  { "label": "Long tail",            "inputJson": "{\"nums\":[1,1,1,1,2,2,2,3,3,4],\"k\":3}" }
+]

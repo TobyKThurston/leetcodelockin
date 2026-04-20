@@ -1,0 +1,8 @@
+[
+  { "label": "No duplicates at all", "inputJson": "{\"s\":\"abcdef\"}" },
+  { "label": "Cascading collapse", "inputJson": "{\"s\":\"abccbaabccba\"}" },
+  { "label": "Full palindrome cancels", "inputJson": "{\"s\":\"abbaabba\"}" },
+  { "label": "Long same-char run odd", "inputJson": "{\"s\":\"aaaaaaa\"}" },
+  { "label": "Long same-char run even", "inputJson": "{\"s\":\"aaaaaaaa\"}" },
+  { "label": "Mixed tail survives", "inputJson": "{\"s\":\"deeedbbcccbdaa\"}" }
+]

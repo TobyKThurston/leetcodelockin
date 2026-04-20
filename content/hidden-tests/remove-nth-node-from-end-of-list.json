@@ -1,0 +1,8 @@
+[
+  { "label": "Remove head three-node", "inputJson": "{\"values\":[1,2,3],\"n\":3}" },
+  { "label": "Remove middle three-node", "inputJson": "{\"values\":[1,2,3],\"n\":2}" },
+  { "label": "Remove tail three-node", "inputJson": "{\"values\":[1,2,3],\"n\":1}" },
+  { "label": "Long list n middle", "inputJson": "{\"values\":[10,20,30,40,50,60,70,80],\"n\":5}" },
+  { "label": "Long list remove first", "inputJson": "{\"values\":[9,8,7,6,5,4,3,2,1],\"n\":9}" },
+  { "label": "Duplicates middle removed", "inputJson": "{\"values\":[5,5,5,5,5],\"n\":3}" }
+]

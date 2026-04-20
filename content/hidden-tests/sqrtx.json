@@ -1,0 +1,8 @@
+[
+  { "label": "Two", "inputJson": "{\"x\":2}" },
+  { "label": "Just below perfect", "inputJson": "{\"x\":15}" },
+  { "label": "Just above perfect", "inputJson": "{\"x\":17}" },
+  { "label": "Max int", "inputJson": "{\"x\":2147483647}" },
+  { "label": "Large perfect square", "inputJson": "{\"x\":2147395600}" },
+  { "label": "Four", "inputJson": "{\"x\":4}" }
+]

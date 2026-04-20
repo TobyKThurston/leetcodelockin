@@ -9,6 +9,7 @@ import {
   dbRowToProblemContent,
   type ProblemContent,
   type ProblemRow,
+  type ProblemTest,
   type SolutionApproach,
 } from '@/lib/problem-types';
 import { ALL_PROBLEMS } from '@/content/problems';
@@ -35,6 +36,28 @@ export async function getProblemBySlug(slug: string): Promise<ProblemContent | n
   const solutions = SOLUTIONS_BY_SLUG.get(slug);
   if (solutions) problem.solutions = solutions;
   return problem;
+}
+
+/**
+ * Server-only fetch of hidden test cases for a problem. The returned array is
+ * exposed to the client *only* through the auth-gated /api/hidden-tests/[slug]
+ * route and never serialized into the /solve/[slug] SSR payload. Falls back to
+ * an empty array if the column is missing or no hidden tests are defined.
+ */
+export async function getProblemHiddenTests(slug: string): Promise<ProblemTest[]> {
+  const supabase = getSupabase();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from('problems')
+    .select('hidden_tests')
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .maybeSingle();
+
+  if (error || !data) return [];
+  const tests = (data as { hidden_tests?: ProblemTest[] }).hidden_tests;
+  return Array.isArray(tests) ? tests : [];
 }
 
 export async function getPublishedSlugs(): Promise<Set<string>> {

@@ -1,0 +1,8 @@
+[
+  { "label": "Left-skewed chain", "inputJson": "{\"root\":[1,2,null,3,null,4,null,5]}" },
+  { "label": "Perfect tree depth 4", "inputJson": "{\"root\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}" },
+  { "label": "Asymmetric deep left", "inputJson": "{\"root\":[1,2,3,4,null,null,null,5,null,6]}" },
+  { "label": "Negative values", "inputJson": "{\"root\":[-10,-20,-30,-40,-50]}" },
+  { "label": "Single right child chain", "inputJson": "{\"root\":[100,null,50,null,25,null,12,null,6]}" },
+  { "label": "Two-node left only", "inputJson": "{\"root\":[0,1]}" }
+]

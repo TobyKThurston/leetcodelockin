@@ -1,0 +1,8 @@
+[
+  { "label": "Single node", "inputJson": "{\"values\":[5]}" },
+  { "label": "No duplicates", "inputJson": "{\"values\":[-3,-1,0,2,4]}" },
+  { "label": "Two same", "inputJson": "{\"values\":[7,7]}" },
+  { "label": "Duplicates only at tail", "inputJson": "{\"values\":[1,2,3,3,3,3]}" },
+  { "label": "Negatives with dups", "inputJson": "{\"values\":[-100,-100,-50,-50,-50,0,0,100]}" },
+  { "label": "Every pair duplicated", "inputJson": "{\"values\":[1,1,2,2,3,3,4,4,5,5]}" }
+]

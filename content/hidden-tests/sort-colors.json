@@ -1,0 +1,8 @@
+[
+  { "label": "Single zero",         "inputJson": "{\"nums\":[0]}" },
+  { "label": "Single two",          "inputJson": "{\"nums\":[2]}" },
+  { "label": "Reverse sorted",      "inputJson": "{\"nums\":[2,2,1,1,0,0]}" },
+  { "label": "Already sorted",      "inputJson": "{\"nums\":[0,0,1,1,2,2]}" },
+  { "label": "No ones",             "inputJson": "{\"nums\":[2,0,2,0,2,0]}" },
+  { "label": "Ones at edges",       "inputJson": "{\"nums\":[1,2,0,2,1,0,0,1]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "k = 1", "inputJson": "{\"n\":5,\"k\":1}" },
+  { "label": "k = n", "inputJson": "{\"n\":5,\"k\":5}" },
+  { "label": "C(5,2)", "inputJson": "{\"n\":5,\"k\":2}" },
+  { "label": "C(6,3)", "inputJson": "{\"n\":6,\"k\":3}" },
+  { "label": "C(2,1)", "inputJson": "{\"n\":2,\"k\":1}" },
+  { "label": "C(6,5)", "inputJson": "{\"n\":6,\"k\":5}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Single zero", "inputJson": "{\"s\":\"0\"}" },
+  { "label": "All ones long", "inputJson": "{\"s\":\"1111111\"}" },
+  { "label": "Trailing zero invalid", "inputJson": "{\"s\":\"100\"}" },
+  { "label": "Valid tens chain", "inputJson": "{\"s\":\"10101010\"}" },
+  { "label": "Mid double-zero", "inputJson": "{\"s\":\"1201234\"}" },
+  { "label": "Boundary 26", "inputJson": "{\"s\":\"2626\"}" }
+]

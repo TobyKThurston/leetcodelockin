@@ -1,0 +1,8 @@
+[
+  { "label": "All negative pick max leaf", "inputJson": "{\"root\":[-3,-2,-1,-4,-5]}" },
+  { "label": "Mixed negatives skip left", "inputJson": "{\"root\":[5,-1,-1,-1,-1]}" },
+  { "label": "Path not through root", "inputJson": "{\"root\":[-10,9,20,null,null,15,7]}" },
+  { "label": "Single positive node", "inputJson": "{\"root\":[1000]}" },
+  { "label": "Left skew positive chain", "inputJson": "{\"root\":[1,2,null,3,null,4,null,5]}" },
+  { "label": "Two negatives path through root", "inputJson": "{\"root\":[-1,-2,-3]}" }
+]

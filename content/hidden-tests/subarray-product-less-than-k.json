@@ -1,0 +1,8 @@
+[
+  { "label": "k equals zero",         "inputJson": "{\"nums\":[1,2,3],\"k\":0}" },
+  { "label": "k equals one",          "inputJson": "{\"nums\":[1,1,1,1],\"k\":1}" },
+  { "label": "Single element below",  "inputJson": "{\"nums\":[10],\"k\":100}" },
+  { "label": "Single element above",  "inputJson": "{\"nums\":[10],\"k\":5}" },
+  { "label": "Large values some pass","inputJson": "{\"nums\":[1000,1,1,1000],\"k\":1001}" },
+  { "label": "Ones and large k",      "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1],\"k\":1000000}" }
+]

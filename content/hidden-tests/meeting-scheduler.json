@@ -1,0 +1,8 @@
+[
+  { "label": "Exact fit", "inputJson": "{\"slots1\":[[10,50]],\"slots2\":[[20,30]],\"duration\":10}" },
+  { "label": "One off by one", "inputJson": "{\"slots1\":[[0,10]],\"slots2\":[[0,10]],\"duration\":11}" },
+  { "label": "First slot too short second fits", "inputJson": "{\"slots1\":[[0,5],[100,200]],\"slots2\":[[1,4],[120,180]],\"duration\":30}" },
+  { "label": "Unsorted input", "inputJson": "{\"slots1\":[[100,200],[0,30]],\"slots2\":[[150,180],[10,20]],\"duration\":5}" },
+  { "label": "No overlap at all", "inputJson": "{\"slots1\":[[0,10],[20,30]],\"slots2\":[[10,20],[30,40]],\"duration\":1}" },
+  { "label": "Large duration barely fits", "inputJson": "{\"slots1\":[[0,1000000]],\"slots2\":[[0,1000000]],\"duration\":1000000}" }
+]

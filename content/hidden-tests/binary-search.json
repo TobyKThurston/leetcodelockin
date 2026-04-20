@@ -1,0 +1,8 @@
+[
+  { "label": "Singleton hit", "inputJson": "{\"nums\":[7],\"target\":7}" },
+  { "label": "Singleton miss", "inputJson": "{\"nums\":[7],\"target\":3}" },
+  { "label": "Target below all", "inputJson": "{\"nums\":[-5,-2,0,3,6,9],\"target\":-9}" },
+  { "label": "Target above all", "inputJson": "{\"nums\":[-5,-2,0,3,6,9],\"target\":100}" },
+  { "label": "Two elements first", "inputJson": "{\"nums\":[-9999,9999],\"target\":-9999}" },
+  { "label": "Negative extreme hit", "inputJson": "{\"nums\":[-9999,-5000,-1,0,1,5000,9999],\"target\":-9999}" }
+]

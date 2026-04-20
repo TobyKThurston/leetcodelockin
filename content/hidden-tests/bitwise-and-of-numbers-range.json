@@ -1,0 +1,8 @@
+[
+  { "label": "Zero at left wipes AND", "inputJson": "{\"left\":0,\"right\":2147483647}" },
+  { "label": "Crosses power-of-two boundary", "inputJson": "{\"left\":7,\"right\":8}" },
+  { "label": "Identical endpoints large", "inputJson": "{\"left\":2147483647,\"right\":2147483647}" },
+  { "label": "Narrow upper range", "inputJson": "{\"left\":2147483640,\"right\":2147483647}" },
+  { "label": "Long common prefix", "inputJson": "{\"left\":1000000000,\"right\":1000000003}" },
+  { "label": "Single element zero", "inputJson": "{\"left\":0,\"right\":0}" }
+]

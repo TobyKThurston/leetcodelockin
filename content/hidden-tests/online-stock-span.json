@@ -1,0 +1,7 @@
+[
+  { "label": "Strictly decreasing", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[100],[90],[80],[70],[60]]}" },
+  { "label": "All equal prices", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\"],\"vals\":[[50],[50],[50],[50]]}" },
+  { "label": "Spike then collapse", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[1],[2],[3],[1],[100]]}" },
+  { "label": "Boundary max price", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\"],\"vals\":[[100000],[1],[100000]]}" },
+  { "label": "Zigzag rising", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[10],[5],[20],[15],[30],[25]]}" }
+]

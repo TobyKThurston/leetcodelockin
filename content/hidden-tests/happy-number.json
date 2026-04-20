@@ -1,0 +1,8 @@
+[
+  { "label": "Seven is happy", "inputJson": "{\"n\":7}" },
+  { "label": "Four enters cycle", "inputJson": "{\"n\":4}" },
+  { "label": "Ten one-step to one", "inputJson": "{\"n\":10}" },
+  { "label": "Max int32 boundary", "inputJson": "{\"n\":2147483647}" },
+  { "label": "Classic unhappy 20", "inputJson": "{\"n\":20}" },
+  { "label": "Power of ten", "inputJson": "{\"n\":1000000000}" }
+]

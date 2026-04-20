@@ -1,0 +1,8 @@
+[
+  { "label": "One mega jump to end", "inputJson": "{\"nums\":[5,1,1,1,1,1]}" },
+  { "label": "Two-element trivial", "inputJson": "{\"nums\":[1,0]}" },
+  { "label": "Exact end hit", "inputJson": "{\"nums\":[2,1,1,1,1]}" },
+  { "label": "Decreasing then boost", "inputJson": "{\"nums\":[3,2,1,0,4,0,0]}" },
+  { "label": "All ones long", "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1,1,1]}" },
+  { "label": "Zigzag optimal choice", "inputJson": "{\"nums\":[2,3,0,1,4]}" }
+]

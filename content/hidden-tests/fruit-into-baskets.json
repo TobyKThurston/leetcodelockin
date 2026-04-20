@@ -1,0 +1,8 @@
+[
+  { "label": "Two types",            "inputJson": "{\"fruits\":[1,2,1,2,1,2,1]}" },
+  { "label": "Three types same run", "inputJson": "{\"fruits\":[0,1,2,2]}" },
+  { "label": "Long then switch",     "inputJson": "{\"fruits\":[1,1,1,1,1,2,2,2,2,3]}" },
+  { "label": "All distinct",         "inputJson": "{\"fruits\":[0,1,2,3,4,5]}" },
+  { "label": "Window at end",        "inputJson": "{\"fruits\":[3,3,3,1,2,1,1,2,3,3,4]}" },
+  { "label": "Single tree",          "inputJson": "{\"fruits\":[0]}" }
+]

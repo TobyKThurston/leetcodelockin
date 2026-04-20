@@ -1,0 +1,8 @@
+[
+  { "label": "Single zero hit", "inputJson": "{\"nums\":[0],\"target\":0}" },
+  { "label": "All zeros target zero", "inputJson": "{\"nums\":[0,0,0,0],\"target\":0}" },
+  { "label": "Negative target", "inputJson": "{\"nums\":[1,1,1,1,1],\"target\":-3}" },
+  { "label": "Target exceeds sum", "inputJson": "{\"nums\":[1,2,3],\"target\":100}" },
+  { "label": "Single impossible", "inputJson": "{\"nums\":[5],\"target\":3}" },
+  { "label": "Mixed values", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":3}" }
+]

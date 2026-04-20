@@ -1,0 +1,8 @@
+[
+  { "label": "Identical arrays",       "inputJson": "{\"nums1\":[1,2,3,4],\"nums2\":[1,2,3,4]}" },
+  { "label": "One element shared",     "inputJson": "{\"nums1\":[1000],\"nums2\":[1000]}" },
+  { "label": "Disjoint singletons",    "inputJson": "{\"nums1\":[0],\"nums2\":[1]}" },
+  { "label": "Many dups both sides",   "inputJson": "{\"nums1\":[4,4,4,5,5,6],\"nums2\":[5,5,6,6,7,7]}" },
+  { "label": "Subset overlap",         "inputJson": "{\"nums1\":[1,2,3,4,5],\"nums2\":[2,4]}" },
+  { "label": "Zero boundary",          "inputJson": "{\"nums1\":[0,1000,500],\"nums2\":[1000,0,0]}" }
+]

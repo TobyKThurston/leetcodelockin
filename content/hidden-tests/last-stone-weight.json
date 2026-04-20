@@ -1,0 +1,8 @@
+[
+  { "label": "All same weight even count", "inputJson": "{\"stones\":[4,4,4,4]}" },
+  { "label": "All same weight odd count", "inputJson": "{\"stones\":[7,7,7]}" },
+  { "label": "Strictly descending", "inputJson": "{\"stones\":[10,9,8,7,6,5,4,3,2,1]}" },
+  { "label": "One big, many small", "inputJson": "{\"stones\":[1000,1,1,1,1,1]}" },
+  { "label": "Reduces to one", "inputJson": "{\"stones\":[3,7,2]}" },
+  { "label": "Pair of ones", "inputJson": "{\"stones\":[1,1]}" }
+]

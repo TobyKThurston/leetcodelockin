@@ -1,0 +1,8 @@
+[
+  { "label": "Single character",        "inputJson": "{\"s\":\"a\"}" },
+  { "label": "Single non-alnum",        "inputJson": "{\"s\":\"!\"}" },
+  { "label": "Mixed case alnum",        "inputJson": "{\"s\":\"RaceCar\"}" },
+  { "label": "Digits only palindrome",  "inputJson": "{\"s\":\"12 3:2 1\"}" },
+  { "label": "Alpha vs digit mismatch", "inputJson": "{\"s\":\"0P\"}" },
+  { "label": "Letters then digits",     "inputJson": "{\"s\":\"ab1ba\"}" }
+]

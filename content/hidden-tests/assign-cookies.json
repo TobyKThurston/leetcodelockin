@@ -1,0 +1,8 @@
+[
+  { "label": "No cookies at all", "inputJson": "{\"g\":[5,6,7],\"s\":[]}" },
+  { "label": "One child many cookies", "inputJson": "{\"g\":[3],\"s\":[1,2,4,5]}" },
+  { "label": "All children exactly matched", "inputJson": "{\"g\":[1,2,3],\"s\":[3,2,1]}" },
+  { "label": "All cookies too small", "inputJson": "{\"g\":[10,11,12],\"s\":[1,2,3]}" },
+  { "label": "Large values", "inputJson": "{\"g\":[2147483647,1],\"s\":[2147483647]}" },
+  { "label": "Duplicates unordered", "inputJson": "{\"g\":[2,2,2,2],\"s\":[1,2,1,2]}" }
+]

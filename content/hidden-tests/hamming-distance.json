@@ -1,0 +1,8 @@
+[
+  { "label": "Both zero", "inputJson": "{\"x\":0,\"y\":0}" },
+  { "label": "Zero vs max int", "inputJson": "{\"x\":0,\"y\":2147483647}" },
+  { "label": "Max int vs max int", "inputJson": "{\"x\":2147483647,\"y\":2147483647}" },
+  { "label": "Alternating patterns", "inputJson": "{\"x\":1431655765,\"y\":2863311530}" },
+  { "label": "One-bit differ at MSB", "inputJson": "{\"x\":0,\"y\":2147483648}" },
+  { "label": "Powers of two apart", "inputJson": "{\"x\":1024,\"y\":1}" }
+]

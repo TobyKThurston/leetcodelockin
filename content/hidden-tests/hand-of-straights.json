@@ -1,0 +1,8 @@
+[
+  { "label": "GroupSize 1 trivial", "inputJson": "{\"hand\":[1,5,3,2,9],\"groupSize\":1}" },
+  { "label": "Not divisible", "inputJson": "{\"hand\":[1,2,3,4,5,6,7],\"groupSize\":2}" },
+  { "label": "Duplicates blocking", "inputJson": "{\"hand\":[1,1,2,2,3,3],\"groupSize\":3}" },
+  { "label": "Full hand one group", "inputJson": "{\"hand\":[8,7,5,6,4],\"groupSize\":5}" },
+  { "label": "Large gap fails", "inputJson": "{\"hand\":[1,2,3,10,11,12],\"groupSize\":3}" },
+  { "label": "Zero included", "inputJson": "{\"hand\":[0,1,2,3,4,5],\"groupSize\":3}" }
+]

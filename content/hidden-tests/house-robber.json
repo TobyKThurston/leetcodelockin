@@ -1,0 +1,8 @@
+[
+  { "label": "Two houses pick max", "inputJson": "{\"nums\":[100,1]}" },
+  { "label": "Two houses pick second", "inputJson": "{\"nums\":[1,100]}" },
+  { "label": "All zeros", "inputJson": "{\"nums\":[0,0,0,0,0]}" },
+  { "label": "Alternating big small", "inputJson": "{\"nums\":[400,1,400,1,400,1,400]}" },
+  { "label": "All equal", "inputJson": "{\"nums\":[5,5,5,5,5,5]}" },
+  { "label": "Tricky middle skip", "inputJson": "{\"nums\":[2,1,1,2]}" }
+]

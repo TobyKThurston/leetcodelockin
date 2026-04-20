@@ -1,0 +1,8 @@
+[
+  { "label": "All match", "inputJson": "{\"values\":[6,6,6,6],\"val\":6}" },
+  { "label": "Tail matches only", "inputJson": "{\"values\":[1,2,3,4,4],\"val\":4}" },
+  { "label": "Middle stretch matches", "inputJson": "{\"values\":[1,2,2,2,3],\"val\":2}" },
+  { "label": "Single no match", "inputJson": "{\"values\":[7],\"val\":3}" },
+  { "label": "Negative target", "inputJson": "{\"values\":[-50,0,-50,50,-50],\"val\":-50}" },
+  { "label": "Alternating match", "inputJson": "{\"values\":[1,2,1,2,1,2],\"val\":1}" }
+]

@@ -1,0 +1,7 @@
+[
+  { "label": "Already palindrome",   "inputJson": "{\"s\":[\"r\",\"a\",\"c\",\"e\",\"c\",\"a\",\"r\"]}" },
+  { "label": "All same character",   "inputJson": "{\"s\":[\"a\",\"a\",\"a\",\"a\"]}" },
+  { "label": "Digits and symbols",   "inputJson": "{\"s\":[\"1\",\"2\",\"!\",\"@\",\"3\"]}" },
+  { "label": "Even length",          "inputJson": "{\"s\":[\"A\",\"B\",\"C\",\"D\"]}" },
+  { "label": "Whitespace included",  "inputJson": "{\"s\":[\"h\",\" \",\"i\",\" \",\"!\"]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Max flips needed (both set, target zero)", "inputJson": "{\"a\":7,\"b\":7,\"c\":8}" },
+  { "label": "Large values", "inputJson": "{\"a\":1000000000,\"b\":1,\"c\":999999999}" },
+  { "label": "All same", "inputJson": "{\"a\":5,\"b\":5,\"c\":5}" },
+  { "label": "a equals c, b is subset", "inputJson": "{\"a\":31,\"b\":15,\"c\":31}" },
+  { "label": "Target has extra high bit", "inputJson": "{\"a\":1,\"b\":2,\"c\":7}" },
+  { "label": "Both inputs equal target disjoint bits", "inputJson": "{\"a\":8,\"b\":8,\"c\":1}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Both zero", "inputJson": "{\"num1\":\"0\",\"num2\":\"0\"}" },
+  { "label": "Identity by one", "inputJson": "{\"num1\":\"1\",\"num2\":\"999999\"}" },
+  { "label": "Powers of ten", "inputJson": "{\"num1\":\"1000\",\"num2\":\"1000\"}" },
+  { "label": "Nines product cascade", "inputJson": "{\"num1\":\"9999\",\"num2\":\"9999\"}" },
+  { "label": "Asymmetric lengths", "inputJson": "{\"num1\":\"123456789\",\"num2\":\"9\"}" },
+  { "label": "Long operands", "inputJson": "{\"num1\":\"498828660196\",\"num2\":\"840477629533\"}" }
+]

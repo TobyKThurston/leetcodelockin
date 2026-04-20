@@ -1,0 +1,8 @@
+[
+  { "label": "Four letters digit", "inputJson": "{\"digits\":\"7\"}" },
+  { "label": "Nine digit", "inputJson": "{\"digits\":\"9\"}" },
+  { "label": "Three digits", "inputJson": "{\"digits\":\"234\"}" },
+  { "label": "Two four-letter", "inputJson": "{\"digits\":\"79\"}" },
+  { "label": "Repeat digit", "inputJson": "{\"digits\":\"22\"}" },
+  { "label": "Four digits", "inputJson": "{\"digits\":\"2345\"}" }
+]

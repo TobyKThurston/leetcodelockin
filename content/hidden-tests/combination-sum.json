@@ -1,0 +1,8 @@
+[
+  { "label": "Target is candidate", "inputJson": "{\"candidates\":[2,3,5],\"target\":5}" },
+  { "label": "Single way", "inputJson": "{\"candidates\":[7],\"target\":7}" },
+  { "label": "Target less than min", "inputJson": "{\"candidates\":[5,6,7],\"target\":3}" },
+  { "label": "Unsorted candidates", "inputJson": "{\"candidates\":[8,2,4],\"target\":8}" },
+  { "label": "Target 1", "inputJson": "{\"candidates\":[1,2,3],\"target\":1}" },
+  { "label": "Small mix", "inputJson": "{\"candidates\":[2,3,6,7],\"target\":7}" }
+]

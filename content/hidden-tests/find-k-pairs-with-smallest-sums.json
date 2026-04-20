@@ -1,0 +1,8 @@
+[
+  { "label": "k exceeds product", "inputJson": "{\"nums1\":[1,2],\"nums2\":[3],\"k\":10}" },
+  { "label": "k=1 smallest", "inputJson": "{\"nums1\":[1,1,2],\"nums2\":[1,2,3],\"k\":1}" },
+  { "label": "Negatives", "inputJson": "{\"nums1\":[-10,-4,0,7],\"nums2\":[-5,0,3],\"k\":4}" },
+  { "label": "Duplicates same sum", "inputJson": "{\"nums1\":[1,1,2],\"nums2\":[1,2,3],\"k\":5}" },
+  { "label": "Single in nums1", "inputJson": "{\"nums1\":[5],\"nums2\":[1,2,3,4,5],\"k\":3}" },
+  { "label": "All equal values", "inputJson": "{\"nums1\":[2,2,2],\"nums2\":[2,2],\"k\":4}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "All same anagram",     "inputJson": "{\"strs\":[\"abc\",\"bca\",\"cab\",\"acb\",\"bac\",\"cba\"]}" },
+  { "label": "All distinct groups",  "inputJson": "{\"strs\":[\"a\",\"b\",\"c\",\"d\"]}" },
+  { "label": "Mixed with empty",     "inputJson": "{\"strs\":[\"\",\"a\",\"\",\"b\",\"ab\",\"ba\"]}" },
+  { "label": "Same letter repeats",  "inputJson": "{\"strs\":[\"aa\",\"aaa\",\"a\",\"aa\",\"aaaa\"]}" },
+  { "label": "Identical duplicates", "inputJson": "{\"strs\":[\"foo\",\"foo\",\"foo\"]}" },
+  { "label": "Varied lengths",       "inputJson": "{\"strs\":[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Single char",          "inputJson": "{\"s\":\"A\",\"k\":0}" },
+  { "label": "k covers whole string","inputJson": "{\"s\":\"ABCDE\",\"k\":5}" },
+  { "label": "Alternating two",      "inputJson": "{\"s\":\"ABABABAB\",\"k\":2}" },
+  { "label": "Dense late cluster",   "inputJson": "{\"s\":\"AABBBBCD\",\"k\":1}" },
+  { "label": "All distinct no swaps","inputJson": "{\"s\":\"ABCDEFG\",\"k\":0}" },
+  { "label": "Mostly same with gap", "inputJson": "{\"s\":\"AAAABAAAA\",\"k\":0}" }
+]

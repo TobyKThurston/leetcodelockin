@@ -1,0 +1,8 @@
+[
+  { "label": "Entire grid is one island", "inputJson": "{\"grid\":[[1,1,1],[1,1,1],[1,1,1]]}" },
+  { "label": "Thin row island", "inputJson": "{\"grid\":[[1,1,0,1,1,1]]}" },
+  { "label": "Thin column with gap", "inputJson": "{\"grid\":[[1],[1],[0],[1],[1],[1]]}" },
+  { "label": "Two equal-size islands", "inputJson": "{\"grid\":[[1,1,0,1,1],[1,1,0,1,1]]}" },
+  { "label": "Diagonal disconnected ones", "inputJson": "{\"grid\":[[1,0,1],[0,1,0],[1,0,1]]}" },
+  { "label": "L-shaped island among smalls", "inputJson": "{\"grid\":[[1,0,0,1],[1,0,0,0],[1,1,1,0],[0,0,1,0]]}" }
+]

@@ -1,0 +1,7 @@
+[
+  { "label": "n = 2 (base)", "inputJson": "{\"n\":2}" },
+  { "label": "n = 3", "inputJson": "{\"n\":3}" },
+  { "label": "n = 20", "inputJson": "{\"n\":20}" },
+  { "label": "n = 45 (upper bound)", "inputJson": "{\"n\":45}" },
+  { "label": "n = 7 (odd mid)", "inputJson": "{\"n\":7}" }
+]

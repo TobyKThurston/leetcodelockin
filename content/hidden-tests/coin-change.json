@@ -1,0 +1,8 @@
+[
+  { "label": "Amount zero, any coins", "inputJson": "{\"coins\":[3,7,11],\"amount\":0}" },
+  { "label": "Single coin exact", "inputJson": "{\"coins\":[7],\"amount\":49}" },
+  { "label": "Single coin impossible", "inputJson": "{\"coins\":[5],\"amount\":7}" },
+  { "label": "Greedy trap", "inputJson": "{\"coins\":[1,3,4],\"amount\":6}" },
+  { "label": "Large coin larger than amount", "inputJson": "{\"coins\":[186,419,83,408],\"amount\":6249}" },
+  { "label": "All coins exceed amount", "inputJson": "{\"coins\":[10,20,30],\"amount\":5}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "Days equal length", "inputJson": "{\"weights\":[1,2,3,4,5],\"days\":5}" },
+  { "label": "All same weight many days", "inputJson": "{\"weights\":[5,5,5,5,5,5,5,5],\"days\":4}" },
+  { "label": "One day all sum", "inputJson": "{\"weights\":[10,20,30,40,50],\"days\":1}" },
+  { "label": "Max weight forces capacity", "inputJson": "{\"weights\":[1,2,3,1,1,500],\"days\":3}" },
+  { "label": "Ten days classic", "inputJson": "{\"weights\":[1,2,3,4,5,6,7,8,9,10],\"days\":5}" },
+  { "label": "Single package", "inputJson": "{\"weights\":[7],\"days\":1}" }
+]

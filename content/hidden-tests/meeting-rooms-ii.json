@@ -1,0 +1,8 @@
+[
+  { "label": "All identical", "inputJson": "{\"intervals\":[[2,5],[2,5],[2,5],[2,5]]}" },
+  { "label": "Chain touching endpoints", "inputJson": "{\"intervals\":[[1,3],[3,5],[5,7],[7,9]]}" },
+  { "label": "Fully nested", "inputJson": "{\"intervals\":[[0,30],[5,25],[10,20],[12,18]]}" },
+  { "label": "Two disjoint clusters", "inputJson": "{\"intervals\":[[0,10],[1,9],[20,30],[21,29],[22,28]]}" },
+  { "label": "Unsorted peak in middle", "inputJson": "{\"intervals\":[[15,20],[0,30],[5,10]]}" },
+  { "label": "Large gap then overlap", "inputJson": "{\"intervals\":[[0,1],[1000000,1000000],[999999,1000000],[999998,999999]]}" }
+]

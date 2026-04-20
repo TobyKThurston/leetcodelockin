@@ -1,0 +1,8 @@
+[
+  { "label": "Symmetric deeper", "inputJson": "{\"root\":[1,2,2,3,4,4,3,5,6,7,8,8,7,6,5]}" },
+  { "label": "Values symmetric structure not", "inputJson": "{\"root\":[1,2,2,3,null,null,3]}" },
+  { "label": "Structure symmetric values not", "inputJson": "{\"root\":[1,2,2,3,4,4,5]}" },
+  { "label": "Right-only child", "inputJson": "{\"root\":[1,null,2]}" },
+  { "label": "Left-only child", "inputJson": "{\"root\":[1,2]}" },
+  { "label": "Negative values symmetric", "inputJson": "{\"root\":[-1,-2,-2,-3,-4,-4,-3]}" }
+]

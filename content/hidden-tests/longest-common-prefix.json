@@ -1,0 +1,8 @@
+[
+  { "label": "One empty string", "inputJson": "{\"strs\":[\"abc\",\"\",\"abcd\"]}" },
+  { "label": "Two identical words", "inputJson": "{\"strs\":[\"flower\",\"flower\"]}" },
+  { "label": "Full word is prefix", "inputJson": "{\"strs\":[\"interspecies\",\"interstellar\",\"interstate\"]}" },
+  { "label": "Single-char mismatch first", "inputJson": "{\"strs\":[\"a\",\"b\",\"c\"]}" },
+  { "label": "Prefix equals shortest", "inputJson": "{\"strs\":[\"abc\",\"abcdef\",\"abcxyz\"]}" },
+  { "label": "All single chars same", "inputJson": "{\"strs\":[\"z\",\"z\",\"z\",\"z\"]}" }
+]

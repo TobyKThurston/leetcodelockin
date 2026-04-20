@@ -1,0 +1,8 @@
+[
+  { "label": "All ones", "inputJson": "{\"candidates\":[1,1,1,1],\"target\":2}" },
+  { "label": "Exact single", "inputJson": "{\"candidates\":[5],\"target\":5}" },
+  { "label": "Impossible target", "inputJson": "{\"candidates\":[2,4,6],\"target\":3}" },
+  { "label": "Distinct values", "inputJson": "{\"candidates\":[1,2,3,4],\"target\":5}" },
+  { "label": "Heavy dups", "inputJson": "{\"candidates\":[3,3,3,3,3],\"target\":9}" },
+  { "label": "Two answers with dup", "inputJson": "{\"candidates\":[10,1,2,7,6,1,5],\"target\":8}" }
+]

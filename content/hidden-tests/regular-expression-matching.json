@@ -1,0 +1,8 @@
+[
+  { "label": "Dot single", "inputJson": "{\"s\":\"a\",\"p\":\".\"}" },
+  { "label": "Literal mismatch", "inputJson": "{\"s\":\"ab\",\"p\":\"a\"}" },
+  { "label": "Only star zero match", "inputJson": "{\"s\":\"aab\",\"p\":\"c*a*b\"}" },
+  { "label": "Dot star literal", "inputJson": "{\"s\":\"aab\",\"p\":\"a.b\"}" },
+  { "label": "Star consumes trailing", "inputJson": "{\"s\":\"aaa\",\"p\":\"ab*a*c*a\"}" },
+  { "label": "Unmatched extra", "inputJson": "{\"s\":\"abc\",\"p\":\"a.c.\"}" }
+]

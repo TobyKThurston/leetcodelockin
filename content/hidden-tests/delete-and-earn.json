@@ -1,0 +1,8 @@
+[
+  { "label": "All same value", "inputJson": "{\"nums\":[7,7,7,7]}" },
+  { "label": "Consecutive run", "inputJson": "{\"nums\":[1,2,3,4,5,6]}" },
+  { "label": "Gap between clusters", "inputJson": "{\"nums\":[2,2,2,8,8,8]}" },
+  { "label": "Ones only", "inputJson": "{\"nums\":[1,1,1,1,1]}" },
+  { "label": "Duplicates with neighbors", "inputJson": "{\"nums\":[3,1,3,3,1,2]}" },
+  { "label": "Two disjoint spikes", "inputJson": "{\"nums\":[10,10,3,3,3,1]}" }
+]

@@ -1,0 +1,8 @@
+[
+  { "label": "n = 2", "inputJson": "{\"n\":2}" },
+  { "label": "n = 7 (Lagrange 4)", "inputJson": "{\"n\":7}" },
+  { "label": "Perfect square 100", "inputJson": "{\"n\":100}" },
+  { "label": "n = 48", "inputJson": "{\"n\":48}" },
+  { "label": "n = 23", "inputJson": "{\"n\":23}" },
+  { "label": "n = 9999", "inputJson": "{\"n\":9999}" }
+]

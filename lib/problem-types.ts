@@ -46,6 +46,9 @@ export interface ProblemContent {
 }
 
 // Raw snake_case row shape returned by Supabase.
+// Server-only fields (like `hidden_tests`) must never be copied into
+// ProblemContent by `dbRowToProblemContent` — the ProblemContent object is
+// serialized into the SSR payload for /solve/[slug] and ships to the client.
 export interface ProblemRow {
   slug: string;
   lc_number: number;
@@ -60,6 +63,7 @@ export interface ProblemRow {
   method_name: string;
   arg_keys: string[];
   default_tests: ProblemTest[];
+  hidden_tests?: ProblemTest[];
   result_compare: ResultCompare;
   is_published: boolean;
 }

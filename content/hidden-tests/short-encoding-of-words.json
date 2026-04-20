@@ -1,0 +1,8 @@
+[
+  { "label": "One word suffix of other", "inputJson": "{\"words\":[\"time\",\"me\",\"bell\"]}" },
+  { "label": "All identical words", "inputJson": "{\"words\":[\"abc\",\"abc\",\"abc\"]}" },
+  { "label": "No shared suffixes", "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
+  { "label": "Full overlap chain", "inputJson": "{\"words\":[\"a\",\"ba\",\"cba\",\"dcba\"]}" },
+  { "label": "Single 7-char word", "inputJson": "{\"words\":[\"abcdefg\"]}" },
+  { "label": "Shared prefix not suffix", "inputJson": "{\"words\":[\"abc\",\"abd\",\"abe\"]}" }
+]

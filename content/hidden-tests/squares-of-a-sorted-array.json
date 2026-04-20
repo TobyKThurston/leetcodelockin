@@ -1,0 +1,8 @@
+[
+  { "label": "Single element zero",     "inputJson": "{\"nums\":[0]}" },
+  { "label": "Single negative",         "inputJson": "{\"nums\":[-5]}" },
+  { "label": "All negative",            "inputJson": "{\"nums\":[-9,-7,-4,-2]}" },
+  { "label": "All zeros",               "inputJson": "{\"nums\":[0,0,0,0]}" },
+  { "label": "Duplicates across zero",  "inputJson": "{\"nums\":[-3,-3,-2,2,3,3]}" },
+  { "label": "Extreme boundary",        "inputJson": "{\"nums\":[-10000,-1,0,1,10000]}" }
+]

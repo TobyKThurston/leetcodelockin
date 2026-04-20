@@ -1,0 +1,8 @@
+[
+  { "label": "Both empty", "inputJson": "{\"word1\":\"\",\"word2\":\"\"}" },
+  { "label": "Empty right", "inputJson": "{\"word1\":\"hello\",\"word2\":\"\"}" },
+  { "label": "Single char same", "inputJson": "{\"word1\":\"a\",\"word2\":\"a\"}" },
+  { "label": "Single char replace", "inputJson": "{\"word1\":\"a\",\"word2\":\"b\"}" },
+  { "label": "Classic intention", "inputJson": "{\"word1\":\"intention\",\"word2\":\"execution\"}" },
+  { "label": "Complete disjoint", "inputJson": "{\"word1\":\"abcd\",\"word2\":\"wxyz\"}" }
+]

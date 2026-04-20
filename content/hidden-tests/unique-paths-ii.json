@@ -1,0 +1,8 @@
+[
+  { "label": "End blocked", "inputJson": "{\"obstacleGrid\":[[0,0],[0,1]]}" },
+  { "label": "Single row clear", "inputJson": "{\"obstacleGrid\":[[0,0,0,0,0]]}" },
+  { "label": "Single column blocked", "inputJson": "{\"obstacleGrid\":[[0],[0],[1],[0]]}" },
+  { "label": "Full row wall", "inputJson": "{\"obstacleGrid\":[[0,0,0],[1,1,1],[0,0,0]]}" },
+  { "label": "Diagonal obstacles", "inputJson": "{\"obstacleGrid\":[[0,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,0]]}" },
+  { "label": "Only one path", "inputJson": "{\"obstacleGrid\":[[0,1,0],[0,1,0],[0,0,0]]}" }
+]

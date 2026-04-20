@@ -1,0 +1,8 @@
+[
+  { "label": "Strictly increasing", "inputJson": "{\"heights\":[1,2,3,4,5]}" },
+  { "label": "Strictly decreasing", "inputJson": "{\"heights\":[5,4,3,2,1]}" },
+  { "label": "All zeros", "inputJson": "{\"heights\":[0,0,0,0]}" },
+  { "label": "Valley between peaks", "inputJson": "{\"heights\":[6,7,0,7,6]}" },
+  { "label": "Classic tall pair", "inputJson": "{\"heights\":[2,1,5,6,2,3]}" },
+  { "label": "Single tall bar", "inputJson": "{\"heights\":[0,10000,0]}" }
+]

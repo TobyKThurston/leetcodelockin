@@ -1,0 +1,8 @@
+[
+  { "label": "Equal values not strict", "inputJson": "{\"root\":[2,2,2]}" },
+  { "label": "Left descendant violates root bound", "inputJson": "{\"root\":[10,5,15,null,null,6,20]}" },
+  { "label": "Deep valid BST", "inputJson": "{\"root\":[8,4,12,2,6,10,14,1,3,5,7,9,11,13,15]}" },
+  { "label": "Right-skewed sorted valid", "inputJson": "{\"root\":[1,null,2,null,3,null,4,null,5]}" },
+  { "label": "Left-skewed descending valid", "inputJson": "{\"root\":[5,4,null,3,null,2,null,1]}" },
+  { "label": "Large negative and positive mix", "inputJson": "{\"root\":[0,-2147483648,2147483647]}" }
+]

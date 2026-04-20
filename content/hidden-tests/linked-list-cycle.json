@@ -1,0 +1,8 @@
+[
+  { "label": "Single no cycle", "inputJson": "{\"values\":[1],\"pos\":-1}" },
+  { "label": "Single self-cycle", "inputJson": "{\"values\":[1],\"pos\":0}" },
+  { "label": "Tail cycles to itself", "inputJson": "{\"values\":[1,2,3,4,5],\"pos\":4}" },
+  { "label": "Cycle at head long list", "inputJson": "{\"values\":[10,20,30,40,50,60],\"pos\":0}" },
+  { "label": "No cycle even length", "inputJson": "{\"values\":[1,2,3,4,5,6],\"pos\":-1}" },
+  { "label": "Cycle mid duplicates", "inputJson": "{\"values\":[7,7,7,7,7],\"pos\":2}" }
+]

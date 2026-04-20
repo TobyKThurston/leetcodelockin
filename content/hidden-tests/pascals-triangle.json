@@ -1,0 +1,7 @@
+[
+  { "label": "Two rows", "inputJson": "{\"numRows\":2}" },
+  { "label": "Four rows", "inputJson": "{\"numRows\":4}" },
+  { "label": "Seven rows", "inputJson": "{\"numRows\":7}" },
+  { "label": "Ten rows", "inputJson": "{\"numRows\":10}" },
+  { "label": "Upper bound 30", "inputJson": "{\"numRows\":30}" }
+]

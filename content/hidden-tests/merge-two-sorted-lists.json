@@ -1,0 +1,8 @@
+[
+  { "label": "Both single", "inputJson": "{\"list1\":[1],\"list2\":[2]}" },
+  { "label": "All of list1 first", "inputJson": "{\"list1\":[-5,-3,-1],\"list2\":[0,2,4]}" },
+  { "label": "All of list2 first", "inputJson": "{\"list1\":[10,20,30],\"list2\":[1,2,3]}" },
+  { "label": "Duplicates across both", "inputJson": "{\"list1\":[1,1,2,3],\"list2\":[1,2,2,4]}" },
+  { "label": "List1 empty big list2", "inputJson": "{\"list1\":[],\"list2\":[-100,-50,0,50,100]}" },
+  { "label": "Negative boundary", "inputJson": "{\"list1\":[-100,-100],\"list2\":[-100,100]}" }
+]
