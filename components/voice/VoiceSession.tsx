@@ -231,6 +231,17 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     }
   }, []);
 
+  // Auto-trigger the browser permission prompt as soon as the intro phase
+  // mounts. If the user has previously denied, the browser silently rejects
+  // without re-prompting — the denied-state UI (with "how to unblock" steps)
+  // handles that path. Fresh visitors get the popup without having to click
+  // the button first.
+  useEffect(() => {
+    if (phase !== 'intro') return;
+    if (micState !== 'unrequested') return;
+    void initMic();
+  }, [phase, micState, initMic]);
+
   // ─── Start session ─────────────────────────────────────────────────────────
 
   const beginSession = useCallback(async () => {
@@ -913,7 +924,29 @@ function IntroPhase({
             )}
           </div>
 
-          {error && (
+          {micState === 'denied' ? (
+            <div
+              className="rounded-lg p-4 space-y-2"
+              style={{
+                ...SG,
+                background: 'rgba(239,68,68,0.06)',
+                border: '1px solid rgba(239,68,68,0.2)',
+              }}
+            >
+              <div className="flex items-center gap-2 text-[13px] font-semibold" style={{ color: '#fca5a5' }}>
+                <AlertCircle size={14} className="shrink-0" />
+                Microphone access is blocked
+              </div>
+              <p className="text-[12px] text-slate-400 leading-relaxed">
+                Your browser is blocking the mic for this site. To unblock:
+              </p>
+              <ol className="text-[12px] text-slate-300 space-y-1 pl-4 list-decimal leading-relaxed">
+                <li>Click the lock (or mic-off) icon next to this page&apos;s URL.</li>
+                <li>Set <span style={MONO}>Microphone</span> to <span className="font-semibold text-white">Allow</span>.</li>
+                <li>Hit <span className="font-semibold text-white">Retry microphone access</span> above.</li>
+              </ol>
+            </div>
+          ) : error ? (
             <div
               className="flex items-start gap-2 rounded-lg p-3 text-[12px]"
               style={{
@@ -926,7 +959,7 @@ function IntroPhase({
               <AlertCircle size={14} className="mt-0.5 shrink-0" />
               <span>{error}</span>
             </div>
-          )}
+          ) : null}
 
           <button
             onClick={onStart}
