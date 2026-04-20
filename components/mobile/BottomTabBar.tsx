@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, Layers, Zap } from 'lucide-react';
+import { Home, BookOpen, Layers, Zap, Monitor } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const TABS = [
@@ -10,6 +10,7 @@ const TABS = [
   { href: '/m/learn',   label: 'Learn',   Icon: BookOpen },
   { href: '/m/cards',   label: 'Cards',   Icon: Layers },
   { href: '/m/upgrade', label: 'Upgrade', Icon: Zap },
+  { href: '/m/desktop', label: 'Desktop', Icon: Monitor },
 ] as const;
 
 function isActive(pathname: string, href: string) {
@@ -25,7 +26,7 @@ export default function BottomTabBar() {
       className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur bg-[#070c17]/90 border-t border-white/[0.06]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <ul className="grid grid-cols-4 h-16">
+      <ul className="grid grid-cols-5 h-16">
         {TABS.map(({ href, label, Icon }) => {
           const active = isActive(pathname, href);
           const isUpgrade = href === '/m/upgrade';

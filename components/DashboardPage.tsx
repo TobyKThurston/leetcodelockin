@@ -2863,6 +2863,45 @@ export function ProgressView({
   );
 }
 
+// ─── Mobile gate — phones get bounced to the dedicated /m site ────────────────
+
+function MobileGate() {
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      router.replace('/m');
+    }
+  }, [router]);
+  return (
+    <div
+      className="fixed inset-0 z-[100] md:hidden flex flex-col items-center justify-center px-6 text-center"
+      style={{ background: C.bg }}
+    >
+      <div
+        className="w-full max-w-sm rounded-xl border p-6"
+        style={{ background: C.cardBg, borderColor: C.borderMid }}
+      >
+        <h3 className="text-[17px] font-semibold text-white mb-2" style={SG}>
+          Opening mobile view
+        </h3>
+        <p className="text-[13.5px] text-slate-400 mb-5 leading-relaxed" style={SG}>
+          Redirecting to the LeetLockin mobile site.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.replace('/m')}
+          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold transition-colors w-full"
+          style={SG}
+        >
+          Continue
+          <ArrowRight size={16} strokeWidth={2.5} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardPage({ initialCompleted, streakData, heatmapData, weaknessSpotlight }: {
@@ -3015,18 +3054,8 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
         />
       }
     >
-      {/* Mobile-only notice — non-blocking nudge toward desktop */}
-      <div
-        className="md:hidden px-4 pt-4"
-      >
-        <div
-          className="rounded-lg border px-3.5 py-2.5 text-[12.5px] leading-snug text-slate-300"
-          style={{ background: C.cardBg, borderColor: C.borderMid, ...SG }}
-        >
-          <span className="font-semibold text-white">Desktop</span>
-          <span className="text-slate-400"> — go on desktop to get the most out of leetlockin.com.</span>
-        </div>
-      </div>
+      {/* Mobile gate — phones go to the dedicated /m experience, never the desktop UI */}
+      <MobileGate />
       <CenterPanel
         path={viewingPath}
         pathStatus={viewingStatus}

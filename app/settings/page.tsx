@@ -104,7 +104,7 @@ export default async function SettingsPage() {
             </CardHeader>
             <CardContent>
               <a
-                href="mailto:tozardt2@gmail.com?subject=LeetCode%20Lockin%20feedback"
+                href="mailto:hello@leetlockin.com?subject=LeetCode%20Lockin%20feedback"
                 className="inline-flex items-center justify-center rounded-md bg-white/10 hover:bg-white/15 text-white text-[13px] font-medium px-4 py-2 transition-colors"
                 style={SG}
               >

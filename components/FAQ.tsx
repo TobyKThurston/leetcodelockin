@@ -86,7 +86,7 @@ export default function FAQ() {
           variants={item}
           className="mt-4 text-[14px] text-slate-400 leading-relaxed max-w-md mx-auto"
         >
-          If it is not here, email us at tobykthurston@gmail.com.
+          If it is not here, email us at hello@leetlockin.com.
         </motion.p>
 
         <motion.div
