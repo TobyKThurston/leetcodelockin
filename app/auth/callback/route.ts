@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasCompletedOnboarding, markOnboardedMobile } from '@/lib/onboarding';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 function detectMobile(ua: string): boolean {
   return /android|iphone|ipod|webos|blackberry|iemobile|opera mini/i.test(ua);
@@ -27,7 +28,18 @@ export async function GET(req: NextRequest) {
         },
       }
     );
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data: { session } } = await supabase.auth.exchangeCodeForSession(code);
+    if (session?.user) {
+      const isMobileSignIn = detectMobile(req.headers.get('user-agent') ?? '');
+      getPostHogClient().capture({
+        distinctId: session.user.id,
+        event: 'user_signed_in',
+        properties: {
+          email: session.user.email,
+          platform: isMobileSignIn ? 'mobile' : 'desktop',
+        },
+      });
+    }
   }
 
   const isMobile = detectMobile(req.headers.get('user-agent') ?? '');

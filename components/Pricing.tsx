@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import posthog from 'posthog-js';
 import { Check } from 'lucide-react';
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -38,6 +39,7 @@ export default function Pricing({ showFaq = false }: { showFaq?: boolean } = {})
 
   function handleCheckout(plan: 'monthly' | 'yearly') {
     setLoading(plan);
+    posthog.capture('checkout_started', { plan, source: 'pricing_page' });
     // /checkout handles auth itself: signed-in users go straight to Stripe,
     // signed-out users bounce through /sign-in?next=/checkout?plan=X and skip
     // the onboarding questionnaire on return. `from` is echoed into Stripe's

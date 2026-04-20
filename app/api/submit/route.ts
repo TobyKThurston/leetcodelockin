@@ -6,6 +6,7 @@ import { findPracticeStepsBySlug } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
 import { recordActivityForUser } from '@/lib/streaks';
 import { getUserSubscription } from '@/lib/subscription';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 interface SubmitRequestBody {
   slug: string;
@@ -53,6 +54,18 @@ export async function POST(req: NextRequest) {
     status,
     passedCount,
     totalCount,
+  });
+
+  getPostHogClient().capture({
+    distinctId: user.id,
+    event: 'problem_submitted',
+    properties: {
+      slug,
+      status,
+      passed_count: passedCount,
+      total_count: totalCount,
+      language,
+    },
   });
 
   // Generate spaced repetition review cards for Pro users on accepted submissions

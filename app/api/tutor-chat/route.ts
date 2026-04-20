@@ -6,6 +6,7 @@ import { getSupabaseUser } from '@/lib/supabase';
 import { checkAiQuota, recordAiUsage } from '@/lib/subscription';
 import { INJECTION_GUARD, fenceUserContent, sanitizeUserText } from '@/lib/prompt-safety';
 import { logApiError } from '@/lib/log';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 const MAX_CODE_LENGTH = 10_000;
 const MAX_PROBLEM_LENGTH = 8_000;
@@ -98,6 +99,13 @@ export async function POST(req: NextRequest) {
     });
 
     await recordAiUsage(user.id, 'tutor-chat');
+    getPostHogClient().capture({
+      distinctId: user.id,
+      event: 'tutor_message_sent',
+      properties: {
+        message_count: messages.length,
+      },
+    });
     return NextResponse.json({ reply: text });
   } catch (err) {
     logApiError('api/tutor-chat', err);

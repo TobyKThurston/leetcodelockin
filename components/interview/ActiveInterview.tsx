@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import posthog from 'posthog-js';
 import dynamic from 'next/dynamic';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -297,12 +298,24 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
 
     const r1 = allResults[0];
     const r2 = allResults[1];
+    const p1Results = r1.length > 0 ? { passed: r1.filter(r => r.passed).length, total: r1.length } : null;
+    const p2Results = r2.length > 0 ? { passed: r2.filter(r => r.passed).length, total: r2.length } : null;
+    const timeUsedMs = now - startedAt;
+
+    posthog.capture('interview_submitted', {
+      time_used_ms: timeUsedMs,
+      problem1_passed: p1Results?.passed ?? null,
+      problem1_total: p1Results?.total ?? null,
+      problem2_passed: p2Results?.passed ?? null,
+      problem2_total: p2Results?.total ?? null,
+    });
+
     onSubmit({
       problem1Code: codes[0],
       problem2Code: codes[1],
-      problem1Results: r1.length > 0 ? { passed: r1.filter(r => r.passed).length, total: r1.length } : null,
-      problem2Results: r2.length > 0 ? { passed: r2.filter(r => r.passed).length, total: r2.length } : null,
-      timeUsedMs: now - startedAt,
+      problem1Results: p1Results,
+      problem2Results: p2Results,
+      timeUsedMs,
     });
   }, [codes, allResults, currentIdx, startedAt, onSubmit]);
 

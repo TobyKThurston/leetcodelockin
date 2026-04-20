@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
@@ -2934,6 +2935,7 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
     }
     // Mark the block complete (idempotent — no-op if already complete).
     if (!completedIds.has(blockId)) {
+      posthog.capture('block_completed', { block_id: blockId });
       setCompletedIds(prev => {
         if (prev.has(blockId)) return prev;
         const next = new Set(prev);

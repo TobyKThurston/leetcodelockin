@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 import { getStripe } from '@/lib/stripe';
 import { getSupabase } from '@/lib/supabase';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 // In the dahlia API, current_period_end lives on SubscriptionItem, not Subscription.
 function getPeriodEnd(subscription: Stripe.Subscription): string | null {
@@ -103,6 +104,15 @@ export async function POST(req: Request) {
           },
           { onConflict: 'user_id' },
         );
+
+        getPostHogClient().capture({
+          distinctId: userId,
+          event: 'subscription_activated',
+          properties: {
+            price_id: subscription.items.data[0]?.price.id ?? null,
+            stripe_subscription_id: subscription.id,
+          },
+        });
         break;
       }
 
@@ -130,6 +140,17 @@ export async function POST(req: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq('stripe_subscription_id', subscription.id);
+
+        const canceledUserId = subscription.metadata?.supabase_user_id;
+        if (canceledUserId) {
+          getPostHogClient().capture({
+            distinctId: canceledUserId,
+            event: 'subscription_canceled',
+            properties: {
+              stripe_subscription_id: subscription.id,
+            },
+          });
+        }
         break;
       }
 

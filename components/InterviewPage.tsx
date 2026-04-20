@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import posthog from 'posthog-js';
 import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import AppShell from '@/components/shell/AppShell';
@@ -367,6 +368,11 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
       // Save to localStorage for crash recovery
       localStorage.setItem(LS_ACTIVE_SESSION, JSON.stringify({ sessionId: session.id, startedAt }));
 
+      posthog.capture('interview_started', {
+        difficulty,
+        problem1_slug: session.problem1Slug,
+        problem2_slug: session.problem2Slug,
+      });
       setActiveState({ session, problems: [p1, p2], startedAt });
       setPhase('active');
     } catch {
@@ -573,6 +579,21 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
     [handleStart],
   );
 
+  // Non-pro who already used their free mock: clicking "new interview" or
+  // "redo" shows the paywall instead of attempting to start another.
+  const [showPaywall, setShowPaywall] = useState(false);
+  const guardedGoToSetup = useCallback(() => {
+    if (!isPro && history.length > 0) { setShowPaywall(true); return; }
+    goToSetup();
+  }, [isPro, history.length, goToSetup]);
+  const guardedRedo = useCallback(
+    (sessionId: string, difficulty: InterviewDifficulty) => {
+      if (!isPro && history.length > 0) { setShowPaywall(true); return; }
+      return handleRedo(sessionId, difficulty);
+    },
+    [isPro, history.length, handleRedo],
+  );
+
   // Selected session id — lights up the matching row in the sidebar.
   const selectedSessionId = useMemo(() => {
     if (phase === 'review' && reviewSession) return reviewSession.id;
@@ -594,13 +615,15 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
     );
   }
 
-  // Locked (non-pro) state keeps full-width pricing — no sidebars.
-  if (!isPro) {
+  // Non-pro who already used their free mock clicks "new interview" / "redo":
+  // show the paywall. Otherwise they fall through to the normal layout so they
+  // can still review their one completed session and its feedback.
+  if (showPaywall) {
     return (
       <div className="flex flex-col" style={{ height: '100vh', background: C.appBg }}>
         <AppNav activeTab="Interview" />
         <div className="flex-1 flex flex-col overflow-hidden" style={{ paddingTop: 48 }}>
-          <LockedScreen />
+          <LockedScreen postFree />
         </div>
       </div>
     );
@@ -635,7 +658,7 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
           <ReviewScreen
             session={reviewSession}
             onBack={goToHistory}
-            onNewInterview={goToSetup}
+            onNewInterview={guardedGoToSetup}
           />
         </div>
       ) : (
@@ -646,8 +669,8 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
               sessions={history}
               pendingFeedbackId={pendingFeedbackId}
               feedbackErrorId={feedbackErrorId}
-              onNewInterview={goToSetup}
-              onRedo={handleRedo}
+              onNewInterview={guardedGoToSetup}
+              onRedo={guardedRedo}
               redoLoadingId={redoLoadingId}
             />
           </div>
@@ -657,7 +680,7 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
               sessions={history}
               pendingFeedbackId={pendingFeedbackId}
               feedbackError={feedbackError}
-              onNewInterview={goToSetup}
+              onNewInterview={guardedGoToSetup}
               onViewSession={handleViewSession}
               onRetryFeedback={handleRetryFeedback}
             />

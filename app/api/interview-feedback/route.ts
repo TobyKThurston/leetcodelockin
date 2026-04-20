@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
-import { getSupabaseUser } from '@/lib/supabase';
+import { getSupabase, getSupabaseUser } from '@/lib/supabase';
 import { checkAiQuota, getUserSubscription, recordAiUsage } from '@/lib/subscription';
 import { INJECTION_GUARD, fenceUserContent } from '@/lib/prompt-safety';
 import { logApiError } from '@/lib/log';
@@ -102,7 +102,17 @@ export async function POST(req: NextRequest) {
 
     const { isPro } = await getUserSubscription(user.id);
     if (!isPro) {
-      return NextResponse.json({ error: 'Mock interview feedback is a Pro feature' }, { status: 403 });
+      // Non-pro users get feedback on their one free mock.
+      const db = getSupabase();
+      const { count } = db
+        ? await db
+          .from('mock_interviews')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+        : { count: 0 };
+      if ((count ?? 0) > 1) {
+        return NextResponse.json({ error: 'Mock interview feedback is a Pro feature' }, { status: 403 });
+      }
     }
 
     const quota = await checkAiQuota(user.id);

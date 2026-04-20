@@ -40,9 +40,15 @@ export async function startInterviewSession(
   const user = await getSupabaseUser();
   if (!user) return { error: 'Not authenticated' };
 
-  // Pro-only gate
+  // Non-pro users get one free mock so they know what they're paying for.
   const { isPro } = await getUserSubscription(user.id);
-  if (!isPro) return { error: 'Pro subscription required' };
+  if (!isPro) {
+    const { count } = await db
+      .from('mock_interviews')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id);
+    if ((count ?? 0) >= 1) return { error: 'Pro subscription required' };
+  }
 
   // Gather context for problem selection
   const [publishedSlugs, solvedSlugs, recentHistory] = await Promise.all([
@@ -141,9 +147,19 @@ export async function saveInterviewFeedback(
 
 // ─── Check pro status ────────────────────────────────────────────────────────
 
-export async function checkInterviewAccess(): Promise<{ isPro: boolean }> {
+export async function checkInterviewAccess(): Promise<{ isPro: boolean; freeUsed: boolean }> {
   const user = await getSupabaseUser();
-  if (!user) return { isPro: false };
+  if (!user) return { isPro: false, freeUsed: false };
   const { isPro } = await getUserSubscription(user.id);
-  return { isPro };
+  if (isPro) return { isPro: true, freeUsed: false };
+
+  const db = getSupabase();
+  if (!db) return { isPro: false, freeUsed: false };
+  // Only completed sessions count — mid-interview refreshes should resume, not lock.
+  const { count } = await db
+    .from('mock_interviews')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('status', 'completed');
+  return { isPro: false, freeUsed: (count ?? 0) >= 1 };
 }

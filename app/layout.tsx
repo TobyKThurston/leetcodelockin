@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import RefTracker from '@/components/RefTracker';
+import PostHogUserIdentifier from '@/components/PostHogUserIdentifier';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -99,6 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} dark`}>
       <body className="antialiased">
         <RefTracker />
+        <PostHogUserIdentifier />
         {children}
         <Analytics />
         <SpeedInsights />

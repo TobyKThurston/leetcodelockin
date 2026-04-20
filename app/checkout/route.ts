@@ -3,6 +3,7 @@ import { getSupabaseUser } from '@/lib/supabase';
 import { getStripe } from '@/lib/stripe';
 import { getOrCreateStripeCustomer } from '@/lib/subscription';
 import { safeReturnPath } from '@/lib/safe-return-path';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 type Plan = 'monthly' | 'yearly';
 
@@ -84,6 +85,12 @@ export async function GET(req: NextRequest) {
       url.searchParams.set('error', 'Stripe did not return a checkout URL');
       return NextResponse.redirect(url);
     }
+
+    getPostHogClient().capture({
+      distinctId: user.id,
+      event: 'checkout_initiated',
+      properties: { plan, price_id: priceId },
+    });
 
     return NextResponse.redirect(session.url);
   } catch (err) {

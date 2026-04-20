@@ -27,7 +27,7 @@ const PRO_FEATURES = [
 
 // ─── Main component ─────────────────────────────────────────────────────────
 
-export default function LockedScreen() {
+export default function LockedScreen({ postFree = false }: { postFree?: boolean } = {}) {
   const [loading, setLoading] = useState(false);
   const pricingRef = useRef<HTMLDivElement>(null);
 
@@ -76,15 +76,22 @@ export default function LockedScreen() {
               className="text-[32px] sm:text-[44px] font-bold text-white tracking-tight leading-[1.08] animate-slam-in"
               style={{ ...SG, animationDelay: '80ms' }}
             >
-              Know you&apos;re ready<br />before the interview starts.
+              {postFree ? (
+                <>That was your free mock.<br />Keep going with Pro.</>
+              ) : (
+                <>Know you&apos;re ready<br />before the interview starts.</>
+              )}
             </h1>
 
             <p
               className="text-[15px] sm:text-[16px] text-zinc-400 leading-relaxed max-w-lg mx-auto mt-5 animate-fade-up"
               style={{ animationDelay: '200ms' }}
             >
-              Timed 45-minute coding interviews with AI-powered debriefs.<br className="hidden sm:block" />
-              No more guessing.
+              {postFree ? (
+                <>Now you know what it feels like. Unlock unlimited timed mocks,<br className="hidden sm:block" />AI debriefs, and the Socratic tutor.</>
+              ) : (
+                <>Timed 45-minute coding interviews with AI-powered debriefs.<br className="hidden sm:block" />No more guessing.</>
+              )}
             </p>
 
             <div className="mt-8 animate-fade-up" style={{ animationDelay: '400ms' }}>
@@ -94,7 +101,7 @@ export default function LockedScreen() {
                 style={SG}
                 onClick={() => pricingRef.current?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Unlock Mock Interviews
+                {postFree ? 'Upgrade to Pro' : 'Unlock Mock Interviews'}
                 <ArrowDown size={15} />
               </Button>
             </div>

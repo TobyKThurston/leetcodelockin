@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion, type Variants } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Check, ChevronRight } from 'lucide-react';
 
+import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
 import { completeOnboarding } from '@/lib/onboarding';
 import { computeSkippedBlocks, type OnboardingAnswers } from '@/lib/onboarding-logic';
@@ -80,13 +81,20 @@ export default function OnboardingFlow() {
 
   const handleContinueFromResults = useCallback(() => {
     startTransition(async () => {
-      await completeOnboarding(getOnboardingAnswers());
+      const onboardingAnswers = getOnboardingAnswers();
+      await completeOnboarding(onboardingAnswers);
+      posthog.capture('onboarding_completed', {
+        python_level: onboardingAnswers.pythonLevel,
+        ds_level: onboardingAnswers.dsLevel,
+        pattern_level: onboardingAnswers.patternLevel,
+      });
       go(5);
     });
   }, [getOnboardingAnswers, go]);
 
   const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
     setCheckoutLoading(plan);
+    posthog.capture('checkout_started', { plan, source: 'onboarding' });
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
