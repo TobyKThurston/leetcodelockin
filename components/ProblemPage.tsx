@@ -73,6 +73,7 @@ interface TestResult {
   passed: boolean;
   actual: string;
   error?: string;
+  errorLine?: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -105,7 +106,7 @@ function testsFromProblem(problem: ProblemContent): TestCase[] {
 
 // ─── Top Nav (glass — matches DashboardNav) ───────────────────────────────────
 
-function TopNav({ problem }: { problem: ProblemContent }) {
+function TopNav({ problem, solved }: { problem: ProblemContent; solved: boolean }) {
   const searchParams = useSearchParams();
   const backHref = searchParams.get('from') === 'dashboard' ? '/dashboard' : '/library';
   const backLabel = searchParams.get('from') === 'dashboard' ? 'Dashboard' : 'Library';
@@ -149,6 +150,20 @@ function TopNav({ problem }: { problem: ProblemContent }) {
         >
           {problem.difficulty}
         </span>
+        {solved && (
+          <span
+            className="ml-1 flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-semibold tracking-wide"
+            style={{
+              color: 'rgba(52,211,153,0.95)',
+              background: 'rgba(16,185,129,0.1)',
+              border: '1px solid rgba(52,211,153,0.3)',
+              ...SG,
+            }}
+            title="You've solved this problem"
+          >
+            <span style={{ fontSize: 10 }}>✓</span> Solved
+          </span>
+        )}
       </div>
 
       {/* Right controls */}
@@ -803,9 +818,12 @@ interface EditorPanelProps {
   onSubmit:      () => void;
   onToggleFullscreen: () => void;
   verdict:       'accepted' | 'wrong' | null;
+  solved:        boolean;
   children:      React.ReactNode;
 }
 
+// Fallback for errors that don't come with a structured `errorLine` — e.g.
+// worker/runtime failures whose message still mentions "line N" somewhere.
 function parseErrorLine(msg: string): number {
   const m = msg.match(/line (\d+)/i);
   return m ? parseInt(m[1], 10) : 0;
@@ -814,7 +832,7 @@ function parseErrorLine(msg: string): number {
 function EditorPanel({
   code, lang, running, results, fullscreen,
   onCodeChange, onLangChange, onReset,
-  onRun, onSubmit, onToggleFullscreen, verdict, children,
+  onRun, onSubmit, onToggleFullscreen, verdict, solved, children,
 }: EditorPanelProps) {
   const onRunRef  = useRef(onRun);
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -836,10 +854,11 @@ function EditorPanel({
       message: string;         severity: number;
     }[] = [];
 
+    const lineCount = model.getLineCount();
     for (const r of results) {
       if (!r.error) continue;
-      const line = parseErrorLine(r.error);
-      if (line < 1 || seenLines.has(line)) continue;
+      const line = r.errorLine ?? parseErrorLine(r.error);
+      if (line < 1 || line > lineCount || seenLines.has(line)) continue;
       seenLines.add(line);
       const label = r.error.trim().split('\n').filter(Boolean).pop() ?? r.error;
       markers.push({
@@ -951,12 +970,13 @@ function EditorPanel({
       >
         {/* Verdict */}
         <div className="text-[12px]" style={SG}>
-          {verdict === 'accepted' && (
-            <span className="font-medium" style={{ color: 'rgba(52,211,153,0.9)' }}>✓ Accepted</span>
-          )}
-          {verdict === 'wrong' && (
+          {verdict === 'wrong' ? (
             <span className="font-medium text-red-400">✗ Wrong Answer</span>
-          )}
+          ) : verdict === 'accepted' || solved ? (
+            <span className="font-medium" style={{ color: 'rgba(52,211,153,0.9)' }}>
+              ✓ Solved
+            </span>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2">
@@ -1423,6 +1443,21 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [running, setRunning]     = useState(false);
   const [verdict, setVerdict]     = useState<'accepted' | 'wrong' | null>(null);
   const [celebration, setCelebration] = useState<{ isFirst: boolean } | null>(null);
+  const [solved, setSolved]       = useState(false);
+
+  // Fetch whether this problem has already been solved so the editor shows
+  // a persistent "Solved" badge across reloads, not just the run-time verdict.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/solved-slugs')
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (cancelled || !data?.slugs) return;
+        if (data.slugs.includes(problem.slug)) setSolved(true);
+      })
+      .catch(() => { /* best-effort */ });
+    return () => { cancelled = true; };
+  }, [problem.slug]);
 
   // Resizable layout
   const [leftWidth, setLeftWidth]   = useState(560);
@@ -1536,6 +1571,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
         // Celebration on accepted submit. First-ever solve gets distinct copy;
         // everything after is a quieter "Solved" reinforcement.
         if (accepted) {
+          setSolved(true);
           const isFirst = (() => {
             try {
               if (localStorage.getItem('lc-solved-once') === '1') return false;
@@ -1581,7 +1617,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
 
   return (
     <div className="flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
-      <TopNav problem={problem} />
+      <TopNav problem={problem} solved={solved} />
 
       <div className="flex flex-1 overflow-hidden relative">
         {fullscreen !== 'editor' && (
@@ -1616,6 +1652,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
               setFullscreen(fs => (fs === 'editor' ? null : 'editor'))
             }
             verdict={verdict}
+            solved={solved}
           >
             <TestCasePanel
               open={panelOpen}

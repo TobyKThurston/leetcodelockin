@@ -145,6 +145,7 @@ interface TestResult {
   passed: boolean;
   actual: string;
   error?: string;
+  errorLine?: number;
 }
 
 let _customCounter = 0;
@@ -330,11 +331,15 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
     if (!model) return;
     const markers: { startLineNumber: number; startColumn: number; endLineNumber: number; endColumn: number; message: string; severity: number }[] = [];
     const seen = new Set<number>();
+    const lineCount = model.getLineCount();
     for (const r of results) {
       if (!r.error) continue;
-      const m = r.error.match(/line (\d+)/i);
-      const line = m ? parseInt(m[1], 10) : 0;
-      if (line < 1 || seen.has(line)) continue;
+      let line = r.errorLine ?? 0;
+      if (!line) {
+        const m = r.error.match(/line (\d+)/i);
+        line = m ? parseInt(m[1], 10) : 0;
+      }
+      if (line < 1 || line > lineCount || seen.has(line)) continue;
       seen.add(line);
       markers.push({
         startLineNumber: line, startColumn: 1,
