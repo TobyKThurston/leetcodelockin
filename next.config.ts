@@ -31,6 +31,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },
+  async redirects() {
+    return [
+      // Branded short link for the TikTok bio — keeps the URL clean while
+      // still tagging the visit so it shows up in Vercel Analytics → UTM.
+      {
+        source: '/tt',
+        destination: '/?utm_source=tiktok&utm_medium=social&utm_campaign=bio',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
