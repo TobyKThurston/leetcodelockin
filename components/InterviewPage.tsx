@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import Link from 'next/link';
 import posthog from 'posthog-js';
-import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle, Mic } from 'lucide-react';
+import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import AppShell from '@/components/shell/AppShell';
 import PageHeader from '@/components/shell/PageHeader';
@@ -97,30 +96,20 @@ function HistoryWelcome({
               Take your first mock interview — 2 problems, 45 minutes, AI debrief after.
             </p>
           </div>
-          <div className="flex flex-col items-center gap-3">
-            <button
-              onClick={onNewInterview}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all hover:brightness-110"
-              style={{
-                background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-                border: '1px solid rgba(147,197,253,0.55)',
-                boxShadow:
-                  '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
-                ...SG,
-              }}
-            >
-              Take your first mock
-              <ArrowRight size={15} />
-            </button>
-            <Link
-              href="/interview/voice"
-              className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-200 transition-colors"
-              style={SG}
-            >
-              <Mic size={13} />
-              Or try the voice mock (new) →
-            </Link>
-          </div>
+          <button
+            onClick={onNewInterview}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all hover:brightness-110"
+            style={{
+              background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+              border: '1px solid rgba(147,197,253,0.55)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
+              ...SG,
+            }}
+          >
+            Take your first mock
+            <ArrowRight size={15} />
+          </button>
         </div>
       </div>
     );
@@ -131,62 +120,8 @@ function HistoryWelcome({
       <PageHeader
         eyebrow="Mock Interviews"
         title="Next mock interview?"
-        subtitle="45 minutes. Two problems. AI debrief after. Click any past session to redo it at the same difficulty, or start a fresh one."
+        subtitle="Pick your format on the next screen — silent two-problem round or voice mock with a live AI interviewer."
       />
-
-      {/* Voice mock callout */}
-      <Link
-        href="/interview/voice"
-        className="block rounded-2xl p-5 mb-4 group transition-all hover:brightness-110"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(168,85,247,0.08) 0%, rgba(168,85,247,0.02) 100%)',
-          border: '1px solid rgba(168,85,247,0.25)',
-          boxShadow: '0 0 60px -30px rgba(168,85,247,0.45)',
-        }}
-      >
-        <div className="flex items-center justify-between gap-6 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.3)' }}
-            >
-              <Mic size={16} style={{ color: 'rgba(216,180,254,0.9)' }} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="text-[15px] text-slate-100 font-semibold" style={SG}>
-                  Voice mock interview
-                </p>
-                <span
-                  className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-[0.1em]"
-                  style={{
-                    color: 'rgba(216,180,254,0.95)',
-                    background: 'rgba(168,85,247,0.15)',
-                    ...SG,
-                  }}
-                >
-                  New
-                </span>
-              </div>
-              <p className="text-[12px] text-slate-500 mt-0.5" style={SG}>
-                One problem, live AI interviewer, 30 or 45 min. Think aloud like the real thing.
-              </p>
-            </div>
-          </div>
-          <span
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-semibold text-slate-200 transition-all group-hover:text-white"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              ...SG,
-            }}
-          >
-            Try it
-            <ArrowRight size={13} />
-          </span>
-        </div>
-      </Link>
 
       {/* Primary CTA card */}
       <div

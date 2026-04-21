@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import VoiceSession from '@/components/voice/VoiceSession';
@@ -12,9 +13,27 @@ type Difficulty = 'easy-medium' | 'medium-hard';
 type Duration = 30 | 45;
 
 export default function VoiceInterviewPage() {
-  const [started, setStarted] = useState(false);
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy-medium');
-  const [duration, setDuration] = useState<Duration>(30);
+  return (
+    <Suspense fallback={null}>
+      <VoiceInterviewPageInner />
+    </Suspense>
+  );
+}
+
+function VoiceInterviewPageInner() {
+  const params = useSearchParams();
+  const prefill = useMemo(() => {
+    const d = params.get('difficulty');
+    const dur = Number(params.get('duration'));
+    const auto = params.get('auto') === '1';
+    const difficulty: Difficulty | null = d === 'easy-medium' || d === 'medium-hard' ? d : null;
+    const duration: Duration | null = dur === 30 || dur === 45 ? (dur as Duration) : null;
+    return { difficulty, duration, auto };
+  }, [params]);
+
+  const [started, setStarted] = useState(prefill.auto && !!prefill.difficulty && !!prefill.duration);
+  const [difficulty, setDifficulty] = useState<Difficulty>(prefill.difficulty ?? 'easy-medium');
+  const [duration, setDuration] = useState<Duration>(prefill.duration ?? 30);
 
   if (started) {
     return <VoiceSession difficulty={difficulty} durationMin={duration} />;
