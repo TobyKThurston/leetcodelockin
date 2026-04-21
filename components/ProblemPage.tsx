@@ -678,7 +678,13 @@ function ProblemPanel({
       <div className="flex-1 flex flex-col overflow-hidden">
         {activeTab === 'question' && <QuestionTab problem={problem} />}
         {activeTab === 'solution' && <SolutionTab problem={problem} />}
-        {activeTab === 'tutor'    && <TutorTab code={code} problem={problem} />}
+        {/* Tutor stays mounted so chat history persists when switching tabs; refresh clears it. */}
+        <div
+          className="flex flex-col flex-1 overflow-hidden"
+          style={{ display: activeTab === 'tutor' ? 'flex' : 'none' }}
+        >
+          <TutorTab code={code} problem={problem} />
+        </div>
       </div>
     </div>
   );
