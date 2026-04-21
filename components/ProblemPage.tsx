@@ -1078,6 +1078,8 @@ interface TestCasePanelProps {
   results:         TestResult[];
   activeId:        string;
   running:         boolean;
+  activeTab:       PanelTab;
+  onTabChange:     (tab: PanelTab) => void;
   onSelectCase:    (id: string) => void;
   onAddCase:       () => void;
   onDeleteCase:    (id: string) => void;
@@ -1435,9 +1437,11 @@ function ErrorsView({
 
 function TestCasePanel({
   open, height, onResize, onToggle, tests, results, activeId, running,
+  activeTab, onTabChange,
   onSelectCase, onAddCase, onDeleteCase, onUpdateInput, onUpdateExpected,
 }: TestCasePanelProps) {
-  const [tab, setTab] = useState<PanelTab>('cases');
+  const tab = activeTab;
+  const setTab = onTabChange;
   const passCount = results.filter(r => r.passed).length;
   const status    = deriveStatus(running, results);
   const errorCount = results.filter(r => !r.passed).length;
@@ -1445,7 +1449,7 @@ function TestCasePanel({
   const jumpToCase = useCallback((id: string) => {
     onSelectCase(id);
     setTab('cases');
-  }, [onSelectCase]);
+  }, [onSelectCase, setTab]);
 
   return (
     <div
@@ -1712,6 +1716,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [lang, setLang]           = useState<LangId>('python');
   const [code, setCode]           = useState(starterPython);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [panelTab, setPanelTab]   = useState<PanelTab>('cases');
   const [tests, setTests]         = useState<TestCase[]>(initialTests);
   const [results, setResults]     = useState<TestResult[]>([]);
   const [activeId, setActiveId]   = useState(initialActiveId);
@@ -1840,27 +1845,13 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
       // Plain Run: no modal, no submission recording.
       if (!showVerdict) return;
 
-      // Submit path — failed on a visible case: skip hidden fetch, show modal now.
+      // Submit path — failed on a visible case: surface via errors tab, no modal.
       if (!visibleAccepted) {
         setVerdict('wrong');
         const fail = firstVisibleFail!;
-        const failTest = tests.find(t => t.id === fail.caseId)!;
-        const runtimeMs = Date.now() - startedAt;
         const passedCount = visibleResults.filter(r => r.passed).length;
-        if (fail.error) {
-          setSubmitResult({
-            kind: 'runtime_error', source: 'visible',
-            label: failTest.label, inputJson: failTest.inputJson,
-            error: fail.error, errorLine: fail.errorLine, runtimeMs,
-          });
-        } else {
-          setSubmitResult({
-            kind: 'wrong', source: 'visible',
-            label: failTest.label, inputJson: failTest.inputJson,
-            expectedJson: failTest.expectedJson, actual: fail.actual || 'None',
-            runtimeMs, passedCount, totalCount: visibleResults.length,
-          });
-        }
+        setActiveId(fail.caseId);
+        setPanelTab('errors');
         recordSubmission('wrong', passedCount, visibleResults.length);
         return;
       }
@@ -1922,20 +1913,26 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
         const fail = hiddenResults[hiddenFailIdx];
         const failDef = hiddenDefs[hiddenFailIdx];
         const label = failDef.label || `Hidden ${hiddenFailIdx + 1}`;
-        if (fail.error) {
-          setSubmitResult({
-            kind: 'runtime_error', source: 'hidden',
-            label, inputJson: failDef.inputJson,
-            error: fail.error, errorLine: fail.errorLine, runtimeMs,
-          });
-        } else {
-          setSubmitResult({
-            kind: 'wrong', source: 'hidden',
-            label, inputJson: failDef.inputJson,
-            expectedJson: failDef.expectedJson, actual: fail.actual || 'None',
-            runtimeMs, passedCount, totalCount,
-          });
-        }
+        const syntheticId = `hidden-fail-${hiddenFailIdx + 1}`;
+        const syntheticTest: TestCase = {
+          id: syntheticId,
+          label,
+          inputJson: failDef.inputJson,
+          expectedJson: failDef.expectedJson,
+          custom: false,
+        };
+        const syntheticResult: TestResult = {
+          caseId: syntheticId,
+          passed: false,
+          actual: fail.actual,
+          error: fail.error,
+          errorLine: fail.errorLine,
+          stdout: fail.stdout,
+        };
+        setTests(prev => [...prev.filter(t => t.id !== syntheticId), syntheticTest]);
+        setResults(prev => [...prev.filter(r => r.caseId !== syntheticId), syntheticResult]);
+        setActiveId(syntheticId);
+        setPanelTab('errors');
         recordSubmission('wrong', passedCount, totalCount);
       } else {
         setVerdict('accepted');
@@ -2026,6 +2023,8 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
               results={results}
               activeId={activeId}
               running={running}
+              activeTab={panelTab}
+              onTabChange={setPanelTab}
               onSelectCase={setActiveId}
               onAddCase={addCustomCase}
               onDeleteCase={deleteCase}
