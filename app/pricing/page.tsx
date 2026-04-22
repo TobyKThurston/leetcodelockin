@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Pricing from '@/components/Pricing';
+import FAQ from '@/components/FAQ';
 import {
   PRO_MONTHLY_USD,
   PRO_YEARLY_USD,
@@ -20,8 +21,9 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <main className="min-h-dvh bg-[#0b1220]">
-      <Pricing showFaq />
+    <main className="theme-light min-h-dvh" style={{ background: 'var(--ll-bg)', color: 'var(--ll-ink)' }}>
+      <Pricing />
+      <FAQ />
     </main>
   );
 }

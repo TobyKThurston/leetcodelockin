@@ -122,6 +122,25 @@ html, body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* ─── Landing page light theme (Linear-style) ─────────────────────────── */
+/* Scoped tokens — only applied where `.theme-light` is set on a wrapper. */
+
+.theme-light {
+  /* Premium Linear/Stripe palette — cool near-white, lighter blue accent. */
+  --ll-bg: #fafbfc;
+  --ll-bg-elevated: #ffffff;
+  --ll-bg-subtle: #f1f5f9;
+  --ll-ink: #0f172a;
+  --ll-ink-muted: #475569;
+  --ll-ink-subtle: #94a3b8;
+  --ll-accent: #3b82f6;
+  --ll-accent-hover: #2563eb;
+  --ll-accent-soft: #38bdf8;
+  --ll-border: #e2e8f0;
+  --ll-border-strong: #cbd5e1;
+}
+
+
 /* ─── Hero animations ─────────────────────────────────────────────────── */
 
 @keyframes slam-in {
@@ -148,6 +167,16 @@ html, body {
 @keyframes hint-appear {
   from { opacity: 0; transform: translateY(7px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-glow-pulse {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 0.8; transform: translateX(-50%) scale(1.06); }
+}
+
+@keyframes hero-shimmer {
+  0%   { background-position: -150% 0%; }
+  100% { background-position: 250% 0%; }
 }
 
 @keyframes ripple-wave {

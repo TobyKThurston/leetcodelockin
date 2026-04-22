@@ -4,8 +4,14 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function NavBar({ flush }: { flush?: boolean } = {}) {
+type NavBarProps = {
+  flush?: boolean;
+  theme?: 'dark' | 'light';
+};
+
+export default function NavBar({ flush, theme = 'dark' }: NavBarProps = {}) {
   const [compact, setCompact] = useState(false);
+  const isLight = theme === 'light';
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 24);
@@ -13,22 +19,34 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const containerStyle = isLight
+    ? compact
+      ? 'w-full max-w-lg px-4 py-2 bg-white/80 border-[var(--ll-border)] shadow-lg shadow-slate-900/[0.04]'
+      : 'w-full max-w-2xl px-5 py-3 bg-white/70 border-[var(--ll-border)] shadow-xl shadow-slate-900/[0.05]'
+    : compact
+      ? 'w-full max-w-lg px-4 py-2 bg-white/[0.05] border-white/[0.1] shadow-lg shadow-black/40'
+      : 'w-full max-w-2xl px-5 py-3 bg-white/[0.03] border-white/[0.07] shadow-xl shadow-black/30';
+
+  const brandColor = isLight ? 'text-[var(--ll-ink)]' : 'text-white';
+  const navColor = isLight ? 'text-[var(--ll-ink-muted)]' : 'text-zinc-400';
+  const navHover = isLight ? 'hover:text-[var(--ll-ink)]' : 'hover:text-white';
+  const ctaStyle = isLight
+    ? 'bg-[var(--ll-accent)] text-white hover:bg-[var(--ll-accent-hover)]'
+    : 'bg-white text-zinc-900 hover:bg-zinc-100';
+
   return (
     <header className={`fixed ${flush ? 'top-0' : 'top-4'} left-0 right-0 z-50 flex justify-center px-4`}>
       <div
         className={`
           flex items-center gap-2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
           rounded-2xl border backdrop-blur-md
-          ${compact
-            ? 'w-full max-w-lg px-4 py-2 bg-white/[0.05] border-white/[0.1] shadow-lg shadow-black/40'
-            : 'w-full max-w-2xl px-5 py-3 bg-white/[0.03] border-white/[0.07] shadow-xl shadow-black/30'
-          }
+          ${containerStyle}
         `}
       >
         <a href="/" className="flex items-center gap-1.5 mr-auto cursor-pointer">
           <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           <span
-            className={`font-semibold tracking-tight text-white transition-all duration-500 ${
+            className={`font-semibold tracking-tight ${brandColor} transition-all duration-500 ${
               compact ? 'text-sm' : 'text-[15px]'
             }`}
           >
@@ -37,18 +55,18 @@ export default function NavBar({ flush }: { flush?: boolean } = {}) {
         </a>
 
         <nav
-          className={`hidden md:flex items-center gap-5 text-zinc-400 transition-all duration-500 ${
+          className={`hidden md:flex items-center gap-5 ${navColor} transition-all duration-500 ${
             compact ? 'text-[12px]' : 'text-[13px]'
           }`}
         >
-          <a href="#roadmap" className="hover:text-white transition-colors">Roadmap</a>
-          <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <a href="#curriculum" className={`${navHover} transition-colors`}>Curriculum</a>
+          <a href="#how-it-works" className={`${navHover} transition-colors`}>How it Works</a>
+          <a href="#pricing" className={`${navHover} transition-colors`}>Pricing</a>
         </nav>
 
         <Link
           href="/sign-in"
-          className={`ml-auto bg-white text-zinc-900 rounded-lg font-semibold hover:bg-zinc-100 transition-all duration-500 ${
+          className={`ml-auto rounded-lg font-semibold transition-all duration-500 ${ctaStyle} ${
             compact ? 'text-[11px] px-3 py-1.5' : 'text-xs px-4 py-2'
           }`}
         >

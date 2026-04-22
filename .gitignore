@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude code local scratch
+.claude/scheduled_tasks.lock
+
+# supabase cli scratch
+supabase/.temp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

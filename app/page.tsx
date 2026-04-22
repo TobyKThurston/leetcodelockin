@@ -19,7 +19,7 @@ const jsonLd = {
         height: 512,
       },
       image: `${siteUrl}/logo.png`,
-      email: 'hello@leetlockin.com',
+      email: 'tobykthurston@gmail.com',
     },
     {
       '@type': 'WebSite',

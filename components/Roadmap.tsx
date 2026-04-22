@@ -80,7 +80,7 @@ function SkillRadar({ growth }: { growth: number }) {
 
   return (
     <div className="w-full max-w-md">
-      <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-slate-600 mb-2 text-center">
+      <p className="text-[9px] font-mono tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)] mb-2 text-center">
         Skill Coverage
       </p>
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full">
@@ -90,7 +90,7 @@ function SkillRadar({ growth }: { growth: number }) {
             key={level}
             d={polygonPath(() => R * level)}
             fill="none"
-            stroke="rgba(255,255,255,0.05)"
+            stroke="rgba(28,31,38,0.08)"
             strokeWidth="1"
           />
         ))}
@@ -105,7 +105,7 @@ function SkillRadar({ growth }: { growth: number }) {
               y1={cy}
               x2={p.x}
               y2={p.y}
-              stroke="rgba(255,255,255,0.05)"
+              stroke="rgba(28,31,38,0.08)"
               strokeWidth="1"
             />
           );
@@ -114,12 +114,9 @@ function SkillRadar({ growth }: { growth: number }) {
         {/* Filled skill polygon */}
         <path
           d={fillPath}
-          fill="rgba(59,130,246,0.18)"
-          stroke="rgba(96,165,250,0.95)"
+          fill="rgba(99,102,241,0.18)"
+          stroke="rgba(99,102,241,0.95)"
           strokeWidth="1.5"
-          style={{
-            filter: 'drop-shadow(0 0 10px rgba(96,165,250,0.4))',
-          }}
         />
 
         {/* Vertex dots */}
@@ -131,7 +128,7 @@ function SkillRadar({ growth }: { growth: number }) {
               cx={p.x}
               cy={p.y}
               r="3"
-              fill="rgba(96,165,250,0.95)"
+              fill="rgba(99,102,241,0.95)"
             />
           );
         })}
@@ -148,7 +145,7 @@ function SkillRadar({ growth }: { growth: number }) {
               dominantBaseline="middle"
               fontSize="10"
               fontFamily="ui-monospace, SFMono-Regular, monospace"
-              fill="rgba(148,163,184,0.8)"
+              fill="rgba(107,114,128,0.95)"
             >
               {label}
             </text>
@@ -250,18 +247,18 @@ export default function Roadmap() {
   return (
     <section
       id="roadmap"
-      className="relative px-4 sm:px-6 pt-32 pb-32"
+      className="relative px-6 sm:px-10 py-32"
       style={{ scrollMarginTop: '80px' }}
     >
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-24">
-          <p className="text-[11px] text-slate-600 tracking-[0.2em] uppercase font-medium mb-4">
+          <p className="text-[11px] tracking-[0.2em] uppercase font-medium mb-4" style={{ color: 'var(--ll-ink-subtle)' }}>
             Curriculum
           </p>
           <h2
-            className="text-4xl sm:text-5xl font-bold text-[#e2e8f0] tracking-tight"
-            style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+            className="text-4xl sm:text-5xl font-bold tracking-tight"
+            style={{ color: 'var(--ll-ink)', fontFamily: 'var(--font-space-grotesk), sans-serif' }}
           >
             From zero to
             <br />
@@ -274,7 +271,7 @@ export default function Roadmap() {
           {/* ─── Left: sticky sidebar ─────────────────────────── */}
           <aside className="hidden md:block">
             <div className="sticky top-28">
-              <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase text-slate-700 mb-6">
+              <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase mb-6" style={{ color: 'var(--ll-ink-subtle)' }}>
                 Curriculum Index
               </p>
 
@@ -293,25 +290,23 @@ export default function Roadmap() {
                         className="absolute left-0 top-1/2 -translate-y-1/2 w-px transition-all duration-500 ease-out"
                         style={{
                           height: isActive ? '72%' : '0%',
-                          background: 'rgba(96,165,250,0.9)',
+                          background: 'var(--ll-accent)',
                           boxShadow: isActive
-                            ? '0 0 10px rgba(96,165,250,0.55)'
+                            ? '0 0 8px rgba(99,102,241,0.4)'
                             : 'none',
                         }}
                       />
                       <div className="flex items-baseline gap-3">
                         <span
                           className="font-mono text-[10px] tabular-nums transition-colors duration-500"
-                          style={{ color: isActive ? '#60a5fa' : '#334155' }}
+                          style={{ color: isActive ? 'var(--ll-accent)' : 'var(--ll-ink-subtle)' }}
                         >
                           {phase.n}
                         </span>
                         <span
-                          className="text-[13px] font-medium tracking-tight transition-colors duration-500 group-hover:text-slate-300"
+                          className="text-[13px] font-medium tracking-tight transition-colors duration-500"
                           style={{
-                            color: isActive
-                              ? '#e2e8f0'
-                              : 'rgba(100,116,139,0.9)',
+                            color: isActive ? 'var(--ll-ink)' : 'var(--ll-ink-muted)',
                           }}
                         >
                           {phase.title}
@@ -325,26 +320,24 @@ export default function Roadmap() {
               {/* Progress meter */}
               <div>
                 <div className="flex items-baseline justify-between mb-2">
-                  <p className="text-[10px] font-mono tracking-[0.22em] uppercase text-slate-700">
+                  <p className="text-[10px] font-mono tracking-[0.22em] uppercase" style={{ color: 'var(--ll-ink-subtle)' }}>
                     Phase
                   </p>
-                  <p className="text-[10px] font-mono tabular-nums text-slate-600">
+                  <p className="text-[10px] font-mono tabular-nums" style={{ color: 'var(--ll-ink-muted)' }}>
                     {String(active + 1).padStart(2, '0')}
-                    <span className="text-slate-800"> / </span>
+                    <span style={{ color: 'var(--ll-ink-subtle)' }}> / </span>
                     {String(phases.length).padStart(2, '0')}
                   </p>
                 </div>
                 <div
                   className="relative h-px w-full"
-                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                  style={{ background: 'var(--ll-border)' }}
                 >
                   <div
                     className="absolute inset-y-0 left-0"
                     style={{
                       width: `${overallProgress * 100}%`,
-                      background:
-                        'linear-gradient(to right, rgba(59,130,246,0.55), rgba(96,165,250,0.95))',
-                      boxShadow: '0 0 8px rgba(96,165,250,0.4)',
+                      background: 'var(--ll-accent)',
                     }}
                   />
                 </div>
@@ -364,16 +357,16 @@ export default function Roadmap() {
                   }}
                   className="min-h-[60vh] flex flex-col justify-center"
                 >
-                  <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase text-slate-600 mb-4">
+                  <p className="text-[10px] font-mono font-semibold tracking-[0.22em] uppercase mb-4" style={{ color: 'var(--ll-ink-subtle)' }}>
                     Phase {phase.n}
                   </p>
                   <h3
-                    className="text-3xl sm:text-4xl font-bold text-[#e2e8f0] tracking-tight mb-3"
-                    style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+                    className="text-3xl sm:text-4xl font-bold tracking-tight mb-3"
+                    style={{ color: 'var(--ll-ink)', fontFamily: 'var(--font-space-grotesk), sans-serif' }}
                   >
                     {phase.title}
                   </h3>
-                  <p className="text-[14px] text-slate-500 leading-relaxed mb-10 max-w-md">
+                  <p className="text-[14px] leading-relaxed mb-10 max-w-md" style={{ color: 'var(--ll-ink-muted)' }}>
                     {phase.tagline}
                   </p>
                   <div className="flex justify-start">

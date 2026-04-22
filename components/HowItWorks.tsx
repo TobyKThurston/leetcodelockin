@@ -19,10 +19,11 @@ function SlidingWindowViz() {
         {values.map((v, i) => (
           <div
             key={i}
-            className="w-11 h-11 rounded-md flex items-center justify-center font-mono text-sm text-slate-300"
+            className="w-11 h-11 rounded-md flex items-center justify-center font-mono text-sm"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'var(--ll-ink)',
+              background: 'var(--ll-bg-elevated)',
+              border: '1px solid var(--ll-border)',
             }}
           >
             {v}
@@ -35,15 +36,15 @@ function SlidingWindowViz() {
         className="absolute top-0 left-0 h-11 pointer-events-none"
         style={{
           width: 'calc(3 * 2.75rem + 2 * 0.375rem)',
-          border: '2px solid rgba(96,165,250,0.95)',
+          border: '2px solid var(--ll-accent)',
           borderRadius: '0.5rem',
-          background: 'rgba(59,130,246,0.14)',
-          boxShadow: '0 0 24px rgba(96,165,250,0.35)',
+          background: 'rgba(59,130,246,0.10)',
+          boxShadow: '0 0 18px rgba(59,130,246,0.18)',
           transform: 'translateX(calc(var(--progress, 0) * 15.625rem))',
           willChange: 'transform',
         }}
       />
-      <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-slate-600 font-mono">
+      <p className="mt-4 text-[10px] uppercase tracking-[0.18em] font-mono" style={{ color: 'var(--ll-ink-subtle)' }}>
         Sliding window
       </p>
     </div>
@@ -58,10 +59,11 @@ function TwoPointersViz() {
         {values.map((v, i) => (
           <div
             key={i}
-            className="w-11 h-11 rounded-md flex items-center justify-center font-mono text-sm text-slate-300"
+            className="w-11 h-11 rounded-md flex items-center justify-center font-mono text-sm"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              color: 'var(--ll-ink)',
+              background: 'var(--ll-bg-elevated)',
+              border: '1px solid var(--ll-border)',
             }}
           >
             {v}
@@ -85,11 +87,10 @@ function TwoPointersViz() {
             style={{
               borderLeft: '7px solid transparent',
               borderRight: '7px solid transparent',
-              borderBottom: '9px solid rgba(96,165,250,1)',
-              filter: 'drop-shadow(0 0 6px rgba(96,165,250,0.6))',
+              borderBottom: '9px solid var(--ll-accent)',
             }}
           />
-          <span className="text-[12px] font-mono font-bold text-blue-400 mt-1">L</span>
+          <span className="text-[12px] font-mono font-bold mt-1" style={{ color: 'var(--ll-accent)' }}>L</span>
         </div>
       </div>
       {/* R pointer: moves from cell 7 → cell 4 as progress goes 0 → 1.
@@ -109,14 +110,13 @@ function TwoPointersViz() {
             style={{
               borderLeft: '7px solid transparent',
               borderRight: '7px solid transparent',
-              borderBottom: '9px solid rgba(147,197,253,1)',
-              filter: 'drop-shadow(0 0 6px rgba(147,197,253,0.6))',
+              borderBottom: '9px solid #a5b4fc',
             }}
           />
-          <span className="text-[12px] font-mono font-bold text-blue-300 mt-1">R</span>
+          <span className="text-[12px] font-mono font-bold mt-1" style={{ color: '#a5b4fc' }}>R</span>
         </div>
       </div>
-      <p className="mt-12 text-[10px] uppercase tracking-[0.18em] text-slate-600 font-mono">
+      <p className="mt-12 text-[10px] uppercase tracking-[0.18em] font-mono" style={{ color: 'var(--ll-ink-subtle)' }}>
         Two pointers
       </p>
     </div>
@@ -148,23 +148,24 @@ function HashMapViz() {
             }
           >
             <div
-              className="px-3 py-1.5 rounded-md text-slate-300 text-right"
+              className="px-3 py-1.5 rounded-md text-right"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                color: 'var(--ll-ink)',
+                background: 'var(--ll-bg-elevated)',
+                border: '1px solid var(--ll-border)',
                 width: '104px',
               }}
             >
               {e.k}
             </div>
-            <span className="text-blue-400">→</span>
+            <span style={{ color: 'var(--ll-accent)' }}>→</span>
             <div
-              className="px-3 py-1.5 rounded-md text-blue-300 text-center"
+              className="px-3 py-1.5 rounded-md text-center"
               style={{
-                background: 'rgba(59,130,246,0.14)',
-                border: '1px solid rgba(96,165,250,0.45)',
+                color: 'var(--ll-accent)',
+                background: 'rgba(59,130,246,0.10)',
+                border: '1px solid rgba(59,130,246,0.40)',
                 width: '44px',
-                boxShadow: '0 0 12px rgba(59,130,246,0.2)',
               }}
             >
               {e.v}
@@ -172,7 +173,7 @@ function HashMapViz() {
           </div>
         ))}
       </div>
-      <p className="mt-4 text-[10px] uppercase tracking-[0.18em] text-slate-600 font-mono">
+      <p className="mt-4 text-[10px] uppercase tracking-[0.18em] font-mono" style={{ color: 'var(--ll-ink-subtle)' }}>
         Hash map
       </p>
     </div>
@@ -272,22 +273,17 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <section id="how-it-works" className="relative px-4 sm:px-6 py-40" style={{ scrollMarginTop: '80px' }}>
-      {/* Top fade */}
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0b1220] to-transparent pointer-events-none z-10" />
-      {/* Bottom fade */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0b1220] to-transparent pointer-events-none z-10" />
-
+    <section id="how-it-works" className="relative px-6 sm:px-10 py-32" style={{ scrollMarginTop: '80px' }}>
       <div ref={containerRef} className="max-w-4xl mx-auto">
 
         {/* Header */}
         <div className="text-center mb-32">
-          <p className="text-[11px] text-slate-600 tracking-[0.2em] uppercase font-medium mb-4">
+          <p className="text-[11px] tracking-[0.22em] uppercase font-semibold mb-4" style={{ color: 'var(--ll-accent)' }}>
             How It Works
           </p>
           <h2
-            className="text-4xl sm:text-5xl font-bold text-[#e2e8f0] tracking-tight"
-            style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+            className="text-4xl sm:text-5xl font-bold tracking-tight"
+            style={{ color: 'var(--ll-ink)', fontFamily: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
           >
             A system, not a<br />pile of problems.
           </h2>
@@ -310,7 +306,8 @@ export default function HowItWorks() {
                 <div className={`flex ${i % 2 === 1 ? 'md:[direction:ltr] md:justify-end' : 'justify-start'}`}>
                   <div className="flex flex-col gap-5">
                     <span
-                      className="font-mono text-[11px] tracking-[0.2em] uppercase text-slate-600"
+                      className="font-mono text-[11px] tracking-[0.2em] uppercase"
+                      style={{ color: 'var(--ll-ink-subtle)' }}
                     >
                       Step {step.n}
                     </span>
@@ -321,12 +318,12 @@ export default function HowItWorks() {
                 {/* Content */}
                 <div className={i % 2 === 1 ? 'md:[direction:ltr]' : ''}>
                   <h3
-                    className="text-2xl sm:text-3xl font-bold text-[#e2e8f0] mb-4 tracking-tight"
-                    style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+                    className="text-2xl sm:text-3xl font-bold mb-4 tracking-tight"
+                    style={{ color: 'var(--ll-ink)', fontFamily: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
                   >
                     {step.title}
                   </h3>
-                  <p className="text-[15px] text-slate-500 leading-relaxed">
+                  <p className="text-[15px] leading-relaxed" style={{ color: 'var(--ll-ink-muted)' }}>
                     {step.body}
                   </p>
                 </div>
