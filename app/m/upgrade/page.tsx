@@ -34,41 +34,48 @@ export default async function MobileUpgradePage() {
     return (
       <div className="max-w-xl mx-auto space-y-5">
         <div className="pt-1">
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
             Your plan
           </p>
-          <h1 className="mt-1 text-[26px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="mt-1 text-[26px] font-bold text-[var(--ll-ink)] tracking-tight" style={SG}>
             You&apos;re Pro
           </h1>
         </div>
 
-        <div className="bg-gradient-to-b from-blue-500/[0.06] to-blue-500/[0.01] ring-1 ring-blue-500/25 rounded-2xl p-6 shadow-[0_0_40px_-15px_rgba(59,130,246,0.25)]">
+        <div
+          className="bg-gradient-to-b from-blue-100/60 to-sky-50/30 ring-1 ring-blue-500/25 rounded-2xl p-6"
+          style={{
+            backgroundColor: 'var(--ll-bg-elevated)',
+            boxShadow: '0 1px 2px rgba(15,23,42,0.04), 0 10px 30px -20px rgba(59,130,246,0.35)',
+          }}
+        >
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center"
             style={{
               background: 'rgba(59,130,246,0.12)',
-              border: '1px solid rgba(59,130,246,0.3)',
+              border: '1px solid rgba(37,99,235,0.3)',
             }}
           >
-            <Check size={22} strokeWidth={2.5} className="text-blue-300" />
+            <Check size={22} strokeWidth={2.5} className="text-blue-600" />
           </div>
-          <h2 className="mt-4 text-[18px] font-bold text-white" style={SG}>
+          <h2 className="mt-4 text-[18px] font-bold text-[var(--ll-ink)]" style={SG}>
             All features unlocked
           </h2>
-          <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed">
+          <p className="mt-1.5 text-[13px] text-[var(--ll-ink-muted)] leading-relaxed">
             Mock interviews, AI feedback, review queue, and unlimited tutor are active on your
             account. Everything runs on desktop.
           </p>
           <Link
             href="/dashboard"
-            className="mt-5 h-12 px-5 rounded-xl bg-white text-zinc-900 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
+            className="mt-5 h-12 px-5 rounded-xl text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 active:scale-[0.98] transition-all text-white"
+            style={{ backgroundColor: 'var(--ll-accent)' }}
           >
             Open desktop site
             <ArrowRight size={15} strokeWidth={2.5} />
           </Link>
         </div>
 
-        <p className="text-center text-[12px] text-slate-600">
+        <p className="text-center text-[12px] text-[var(--ll-ink-subtle)]">
           Manage or cancel your subscription in Settings on desktop.
         </p>
       </div>
@@ -84,37 +91,47 @@ export default async function MobileUpgradePage() {
           <div
             className="w-6 h-6 rounded-md flex items-center justify-center"
             style={{
-              background: 'rgba(251,191,36,0.1)',
-              border: '1px solid rgba(251,191,36,0.22)',
+              background: 'rgba(251,191,36,0.12)',
+              border: '1px solid rgba(217,119,6,0.35)',
             }}
           >
-            <Zap size={13} strokeWidth={2.5} className="text-amber-400" />
+            <Zap size={13} strokeWidth={2.5} className="text-amber-600" />
           </div>
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
             Upgrade
           </p>
         </div>
-        <h1 className="mt-2 text-[26px] font-bold text-white tracking-tight leading-tight" style={SG}>
+        <h1 className="mt-2 text-[26px] font-bold text-[var(--ll-ink)] tracking-tight leading-tight" style={SG}>
           Unlock interview mode
         </h1>
-        <p className="mt-2 text-[14px] text-slate-400 leading-relaxed">
+        <p className="mt-2 text-[14px] text-[var(--ll-ink-muted)] leading-relaxed">
           Pro unlocks the full interview-prep toolkit on desktop. The free curriculum stays free
           forever.
         </p>
       </div>
 
       {/* What's locked */}
-      <div className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-2xl divide-y divide-white/[0.04] overflow-hidden">
-        {LOCKED_FEATURES.map((f) => (
-          <div key={f.title} className="flex items-start gap-3 px-4 py-4">
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          backgroundColor: 'var(--ll-bg-elevated)',
+          border: '1px solid var(--ll-border)',
+        }}
+      >
+        {LOCKED_FEATURES.map((f, i) => (
+          <div
+            key={f.title}
+            className="flex items-start gap-3 px-4 py-4"
+            style={i > 0 ? { borderTop: '1px solid var(--ll-border)' } : undefined}
+          >
             <div className="shrink-0 w-8 h-8 rounded-lg bg-blue-500/10 ring-1 ring-blue-500/25 flex items-center justify-center mt-0.5">
-              <Check size={14} strokeWidth={2.5} className="text-blue-300" />
+              <Check size={14} strokeWidth={2.5} className="text-blue-600" />
             </div>
             <div className="min-w-0">
-              <p className="text-[14px] font-semibold text-white" style={SG}>
+              <p className="text-[14px] font-semibold text-[var(--ll-ink)]" style={SG}>
                 {f.title}
               </p>
-              <p className="mt-0.5 text-[12.5px] text-slate-500 leading-snug">{f.desc}</p>
+              <p className="mt-0.5 text-[12.5px] text-[var(--ll-ink-muted)] leading-snug">{f.desc}</p>
             </div>
           </div>
         ))}
@@ -125,7 +142,7 @@ export default async function MobileUpgradePage() {
 
       {/* Free tier reassurance */}
       <div className="text-center">
-        <p className="text-[11.5px] text-slate-600 leading-relaxed max-w-xs mx-auto">
+        <p className="text-[11.5px] text-[var(--ll-ink-subtle)] leading-relaxed max-w-xs mx-auto">
           Not ready? The full curriculum, 212+ problems, and 5 tutor messages stay free forever.
         </p>
       </div>

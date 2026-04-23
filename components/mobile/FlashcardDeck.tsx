@@ -43,13 +43,13 @@ const TYPE_LABEL: Record<QuickCardType, string> = {
 };
 
 const TYPE_ACCENT: Record<QuickCardType, string> = {
-  big_o: 'text-blue-300 bg-blue-500/10 border-blue-500/20',
-  pattern: 'text-amber-300 bg-amber-500/10 border-amber-500/20',
-  code_reading: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20',
+  big_o: 'text-blue-700 bg-blue-500/10 border-blue-500/30',
+  pattern: 'text-amber-700 bg-amber-500/10 border-amber-500/30',
+  code_reading: 'text-emerald-700 bg-emerald-500/10 border-emerald-500/30',
 };
 
-const TOPIC_ACCENT_ON = 'text-indigo-200 bg-indigo-500/10 border-indigo-400/30';
-const CHIP_OFF = 'text-slate-500 bg-white/[0.02] border-white/5';
+const TOPIC_ACCENT_ON = 'text-indigo-700 bg-indigo-500/10 border-indigo-500/30';
+const CHIP_OFF = 'text-[var(--ll-ink-subtle)] bg-[var(--ll-bg-subtle)] border-[var(--ll-border)]';
 
 type PersistedFilters = { types?: string[]; topics?: string[] };
 
@@ -77,6 +77,17 @@ function readPersistedFilters(): {
     return null;
   }
 }
+
+const CARD_SURFACE: React.CSSProperties = {
+  backgroundColor: 'var(--ll-bg-elevated)',
+  border: '1px solid var(--ll-border)',
+  boxShadow: '0 1px 2px rgba(15,23,42,0.04)',
+};
+
+const ICON_BTN_SURFACE: React.CSSProperties = {
+  backgroundColor: 'var(--ll-bg-elevated)',
+  border: '1px solid var(--ll-border)',
+};
 
 export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
   const [seed, setSeed] = useState(0);
@@ -178,10 +189,10 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+          <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
             Flashcards
           </p>
-          <h1 className="mt-1 text-[22px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="mt-1 text-[22px] font-bold text-[var(--ll-ink)] tracking-tight" style={SG}>
             Quick review
           </h1>
         </div>
@@ -189,7 +200,8 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className="h-10 w-10 rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 hover:text-white hover:bg-white/[0.06] inline-flex items-center justify-center transition-colors"
+            className="h-10 w-10 rounded-lg text-[var(--ll-ink-muted)] hover:text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] inline-flex items-center justify-center transition-colors"
+            style={ICON_BTN_SURFACE}
             aria-label="Filter cards"
           >
             <Settings2 size={15} strokeWidth={2.25} />
@@ -197,7 +209,8 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           <button
             type="button"
             onClick={reshuffle}
-            className="h-10 px-3 rounded-lg border border-white/10 bg-white/[0.03] text-[12px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] inline-flex items-center gap-1.5 transition-colors"
+            className="h-10 px-3 rounded-lg text-[12px] font-semibold text-[var(--ll-ink-muted)] hover:text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] inline-flex items-center gap-1.5 transition-colors"
+            style={ICON_BTN_SURFACE}
             aria-label="Shuffle"
           >
             <Shuffle size={13} strokeWidth={2.5} />
@@ -208,7 +221,10 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
 
       {/* Counter */}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-1 rounded-full bg-white/[0.05] overflow-hidden">
+        <div
+          className="flex-1 h-1 rounded-full overflow-hidden"
+          style={{ backgroundColor: 'var(--ll-bg-subtle)' }}
+        >
           <div
             className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all"
             style={{
@@ -216,38 +232,43 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
             }}
           />
         </div>
-        <span className="text-[11px] font-semibold text-slate-500 tabular-nums">
+        <span className="text-[11px] font-semibold text-[var(--ll-ink-subtle)] tabular-nums">
           {matchingCount === 0 ? '0 / 0' : `${index + 1} / ${matchingCount}`}
         </span>
       </div>
 
       {/* Empty state (no cards match filters) */}
       {!card && (
-        <article className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-2xl p-6 min-h-[380px] flex flex-col items-center justify-center text-center">
-          <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-slate-500">
+        <article
+          className="rounded-2xl p-6 min-h-[380px] flex flex-col items-center justify-center text-center"
+          style={CARD_SURFACE}
+        >
+          <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-[var(--ll-ink-subtle)]">
             No cards match
           </p>
           <h2
-            className="mt-3 text-[18px] font-bold text-white leading-tight"
+            className="mt-3 text-[18px] font-bold text-[var(--ll-ink)] leading-tight"
             style={SG}
           >
             Every card is filtered out
           </h2>
-          <p className="mt-2 text-[13px] text-slate-400 max-w-xs">
+          <p className="mt-2 text-[13px] text-[var(--ll-ink-muted)] max-w-xs">
             Turn a question format or topic back on to see cards here.
           </p>
           <div className="mt-6 flex gap-2">
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
-              className="h-10 px-4 rounded-xl border border-white/10 bg-white/[0.03] text-[13px] font-semibold text-slate-200 hover:bg-white/[0.06] transition-all"
+              className="h-10 px-4 rounded-xl text-[13px] font-semibold text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] transition-all"
+              style={ICON_BTN_SURFACE}
             >
               Adjust filters
             </button>
             <button
               type="button"
               onClick={resetFilters}
-              className="h-10 px-4 rounded-xl bg-white text-zinc-900 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] transition-all"
+              className="h-10 px-4 rounded-xl text-white text-[13px] font-semibold active:scale-[0.98] transition-all"
+              style={{ backgroundColor: 'var(--ll-accent)' }}
             >
               Reset all
             </button>
@@ -257,7 +278,10 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
 
       {/* Card */}
       {card && (
-        <article className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-2xl p-5 min-h-[380px] flex flex-col">
+        <article
+          className="rounded-2xl p-5 min-h-[380px] flex flex-col"
+          style={CARD_SURFACE}
+        >
           {/* Type + topic badges */}
           <div className="flex flex-wrap items-center gap-2">
             <span
@@ -279,18 +303,22 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           </div>
 
           {/* Title */}
-          <h2 className="mt-4 text-[17px] font-bold text-white leading-tight" style={SG}>
+          <h2 className="mt-4 text-[17px] font-bold text-[var(--ll-ink)] leading-tight" style={SG}>
             {card.title}
           </h2>
 
           {/* Question */}
-          <p className="mt-2.5 text-[14px] text-slate-300 leading-relaxed">{card.question}</p>
+          <p className="mt-2.5 text-[14px] text-[var(--ll-ink-muted)] leading-relaxed">{card.question}</p>
 
           {/* Code block */}
           {card.code && (
             <pre
-              className="mt-4 bg-black/40 ring-1 ring-white/[0.05] rounded-xl p-3 overflow-x-auto text-[12px] leading-relaxed text-slate-300"
-              style={MONO}
+              className="mt-4 rounded-xl p-3 overflow-x-auto text-[12px] leading-relaxed text-slate-200"
+              style={{
+                ...MONO,
+                backgroundColor: '#0f172a',
+                border: '1px solid var(--ll-border-strong)',
+              }}
             >
               {card.code}
             </pre>
@@ -314,10 +342,10 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
                       }}
                       className={cn(
                         'w-full text-left px-4 h-12 rounded-xl border text-[13px] font-medium transition-all',
-                        !show && 'border-white/10 bg-white/[0.03] text-slate-200 hover:bg-white/[0.06] active:scale-[0.99]',
-                        show && isCorrect && 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
-                        show && !isCorrect && isPicked && 'border-rose-500/40 bg-rose-500/10 text-rose-200',
-                        show && !isCorrect && !isPicked && 'border-white/5 bg-white/[0.02] text-slate-500',
+                        !show && 'border-[var(--ll-border)] bg-[var(--ll-bg-elevated)] text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] active:scale-[0.99]',
+                        show && isCorrect && 'border-emerald-500/50 bg-emerald-500/10 text-emerald-700',
+                        show && !isCorrect && isPicked && 'border-rose-500/50 bg-rose-500/10 text-rose-700',
+                        show && !isCorrect && !isPicked && 'border-[var(--ll-border)] bg-[var(--ll-bg-subtle)] text-[var(--ll-ink-subtle)]',
                       )}
                     >
                       {choice}
@@ -333,7 +361,8 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
             <button
               type="button"
               onClick={() => setRevealed(true)}
-              className="mt-auto h-12 px-5 rounded-xl border border-white/15 bg-white/5 text-[14px] font-semibold text-white hover:bg-white/10 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
+              className="mt-auto h-12 px-5 rounded-xl text-[14px] font-semibold text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
+              style={ICON_BTN_SURFACE}
             >
               <Eye size={15} strokeWidth={2} />
               Tap to reveal
@@ -342,11 +371,11 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
 
           {/* Answer reveal */}
           {revealed && (
-            <div className="mt-5 pt-4 border-t border-white/[0.06]">
-              <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500">
+            <div className="mt-5 pt-4" style={{ borderTop: '1px solid var(--ll-border)' }}>
+              <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-[var(--ll-ink-subtle)]">
                 Answer
               </p>
-              <p className="mt-2 text-[13px] text-slate-300 leading-relaxed whitespace-pre-wrap">
+              <p className="mt-2 text-[13px] text-[var(--ll-ink-muted)] leading-relaxed whitespace-pre-wrap">
                 {card.answer}
               </p>
             </div>
@@ -360,7 +389,8 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           type="button"
           onClick={goPrev}
           disabled={!card}
-          className="flex-1 h-12 rounded-xl border border-white/10 bg-white/[0.03] text-[13px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          className="flex-1 h-12 rounded-xl text-[13px] font-semibold text-[var(--ll-ink-muted)] hover:text-[var(--ll-ink)] hover:bg-[var(--ll-bg-subtle)] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          style={ICON_BTN_SURFACE}
         >
           <ChevronLeft size={16} strokeWidth={2.5} />
           Previous
@@ -369,7 +399,8 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           type="button"
           onClick={goNext}
           disabled={!card}
-          className="flex-1 h-12 rounded-xl bg-white text-zinc-900 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          className="flex-1 h-12 rounded-xl text-white text-[13px] font-semibold active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          style={{ backgroundColor: 'var(--ll-accent)' }}
         >
           Next
           <ChevronRight size={16} strokeWidth={2.5} />
@@ -416,21 +447,25 @@ function FilterDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          'sm:max-w-md bg-[#0b1220] text-slate-200 ring-white/10',
-          'max-h-[85vh] overflow-y-auto',
+          'theme-light sm:max-w-md max-h-[85vh] overflow-y-auto',
         )}
+        style={{
+          backgroundColor: 'var(--ll-bg-elevated)',
+          color: 'var(--ll-ink)',
+          border: '1px solid var(--ll-border)',
+        }}
       >
         <DialogHeader>
-          <DialogTitle className="text-[16px] text-white" style={SG}>
+          <DialogTitle className="text-[16px] text-[var(--ll-ink)]" style={SG}>
             Card filters
           </DialogTitle>
-          <p className="text-[12px] text-slate-400">
+          <p className="text-[12px] text-[var(--ll-ink-muted)]">
             Choose the formats and topics you want to see in this deck.
           </p>
         </DialogHeader>
 
         <section className="mt-1 space-y-2.5">
-          <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+          <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
             Question format
           </p>
           <div className="flex flex-wrap gap-2">
@@ -455,7 +490,7 @@ function FilterDialog({
         </section>
 
         <section className="mt-4 space-y-2.5">
-          <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+          <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
             Topics
           </p>
           <div className="flex flex-wrap gap-2">
@@ -479,15 +514,18 @@ function FilterDialog({
           </div>
         </section>
 
-        <div className="mt-5 flex items-center justify-between pt-4 border-t border-white/[0.06]">
-          <span className="text-[12px] text-slate-400 tabular-nums">
-            <span className="text-white font-semibold">{matching}</span>
-            <span className="text-slate-500"> of {total} cards</span>
+        <div
+          className="mt-5 flex items-center justify-between pt-4"
+          style={{ borderTop: '1px solid var(--ll-border)' }}
+        >
+          <span className="text-[12px] text-[var(--ll-ink-muted)] tabular-nums">
+            <span className="text-[var(--ll-ink)] font-semibold">{matching}</span>
+            <span className="text-[var(--ll-ink-subtle)]"> of {total} cards</span>
           </span>
           <button
             type="button"
             onClick={onReset}
-            className="text-[12px] font-semibold text-slate-300 hover:text-white transition-colors"
+            className="text-[12px] font-semibold text-[var(--ll-ink-muted)] hover:text-[var(--ll-ink)] transition-colors"
           >
             Reset
           </button>

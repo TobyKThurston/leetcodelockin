@@ -17,13 +17,13 @@ export default async function MobileLearnPage() {
     <div className="max-w-xl mx-auto space-y-6">
       {/* Header */}
       <div className="pt-1">
-        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
+        <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[var(--ll-ink-subtle)]">
           Curriculum
         </p>
-        <h1 className="mt-1 text-[26px] font-bold text-white tracking-tight" style={SG}>
+        <h1 className="mt-1 text-[26px] font-bold text-[var(--ll-ink)] tracking-tight" style={SG}>
           Lessons
         </h1>
-        <p className="mt-1.5 text-[13px] text-slate-500 leading-relaxed">
+        <p className="mt-1.5 text-[13px] text-[var(--ll-ink-muted)] leading-relaxed">
           Browse the curriculum on the go. Tap any block to preview what you&apos;ll learn.
         </p>
       </div>
@@ -38,53 +38,68 @@ export default async function MobileLearnPage() {
           <section key={path.id} className="space-y-2.5">
             <div className="flex items-baseline justify-between gap-3">
               <h2
-                className="text-[15px] font-bold text-white tracking-tight"
+                className="text-[15px] font-bold text-[var(--ll-ink)] tracking-tight"
                 style={SG}
               >
-                <span className="text-slate-600 mr-2 font-semibold tabular-nums">
+                <span className="text-[var(--ll-ink-subtle)] mr-2 font-semibold tabular-nums">
                   {String(pathIdx + 1).padStart(2, '0')}
                 </span>
                 {path.title}
               </h2>
-              <span className="text-[11px] font-semibold text-slate-500 tabular-nums shrink-0">
+              <span className="text-[11px] font-semibold text-[var(--ll-ink-muted)] tabular-nums shrink-0">
                 {pathDone}/{pathTotal}
               </span>
             </div>
 
-            <div className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-2xl divide-y divide-white/[0.04] overflow-hidden">
-              {lessonBlocks.map((block) => {
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{
+                backgroundColor: 'var(--ll-bg-elevated)',
+                border: '1px solid var(--ll-border)',
+              }}
+            >
+              {lessonBlocks.map((block, blockIdx) => {
                 const isDone = completed.has(block.id);
                 return (
                   <Link
                     key={block.id}
                     href={`/m/learn/${block.id}`}
-                    className="flex items-center gap-3 px-4 py-3.5 min-h-[60px] hover:bg-white/[0.03] active:bg-white/[0.05] transition-colors"
+                    className="flex items-center gap-3 px-4 py-3.5 min-h-[60px] hover:bg-[var(--ll-bg-subtle)] active:bg-[var(--ll-bg-subtle)] transition-colors"
+                    style={blockIdx > 0 ? { borderTop: '1px solid var(--ll-border)' } : undefined}
                   >
                     <div
                       className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                         isDone
-                          ? 'bg-emerald-500/10 ring-1 ring-emerald-500/25'
-                          : 'bg-white/[0.03] ring-1 ring-white/[0.06]'
+                          ? 'bg-emerald-500/10 ring-1 ring-emerald-500/30'
+                          : 'ring-1'
                       }`}
+                      style={
+                        isDone
+                          ? undefined
+                          : {
+                              backgroundColor: 'var(--ll-bg-subtle)',
+                              boxShadow: 'inset 0 0 0 1px var(--ll-border)',
+                            }
+                      }
                     >
                       <BookOpen
                         size={14}
                         strokeWidth={2}
-                        className={isDone ? 'text-emerald-300' : 'text-slate-400'}
+                        className={isDone ? 'text-emerald-600' : 'text-[var(--ll-ink-muted)]'}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className="text-[13.5px] font-semibold text-white leading-tight truncate"
+                        className="text-[13.5px] font-semibold text-[var(--ll-ink)] leading-tight truncate"
                         style={SG}
                       >
                         {block.title}
                       </p>
-                      <p className="mt-0.5 text-[11.5px] text-slate-500 truncate">
+                      <p className="mt-0.5 text-[11.5px] text-[var(--ll-ink-muted)] truncate">
                         {block.subtitle}
                       </p>
                     </div>
-                    <ChevronRight size={15} strokeWidth={2.5} className="text-slate-600 shrink-0" />
+                    <ChevronRight size={15} strokeWidth={2.5} className="text-[var(--ll-ink-subtle)] shrink-0" />
                   </Link>
                 );
               })}
@@ -94,9 +109,15 @@ export default async function MobileLearnPage() {
                 const practiceCount = path.blocks.filter(isPractice).length;
                 if (practiceCount === 0) return null;
                 return (
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-black/[0.2]">
-                    <Code2 size={12} strokeWidth={2} className="text-slate-600" />
-                    <p className="text-[11px] text-slate-600">
+                  <div
+                    className="flex items-center gap-2 px-4 py-2.5"
+                    style={{
+                      backgroundColor: 'var(--ll-bg-subtle)',
+                      borderTop: '1px solid var(--ll-border)',
+                    }}
+                  >
+                    <Code2 size={12} strokeWidth={2} className="text-[var(--ll-ink-subtle)]" />
+                    <p className="text-[11px] text-[var(--ll-ink-subtle)]">
                       {practiceCount} practice problem{practiceCount === 1 ? '' : 's'} — open on desktop to solve
                     </p>
                   </div>

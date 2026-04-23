@@ -20,8 +20,12 @@ export default function BottomTabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur bg-[#070c17]/90 border-t border-white/[0.06]"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur"
+      style={{
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        backgroundColor: 'rgba(250,251,252,0.9)',
+        borderTop: '1px solid var(--ll-border)',
+      }}
     >
       <ul className="grid grid-cols-3 h-16">
         {TABS.map(({ href, label, Icon }) => {
@@ -33,15 +37,17 @@ export default function BottomTabBar() {
                 href={href}
                 className={cn(
                   'flex-1 flex flex-col items-center justify-center gap-1 min-h-[44px] transition-colors',
-                  active ? 'text-white' : 'text-slate-500 hover:text-slate-300',
+                  active
+                    ? 'text-[var(--ll-ink)]'
+                    : 'text-[var(--ll-ink-subtle)] hover:text-[var(--ll-ink-muted)]',
                 )}
               >
                 <Icon
                   size={22}
                   strokeWidth={2}
                   className={cn(
-                    active && isUpgrade && 'text-amber-400',
-                    !active && isUpgrade && 'text-amber-500/60',
+                    active && isUpgrade && 'text-amber-500',
+                    !active && isUpgrade && 'text-amber-500/70',
                   )}
                 />
                 <span className="text-[10px] font-medium tracking-wide">{label}</span>
