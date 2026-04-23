@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 
-const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
+const SANS = { fontFamily: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' };
 
 type Mode = 'signin' | 'signup';
 
@@ -161,24 +161,15 @@ export default async function SignInPage({
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 relative"
-      style={{ background: '#0b1220' }}
+      className="theme-light min-h-screen flex flex-col items-center justify-center px-4 relative"
+      style={{ background: 'var(--ll-bg)', color: 'var(--ll-ink)' }}
     >
-      {/* Moving dot grid — matches landing page */}
+      {/* Soft Stripe-style gradient mesh */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
-      {/* Ambient glow — blue to match landing */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
           background:
-            'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(59,130,246,0.09) 0%, transparent 70%)',
+            'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(59,130,246,0.14) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 30%, rgba(56,189,248,0.10) 0%, transparent 70%)',
         }}
       />
 
@@ -187,23 +178,34 @@ export default async function SignInPage({
         <div className="mb-6 text-center">
           <Link href="/" className="inline-block">
             <p
-              className="text-[26px] font-bold text-white tracking-tight"
-              style={SG}
+              className="text-[26px] font-bold tracking-tight"
+              style={{ ...SANS, color: 'var(--ll-ink)', letterSpacing: '-0.02em' }}
             >
               LeetLockin
             </p>
           </Link>
-          <p className="text-[13px] text-zinc-500 mt-0.5" style={SG}>
+          <p
+            className="text-[13px] mt-0.5"
+            style={{ ...SANS, color: 'var(--ll-ink-muted)' }}
+          >
             Learn patterns. Crack interviews.
           </p>
         </div>
 
-        <Card className="bg-white/[0.025] border-white/10 backdrop-blur-sm">
+        <Card
+          className="rounded-lg"
+          style={{
+            background: 'var(--ll-bg-elevated)',
+            border: '1px solid var(--ll-border)',
+            boxShadow:
+              '0 1px 2px rgba(15,23,42,0.04), 0 24px 60px -28px rgba(15,23,42,0.18)',
+          }}
+        >
           <CardHeader>
-            <CardTitle className="text-white" style={SG}>
+            <CardTitle style={{ ...SANS, color: 'var(--ll-ink)' }}>
               {isSignIn ? 'Sign in to continue' : 'Create your account'}
             </CardTitle>
-            <CardDescription style={SG}>
+            <CardDescription style={{ ...SANS, color: 'var(--ll-ink-muted)' }}>
               {isSignIn
                 ? 'Your progress is saved to your account.'
                 : 'Start locking in with a free account.'}
@@ -217,7 +219,13 @@ export default async function SignInPage({
               <Button
                 type="submit"
                 variant="outline"
-                className="w-full h-10 bg-white/[0.03] text-white hover:bg-white/[0.06] border-white/10"
+                className="w-full h-10 rounded-md font-medium"
+                style={{
+                  background: 'var(--ll-bg-elevated)',
+                  color: 'var(--ll-ink)',
+                  border: '1px solid var(--ll-border-strong)',
+                  boxShadow: '0 1px 2px rgba(15,23,42,0.04)',
+                }}
               >
                 <svg
                   width="18"
@@ -249,14 +257,14 @@ export default async function SignInPage({
 
             {/* Divider */}
             <div className="relative flex items-center">
-              <Separator className="flex-1 bg-white/10" />
+              <Separator className="flex-1" style={{ background: 'var(--ll-border)' }} />
               <span
-                className="px-3 text-[11px] uppercase tracking-wider text-zinc-500"
-                style={SG}
+                className="px-3 text-[11px] uppercase tracking-wider"
+                style={{ ...SANS, color: 'var(--ll-ink-subtle)' }}
               >
                 or
               </span>
-              <Separator className="flex-1 bg-white/10" />
+              <Separator className="flex-1" style={{ background: 'var(--ll-border)' }} />
             </div>
 
             {/* Email / Password */}
@@ -267,7 +275,7 @@ export default async function SignInPage({
               <input type="hidden" name="next" value={nextUrl} />
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-zinc-300" style={SG}>
+                <Label htmlFor="email" style={{ ...SANS, color: 'var(--ll-ink-muted)' }}>
                   Email
                 </Label>
                 <Input
@@ -277,12 +285,17 @@ export default async function SignInPage({
                   autoComplete="email"
                   required
                   placeholder="you@example.com"
-                  className="h-10 bg-white/[0.03] border-white/10 text-white placeholder:text-zinc-600"
+                  className="h-10 rounded-md"
+                  style={{
+                    background: 'var(--ll-bg-elevated)',
+                    color: 'var(--ll-ink)',
+                    border: '1px solid var(--ll-border)',
+                  }}
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="password" className="text-zinc-300" style={SG}>
+                <Label htmlFor="password" style={{ ...SANS, color: 'var(--ll-ink-muted)' }}>
                   Password
                 </Label>
                 <Input
@@ -293,24 +306,29 @@ export default async function SignInPage({
                   required
                   minLength={6}
                   placeholder={isSignIn ? 'Your password' : 'At least 6 characters'}
-                  className="h-10 bg-white/[0.03] border-white/10 text-white placeholder:text-zinc-600"
+                  className="h-10 rounded-md"
+                  style={{
+                    background: 'var(--ll-bg-elevated)',
+                    color: 'var(--ll-ink)',
+                    border: '1px solid var(--ll-border)',
+                  }}
                 />
               </div>
 
               {error ? (
                 <p
-                  className="text-[12.5px] text-red-400"
+                  className="text-[12.5px]"
                   role="alert"
-                  style={SG}
+                  style={{ ...SANS, color: '#dc2626' }}
                 >
                   {error}
                 </p>
               ) : null}
               {message ? (
                 <p
-                  className="text-[12.5px] text-emerald-400"
+                  className="text-[12.5px]"
                   role="status"
-                  style={SG}
+                  style={{ ...SANS, color: '#059669' }}
                 >
                   {message}
                 </p>
@@ -318,21 +336,30 @@ export default async function SignInPage({
 
               <Button
                 type="submit"
-                className="w-full h-10 bg-blue-600 text-white hover:bg-blue-500 border-transparent font-bold"
+                className="w-full h-10 rounded-md font-semibold text-white border-transparent"
+                style={{
+                  background: 'var(--ll-accent)',
+                  boxShadow:
+                    '0 1px 0 0 rgba(255,255,255,0.15) inset, 0 1px 2px rgba(15,23,42,0.06), 0 8px 24px -10px rgba(59,130,246,0.55)',
+                }}
               >
                 {isSignIn ? 'Sign in' : 'Create account'}
               </Button>
             </form>
           </CardContent>
 
-          <CardFooter className="justify-center bg-transparent border-t border-white/10">
-            <p className="text-[12.5px] text-zinc-500" style={SG}>
+          <CardFooter
+            className="justify-center bg-transparent"
+            style={{ borderTop: '1px solid var(--ll-border)' }}
+          >
+            <p className="text-[12.5px]" style={{ ...SANS, color: 'var(--ll-ink-muted)' }}>
               {isSignIn ? (
                 <>
                   Don&apos;t have an account?{' '}
                   <Link
                     href={`/sign-in?mode=signup&next=${encodeURIComponent(nextUrl)}`}
-                    className="text-blue-400 hover:text-blue-300 font-medium"
+                    className="font-medium hover:underline"
+                    style={{ color: 'var(--ll-accent)' }}
                   >
                     Sign up
                   </Link>
@@ -342,7 +369,8 @@ export default async function SignInPage({
                   Already have an account?{' '}
                   <Link
                     href={`/sign-in?mode=signin&next=${encodeURIComponent(nextUrl)}`}
-                    className="text-blue-400 hover:text-blue-300 font-medium"
+                    className="font-medium hover:underline"
+                    style={{ color: 'var(--ll-accent)' }}
                   >
                     Sign in
                   </Link>
@@ -354,14 +382,14 @@ export default async function SignInPage({
 
         <Link
           href={`${nextUrl}${nextUrl.includes('?') ? '&' : '?'}guest=1`}
-          className="mt-5 block text-center text-[12.5px] text-zinc-500 hover:text-zinc-300 transition-colors"
-          style={SG}
+          className="mt-5 block text-center text-[12.5px] transition-colors hover:text-[var(--ll-ink)]"
+          style={{ ...SANS, color: 'var(--ll-ink-muted)' }}
         >
           Continue as guest →
         </Link>
         <p
-          className="mt-2 text-center text-[11px] text-zinc-700"
-          style={SG}
+          className="mt-2 text-center text-[11px]"
+          style={{ ...SANS, color: 'var(--ll-ink-subtle)' }}
         >
           You can browse everything — sign in to save progress.
         </p>
