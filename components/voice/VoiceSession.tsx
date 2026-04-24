@@ -790,6 +790,12 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           </div>
         </div>
 
+        {/* Live transcription overlay — bottom-left, always-on during an
+            active voice session so the user can see mic → STT is working. */}
+        {!isPractice && (
+          <LiveTranscriptionOverlay transcript={transcript} muted={muted} micLevel={micLevel} />
+        )}
+
         {/* Transcript drawer */}
         {showTranscript && (
           <div
@@ -826,6 +832,107 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               ))}
             </div>
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Live transcription overlay ──────────────────────────────────────────────
+
+function LiveTranscriptionOverlay({
+  transcript,
+  muted,
+  micLevel,
+}: {
+  transcript: Turn[];
+  muted: boolean;
+  micLevel: number;
+}) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const recent = transcript.slice(-3);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [transcript.length]);
+
+  const speaking = !muted && micLevel > VAD_THRESHOLD;
+  const statusLabel = muted
+    ? 'Mic muted'
+    : speaking
+      ? 'Listening…'
+      : transcript.length === 0
+        ? 'Waiting for you to speak…'
+        : 'Idle';
+  const statusColor = muted
+    ? '#fca5a5'
+    : speaking
+      ? '#34d399'
+      : 'rgba(148,163,184,0.85)';
+
+  return (
+    <div
+      className="fixed bottom-4 left-4 w-[340px] rounded-xl overflow-hidden pointer-events-auto"
+      style={{
+        background: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        border: '1px solid rgba(15,23,42,0.10)',
+        boxShadow: '0 10px 28px -14px rgba(15,23,42,0.25)',
+        zIndex: 30,
+      }}
+      aria-live="polite"
+    >
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{ borderBottom: '1px solid rgba(15,23,42,0.06)' }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="h-1.5 w-1.5 rounded-full"
+            style={{
+              background: statusColor,
+              boxShadow: speaking ? `0 0 8px ${statusColor}` : 'none',
+              transition: 'box-shadow 120ms',
+            }}
+          />
+          <span
+            className="text-[10px] font-semibold uppercase tracking-[0.14em]"
+            style={{ ...SG, color: statusColor }}
+          >
+            {statusLabel}
+          </span>
+        </div>
+        <span className="text-[10px] text-slate-400" style={SG}>
+          Live transcript
+        </span>
+      </div>
+      <div
+        ref={scrollRef}
+        className="px-3 py-2.5 space-y-2 overflow-y-auto"
+        style={{ maxHeight: 140 }}
+      >
+        {recent.length === 0 ? (
+          <p className="text-[12px] text-slate-400 italic" style={SG}>
+            Say something — your words will appear here as you speak.
+          </p>
+        ) : (
+          recent.map((t, i) => (
+            <div key={`${transcript.length - recent.length + i}`}>
+              <p
+                className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
+                style={{
+                  ...SG,
+                  color: t.role === 'ai' ? 'rgba(59,130,246,0.85)' : 'rgba(100,116,139,0.85)',
+                }}
+              >
+                {t.role === 'ai' ? 'Interviewer' : 'You'}
+              </p>
+              <p className="text-[12.5px] text-slate-800 leading-snug" style={SG}>
+                {t.text}
+              </p>
+            </div>
+          ))
         )}
       </div>
     </div>
