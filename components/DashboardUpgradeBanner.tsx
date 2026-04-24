@@ -45,16 +45,16 @@ export default function DashboardUpgradeBanner() {
       }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-white" style={SG}>
+        <p className="text-[13px] font-semibold text-slate-900" style={SG}>
           Unlock mock interviews + spaced-repetition review
         </p>
-        <p className="text-[11.5px] text-slate-400 leading-snug">
+        <p className="text-[11.5px] text-slate-600 leading-snug">
           Pro adds timed AI interviews, personalized flashcards from your solutions, and unlimited tutor messages.
         </p>
       </div>
       <a
         href="/checkout?plan=yearly&from=/dashboard"
-        className="shrink-0 inline-flex items-center px-3.5 py-1.5 rounded-md text-[12px] font-semibold text-white bg-blue-500 hover:bg-blue-400 border border-blue-400/60 transition-colors"
+        className="shrink-0 inline-flex items-center px-3.5 py-1.5 rounded-md text-[12px] font-semibold text-slate-900 bg-blue-500 hover:bg-blue-400 border border-blue-400/60 transition-colors"
         style={SG}
       >
         See Pro
@@ -63,7 +63,7 @@ export default function DashboardUpgradeBanner() {
         type="button"
         onClick={dismiss}
         aria-label="Dismiss"
-        className="shrink-0 text-slate-500 hover:text-white transition-colors p-1"
+        className="shrink-0 text-slate-500 hover:text-slate-900 transition-colors p-1"
       >
         <X size={14} />
       </button>

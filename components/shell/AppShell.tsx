@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import AppNav, { type AppNavTab } from '@/components/AppNav';
-import { C, GRID_BG, SHELL } from '@/lib/ui-tokens';
+import { SHELL } from '@/lib/ui-tokens';
 import { cn } from '@/lib/utils';
 
 type AppShellProps = {
@@ -25,7 +25,7 @@ export default function AppShell({
   mainClassName,
 }: AppShellProps) {
   return (
-    <div className="min-h-screen" style={{ background: C.appBg }}>
+    <div className="min-h-screen ll-app-mesh">
       <AppNav activeTab={activeTab} />
       {sidebar}
       {rail}
@@ -33,7 +33,6 @@ export default function AppShell({
         style={{
           paddingLeft: SHELL.sideWidth,
           paddingTop: SHELL.navHeight,
-          ...GRID_BG,
         }}
         className={cn(
           'min-h-screen overflow-x-auto pb-24',

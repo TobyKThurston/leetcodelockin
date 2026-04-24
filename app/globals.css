@@ -122,23 +122,301 @@ html, body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* ─── Landing page light theme (Linear-style) ─────────────────────────── */
-/* Scoped tokens — only applied where `.theme-light` is set on a wrapper. */
+/* ─── App + Landing light theme (Linear/Stripe-style) ──────────────────── */
+/* Scoped tokens — applied where `.theme-light` is set on a wrapper (body    */
+/* in app/layout.tsx).                                                       */
 
 .theme-light {
-  /* Premium Linear/Stripe palette — cool near-white, lighter blue accent. */
-  --ll-bg: #fafbfc;
-  --ll-bg-elevated: #ffffff;
-  --ll-bg-subtle: #f1f5f9;
-  --ll-ink: #0f172a;
-  --ll-ink-muted: #475569;
-  --ll-ink-subtle: #94a3b8;
-  --ll-accent: #3b82f6;
+  /* Surfaces — soft-blue environment, white cards (Linear/Stripe style)    */
+  /*                                                                        */
+  /*  canvas  (lightest blue — the environment)                             */
+  /*    └ panel   (side surfaces — sidebar/rail, slightly darker blue)      */
+  /*        └ card  (regular card — pure white, the interactive surface)    */
+  /*            └ elevated  (hero/active surface — also white)              */
+  /*                                                                        */
+  /*  Rule: blue = environment, white = interactive objects                 */
+  --ll-bg:           #f4f7ff;   /* app canvas — light blue wash */
+  --ll-bg-panel:     #eef3ff;   /* sidebar / rail panels — slightly darker */
+  --ll-bg-card:      #ffffff;   /* regular card surface — crisp white */
+  --ll-bg-elevated:  #ffffff;   /* hero / active surface */
+  --ll-bg-subtle:    #e6edff;   /* sunken strip / inputs */
+  --ll-bg-hover:     #f5f8ff;   /* hover on card/button */
+  --ll-bg-tinted:    #eef4ff;   /* selected card highlight */
+  --ll-bg-code:      #eef3ff;   /* coding panel workspace */
+
+  /* Ink */
+  --ll-ink:          #0f172a;   /* body text */
+  --ll-ink-strong:   #020617;   /* headings */
+  --ll-ink-muted:    #475569;   /* secondary text */
+  --ll-ink-subtle:   #64748b;   /* meta, helper text */
+  --ll-ink-faint:    #94a3b8;   /* eyebrow / placeholder */
+  --ll-ink-dim:      #cbd5e1;   /* disabled / decorative */
+
+  /* Accent (blue) */
+  --ll-accent:       #3b82f6;
   --ll-accent-hover: #2563eb;
-  --ll-accent-soft: #38bdf8;
-  --ll-border: #e2e8f0;
-  --ll-border-strong: #cbd5e1;
+  --ll-accent-soft:  #eff6ff;   /* bg tint */
+  --ll-accent-ink:   #1d4ed8;   /* text on soft tint */
+  --ll-accent-ring:  rgba(59,130,246,0.22);
+
+  /* Borders — soft blue-tinted */
+  --ll-border:         #e6edff;
+  --ll-border-strong:  #dce6ff;
+  --ll-border-subtle:  #f0f4ff;
+
+  /* Semantic — success (emerald) */
+  --ll-success:        #059669;
+  --ll-success-hover:  #047857;
+  --ll-success-soft:   #ecfdf5;
+  --ll-success-border: #a7f3d0;
+  --ll-success-ink:    #065f46;
+
+  /* Semantic — warning (amber) */
+  --ll-warning:        #d97706;
+  --ll-warning-soft:   #fffbeb;
+  --ll-warning-border: #fde68a;
+  --ll-warning-ink:    #b45309;
+
+  /* Semantic — danger (red) */
+  --ll-danger:         #dc2626;
+  --ll-danger-hover:   #b91c1c;
+  --ll-danger-soft:    #fef2f2;
+  --ll-danger-border:  #fecaca;
+  --ll-danger-ink:     #991b1b;
+
+  /* Shadow (used inline via rgba for tuning) */
+  --ll-shadow-sm:  0 1px 2px rgba(15,23,42,0.04);
+  --ll-shadow-md:  0 4px 14px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
+  --ll-shadow-lg:  0 18px 40px -12px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.04);
+
+  /* Translucent surfaces — subtle nav tint, not a dark fog */
+  --ll-nav-bg:   rgba(234,240,255,0.92);
+  --ll-glass-bg: rgba(238,244,255,0.82);
 }
+
+/* Dark theme — same blue-tinted palette as before, but applied with the
+   light-mode principles: flat surfaces, crisp borders, clear layering,
+   no radial glows. Depth comes from stepping the surfaces, not washes.   */
+.theme-dark {
+  /* Surfaces — slate-blue environment, lifted cards clearly pop           */
+  /*                                                                       */
+  /*  canvas  (deepest slate-blue — the environment)                       */
+  /*    └ panel   (side surfaces — one step up)                            */
+  /*        └ card  (regular card — clearly lifted, the interactive one)   */
+  /*            └ elevated  (hero/active surface — brightest step)         */
+  --ll-bg:           #0b1220;   /* app canvas — deep slate blue */
+  --ll-bg-panel:     #0e1626;   /* sidebar / rail panels */
+  --ll-bg-card:      #151f32;   /* regular card surface — clearly lifted */
+  --ll-bg-elevated:  #1b2740;   /* hero / active surface */
+  --ll-bg-subtle:    #0f182a;   /* sunken strip / inputs */
+  --ll-bg-hover:     #1f2a41;   /* hover on card/button */
+  --ll-bg-tinted:    rgba(96,165,250,0.10); /* selected card highlight */
+  --ll-bg-code:      #0a1020;   /* coding panel workspace */
+
+  /* Ink — crisp, high contrast for legibility */
+  --ll-ink:          #e2e8f0;   /* body text */
+  --ll-ink-strong:   #f8fafc;   /* headings */
+  --ll-ink-muted:    #94a3b8;   /* secondary text */
+  --ll-ink-subtle:   #64748b;   /* meta, helper text */
+  --ll-ink-faint:    #475569;   /* eyebrow / placeholder */
+  --ll-ink-dim:      #334155;   /* disabled / decorative */
+
+  /* Accent (blue) */
+  --ll-accent:       #60a5fa;
+  --ll-accent-hover: #3b82f6;
+  --ll-accent-soft:  rgba(96,165,250,0.12);
+  --ll-accent-ink:   #93c5fd;
+  --ll-accent-ring:  rgba(96,165,250,0.30);
+
+  /* Borders — clearly visible, not washed */
+  --ll-border:         rgba(255,255,255,0.10);
+  --ll-border-strong:  rgba(255,255,255,0.18);
+  --ll-border-subtle:  rgba(255,255,255,0.06);
+
+  /* Semantic — success */
+  --ll-success:        #34d399;
+  --ll-success-hover:  #10b981;
+  --ll-success-soft:   rgba(16,185,129,0.12);
+  --ll-success-border: rgba(16,185,129,0.30);
+  --ll-success-ink:    #6ee7b7;
+
+  /* Semantic — warning */
+  --ll-warning:        #fbbf24;
+  --ll-warning-soft:   rgba(251,191,36,0.10);
+  --ll-warning-border: rgba(251,191,36,0.28);
+  --ll-warning-ink:    #fcd34d;
+
+  /* Semantic — danger */
+  --ll-danger:         #f87171;
+  --ll-danger-hover:   #ef4444;
+  --ll-danger-soft:    rgba(239,68,68,0.10);
+  --ll-danger-border:  rgba(239,68,68,0.28);
+  --ll-danger-ink:     #fca5a5;
+
+  /* Shadows — crisp, minimal bloom */
+  --ll-shadow-sm:  0 1px 2px rgba(0,0,0,0.4);
+  --ll-shadow-md:  0 2px 8px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
+  --ll-shadow-lg:  0 10px 28px -8px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.4);
+
+  /* Translucent surfaces */
+  --ll-nav-bg:   rgba(14,22,38,0.88);
+  --ll-glass-bg: rgba(20,28,46,0.78);
+}
+
+/* Reusable background utilities for app shells */
+.ll-surface {
+  background-color: var(--ll-bg);
+  color: var(--ll-ink);
+}
+
+/* Soft Stripe-style radial mesh for app canvases — same family as landing
+   but cooler/quieter so dense UI doesn't compete with it.                  */
+.ll-gradient-mesh {
+  background-image:
+    radial-gradient(ellipse 55% 45% at 78% 8%,  rgba(59,130,246,0.10), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 12% 18%, rgba(56,189,248,0.08), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 95%, rgba(59,130,246,0.05), transparent 72%);
+  background-attachment: fixed, fixed, fixed;
+}
+
+/* Dark mode: flat canvas, no radial glows — keep it clean and clear */
+.theme-dark .ll-gradient-mesh {
+  background-image: none;
+  background-color: var(--ll-bg);
+}
+
+/* App shell wash — cool blue gradient, more present so surfaces pop */
+.ll-app-mesh {
+  background:
+    radial-gradient(ellipse 55% 38% at 92% -8%, rgba(59,130,246,0.14), transparent 72%),
+    radial-gradient(ellipse 45% 32% at 4% 16%, rgba(56,189,248,0.10), transparent 72%),
+    radial-gradient(ellipse 65% 45% at 50% 108%, rgba(59,130,246,0.06), transparent 72%),
+    var(--ll-bg);
+}
+
+/* Dark mode: flat canvas — the panel/card layering provides depth, not glows */
+.theme-dark .ll-app-mesh {
+  background: var(--ll-bg);
+}
+
+/* Subtle dotted/grid wash */
+.ll-grid {
+  background-image:
+    linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.theme-dark .ll-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+}
+
+/* Coding panel — distinct blue-washed surface signalling the "workspace" */
+.ll-code-surface {
+  background:
+    linear-gradient(180deg, rgba(59,130,246,0.04), rgba(59,130,246,0.02) 40%, transparent 80%),
+    var(--ll-bg-code);
+}
+
+/* Dark mode: flat code surface — no gradient fade */
+.theme-dark .ll-code-surface {
+  background: var(--ll-bg-code);
+}
+
+/* Soft accent hero — for "Up Next" / active CTAs */
+.ll-accent-hero {
+  background:
+    linear-gradient(180deg, #dbeafe 0%, #eef4fc 100%);
+  border-color: #bfdbfe;
+}
+
+/* Dark mode: solid tinted surface with a clear blue border — no gradient haze */
+.theme-dark .ll-accent-hero {
+  background: rgba(96,165,250,0.08);
+  border-color: rgba(96,165,250,0.35);
+}
+
+/* ─── Dark-mode compat layer ─────────────────────────────────────────────
+   The light-mode refactor uses many hardcoded `bg-white`, `text-slate-*`,
+   `border-slate-*` classes. To make the theme toggle actually flip those
+   surfaces (short of a full class-rewrite), we remap the most common ones
+   to our dark tokens when `.theme-dark` is active.
+   Kept surgical — only the utilities that actually appear in app pages.    */
+
+.theme-dark .bg-white               { background-color: var(--ll-bg-elevated); }
+.theme-dark .bg-slate-50            { background-color: var(--ll-bg-subtle); }
+.theme-dark .bg-slate-100           { background-color: var(--ll-bg-hover); }
+.theme-dark .bg-slate-200           { background-color: var(--ll-border-strong); }
+
+.theme-dark .bg-emerald-50          { background-color: rgba(16,185,129,0.10); }
+.theme-dark .bg-amber-50            { background-color: rgba(251,191,36,0.10); }
+.theme-dark .bg-red-50              { background-color: rgba(239,68,68,0.10); }
+.theme-dark .bg-blue-50             { background-color: rgba(59,130,246,0.12); }
+
+.theme-dark .text-slate-900         { color: var(--ll-ink-strong); }
+.theme-dark .text-slate-800         { color: var(--ll-ink-strong); }
+.theme-dark .text-slate-700         { color: var(--ll-ink); }
+.theme-dark .text-slate-600         { color: var(--ll-ink-muted); }
+.theme-dark .text-slate-500         { color: var(--ll-ink-subtle); }
+.theme-dark .text-slate-400         { color: var(--ll-ink-faint); }
+.theme-dark .text-slate-300         { color: var(--ll-ink-dim); }
+
+.theme-dark .text-emerald-700       { color: var(--ll-success-ink); }
+.theme-dark .text-emerald-600       { color: var(--ll-success); }
+.theme-dark .text-amber-700         { color: var(--ll-warning-ink); }
+.theme-dark .text-amber-600         { color: var(--ll-warning); }
+.theme-dark .text-red-700           { color: var(--ll-danger-ink); }
+.theme-dark .text-red-600           { color: var(--ll-danger); }
+.theme-dark .text-blue-700          { color: var(--ll-accent-ink); }
+.theme-dark .text-blue-600          { color: var(--ll-accent); }
+
+.theme-dark .border-slate-100       { border-color: var(--ll-border-subtle); }
+.theme-dark .border-slate-200       { border-color: var(--ll-border); }
+.theme-dark .border-slate-300       { border-color: var(--ll-border-strong); }
+/* Opacity-modified slate borders — Tailwind emits these as semi-transparent
+   light-slate, which on dark bg renders as a harsh bright line. Override.  */
+.theme-dark .border-slate-200\/40   { border-color: var(--ll-border-subtle); }
+.theme-dark .border-slate-200\/50   { border-color: var(--ll-border); }
+.theme-dark .border-slate-200\/60   { border-color: var(--ll-border); }
+.theme-dark .border-slate-300\/50   { border-color: var(--ll-border); }
+.theme-dark .border-slate-300\/60   { border-color: var(--ll-border-strong); }
+.theme-dark .border-slate-300\/80   { border-color: var(--ll-border-strong); }
+.theme-dark .bg-slate-50\/50        { background-color: var(--ll-bg-subtle); }
+.theme-dark .bg-slate-50\/60        { background-color: var(--ll-bg-subtle); }
+.theme-dark .bg-slate-50\/70        { background-color: var(--ll-bg-subtle); }
+.theme-dark .bg-slate-50\/80        { background-color: var(--ll-bg-subtle); }
+.theme-dark .bg-slate-100\/20       { background-color: var(--ll-bg-hover); }
+.theme-dark .bg-slate-100\/50       { background-color: var(--ll-bg-hover); }
+.theme-dark .bg-slate-100\/70       { background-color: var(--ll-bg-hover); }
+.theme-dark .bg-white\/80           { background-color: var(--ll-bg-elevated); }
+.theme-dark .hover\:bg-slate-100\/50:hover { background-color: var(--ll-bg-hover); }
+.theme-dark .hover\:border-slate-300\/60:hover { border-color: var(--ll-border-strong); }
+.theme-dark .border-emerald-200     { border-color: var(--ll-success-border); }
+.theme-dark .border-amber-200       { border-color: var(--ll-warning-border); }
+.theme-dark .border-red-200         { border-color: var(--ll-danger-border); }
+.theme-dark .border-blue-200        { border-color: rgba(96,165,250,0.32); }
+.theme-dark .border-blue-400\/50    { border-color: rgba(96,165,250,0.45); }
+.theme-dark .border-blue-400\/60    { border-color: rgba(96,165,250,0.55); }
+.theme-dark .border-blue-400\/75    { border-color: rgba(96,165,250,0.65); }
+
+/* Blue accent hover patches that don't resolve via the tokens above */
+.theme-dark .hover\:bg-slate-100:hover  { background-color: var(--ll-bg-hover); }
+.theme-dark .hover\:bg-slate-50:hover   { background-color: var(--ll-bg-subtle); }
+.theme-dark .hover\:border-slate-300:hover { border-color: var(--ll-border-strong); }
+.theme-dark .hover\:text-slate-900:hover   { color: var(--ll-ink-strong); }
+.theme-dark .hover\:text-slate-700:hover   { color: var(--ll-ink); }
+.theme-dark .hover\:border-emerald-500\/40:hover { border-color: rgba(16,185,129,0.45); }
+.theme-dark .hover\:border-emerald-500\/50:hover { border-color: rgba(16,185,129,0.55); }
+
+/* The soft blue highlight used for active path/category cards must stay visible on dark */
+.theme-dark .bg-blue-500\/\[0\.08\]  { background-color: rgba(59,130,246,0.18); }
+.theme-dark .bg-blue-500\/\[0\.10\]  { background-color: rgba(59,130,246,0.22); }
+.theme-dark .bg-blue-500\/\[0\.15\]  { background-color: rgba(59,130,246,0.30); }
+.theme-dark .bg-emerald-500\/\[0\.05\] { background-color: rgba(16,185,129,0.12); }
+.theme-dark .bg-amber-500\/\[0\.08\]  { background-color: rgba(251,191,36,0.14); }
+.theme-dark .bg-amber-500\/\[0\.13\]  { background-color: rgba(251,191,36,0.20); }
 
 
 /* ─── Hero animations ─────────────────────────────────────────────────── */

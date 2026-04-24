@@ -15,20 +15,22 @@ interface SetupScreenProps {
   loading: boolean;
 }
 
-const DIFFICULTIES: { id: InterviewDifficulty; label: string; sub: string; tag: string; tagColor: string }[] = [
+const DIFFICULTIES: { id: InterviewDifficulty; label: string; sub: string; tag: string; tagColor: string; tagBg: string }[] = [
   {
     id: 'easy-medium',
     label: 'Easy + Medium',
     sub: 'Build confidence and nail the fundamentals',
     tag: 'Recommended',
-    tagColor: 'rgba(52,211,153,0.7)',
+    tagColor: 'var(--ll-success-ink)',
+    tagBg: 'var(--ll-success-soft)',
   },
   {
     id: 'medium-hard',
     label: 'Medium + Hard',
     sub: 'Push yourself with real interview difficulty',
     tag: 'Challenge',
-    tagColor: 'rgba(251,191,36,0.7)',
+    tagColor: 'var(--ll-warning-ink)',
+    tagBg: 'var(--ll-warning-soft)',
   },
 ];
 
@@ -55,10 +57,10 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
     <div className="flex-1 flex items-center justify-center px-6 py-10">
       <div className="max-w-lg w-full space-y-7">
         <div className="text-center space-y-2">
-          <h1 className="text-[26px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="text-[26px] font-bold text-slate-900 tracking-tight" style={SG}>
             New Mock Interview
           </h1>
-          <p className="text-[14px] text-zinc-400" style={SG}>
+          <p className="text-[14px] text-slate-600" style={SG}>
             Pick a format, difficulty, and start the clock.
           </p>
         </div>
@@ -82,7 +84,7 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
                 label: 'Voice',
                 sub: '1 problem · live AI interviewer',
                 tag: 'New',
-                tagColor: 'rgba(216,180,254,0.95)',
+                tagColor: '#6d28d9',
                 tagBg: 'rgba(168,85,247,0.15)',
                 activeColor: 'rgba(168,85,247,0.45)',
                 activeBg: 'rgba(168,85,247,0.08)',
@@ -99,16 +101,16 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
                   onClick={() => setFormat(f.v)}
                   className="text-left rounded-xl px-5 py-4 transition-all"
                   style={{
-                    background: active ? accent.activeBg : 'rgba(255,255,255,0.02)',
+                    background: active ? accent.activeBg : 'var(--ll-bg-card)',
                     border: active
                       ? `1.5px solid ${accent.bg}`
-                      : '1px solid rgba(255,255,255,0.06)',
+                      : '1px solid var(--ll-border)',
                     boxShadow: active ? `0 0 20px ${accent.glow}` : 'none',
                   }}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span style={{ color: active ? accent.color : 'rgba(148,163,184,0.7)' }}>{f.icon}</span>
-                    <span className="text-[14px] font-semibold text-white" style={SG}>{f.label}</span>
+                    <span style={{ color: active ? accent.color : 'var(--ll-ink-muted)' }}>{f.icon}</span>
+                    <span className="text-[14px] font-semibold text-slate-900" style={SG}>{f.label}</span>
                     {'tag' in f && f.tag && (
                       <span
                         className="text-[9px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded"
@@ -118,7 +120,7 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
                       </span>
                     )}
                   </div>
-                  <p className="text-[12px] text-zinc-500 leading-relaxed" style={SG}>{f.sub}</p>
+                  <p className="text-[12px] text-slate-500 leading-relaxed" style={SG}>{f.sub}</p>
                 </button>
               );
             })}
@@ -139,27 +141,27 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
                   onClick={() => setSelected(d.id)}
                   className="text-left rounded-xl px-5 py-4 transition-all"
                   style={{
-                    background: active ? 'rgba(59,130,246,0.06)' : 'rgba(255,255,255,0.02)',
+                    background: active ? 'rgba(59,130,246,0.08)' : 'var(--ll-bg-card)',
                     border: active
                       ? '1.5px solid rgba(59,130,246,0.4)'
-                      : '1px solid rgba(255,255,255,0.06)',
+                      : '1px solid var(--ll-border)',
                     boxShadow: active ? '0 0 20px rgba(59,130,246,0.1)' : 'none',
                   }}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[14px] font-semibold text-white" style={SG}>
+                    <span className="text-[14px] font-semibold text-slate-900" style={SG}>
                       {format === 'voice'
                         ? (d.id === 'easy-medium' ? 'Medium' : 'Hard')
                         : d.label}
                     </span>
                     <span
                       className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
-                      style={{ color: d.tagColor, background: `${d.tagColor}15` }}
+                      style={{ color: d.tagColor, background: d.tagBg }}
                     >
                       {d.tag}
                     </span>
                   </div>
-                  <p className="text-[12px] text-zinc-500 leading-relaxed" style={SG}>
+                  <p className="text-[12px] text-slate-500 leading-relaxed" style={SG}>
                     {format === 'voice'
                       ? (d.id === 'easy-medium' ? 'Standard onsite difficulty' : 'Senior-level challenge')
                       : d.sub}
@@ -185,14 +187,14 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
                     onClick={() => setDuration(d.v)}
                     className="text-center rounded-xl px-5 py-3 transition-all"
                     style={{
-                      background: active ? 'rgba(168,85,247,0.08)' : 'rgba(255,255,255,0.02)',
+                      background: active ? 'rgba(168,85,247,0.10)' : 'var(--ll-bg-card)',
                       border: active
                         ? '1.5px solid rgba(168,85,247,0.45)'
-                        : '1px solid rgba(255,255,255,0.06)',
+                        : '1px solid var(--ll-border)',
                     }}
                   >
-                    <span className="text-[14px] font-semibold text-white" style={SG}>{d.label}</span>
-                    <span className="block text-[11px] text-zinc-500 mt-0.5" style={SG}>{d.sub}</span>
+                    <span className="text-[14px] font-semibold text-slate-900" style={SG}>{d.label}</span>
+                    <span className="block text-[11px] text-slate-500 mt-0.5" style={SG}>{d.sub}</span>
                   </button>
                 );
               })}
@@ -201,26 +203,26 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
         )}
 
         {/* Rules */}
-        <div className="flex items-center justify-center gap-6 text-[12px] text-zinc-500" style={SG}>
+        <div className="flex items-center justify-center gap-6 text-[12px] text-slate-500" style={SG}>
           {format === 'voice' ? (
             <>
               <span className="flex items-center gap-1.5">
-                <Clock size={13} className="text-zinc-600" />
+                <Clock size={13} className="text-slate-600" />
                 {duration} minutes
               </span>
               <span className="flex items-center gap-1.5">
-                <Mic size={13} className="text-zinc-600" />
+                <Mic size={13} className="text-slate-600" />
                 Live AI interviewer
               </span>
             </>
           ) : (
             <>
               <span className="flex items-center gap-1.5">
-                <Clock size={13} className="text-zinc-600" />
+                <Clock size={13} className="text-slate-600" />
                 45 minutes, no pause
               </span>
               <span className="flex items-center gap-1.5">
-                <Zap size={13} className="text-zinc-600" />
+                <Zap size={13} className="text-slate-600" />
                 2 problems, submitted together
               </span>
             </>
@@ -237,7 +239,7 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
               boxShadow:
-                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
+                '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >

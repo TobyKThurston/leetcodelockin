@@ -53,8 +53,8 @@ export default function UpgradePrompt({
     <div
       className="rounded-xl p-5 space-y-4"
       style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(15,23,42,0.04)',
+        border: '1px solid rgba(15,23,42,0.08)',
       }}
     >
       {/* Header */}
@@ -66,13 +66,13 @@ export default function UpgradePrompt({
           >
             <Zap size={14} className="text-amber-400" />
           </div>
-          <p className="text-[14px] font-semibold text-white" style={SG}>
+          <p className="text-[14px] font-semibold text-slate-900" style={SG}>
             Upgrade to Pro
           </p>
         </div>
-        <p className="text-[13px] text-zinc-400 leading-relaxed">
+        <p className="text-[13px] text-slate-400 leading-relaxed">
           You've used{' '}
-          <span className="text-zinc-200 font-medium">{used}/{limit}</span>{' '}
+          <span className="text-slate-200 font-medium">{used}/{limit}</span>{' '}
           free tutor messages this week. Resets in 7 days, or go Pro for unlimited access.
         </p>
       </div>
@@ -81,10 +81,10 @@ export default function UpgradePrompt({
       <div className="space-y-2">
         {FEATURES.map(f => (
           <div key={f.label} className="flex items-start gap-2.5">
-            <f.icon size={14} className="shrink-0 mt-0.5 text-zinc-500" />
+            <f.icon size={14} className="shrink-0 mt-0.5 text-slate-500" />
             <div>
-              <p className="text-[12px] font-medium text-zinc-300" style={SG}>{f.label}</p>
-              <p className="text-[11px] text-zinc-500">{f.desc}</p>
+              <p className="text-[12px] font-medium text-slate-300" style={SG}>{f.label}</p>
+              <p className="text-[11px] text-slate-500">{f.desc}</p>
             </div>
           </div>
         ))}
@@ -95,7 +95,7 @@ export default function UpgradePrompt({
         <Button
           size="sm"
           variant="outline"
-          className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
+          className="border-slate-200 text-slate-200 hover:bg-slate-100 text-[12px] font-semibold"
           onClick={() => handleUpgrade('monthly')}
           disabled={loading}
         >
@@ -104,7 +104,7 @@ export default function UpgradePrompt({
         <Button
           size="sm"
           variant="outline"
-          className="border-white/10 text-zinc-200 hover:bg-white/[0.04] text-[12px] font-semibold"
+          className="border-slate-200 text-slate-200 hover:bg-slate-100 text-[12px] font-semibold"
           onClick={() => handleUpgrade('yearly')}
           disabled={loading}
         >

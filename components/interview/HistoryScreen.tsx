@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
 
-const BORDER = 'rgba(255,255,255,0.06)';
+const BORDER = 'rgba(15,23,42,0.08)';
 
 function scoreColor(score: number): string {
   if (score >= 8) return 'rgba(52,211,153,0.9)';
@@ -78,24 +78,24 @@ export default function HistoryScreen({
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-md text-center space-y-6">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)' }}>
-            <Trophy size={28} style={{ color: 'rgba(96,165,250,0.8)' }} />
+            <Trophy size={28} style={{ color: '#1d4ed8' }} />
           </div>
           <div className="space-y-2">
-            <h2 className="text-[22px] font-bold text-white tracking-tight" style={SG}>
+            <h2 className="text-[22px] font-bold text-slate-900 tracking-tight" style={SG}>
               Ready to test yourself?
             </h2>
-            <p className="text-[14px] text-zinc-400 leading-relaxed">
+            <p className="text-[14px] text-slate-400 leading-relaxed">
               Take your first mock interview — 2 problems, 45 minutes, AI feedback after.
             </p>
           </div>
           <button
             onClick={onNewInterview}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all hover:brightness-110"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[14px] font-semibold text-slate-900 transition-all hover:brightness-110"
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
               boxShadow:
-                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
+                '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >
@@ -112,17 +112,17 @@ export default function HistoryScreen({
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-[22px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="text-[22px] font-bold text-slate-900 tracking-tight" style={SG}>
             Mock Interviews
           </h1>
           <button
             onClick={onNewInterview}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-slate-900 transition-all hover:brightness-110 active:brightness-95"
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
               boxShadow:
-                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+                '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >
@@ -135,20 +135,20 @@ export default function HistoryScreen({
         {completed.length > 0 && (
           <div
             className="grid grid-cols-3 gap-4 rounded-xl px-5 py-4"
-            style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}` }}
+            style={{ background: 'rgba(15,23,42,0.04)', border: `1px solid ${BORDER}` }}
           >
             <div>
-              <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-1" style={SG}>Completed</p>
-              <p className="text-[20px] font-bold text-white" style={SG}>{completed.length}</p>
+              <p className="text-[11px] text-slate-500 uppercase tracking-wider mb-1" style={SG}>Completed</p>
+              <p className="text-[20px] font-bold text-slate-900" style={SG}>{completed.length}</p>
             </div>
             <div>
-              <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-1" style={SG}>Avg Score</p>
+              <p className="text-[11px] text-slate-500 uppercase tracking-wider mb-1" style={SG}>Avg Score</p>
               <p className="text-[20px] font-bold" style={{ ...SG, color: scoreColor(avgScore) }}>
                 {avgScore.toFixed(1)}
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-1" style={SG}>Best</p>
+              <p className="text-[11px] text-slate-500 uppercase tracking-wider mb-1" style={SG}>Best</p>
               <p className="text-[20px] font-bold" style={{ ...SG, color: scoreColor(bestScore) }}>
                 {bestScore}/10
               </p>
@@ -157,7 +157,7 @@ export default function HistoryScreen({
             {/* Trend sparkline */}
             {last10.length >= 2 && (
               <div className="col-span-3 pt-2">
-                <p className="text-[10px] text-zinc-600 uppercase tracking-wider mb-2" style={SG}>Last {last10.length} scores</p>
+                <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-2" style={SG}>Last {last10.length} scores</p>
                 <div className="flex items-end gap-1.5 h-8">
                   {last10.map((s, i) => {
                     const score = s.overallScore ?? 0;
@@ -201,8 +201,8 @@ export default function HistoryScreen({
               <button
                 key={s.id}
                 onClick={handleClick}
-                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${isPending ? 'cursor-default' : 'hover:bg-white/[0.02]'}`}
-                style={{ background: 'rgba(255,255,255,0.015)', border: `1px solid ${BORDER}` }}
+                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${isPending ? 'cursor-default' : 'hover:bg-slate-50/50'}`}
+                style={{ background: 'rgba(15,23,42,0.03)', border: `1px solid ${BORDER}` }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0">
@@ -211,14 +211,14 @@ export default function HistoryScreen({
                         className="flex items-center justify-center w-10"
                         aria-label="Analyzing"
                       >
-                        <Loader2 size={18} className="animate-spin" style={{ color: 'rgba(96,165,250,0.85)' }} />
+                        <Loader2 size={18} className="animate-spin" style={{ color: '#1d4ed8' }} />
                       </span>
                     ) : hasError ? (
                       <span className="flex items-center justify-center w-10">
                         {passedAll ? (
-                          <CheckCircle2 size={18} style={{ color: 'rgba(52,211,153,0.9)' }} />
+                          <CheckCircle2 size={18} style={{ color: '#047857' }} />
                         ) : (
-                          <AlertCircle size={18} style={{ color: 'rgba(248,113,113,0.85)' }} />
+                          <AlertCircle size={18} style={{ color: '#b91c1c' }} />
                         )}
                       </span>
                     ) : s.overallScore != null ? (
@@ -229,13 +229,13 @@ export default function HistoryScreen({
                         {s.overallScore}
                       </span>
                     ) : (
-                      <span className="text-[13px] text-zinc-600 w-10 text-center" style={SG}>
+                      <span className="text-[13px] text-slate-600 w-10 text-center" style={SG}>
                         {s.status === 'in_progress' ? '…' : '—'}
                       </span>
                     )}
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[13px] font-medium text-zinc-200" style={SG}>
+                        <span className="text-[13px] font-medium text-slate-200" style={SG}>
                           {formatDate(s.createdAt)}
                         </span>
                         <span
@@ -272,13 +272,13 @@ export default function HistoryScreen({
                           </Badge>
                         )}
                       </div>
-                      <p className="text-[12px] text-zinc-500 mt-0.5 truncate">
+                      <p className="text-[12px] text-slate-500 mt-0.5 truncate">
                         {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-zinc-600 shrink-0">
+                  <div className="flex items-center gap-3 text-slate-600 shrink-0">
                     {s.timeUsedMs != null && (
                       <span className="flex items-center gap-1 text-[12px]" style={MONO}>
                         <Clock size={12} />
@@ -304,10 +304,10 @@ export default function HistoryScreen({
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2" style={SG}>
-              <AlertCircle size={16} style={{ color: 'rgba(248,113,113,0.9)' }} />
+              <AlertCircle size={16} style={{ color: '#b91c1c' }} />
               Analysis unavailable
             </DialogTitle>
-            <DialogDescription className="text-[13px] text-zinc-400 leading-relaxed">
+            <DialogDescription className="text-[13px] text-slate-400 leading-relaxed">
               {dialogErrorMessage ?? 'We couldn\u2019t generate feedback for this session. Your code and results are still saved.'}
             </DialogDescription>
           </DialogHeader>
@@ -322,7 +322,7 @@ export default function HistoryScreen({
             </Button>
             {onRetryFeedback && dialogSession && (
               <Button
-                className="h-9 text-[13px] bg-blue-600 hover:bg-blue-500 text-white gap-1.5"
+                className="h-9 text-[13px] bg-blue-600 hover:bg-blue-500 text-slate-900 gap-1.5"
                 style={SG}
                 onClick={() => {
                   const id = dialogSession.id;

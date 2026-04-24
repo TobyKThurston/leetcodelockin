@@ -21,7 +21,7 @@ import InterviewTimer from './InterviewTimer';
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
   loading: () => (
-    <div className="flex-1 flex items-center justify-center" style={{ background: '#0f1729' }}>
+    <div className="flex-1 flex items-center justify-center" style={{ background: 'var(--ll-bg-elevated)' }}>
       <div className="flex gap-1.5">
         {[0, 1, 2].map(i => (
           <div
@@ -37,19 +37,19 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 // ─── Design tokens ─────────────────────────────────────────────────��────────
 
-const BG_BASE   = '#0b1220';
-const BG_PANEL  = '#070c17';
-const BG_EDITOR = '#0f1729';
-const BORDER    = 'rgba(255,255,255,0.06)';
-const BORDER_MED = 'rgba(255,255,255,0.1)';
+const BG_BASE   = 'var(--ll-bg)';
+const BG_PANEL  = 'var(--ll-bg-panel)';
+const BG_EDITOR = 'var(--ll-bg-elevated)';
+const BORDER    = 'rgba(15,23,42,0.08)';
+const BORDER_MED = 'rgba(15,23,42,0.12)';
 
 const SG: React.CSSProperties   = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
 
 const DIFF_STYLE: Record<string, React.CSSProperties> = {
-  Easy:   { color: 'rgba(52,211,153,0.9)',  border: '1px solid rgba(52,211,153,0.2)',  background: 'rgba(16,185,129,0.07)' },
-  Medium: { color: 'rgba(251,191,36,0.9)',  border: '1px solid rgba(251,191,36,0.2)',  background: 'rgba(245,158,11,0.07)' },
-  Hard:   { color: 'rgba(248,113,113,0.9)', border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(239,68,68,0.07)' },
+  Easy:   { color: '#047857',  border: '1px solid rgba(52,211,153,0.2)',  background: 'rgba(16,185,129,0.07)' },
+  Medium: { color: '#b45309',  border: '1px solid rgba(251,191,36,0.2)',  background: 'rgba(245,158,11,0.07)' },
+  Hard:   { color: '#b91c1c', border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(239,68,68,0.07)' },
 };
 
 // ─── Monaco theme ───────────────────────────────────────────────────────────
@@ -69,18 +69,18 @@ const defineTheme: BeforeMount = (monaco) => {
     colors: {
       // Monaco theme colors must be hex (#RRGGBB or #RRGGBBAA) — rgba()
       // strings silently fall back to pure red, painting the selection red.
-      'editor.background':               '#0f1729',
-      'editor.foreground':               '#e5e7eb',
-      'editor.lineHighlightBackground':  '#131b30',
+      'editor.background':               'var(--ll-bg-elevated)',
+      'editor.foreground':               '#1e293b',
+      'editor.lineHighlightBackground':  '#f1f5f9',
       'editor.selectionBackground':      '#3b82f640',
       'editorLineNumber.foreground':     '#334155',
       'editorLineNumber.activeForeground':'#94a3b8',
       'editorCursor.foreground':         '#60a5fa',
       'editor.inactiveSelectionBackground': '#ffffff0d',
-      'editorIndentGuide.background1':   '#1e293b',
-      'editorWidget.background':         '#0f1729',
-      'editorSuggestWidget.background':  '#0f1729',
-      'editorSuggestWidget.border':      '#1e293b',
+      'editorIndentGuide.background1':   '#f1f5f9',
+      'editorWidget.background':         'var(--ll-bg-elevated)',
+      'editorSuggestWidget.background':  'var(--ll-bg-elevated)',
+      'editorSuggestWidget.border':      '#f1f5f9',
       'scrollbarSlider.background':      '#ffffff08',
       'scrollbarSlider.hoverBackground': '#ffffff0f',
       'scrollbarSlider.activeBackground':'#ffffff14',
@@ -122,13 +122,13 @@ const EDITOR_OPTIONS = {
 // ─── Markdown components ────────────────────────────────────────────────────
 
 const MD_COMPONENTS = {
-  p:      (props: React.HTMLAttributes<HTMLParagraphElement>) => <p {...props} className="text-[13.5px] leading-[1.75] text-zinc-400 mb-3 last:mb-0" />,
-  strong: (props: React.HTMLAttributes<HTMLElement>) => <strong {...props} className="font-semibold text-slate-100" />,
-  em:     (props: React.HTMLAttributes<HTMLElement>) => <em {...props} className="not-italic text-slate-200" />,
-  code:   (props: React.HTMLAttributes<HTMLElement>) => <code {...props} className="px-1.5 py-0.5 rounded text-[12.5px]" style={{ background: 'rgba(255,255,255,0.07)', color: '#c9d1d9', ...MONO }} />,
-  ul:     (props: React.HTMLAttributes<HTMLUListElement>) => <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-zinc-400" />,
-  ol:     (props: React.OlHTMLAttributes<HTMLOListElement>) => <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-zinc-400" />,
-  li:     (props: React.LiHTMLAttributes<HTMLLIElement>) => <li {...props} className="text-[13.5px] leading-[1.6] text-zinc-400" />,
+  p:      (props: React.HTMLAttributes<HTMLParagraphElement>) => <p {...props} className="text-[13.5px] leading-[1.75] text-slate-400 mb-3 last:mb-0" />,
+  strong: (props: React.HTMLAttributes<HTMLElement>) => <strong {...props} className="font-semibold text-slate-900" />,
+  em:     (props: React.HTMLAttributes<HTMLElement>) => <em {...props} className="not-italic text-slate-800" />,
+  code:   (props: React.HTMLAttributes<HTMLElement>) => <code {...props} className="px-1.5 py-0.5 rounded text-[12.5px]" style={{ background: 'rgba(15,23,42,0.09)', color: '#1e293b', ...MONO }} />,
+  ul:     (props: React.HTMLAttributes<HTMLUListElement>) => <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-slate-400" />,
+  ol:     (props: React.OlHTMLAttributes<HTMLOListElement>) => <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-slate-400" />,
+  li:     (props: React.LiHTMLAttributes<HTMLLIElement>) => <li {...props} className="text-[13.5px] leading-[1.6] text-slate-400" />,
 };
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -432,9 +432,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             onClick={() => setShowExitConfirm(true)}
             className="flex items-center justify-center w-8 h-8 rounded-lg transition-all hover:brightness-125"
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(15,23,42,0.05)',
               border: `1px solid ${BORDER_MED}`,
-              color: '#8ea0b7',
+              color: '#64748b',
             }}
             title="Return home"
             aria-label="Return home"
@@ -452,13 +452,13 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 style={{
                   background: active ? 'rgba(59,130,246,0.08)' : 'transparent',
                   border: active ? '1px solid rgba(59,130,246,0.2)' : '1px solid transparent',
-                  color: active ? '#c9d1d9' : '#3f4f63',
+                  color: active ? '#1e293b' : '#cbd5e1',
                   ...SG,
                 }}
               >
                 <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style={{
-                  background: active ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.04)',
-                  color: active ? '#93c5fd' : '#3f4f63',
+                  background: active ? 'rgba(59,130,246,0.15)' : 'rgba(15,23,42,0.05)',
+                  color: active ? '#93c5fd' : '#cbd5e1',
                 }}>
                   {i + 1}
                 </span>
@@ -480,12 +480,12 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         {/* Submit button */}
         <button
           onClick={handleSubmit}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-all hover:brightness-110 active:brightness-95"
           style={{
             background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
             border: '1px solid rgba(147,197,253,0.55)',
             boxShadow:
-              '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+              '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
             ...SG,
           }}
         >
@@ -507,12 +507,12 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               className="flex items-center justify-between shrink-0 px-4"
               style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
             >
-              <span className="text-[12.5px] font-medium" style={{ color: '#c9d1d9', ...SG }}>
+              <span className="text-[12.5px] font-medium" style={{ color: '#1e293b', ...SG }}>
                 Question
               </span>
               <button
                 onClick={() => setFullscreen(fs => fs === 'left' ? null : 'left')}
-                className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-600 hover:text-zinc-300 transition-colors"
+                className="p-1.5 rounded hover:bg-slate-100 text-slate-600 hover:text-slate-700 transition-colors"
               >
                 {fullscreen === 'left' ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
               </button>
@@ -524,9 +524,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}
             >
               <div>
-                <h1 className="text-[19px] font-semibold text-white mb-3" style={{ ...SG, letterSpacing: '-0.02em' }}>
+                <h1 className="text-[19px] font-semibold text-slate-900 mb-3" style={{ ...SG, letterSpacing: '-0.02em' }}>
                   {problem.title}{' '}
-                  <span className="text-zinc-600 font-normal text-[14px]">(LC #{problem.lcNumber})</span>
+                  <span className="text-slate-600 font-normal text-[14px]">(LC #{problem.lcNumber})</span>
                 </h1>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="px-2 py-0.5 rounded-md text-[11.5px] font-medium" style={DIFF_STYLE[problem.difficulty]}>
@@ -543,33 +543,33 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               <div className="space-y-4">
                 {problem.examples.map((ex, i) => (
                   <div key={i}>
-                    <p className="text-[12px] font-semibold text-zinc-400 mb-2 uppercase tracking-[0.08em]" style={SG}>
+                    <p className="text-[12px] font-semibold text-slate-400 mb-2 uppercase tracking-[0.08em]" style={SG}>
                       Example {i + 1}
                     </p>
                     <div
                       className="rounded-lg px-4 py-3 space-y-1.5"
-                      style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}` }}
+                      style={{ background: 'rgba(15,23,42,0.04)', border: `1px solid ${BORDER}` }}
                     >
                       <p className="text-[12.5px]" style={MONO}>
-                        <span style={{ color: 'rgba(96,165,250,0.7)' }}>Input: </span>
-                        <span style={{ color: '#c9d1d9' }}>{ex.input}</span>
+                        <span style={{ color: '#1d4ed8' }}>Input: </span>
+                        <span style={{ color: '#1e293b' }}>{ex.input}</span>
                       </p>
                       <p className="text-[12.5px]" style={MONO}>
-                        <span style={{ color: 'rgba(96,165,250,0.7)' }}>Output: </span>
-                        <span style={{ color: '#c9d1d9' }}>{ex.output}</span>
+                        <span style={{ color: '#1d4ed8' }}>Output: </span>
+                        <span style={{ color: '#1e293b' }}>{ex.output}</span>
                       </p>
-                      {ex.explanation && <p className="text-[11.5px] text-zinc-600 pt-0.5">{ex.explanation}</p>}
+                      {ex.explanation && <p className="text-[11.5px] text-slate-600 pt-0.5">{ex.explanation}</p>}
                     </div>
                   </div>
                 ))}
               </div>
 
               <div>
-                <p className="text-[10px] font-semibold text-zinc-600 tracking-[0.12em] uppercase mb-2.5" style={SG}>Constraints</p>
+                <p className="text-[10px] font-semibold text-slate-600 tracking-[0.12em] uppercase mb-2.5" style={SG}>Constraints</p>
                 <ul className="space-y-1.5">
                   {problem.constraints.map(c => (
-                    <li key={c} className="flex items-start gap-2.5 text-[12.5px] text-zinc-500" style={MONO}>
-                      <span className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
+                    <li key={c} className="flex items-start gap-2.5 text-[12.5px] text-slate-500" style={MONO}>
+                      <span className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(15,23,42,0.12)' }} />
                       {c}
                     </li>
                   ))}
@@ -591,24 +591,24 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
             >
               <div className="flex items-center gap-2">
-                <span className="text-[12px] font-medium text-zinc-400" style={SG}>Python</span>
+                <span className="text-[12px] font-medium text-slate-400" style={SG}>Python</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-700 select-none">
-                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
-                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
+                <span className="hidden sm:flex items-center gap-1 text-[11px] text-slate-700 select-none">
+                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(15,23,42,0.05)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
+                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(15,23,42,0.05)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
                   <span className="ml-0.5" style={SG}>Run</span>
                 </span>
                 <button
                   onClick={() => setCode(problem.starterCode.python)}
-                  className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-700 hover:text-zinc-400 transition-colors"
+                  className="p-1.5 rounded hover:bg-slate-100 text-slate-700 hover:text-slate-600 transition-colors"
                   title="Reset to starter code"
                 >
                   <RotateCcw size={13} />
                 </button>
                 <button
                   onClick={() => setFullscreen(fs => fs === 'editor' ? null : 'editor')}
-                  className="p-1.5 rounded hover:bg-white/[0.05] text-zinc-700 hover:text-zinc-400 transition-colors"
+                  className="p-1.5 rounded hover:bg-slate-100 text-slate-700 hover:text-slate-600 transition-colors"
                 >
                   {fullscreen === 'editor' ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
                 </button>
@@ -642,7 +642,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 <button
                   onClick={() => setPanelOpen(o => !o)}
                   className="flex items-center gap-2 text-[12px] font-medium transition-colors"
-                  style={{ color: panelOpen ? '#a8b3c7' : '#3f4f63', ...SG }}
+                  style={{ color: panelOpen ? '#475569' : '#cbd5e1', ...SG }}
                 >
                   <ChevronUp size={12} className={panelOpen ? '' : 'rotate-180'} style={{ transition: 'transform 0.18s' }} />
                   Test Cases
@@ -666,7 +666,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                   >
                     {tests.map(t => {
                       const r = results.find(r => r.caseId === t.id);
-                      const dot = !r ? 'rgba(255,255,255,0.12)' : r.passed ? 'rgba(52,211,153,0.75)' : 'rgba(248,113,113,0.75)';
+                      const dot = !r ? 'rgba(15,23,42,0.14)' : r.passed ? 'rgba(52,211,153,0.75)' : 'rgba(248,113,113,0.75)';
                       const isActive = t.id === activeTestId;
                       return (
                         <div
@@ -683,16 +683,16 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                           }}
                         >
                           <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: dot }} />
-                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#c9d1d9' : '#3a4a5c' }}>{t.label}</span>
+                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#1e293b' : '#cbd5e1' }}>{t.label}</span>
                           {t.custom && (
-                            <button className="ml-0.5 p-0.5 rounded hover:bg-white/10" style={{ color: '#3a4a5c' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
+                            <button className="ml-0.5 p-0.5 rounded hover:bg-slate-100" style={{ color: '#cbd5e1' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
                               <X size={9} />
                             </button>
                           )}
                         </div>
                       );
                     })}
-                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-white/[0.04] ml-1" style={{ color: '#3a4a5c' }}>
+                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-slate-100 ml-1" style={{ color: '#cbd5e1' }}>
                       <Plus size={11} />
                     </button>
                   </div>
@@ -701,27 +701,27 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                   {activeTest && (
                     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5" style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Input</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Input</p>
                         <textarea
                           value={activeTest.inputJson}
                           onChange={e => updateTestInput(activeTest.id, e.target.value)}
                           spellCheck={false}
                           rows={2}
                           className="w-full resize-none rounded-md px-2.5 py-1.5 text-[12px] outline-none"
-                          style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${BORDER}`, color: '#c9d1d9', ...MONO }}
+                          style={{ background: 'rgba(15,23,42,0.04)', border: `1px solid ${BORDER}`, color: '#1e293b', ...MONO }}
                         />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Expected</p>
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]" style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(96,165,250,0.7)', ...MONO }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Expected</p>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]" style={{ background: 'rgba(15,23,42,0.05)', color: '#1d4ed8', ...MONO }}>
                           {activeTest.expectedJson || '—'}
                         </span>
                       </div>
                       {activeResult && (
                         <div>
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Output</p>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Output</p>
                           {activeResult.error ? (
-                            <pre className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: 'rgba(248,113,113,0.9)', ...MONO }}>
+                            <pre className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: '#b91c1c', ...MONO }}>
                               {activeResult.error}
                             </pre>
                           ) : (
@@ -751,7 +751,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 onClick={execTests}
                 disabled={running}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ color: running ? '#3f4f63' : '#a8b3c7', border: `1px solid ${BORDER_MED}`, background: 'rgba(255,255,255,0.03)' }}
+                style={{ color: running ? '#cbd5e1' : '#475569', border: `1px solid ${BORDER_MED}`, background: 'rgba(15,23,42,0.05)' }}
               >
                 <Play size={11} />
                 {running ? 'Running…' : 'Run Tests'}
@@ -763,7 +763,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
 
       {showExitConfirm && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/40 backdrop-blur-sm"
           onClick={() => setShowExitConfirm(false)}
         >
           <div
@@ -776,13 +776,13 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 className="flex items-center justify-center w-9 h-9 rounded-lg shrink-0"
                 style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}
               >
-                <AlertTriangle size={16} style={{ color: 'rgba(248,113,113,0.9)' }} />
+                <AlertTriangle size={16} style={{ color: '#b91c1c' }} />
               </div>
               <div>
-                <h3 className="text-[15px] font-semibold text-white mb-1" style={SG}>
+                <h3 className="text-[15px] font-semibold text-slate-900 mb-1" style={SG}>
                   Leave interview?
                 </h3>
-                <p className="text-[13px] leading-relaxed" style={{ color: '#8ea0b7', ...SG }}>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#64748b', ...SG }}>
                   Your progress on both problems will be lost. This can&apos;t be undone.
                 </p>
               </div>
@@ -792,9 +792,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 onClick={() => setShowExitConfirm(false)}
                 className="px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors"
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
+                  background: 'rgba(15,23,42,0.05)',
                   border: `1px solid ${BORDER_MED}`,
-                  color: '#a8b3c7',
+                  color: '#475569',
                   ...SG,
                 }}
               >
@@ -802,7 +802,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               </button>
               <button
                 onClick={handleExitHome}
-                className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110"
+                className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-all hover:brightness-110"
                 style={{
                   background: 'linear-gradient(180deg, rgba(248,113,113,0.9) 0%, rgba(239,68,68,0.9) 100%)',
                   border: '1px solid rgba(248,113,113,0.5)',

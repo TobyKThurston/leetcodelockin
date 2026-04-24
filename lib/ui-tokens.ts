@@ -1,22 +1,36 @@
 import type { CSSProperties } from 'react';
 
+// Light-mode palette (matches .theme-light tokens in app/globals.css).
+// Keys mirror the old dark-mode shape so the shell primitives pick up the new
+// values without a broad rename.
+// Theme-reactive tokens. Values are CSS var() refs so inline styles
+// automatically switch when the body gets .theme-dark.
 export const C: Record<string, string> = {
-  appBg:      '#0b1220',
-  panelBg:    '#070c17',
-  cardBg:     '#0f1729',
-  cardBgDark: '#070c17',
-  border:     'rgba(255,255,255,0.06)',
-  borderMid:  'rgba(255,255,255,0.1)',
-  text:       '#e5e7eb',
-  textSub:    '#cbd5e1',
-  textMuted:  '#94a3b8',
-  textDim:    '#64748b',
-  blue:       '#3b82f6',
-  blueDim:    'rgba(59,130,246,0.12)',
-  blueBorder: 'rgba(96,165,250,0.4)',
-  emerald:    '#10b981',
-  emeraldDim: 'rgba(16,185,129,0.1)',
-  emeraldBorder: 'rgba(16,185,129,0.32)',
+  // Surfaces
+  appBg:         'var(--ll-bg)',
+  panelBg:       'var(--ll-bg-panel)',
+  cardBg:        'var(--ll-bg-elevated)',
+  cardBgDark:    'var(--ll-bg-subtle)',
+
+  // Borders
+  border:        'var(--ll-border)',
+  borderMid:     'var(--ll-border-strong)',
+
+  // Ink
+  text:          'var(--ll-ink)',
+  textSub:       'var(--ll-ink-muted)',
+  textMuted:     'var(--ll-ink-subtle)',
+  textDim:       'var(--ll-ink-faint)',
+
+  // Accent — blue
+  blue:          'var(--ll-accent)',
+  blueDim:       'var(--ll-accent-soft)',
+  blueBorder:    'var(--ll-accent-ring)',
+
+  // Semantic — success
+  emerald:       'var(--ll-success)',
+  emeraldDim:    'var(--ll-success-soft)',
+  emeraldBorder: 'var(--ll-success-border)',
 };
 
 export const SG: CSSProperties = {
@@ -25,9 +39,10 @@ export const SG: CSSProperties = {
 
 export const MONO_FONT = 'var(--font-geist-mono), ui-monospace, monospace';
 
+// Subtle grid wash on light surfaces — dark lines at low opacity.
 export const GRID_BG: CSSProperties = {
   backgroundImage:
-    'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
+    'linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px)',
   backgroundSize: '40px 40px',
 };
 

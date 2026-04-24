@@ -90,15 +90,30 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0b1220',
+  themeColor: '#fafbfc',
   width: 'device-width',
   initialScale: 1,
 };
 
+// Inline pre-hydration script: reads the persisted theme and applies the right
+// class to <body> / <html> before React renders, preventing a flash of wrong
+// theme. Safe for SSR — runs synchronously on the client only.
+const themeInitScript = `(() => {
+  try {
+    var m = localStorage.getItem('ll-theme');
+    if (m !== 'dark' && m !== 'light') m = 'light';
+    document.body.classList.add(m === 'dark' ? 'theme-dark' : 'theme-light');
+    if (m === 'dark') document.documentElement.classList.add('dark');
+  } catch (e) {
+    document.body.classList.add('theme-light');
+  }
+})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} dark`}>
-      <body className="antialiased">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable}`}>
+      <body className="antialiased ll-surface" suppressHydrationWarning>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <RefTracker />
         <PostHogUserIdentifier />
         {children}

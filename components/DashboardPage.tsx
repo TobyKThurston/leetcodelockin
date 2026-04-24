@@ -6,7 +6,7 @@ import posthog from 'posthog-js';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
-import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap, Flame, Snowflake, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap, Flame, Snowflake, AlertTriangle, Trophy, Crown, Shield, Swords, Sparkles, Brain, Star, Medal } from 'lucide-react';
 import type { WeaknessSpotlight } from '@/lib/weaknesses';
 import { CURRICULUM, type PathDef, type BlockDef, type CurriculumStep, type PracticeStepDef, isLesson, isPractice } from '@/lib/curriculum';
 import { setBlockCompleted } from '@/lib/progress';
@@ -1201,35 +1201,35 @@ function SidebarPathCard({
       className={cn(
         'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        locked && 'cursor-default opacity-45 bg-slate-900/30 border-slate-800/40',
+        locked && 'cursor-default opacity-45 bg-[var(--ll-bg-subtle)] border-slate-200/60',
         !locked && 'cursor-pointer',
-        isViewing && 'bg-blue-500/[0.08] border-blue-400/50',
-        !isViewing && complete && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
-        !isViewing && !complete && !locked && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+        isViewing && 'bg-[var(--ll-bg-tinted)] border-blue-400/60 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(59,130,246,0.25)]',
+        !isViewing && complete && 'bg-[var(--ll-bg-card)] border-emerald-500/30 hover:border-emerald-500/50',
+        !isViewing && !complete && !locked && 'bg-[var(--ll-bg-card)] border-[var(--ll-border)] hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
       )}
     >
       <div className="flex items-center justify-between mb-1.5">
         <span
           className={cn(
-            'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-            locked && 'text-slate-700',
-            isViewing && 'text-blue-300',
-            !isViewing && complete && 'text-emerald-400/70',
+            'font-mono text-[11px] font-bold tabular-nums tracking-wider',
+            locked && 'text-slate-500',
+            isViewing && 'text-blue-600',
+            !isViewing && complete && 'text-emerald-600',
             !isViewing && !complete && !locked && 'text-slate-500',
           )}
         >
           {n}
         </span>
-        {locked && <Lock size={10} className="text-slate-700" />}
-        {!locked && complete && <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />}
+        {locked && <Lock size={11} className="text-slate-500" />}
+        {!locked && complete && <CheckCircle2 size={13} strokeWidth={2.25} className="text-emerald-600" />}
       </div>
       <p
         className={cn(
-          'text-[12.5px] font-semibold leading-tight mb-0.5 tracking-[-0.005em]',
+          'text-[13.5px] font-semibold leading-tight mb-1 tracking-[-0.005em]',
           locked && 'text-slate-600',
-          isViewing && 'text-white',
-          !isViewing && complete && 'text-slate-300',
-          !isViewing && !complete && !locked && 'text-slate-200',
+          isViewing && 'text-slate-900',
+          !isViewing && complete && 'text-slate-700',
+          !isViewing && !complete && !locked && 'text-slate-900',
         )}
         style={SG}
       >
@@ -1237,11 +1237,11 @@ function SidebarPathCard({
       </p>
       <p
         className={cn(
-          'text-[10.5px] leading-snug mb-2.5',
-          locked && 'text-slate-800',
-          isViewing && 'text-slate-300',
+          'text-[11.5px] leading-snug mb-2.5 line-clamp-2',
+          locked && 'text-slate-500',
+          isViewing && 'text-slate-600',
           !isViewing && complete && 'text-slate-500',
-          !isViewing && !complete && !locked && 'text-slate-400',
+          !isViewing && !complete && !locked && 'text-slate-600',
         )}
       >
         {path.description}
@@ -1250,16 +1250,16 @@ function SidebarPathCard({
         <div>
           <div
             className={cn(
-              'flex justify-between mb-1 text-[9.5px] font-medium',
-              isViewing && 'text-slate-300',
+              'flex justify-between mb-1 text-[10.5px] font-medium',
+              isViewing && 'text-slate-700',
               !isViewing && complete && 'text-slate-500',
-              !isViewing && !complete && 'text-slate-400',
+              !isViewing && !complete && 'text-slate-600',
             )}
           >
             <span>{blocksComplete} / {path.blocks.length} blocks</span>
             <span className="tabular-nums">{pct}%</span>
           </div>
-          <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+          <div className="h-[2px] rounded-full bg-white/80 overflow-hidden">
             <div
               className={cn(
                 'h-full rounded-full transition-all',
@@ -1297,9 +1297,9 @@ function Sidebar({
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
               <span className="text-slate-500 font-medium">Mastery</span>
-              <span className="text-slate-300 font-semibold tabular-nums">{masteryPct}%</span>
+              <span className="text-slate-700 font-semibold tabular-nums">{masteryPct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[3px] rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${masteryPct}%`, background: C.blue }}
@@ -1308,7 +1308,7 @@ function Sidebar({
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-slate-500">Streak</span>
-            <span className="flex items-center gap-1 text-slate-400 font-medium tabular-nums">
+            <span className="flex items-center gap-1 text-slate-600 font-medium tabular-nums">
               {streakData.currentStreak > 0 && (
                 streakData.todayActive
                   ? <Flame size={11} className="text-emerald-400" />
@@ -1319,12 +1319,12 @@ function Sidebar({
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-slate-500">Problems</span>
-            <span className="text-slate-400 font-medium tabular-nums">{totalComplete} done</span>
+            <span className="text-slate-600 font-medium tabular-nums">{totalComplete} done</span>
           </div>
         </div>
       }
     >
-      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+      <p className="text-[11px] font-bold text-slate-500 tracking-[0.16em] uppercase mb-3 px-1">
         Learning Paths
       </p>
       {CURRICULUM.map(path => (
@@ -1431,34 +1431,34 @@ function RightRail({
               className={cn(
                 'rounded-lg px-3 py-2.5 border',
                 pathStatus === 'complete'
-                  ? 'bg-slate-800/30 border-emerald-500/25'
+                  ? 'bg-slate-50 border-emerald-500/25'
                   : 'bg-blue-500/[0.08] border-blue-400/50',
               )}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span
                   className={cn(
-                    'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-                    pathStatus === 'complete' ? 'text-emerald-400/70' : 'text-blue-300',
+                    'font-mono text-[11px] font-bold tabular-nums tracking-wider',
+                    pathStatus === 'complete' ? 'text-emerald-600' : 'text-blue-600',
                   )}
                 >
                   {n}
                 </span>
                 {pathStatus === 'complete' && (
-                  <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />
+                  <CheckCircle2 size={13} strokeWidth={2.25} className="text-emerald-600" />
                 )}
               </div>
               <p
-                className="text-[12.5px] font-semibold leading-tight mb-2.5 tracking-[-0.005em] text-white"
+                className="text-[13.5px] font-semibold leading-tight mb-2.5 tracking-[-0.005em] text-slate-900"
                 style={SG}
               >
                 {path.title}
               </p>
-              <div className="flex justify-between mb-1 text-[9.5px] font-medium text-slate-300">
+              <div className="flex justify-between mb-1 text-[10.5px] font-medium text-slate-600">
                 <span>{blocksComplete} / {blocksTotal} blocks</span>
                 <span className="tabular-nums">{pct}%</span>
               </div>
-              <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+              <div className="h-[2px] rounded-full bg-white/80 overflow-hidden">
                 <div
                   className={cn(
                     'h-full rounded-full transition-all',
@@ -1485,14 +1485,14 @@ function RightRail({
             <RailHeader>Activity</RailHeader>
             <div className={cn(RAIL_BOX, 'space-y-3')}>
               <ActivityHeatmap data={heatmapData} weeks={7} />
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="text-slate-500">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-slate-600">
                   {streakData.currentStreak > 0
                     ? `${streakData.currentStreak} day streak${streakData.todayActive ? '' : ' · do something today!'}`
                     : 'Start your streak today'}
                 </span>
                 {streakData.longestStreak > 0 && (
-                  <span className="text-slate-600 tabular-nums">Best: {streakData.longestStreak}d</span>
+                  <span className="text-slate-500 tabular-nums">Best: {streakData.longestStreak}d</span>
                 )}
               </div>
               {/* Streak freeze */}
@@ -1501,25 +1501,25 @@ function RightRail({
                   type="button"
                   onClick={handleUseFreeze}
                   disabled={freezePending || localFreezesRemaining <= 0}
-                  className="w-full flex items-center justify-center gap-1.5 rounded-md py-1.5 text-[10px] font-medium bg-blue-500/10 border border-blue-400/30 text-blue-300 hover:bg-blue-500/20 transition-colors disabled:opacity-40"
+                  className="w-full flex items-center justify-center gap-1.5 rounded-md py-1.5 text-[11px] font-medium bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors disabled:opacity-40"
                 >
-                  <Snowflake size={10} />
+                  <Snowflake size={11} />
                   {freezePending ? 'Saving...' : `Use Streak Freeze (${localFreezesRemaining} left)`}
                 </button>
               )}
               {freezeUsed && (
-                <div className="flex items-center justify-center gap-1.5 text-[10px] text-blue-300">
-                  <Snowflake size={10} />
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-blue-700">
+                  <Snowflake size={11} />
                   Streak saved!
                 </div>
               )}
               {!streakData.isPro && streakData.currentStreak > 0 && (
-                <div className="flex items-center justify-between text-[10px] text-slate-600">
+                <div className="flex items-center justify-between text-[11px] text-slate-600">
                   <span className="flex items-center gap-1">
-                    <Snowflake size={9} />
+                    <Snowflake size={10} />
                     Streak Freeze
                   </span>
-                  <Badge variant="outline" className="text-[8px] px-1.5 py-0 h-3.5 border-slate-700 text-slate-500">
+                  <Badge variant="outline" className="text-[9.5px] px-1.5 py-0 h-4 border-slate-200 text-slate-500">
                     Pro
                   </Badge>
                 </div>
@@ -1535,16 +1535,16 @@ function RightRail({
                 <div className="flex items-center gap-2">
                   <AlertTriangle size={12} className="text-amber-400 shrink-0" />
                   <span
-                    className="text-[12px] font-semibold text-white tracking-[-0.005em]"
+                    className="text-[12px] font-semibold text-slate-900 tracking-[-0.005em]"
                     style={SG}
                   >
                     {weaknessSpotlight.pattern}
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[11px] text-slate-600">
                   {weaknessSpotlight.failCount} of {weaknessSpotlight.totalAttempts} attempts failed
                   {' · '}
-                  <span className="text-amber-400/80 font-medium">
+                  <span className="text-amber-700 font-medium">
                     {Math.round(weaknessSpotlight.failRate * 100)}% fail rate
                   </span>
                 </p>
@@ -1555,12 +1555,12 @@ function RightRail({
                       href={`/solve/${p.slug}?from=dashboard`}
                       className={cn(
                         'flex items-center justify-between rounded-md px-2.5 py-2',
-                        'bg-slate-900/60 border border-slate-700/40',
-                        'hover:bg-slate-800/60 hover:border-slate-600/50 transition-colors',
+                        'bg-white/80 border border-slate-200/40',
+                        'hover:bg-slate-100 hover:border-slate-300/50 transition-colors',
                       )}
                     >
                       <span
-                        className="text-[11px] font-medium text-slate-200 truncate mr-2"
+                        className="text-[12px] font-medium text-slate-900 truncate mr-2"
                         style={SG}
                       >
                         {p.title}
@@ -1568,10 +1568,10 @@ function RightRail({
                       <Badge
                         variant="outline"
                         className={cn(
-                          'text-[8px] px-1.5 py-0 h-3.5 shrink-0 font-semibold',
-                          p.difficulty === 'Easy' && 'border-emerald-500/40 text-emerald-400',
-                          p.difficulty === 'Medium' && 'border-amber-500/40 text-amber-400',
-                          p.difficulty === 'Hard' && 'border-red-500/40 text-red-400',
+                          'text-[10px] px-1.5 py-0 h-4 shrink-0 font-semibold',
+                          p.difficulty === 'Easy' && 'border-emerald-300 text-emerald-700 bg-emerald-50',
+                          p.difficulty === 'Medium' && 'border-amber-300 text-amber-700 bg-amber-50',
+                          p.difficulty === 'Hard' && 'border-red-300 text-red-700 bg-red-50',
                         )}
                       >
                         {p.difficulty}
@@ -1600,31 +1600,31 @@ function RightRail({
                   }}
                   className={cn(
                     'w-full text-left rounded-lg px-3 py-3 border transition-colors',
-                    'bg-slate-800/40 border-slate-700/60',
-                    'hover:bg-slate-800/60 hover:border-slate-600/70',
+                    'bg-white border-slate-200',
+                    'hover:bg-slate-100 hover:border-slate-300',
                   )}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-mono text-[10px] font-bold tabular-nums tracking-wider text-slate-500">
+                    <span className="font-mono text-[11px] font-bold tabular-nums tracking-wider text-slate-500">
                       {recN}
                     </span>
                     {!isSamePath && (
-                      <span className="text-[9px] text-slate-600 font-medium">
+                      <span className="text-[10.5px] text-slate-600 font-medium">
                         · {rec.path.title}
                       </span>
                     )}
                   </div>
                   <p
-                    className="text-[12.5px] font-semibold leading-tight text-slate-200 tracking-[-0.005em] mb-1"
+                    className="text-[13.5px] font-semibold leading-tight text-slate-900 tracking-[-0.005em] mb-1"
                     style={SG}
                   >
                     {rec.block.title}
                   </p>
-                  <p className="text-[11px] text-slate-500 leading-snug line-clamp-2">
+                  <p className="text-[11.5px] text-slate-600 leading-snug line-clamp-2">
                     {isLesson(rec.block) ? rec.block.subtitle : `Practice · ${rec.block.difficulty}`}
                   </p>
-                  <div className="flex items-center gap-1.5 mt-2.5 text-[10px] text-slate-500 font-medium">
-                    <ArrowRight size={10} strokeWidth={2} />
+                  <div className="flex items-center gap-1.5 mt-2.5 text-[11px] text-blue-600 font-medium">
+                    <ArrowRight size={11} strokeWidth={2} />
                     <span>Continue</span>
                   </div>
                 </button>
@@ -1657,10 +1657,10 @@ function connPath(i: number): string {
 
 function connStroke(from: BlockStatus, to: BlockStatus): string {
   if (from === 'complete' && to === 'complete') return 'rgba(16,185,129,0.55)';
-  if (from === 'complete' && to === 'active')   return 'rgba(96,165,250,0.65)';
+  if (from === 'complete' && to === 'active')   return '#3B82F6';
   if (from === 'complete')                      return 'rgba(16,185,129,0.45)';
-  if (from === 'active')                        return 'rgba(96,165,250,0.35)';
-  return 'rgba(255,255,255,0.10)';
+  if (from === 'active')                        return '#3B82F6';
+  return '#BFD3FF';
 }
 
 function connDash(from: BlockStatus): string {
@@ -1688,27 +1688,26 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
         height: CARD_H,
         ...(active ? {
           transform: 'scale(1.04)',
-          boxShadow: '0 0 24px 4px rgba(59,130,246,0.18), 0 0 48px 8px rgba(59,130,246,0.08)',
+          boxShadow: '0 8px 20px rgba(59,130,246,0.15)',
         } : {}),
       }}
       className={cn(
         'group relative text-left rounded-lg overflow-hidden p-4 flex flex-col',
         'border transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        locked && 'cursor-default opacity-[0.28] bg-[#0c1220] border-white/[0.03] saturate-[0.3]',
+        locked && 'cursor-default opacity-[0.28] bg-[var(--ll-bg-subtle)] border-slate-100 saturate-[0.3]',
         !locked && 'cursor-pointer',
         active && [
-          'bg-blue-500/[0.10] border-blue-400/60',
-          'hover:bg-blue-500/[0.15] hover:border-blue-400/75',
-          'ring-1 ring-blue-400/25',
+          'bg-[var(--ll-bg-elevated)] border-blue-500',
+          'hover:bg-[var(--ll-bg-tinted)] hover:border-blue-500',
         ],
         complete && [
           'bg-emerald-500/[0.05] border-emerald-400/35',
           'hover:border-emerald-400/50',
         ],
         !locked && !active && !complete && [
-          'bg-[#0f1729] border-white/[0.06]',
-          'hover:bg-[#131b30] hover:border-white/[0.12]',
+          'bg-[var(--ll-bg-elevated)] border-[var(--ll-border)]',
+          'hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
         ],
       )}
     >
@@ -1717,26 +1716,26 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
         <span
           className={cn(
             'font-mono text-[13px] font-extrabold tabular-nums tracking-[0.14em]',
-            locked && 'text-slate-700/60',
-            active && 'text-blue-300',
-            complete && 'text-emerald-400',
-            !locked && !active && !complete && 'text-slate-400',
+            locked && 'text-slate-500',
+            active && 'text-blue-600',
+            complete && 'text-emerald-600',
+            !locked && !active && !complete && 'text-slate-500',
           )}
         >
           {n}
         </span>
-        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-400" />}
-        {locked && <Lock size={11} className="text-slate-700/60" />}
+        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-600" />}
+        {locked && <Lock size={11} className="text-slate-500" />}
       </div>
 
       {/* Title */}
       <p
         className={cn(
           'text-[15px] font-semibold leading-snug mb-1 tracking-[-0.01em]',
-          locked && 'text-slate-600/60',
-          active && 'text-white',
-          complete && 'text-slate-300',
-          !locked && !active && !complete && 'text-slate-100 group-hover:text-white',
+          locked && 'text-slate-500',
+          active && 'text-slate-900',
+          complete && 'text-slate-800',
+          !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900',
         )}
         style={SG}
       >
@@ -1746,11 +1745,11 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
       {/* Subtitle */}
       <p
         className={cn(
-          'text-[12px] leading-relaxed line-clamp-2',
-          locked && 'text-slate-700/50',
-          active && 'text-slate-400',
-          complete && 'text-slate-500/80',
-          !locked && !active && !complete && 'text-slate-500',
+          'text-[12.5px] leading-relaxed line-clamp-2',
+          locked && 'text-slate-500',
+          active && 'text-slate-600',
+          complete && 'text-slate-500',
+          !locked && !active && !complete && 'text-slate-600',
         )}
       >
         {block.subtitle}
@@ -1760,33 +1759,33 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
       {!locked && (
         <div
           className={cn(
-            'mt-auto pt-3 flex items-center gap-4 text-[11px] font-medium tabular-nums',
+            'mt-auto pt-3 flex items-center gap-4 text-[11.5px] font-medium tabular-nums',
             'border-t',
-            active && 'border-blue-400/20',
-            complete && 'border-emerald-400/15',
-            !active && !complete && 'border-white/[0.06]',
+            active && 'border-blue-200',
+            complete && 'border-emerald-200',
+            !active && !complete && 'border-slate-200',
           )}
         >
           <span
             className={cn(
               'flex items-center gap-1.5',
-              active && 'text-blue-200',
-              complete && 'text-slate-500',
-              !active && !complete && 'text-slate-400',
+              active && 'text-blue-700',
+              complete && 'text-slate-600',
+              !active && !complete && 'text-slate-600',
             )}
           >
-            <BookOpen size={11} strokeWidth={2.25} />
+            <BookOpen size={12} strokeWidth={2.25} />
             {block.lessonCount} {block.lessonCount === 1 ? 'lesson' : 'lessons'}
           </span>
           <span
             className={cn(
               'flex items-center gap-1.5',
-              active && 'text-blue-200',
-              complete && 'text-slate-500',
-              !active && !complete && 'text-slate-400',
+              active && 'text-blue-700',
+              complete && 'text-slate-600',
+              !active && !complete && 'text-slate-600',
             )}
           >
-            <Target size={11} strokeWidth={2.25} />
+            <Target size={12} strokeWidth={2.25} />
             {block.problemCount} {block.problemCount === 1 ? 'problem' : 'problems'}
           </span>
         </div>
@@ -1823,7 +1822,7 @@ function PracticeCard({ step, blockStatus, onOpen }: {
         'group relative text-left rounded-lg overflow-hidden px-3.5 py-2.5 flex flex-col justify-center',
         'border transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50',
-        locked && 'cursor-default opacity-[0.28] bg-[#0c1220] border-white/[0.03] saturate-[0.3]',
+        locked && 'cursor-default opacity-[0.28] bg-[var(--ll-bg-subtle)] border-slate-100 saturate-[0.3]',
         !locked && 'cursor-pointer',
         active && [
           'bg-amber-500/[0.08] border-amber-400/50',
@@ -1835,8 +1834,8 @@ function PracticeCard({ step, blockStatus, onOpen }: {
           'hover:border-emerald-400/50',
         ],
         !locked && !active && !complete && [
-          'bg-[#0f1729] border-amber-400/[0.15]',
-          'hover:bg-[#131b30] hover:border-amber-400/30',
+          'bg-[var(--ll-bg-elevated)] border-amber-400/[0.15]',
+          'hover:bg-[var(--ll-bg-hover)] hover:border-amber-400/30',
         ],
       )}
     >
@@ -1846,41 +1845,51 @@ function PracticeCard({ step, blockStatus, onOpen }: {
           size={12}
           strokeWidth={2.25}
           className={cn(
-            locked && 'text-slate-700/60',
-            active && 'text-amber-300',
-            complete && 'text-emerald-400',
-            !locked && !active && !complete && 'text-amber-400/70',
+            locked && 'text-slate-500',
+            active && 'text-amber-600',
+            complete && 'text-emerald-600',
+            !locked && !active && !complete && 'text-amber-600',
           )}
         />
         <p
           className={cn(
-            'text-[13px] font-semibold leading-snug truncate',
-            locked && 'text-slate-600/60',
-            active && 'text-white',
-            complete && 'text-slate-300',
-            !locked && !active && !complete && 'text-slate-100 group-hover:text-white',
+            'text-[13.5px] font-semibold leading-snug truncate',
+            locked && 'text-slate-500',
+            active && 'text-slate-900',
+            complete && 'text-slate-800',
+            !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900',
           )}
           style={SG}
         >
           {step.title}
         </p>
-        {complete && <CheckCircle2 size={12} strokeWidth={2.5} className="text-emerald-400 shrink-0 ml-auto" />}
-        {locked && <Lock size={10} className="text-slate-700/60 shrink-0 ml-auto" />}
+        {complete && <CheckCircle2 size={12} strokeWidth={2.5} className="text-emerald-600 shrink-0 ml-auto" />}
+        {locked && <Lock size={10} className="text-slate-500 shrink-0 ml-auto" />}
       </div>
-      {/* Difficulty pill */}
+      {/* Difficulty pill + group label */}
       {!locked && (
-        <span
-          className={cn(
-            'inline-flex items-center self-start ml-5 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-[0.08em] uppercase',
-            step.difficulty === 'Easy'
-              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25'
-              : step.difficulty === 'Medium'
-              ? 'bg-amber-500/15 text-amber-400 border border-amber-500/25'
-              : 'bg-red-500/15 text-red-400 border border-red-500/25',
+        <div className="flex items-center gap-1.5 ml-5 min-w-0">
+          <span
+            className={cn(
+              'inline-flex items-center shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold tracking-[0.08em] uppercase',
+              step.difficulty === 'Easy'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : step.difficulty === 'Medium'
+                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                : 'bg-red-50 text-red-700 border border-red-200',
+            )}
+          >
+            {step.difficulty}
+          </span>
+          {step.group && (
+            <span
+              className="text-[10px] font-medium text-slate-500 truncate tracking-[0.02em]"
+              title={step.group}
+            >
+              {step.group}
+            </span>
           )}
-        >
-          {step.difficulty}
-        </span>
+        </div>
       )}
     </button>
   );
@@ -1929,7 +1938,7 @@ function PathView({
         subtitle={path.description}
         right={
           <div className="text-right">
-            <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
+            <div className="h-[4px] w-28 rounded-full bg-slate-100 mb-1.5">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${pct}%`, background: pathStatus === 'complete' ? C.emerald : C.blue }}
@@ -2011,7 +2020,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       >
         {children}
       </span>
-      <div className="flex-1 h-px bg-white/[0.06]" />
+      <div className="flex-1 h-px bg-slate-100" />
     </div>
   );
 }
@@ -2054,7 +2063,7 @@ function TryIt({ quiz, onCorrect }: { quiz: LessonPreview['quiz']; onCorrect?: (
           fontFamily: MONO_FONT,
           fontSize: 13,
           color: C.textSub,
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(15,23,42,0.05)',
           border: `1px solid ${C.border}`,
           borderRadius: 6,
           padding: '12px 16px',
@@ -2073,7 +2082,7 @@ function TryIt({ quiz, onCorrect }: { quiz: LessonPreview['quiz']; onCorrect?: (
         {quiz.opts.map((opt, i) => {
           const isCorrect  = i === quiz.correct;
           const isSelected = answer === i;
-          let bg     = 'rgba(255,255,255,0.04)';
+          let bg     = 'rgba(15,23,42,0.05)';
           let border = C.border;
           let color  = C.textMuted;
           if (answered) {
@@ -2149,7 +2158,7 @@ function LessonPanel({
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="gap-1 -ml-2 mb-3 h-7 text-slate-500 hover:text-slate-300 text-[11.5px]"
+          className="gap-1 -ml-2 mb-3 h-7 text-slate-500 hover:text-slate-700 text-[11.5px]"
         >
           <ChevronLeft size={12} />
           {path.title}
@@ -2250,7 +2259,7 @@ function LessonPanel({
               variant="ghost"
               size="sm"
               onClick={onBack}
-              className="gap-1 text-slate-500 hover:text-slate-300 text-[12px]"
+              className="gap-1 text-slate-500 hover:text-slate-700 text-[12px]"
             >
               <ChevronLeft size={12} />
               Back to path
@@ -2290,7 +2299,7 @@ function LessonPanel({
           <Separator className="mb-5" style={{ background: C.border }} />
 
           <div className="flex items-center justify-between gap-3">
-            <Button variant="ghost" size="sm" onClick={onBack} className="gap-1 text-slate-500 hover:text-slate-300 text-[12px]">
+            <Button variant="ghost" size="sm" onClick={onBack} className="gap-1 text-slate-500 hover:text-slate-700 text-[12px]">
               <ChevronLeft size={12} />
               Back to path
             </Button>
@@ -2410,26 +2419,6 @@ function computePathStats(
   });
 }
 
-// Simple stat box with optional accent color strip at the top.
-function StatBox({ value, label, accent }: { value: string; label: string; accent?: string }) {
-  return (
-    <div
-      className="rounded-lg px-3.5 py-3 bg-slate-800/40 border border-slate-700/60 overflow-hidden relative"
-    >
-      {accent && (
-        <div
-          className="absolute inset-x-0 top-0 h-[2px]"
-          style={{ background: accent }}
-        />
-      )}
-      <div className="text-[20px] leading-none font-semibold text-slate-100 tabular-nums" style={SG}>
-        {value}
-      </div>
-      <div className="text-[10.5px] text-slate-500 mt-2">{label}</div>
-    </div>
-  );
-}
-
 // Row for a path — color-coded by path order.
 function ProgressPathCard({
   stats, onClick,
@@ -2450,8 +2439,8 @@ function ProgressPathCard({
         'w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
         complete
-          ? 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40'
-          : 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+          ? 'bg-slate-50 border-emerald-500/25 hover:border-emerald-500/40'
+          : 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300',
       )}
       style={pct > 0 && !complete ? { background: pc.bg } : undefined}
     >
@@ -2469,7 +2458,7 @@ function ProgressPathCard({
       <p
         className={cn(
           'text-[12.5px] font-semibold leading-tight mb-2.5 tracking-[-0.005em]',
-          complete ? 'text-slate-300' : 'text-slate-200',
+          complete ? 'text-slate-700' : 'text-slate-800',
         )}
         style={SG}
       >
@@ -2478,13 +2467,13 @@ function ProgressPathCard({
       <div
         className={cn(
           'flex justify-between mb-1 text-[9.5px] font-medium',
-          complete ? 'text-slate-500' : 'text-slate-400',
+          complete ? 'text-slate-500' : 'text-slate-600',
         )}
       >
         <span>{blocksComplete} / {blocksTotal} blocks</span>
         <span className="tabular-nums">{pct}%</span>
       </div>
-      <div className="h-[3px] rounded-full bg-slate-900/60 overflow-hidden">
+      <div className="h-[3px] rounded-full bg-white/80 overflow-hidden">
         <div
           className="h-full rounded-full transition-all"
           style={{
@@ -2501,7 +2490,7 @@ function ProgressPathCard({
 
 function EmptyHint({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg px-3 py-2.5 text-[11.5px] text-slate-500 bg-slate-800/40 border border-slate-700/60">
+    <div className="rounded-lg px-3 py-2.5 text-[11.5px] text-slate-500 bg-white border border-slate-200">
       {children}
     </div>
   );
@@ -2514,6 +2503,661 @@ function SectionHeader({ children, count }: { children: React.ReactNode; count?:
       {children}
       {count !== undefined && <span className="ml-2 text-slate-700 tabular-nums">{count}</span>}
     </p>
+  );
+}
+
+// ─── Progress page flourishes — "editorial dossier" aesthetic ────────────────
+// The progress view leans into a magazine-spread feel: section sigils, dashed
+// rules, oversized typography, a boarding-pass ticket, and a sticker wall.
+// Intentional deviation from the otherwise reserved app chrome.
+
+function DossierHeader({
+  number, label, count, right, icon: Icon, iconColor,
+}: {
+  number: string;
+  label: string;
+  count?: number;
+  right?: React.ReactNode;
+  icon?: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string; style?: React.CSSProperties }>;
+  iconColor?: string;
+}) {
+  return (
+    <div className="flex items-baseline justify-between mb-3 px-1">
+      <div className="flex items-center gap-2">
+        <span
+          className="font-mono font-bold tabular-nums"
+          style={{ fontSize: 9.5, letterSpacing: '0.22em', color: C.blue, textTransform: 'uppercase' }}
+        >
+          §{number}
+        </span>
+        <span className="text-[10px] font-bold text-slate-700 tracking-[0.16em] uppercase">
+          {label}
+        </span>
+        {Icon && (
+          <Icon size={11} strokeWidth={2.25} style={{ color: iconColor ?? '#64748b', transform: 'translateY(0.5px)' }} />
+        )}
+        {count !== undefined && (
+          <span className="font-mono text-[9.5px] tabular-nums text-slate-400 tracking-[0.14em]">
+            · {String(count).padStart(2, '0')}
+          </span>
+        )}
+      </div>
+      {right && (
+        <span className="font-mono text-[9px] tabular-nums tracking-[0.18em] uppercase text-slate-400">
+          {right}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function StatPill({
+  icon: Icon, label, value, color,
+}: {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string }>;
+  label: string; value: number; color: string;
+}) {
+  return (
+    <div
+      className="rounded-lg px-3 py-2.5 border-2 flex items-center gap-2.5"
+      style={{ background: `${color}14`, borderColor: `${color}55` }}
+    >
+      <div
+        className="w-8 h-8 rounded-md flex items-center justify-center shrink-0"
+        style={{ background: color, boxShadow: `0 2px 0 ${color}aa, 0 4px 8px ${color}40` }}
+      >
+        <Icon size={14} strokeWidth={2.75} color="white" />
+      </div>
+      <div className="min-w-0">
+        <div className="text-[9px] font-mono font-bold tracking-[0.2em] uppercase text-slate-500 leading-none mb-1">
+          {label}
+        </div>
+        <div className="text-[18px] font-extrabold tabular-nums leading-none text-slate-900" style={SG}>
+          {value}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// XP math — tied to actual progress, feels generous.
+const XP_PER_BLOCK   = 120;
+const XP_PER_LESSON  = 10;
+const XP_PER_PROBLEM = 15;
+const XP_PER_SKILL   = 40;
+const XP_PER_LEVEL   = 400;
+
+function computeXp(totalComplete: number, totalLessons: number, totalProblems: number, skillsCount: number) {
+  const totalXp   = totalComplete * XP_PER_BLOCK
+                  + totalLessons  * XP_PER_LESSON
+                  + totalProblems * XP_PER_PROBLEM
+                  + skillsCount   * XP_PER_SKILL;
+  const level       = Math.floor(totalXp / XP_PER_LEVEL) + 1;
+  const xpIntoLevel = totalXp % XP_PER_LEVEL;
+  const xpToNext    = XP_PER_LEVEL - xpIntoLevel;
+  const levelPct    = Math.round((xpIntoLevel / XP_PER_LEVEL) * 100);
+  return { totalXp, level, xpIntoLevel, xpToNext, levelPct };
+}
+
+function PlayerCard({
+  level, xpIntoLevel, xpToNext, levelPct, totalXp,
+  totalComplete, totalProblems, skillsCount,
+}: {
+  level: number; xpIntoLevel: number; xpToNext: number;
+  levelPct: number; totalXp: number;
+  totalComplete: number; totalProblems: number; skillsCount: number;
+}) {
+  return (
+    <div
+      className="relative rounded-2xl overflow-hidden border-[2px] border-slate-900/90 p-6"
+      style={{
+        background:
+          'linear-gradient(135deg, #fef3c7 0%, #ffffff 35%, #ede9fe 70%, #dbeafe 100%)',
+        boxShadow: '0 4px 0 rgba(15,23,42,0.88), 0 20px 50px -20px rgba(139,92,246,0.35)',
+      }}
+    >
+      {/* confetti dots */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 12% 18%, #f59e0b 2px, transparent 2px), radial-gradient(circle at 85% 22%, #8b5cf6 2px, transparent 2px), radial-gradient(circle at 78% 78%, #ec4899 2px, transparent 2px), radial-gradient(circle at 22% 82%, #3b82f6 2px, transparent 2px)',
+          backgroundSize: '220px 220px, 260px 260px, 200px 200px, 240px 240px',
+        }}
+      />
+
+      {/* top ticker */}
+      <div className="relative flex items-center justify-between mb-5">
+        <span className="font-mono text-[9.5px] font-bold tracking-[0.22em] uppercase text-slate-600">
+          Player Card · Season 1
+        </span>
+        <span className="font-mono text-[9.5px] font-bold tabular-nums tracking-[0.18em] text-slate-500">
+          TOTAL XP · {totalXp.toLocaleString()}
+        </span>
+      </div>
+
+      <div className="relative flex items-center gap-6 mb-6">
+        {/* level medallion */}
+        <div className="relative shrink-0 w-[124px] h-[124px] flex items-center justify-center">
+          <div
+            className="absolute inset-0 rounded-full blur-2xl opacity-60"
+            style={{ background: 'radial-gradient(circle, #fbbf24 0%, #8b5cf6 60%, transparent 80%)' }}
+          />
+          <div
+            className="absolute inset-0 rounded-full border-[3px] border-dashed"
+            style={{ borderColor: 'rgba(15,23,42,0.18)', animation: 'spin 40s linear infinite' }}
+          />
+          <div
+            className="absolute inset-[8px] rounded-full"
+            style={{
+              background:
+                'conic-gradient(from 0deg, #f59e0b, #ec4899, #8b5cf6, #3b82f6, #f59e0b)',
+              filter: 'saturate(1.15)',
+            }}
+          />
+          <div className="absolute inset-[14px] rounded-full bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
+            <div className="text-center leading-none" style={SG}>
+              <div className="text-[9.5px] font-mono font-bold tracking-[0.2em] uppercase text-amber-300 mb-1">LVL</div>
+              <div
+                className="text-[46px] font-extrabold tabular-nums text-white"
+                style={{ letterSpacing: '-0.04em', textShadow: '0 0 12px rgba(251,191,36,0.5)' }}
+              >
+                {level}
+              </div>
+            </div>
+          </div>
+          <Sparkles size={20} strokeWidth={2.5} className="absolute -top-1 -right-1 text-amber-400" style={{ filter: 'drop-shadow(0 0 6px #fbbf24)' }} />
+        </div>
+
+        {/* XP bar + meta */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline justify-between mb-2">
+            <span className="text-[11px] font-mono font-bold tracking-[0.18em] uppercase text-slate-700">
+              Level {level} → {level + 1}
+            </span>
+            <span className="text-[10px] font-mono tabular-nums font-bold text-slate-600">
+              {levelPct}%
+            </span>
+          </div>
+          <div
+            className="relative h-4 rounded-full border-2 border-slate-900/85 overflow-hidden"
+            style={{ background: '#f1f5f9', boxShadow: 'inset 0 2px 3px rgba(15,23,42,0.12)' }}
+          >
+            <div
+              className="absolute inset-y-0 left-0"
+              style={{
+                width: `${levelPct}%`,
+                background: 'linear-gradient(90deg, #fbbf24 0%, #ec4899 45%, #8b5cf6 100%)',
+                transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
+                boxShadow: '0 0 10px rgba(236,72,153,0.6)',
+              }}
+            />
+            {/* diagonal stripes overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-25"
+              style={{
+                width: `${levelPct}%`,
+                backgroundImage:
+                  'repeating-linear-gradient(45deg, rgba(255,255,255,0.8) 0, rgba(255,255,255,0.8) 3px, transparent 3px, transparent 8px)',
+              }}
+            />
+          </div>
+          <div className="flex items-baseline justify-between mt-2.5">
+            <span className="font-mono text-[12.5px] tabular-nums font-bold text-slate-900" style={SG}>
+              {xpIntoLevel}
+              <span className="text-slate-400 font-normal"> / {XP_PER_LEVEL}</span>
+              <span className="text-[9.5px] font-normal text-slate-500 uppercase tracking-[0.18em] ml-1">xp</span>
+            </span>
+            <span className="font-mono text-[10px] tabular-nums font-semibold text-slate-500">
+              <span className="text-amber-600 font-bold">{xpToNext}</span> xp to next
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* stat pills */}
+      <div className="relative grid grid-cols-3 gap-2.5">
+        <StatPill icon={Flame}  label="Blocks"   value={totalComplete} color="#f97316" />
+        <StatPill icon={Swords} label="Problems" value={totalProblems} color="#ec4899" />
+        <StatPill icon={Brain}  label="Skills"   value={skillsCount}   color="#8b5cf6" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Achievements ──────────────────────────────────────────────────────────
+
+type AchievementTier = 'bronze' | 'silver' | 'gold';
+const TIER_STYLES: Record<AchievementTier, { from: string; to: string; glow: string; ring: string }> = {
+  bronze: { from: '#b45309', to: '#f59e0b', glow: '#fbbf24', ring: '#fde68a' },
+  silver: { from: '#64748b', to: '#cbd5e1', glow: '#e2e8f0', ring: '#f1f5f9' },
+  gold:   { from: '#b45309', to: '#fde047', glow: '#fef08a', ring: '#fef3c7' },
+};
+
+function AchievementTile({
+  icon: Icon, name, hint, earned, tier,
+}: {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string }>;
+  name: string; hint: string; earned: boolean; tier: AchievementTier;
+}) {
+  const c = TIER_STYLES[tier];
+  return (
+    <div
+      className={cn(
+        'group relative rounded-xl border-2 p-3 pt-4 flex flex-col items-center gap-2 text-center overflow-hidden',
+        'transition-all duration-200',
+        earned ? 'hover:-translate-y-1' : 'opacity-80',
+      )}
+      style={
+        earned
+          ? { background: `linear-gradient(155deg, ${c.from} 0%, ${c.to} 100%)`, borderColor: 'rgba(15,23,42,0.2)', boxShadow: `0 3px 0 rgba(15,23,42,0.35), 0 8px 18px ${c.glow}55` }
+          : { background: '#f1f5f9', borderColor: '#e2e8f0' }
+      }
+      title={hint}
+    >
+      {earned && (
+        <span
+          className="absolute -top-1 -right-1 text-amber-300"
+          style={{ filter: 'drop-shadow(0 0 4px #fde047)' }}
+        >
+          <Sparkles size={12} strokeWidth={2.5} />
+        </span>
+      )}
+      <div
+        className={cn(
+          'relative w-11 h-11 rounded-full flex items-center justify-center border-2 shrink-0',
+        )}
+        style={
+          earned
+            ? { background: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.55)' }
+            : { background: 'white', borderColor: '#cbd5e1' }
+        }
+      >
+        {earned ? (
+          <Icon size={18} strokeWidth={2.75} color="white" />
+        ) : (
+          <Lock size={14} strokeWidth={2.25} color="#94a3b8" />
+        )}
+      </div>
+      <div
+        className={cn('text-[10.5px] font-bold leading-tight tracking-[-0.005em]')}
+        style={{ color: earned ? '#ffffff' : '#94a3b8', ...SG, textShadow: earned ? '0 1px 2px rgba(0,0,0,0.18)' : 'none' }}
+      >
+        {name}
+      </div>
+      <div
+        className={cn('text-[9px] font-medium leading-snug opacity-90')}
+        style={{ color: earned ? 'rgba(255,255,255,0.85)' : '#cbd5e1' }}
+      >
+        {hint}
+      </div>
+    </div>
+  );
+}
+
+// ─── Boss card — each path rendered as an RPG boss encounter ───────────────
+
+function BossCard({ stats, onClick }: { stats: PathStats; onClick: () => void }) {
+  const { path, blocksComplete, blocksTotal, pct, pathStatus } = stats;
+  const complete = pathStatus === 'complete';
+  const hpRemaining = blocksTotal - blocksComplete;
+  const hpPct = complete ? 0 : 100 - pct;
+  const engaged = !complete && blocksComplete > 0;
+  const pc = pathColor(path.order);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'group relative w-full text-left rounded-xl border-2 p-4 overflow-hidden',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+        'transition-transform hover:-translate-y-0.5',
+        complete ? 'border-amber-400/60' : engaged ? 'border-slate-300' : 'border-slate-200',
+      )}
+      style={{
+        background: complete
+          ? 'linear-gradient(135deg, #fef3c7 0%, #ffffff 100%)'
+          : engaged
+            ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
+            : '#ffffff',
+        boxShadow: complete ? '0 2px 0 #d97706, 0 8px 18px rgba(251,191,36,0.25)' : '0 1px 0 rgba(15,23,42,0.04)',
+      }}
+    >
+      {complete && (
+        <span className="absolute top-2 right-2" style={{ filter: 'drop-shadow(0 0 6px #fbbf24)' }}>
+          <Crown size={16} strokeWidth={2.5} className="text-amber-500" />
+        </span>
+      )}
+      {engaged && (
+        <span
+          className="absolute top-3 right-3 inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase tracking-[0.18em] text-rose-500"
+        >
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-60 animate-ping" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500" />
+          </span>
+          In Combat
+        </span>
+      )}
+
+      <div className="flex items-start gap-3 mb-3">
+        <div
+          className="relative w-11 h-11 rounded-lg flex items-center justify-center shrink-0"
+          style={{
+            background: complete
+              ? 'linear-gradient(135deg, #fbbf24, #f59e0b)'
+              : pc.bar,
+            boxShadow: complete ? '0 2px 0 #b45309' : `0 2px 0 ${pc.accent}aa`,
+          }}
+        >
+          {complete ? <Trophy size={20} strokeWidth={2.5} color="white" /> : <Shield size={20} strokeWidth={2.5} color="white" />}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span
+              className="font-mono text-[9px] font-bold tabular-nums tracking-[0.2em] uppercase"
+              style={{ color: complete ? '#92400e' : pc.accent }}
+            >
+              Boss · {String(path.order).padStart(2, '0')}
+            </span>
+            {complete && (
+              <span className="text-[9px] font-mono font-bold tracking-[0.2em] uppercase text-amber-600">
+                Defeated
+              </span>
+            )}
+          </div>
+          <p className="text-[14.5px] font-bold text-slate-900 leading-tight tracking-[-0.005em]" style={SG}>
+            {path.title}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-[9px] font-mono font-bold tracking-[0.16em] uppercase text-slate-500 shrink-0">HP</span>
+        <div
+          className="flex-1 relative h-3.5 rounded-full overflow-hidden border-2"
+          style={{ background: '#0f172a', borderColor: '#0f172a' }}
+        >
+          <div
+            className="absolute inset-y-0 left-0"
+            style={{
+              width: `${hpPct}%`,
+              background: complete
+                ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+                : hpPct > 50
+                  ? 'linear-gradient(90deg, #dc2626, #f87171)'
+                  : 'linear-gradient(90deg, #f59e0b, #fbbf24)',
+              transition: 'width 0.8s cubic-bezier(0.4,0,0.2,1)',
+            }}
+          />
+          <div
+            className="absolute inset-0 pointer-events-none opacity-20"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(45deg, rgba(255,255,255,0.8) 0, rgba(255,255,255,0.8) 2px, transparent 2px, transparent 6px)',
+            }}
+          />
+        </div>
+        <span className="font-mono text-[10.5px] tabular-nums font-bold text-slate-700 shrink-0">
+          {hpRemaining}<span className="text-slate-400 font-normal">/{blocksTotal}</span>
+        </span>
+      </div>
+    </button>
+  );
+}
+
+// ─── Quest card — replaces the old ticket stub ────────────────────────────
+
+function RewardChip({
+  icon: Icon, label, color,
+}: {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string }>;
+  label: string; color: string;
+}) {
+  return (
+    <div
+      className="inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-1 border-2"
+      style={{ background: `${color}20`, borderColor: `${color}80` }}
+    >
+      <div
+        className="w-5 h-5 rounded-full flex items-center justify-center"
+        style={{ background: color }}
+      >
+        <Icon size={11} strokeWidth={3} color="white" />
+      </div>
+      <span className="text-[11px] font-bold tabular-nums tracking-[-0.005em]" style={{ color, ...SG }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function QuestCard({
+  block, path, onAccept,
+}: {
+  block: CurriculumStep;
+  path: PathDef;
+  onAccept: () => void;
+}) {
+  const pc = pathColor(path.order);
+  const isL = isLesson(block);
+  const xpReward = XP_PER_BLOCK
+                 + (isL ? block.lessonCount  * XP_PER_LESSON  : 0)
+                 + (isL ? block.problemCount * XP_PER_PROBLEM : XP_PER_PROBLEM);
+  const skillsReward = isL ? block.skills.length : 0;
+
+  return (
+    <div
+      className="relative rounded-2xl overflow-hidden border-[2px] border-slate-900/90"
+      style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+        boxShadow: '0 4px 0 rgba(15,23,42,0.85), 0 24px 50px -20px rgba(99,102,241,0.45)',
+      }}
+    >
+      {/* sparkle dots scattered */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 18% 24%, #fbbf24 1px, transparent 1.5px), radial-gradient(circle at 82% 15%, #a78bfa 1px, transparent 1.5px), radial-gradient(circle at 70% 72%, #60a5fa 1px, transparent 1.5px), radial-gradient(circle at 30% 78%, #f9a8d4 1px, transparent 1.5px)',
+          backgroundSize: '180px 180px, 220px 220px, 200px 200px, 240px 240px',
+        }}
+      />
+
+      {/* NEW QUEST banner */}
+      <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+        <Sparkles size={13} strokeWidth={2.75} className="text-amber-300" style={{ filter: 'drop-shadow(0 0 6px #fbbf24)' }} />
+        <span
+          className="text-[9.5px] font-mono font-bold tracking-[0.22em] uppercase text-amber-300"
+          style={{ textShadow: '0 0 6px rgba(251,191,36,0.55)' }}
+        >
+          New Quest
+        </span>
+      </div>
+
+      <div className="relative p-6 pr-28">
+        <p
+          className="text-[10px] font-mono font-bold tracking-[0.22em] uppercase mb-2"
+          style={{ color: pc.accent, textShadow: `0 0 8px ${pc.accent}99` }}
+        >
+          {path.title}
+        </p>
+        <h3
+          className="text-[22px] font-bold text-white mb-2 tracking-[-0.015em] leading-tight"
+          style={SG}
+        >
+          {block.title}
+        </h3>
+        {isL && (
+          <p className="text-[13px] leading-relaxed text-slate-300 mb-4 max-w-[46ch]">
+            {block.subtitle}
+          </p>
+        )}
+        {isPractice(block) && (
+          <p className="text-[13px] leading-relaxed text-slate-300 mb-4">
+            Practice encounter · {block.difficulty}
+          </p>
+        )}
+
+        {/* Objectives */}
+        {isL && (
+          <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mb-5">
+            <span className="text-[9.5px] font-mono font-bold tracking-[0.2em] uppercase text-slate-400">
+              Objectives
+            </span>
+            <span className="text-[11.5px] font-semibold text-slate-100 flex items-center gap-1.5">
+              <BookOpen size={12} strokeWidth={2.5} />
+              {block.lessonCount} lesson{block.lessonCount === 1 ? '' : 's'}
+            </span>
+            <span className="text-slate-600">·</span>
+            <span className="text-[11.5px] font-semibold text-slate-100 flex items-center gap-1.5">
+              <Target size={12} strokeWidth={2.5} />
+              {block.problemCount} problem{block.problemCount === 1 ? '' : 's'}
+            </span>
+          </div>
+        )}
+
+        {/* Rewards + Accept */}
+        <div className="flex items-center flex-wrap gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[9.5px] font-mono font-bold tracking-[0.22em] uppercase text-slate-400">
+              Rewards
+            </span>
+            <RewardChip icon={Zap}   label={`+${xpReward} XP`} color="#fbbf24" />
+            {skillsReward > 0 && (
+              <RewardChip icon={Brain} label={`+${skillsReward} skill${skillsReward === 1 ? '' : 's'}`} color="#a78bfa" />
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onAccept}
+            className={cn(
+              'ml-auto inline-flex items-center gap-2 h-10 px-5 rounded-md text-[13px] font-extrabold text-slate-900',
+              'bg-amber-400 hover:bg-amber-300 border-2 border-slate-900/85',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70',
+              'transition tracking-[-0.005em]',
+            )}
+            style={{ ...SG, boxShadow: '0 3px 0 rgba(15,23,42,0.9)' }}
+          >
+            Accept Quest
+            <ArrowRight size={14} strokeWidth={3} />
+          </button>
+        </div>
+      </div>
+
+      {/* ticker stripe */}
+      <div className="relative flex h-1.5">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div key={i} className="flex-1" style={{ background: i % 2 === 0 ? '#fbbf24' : '#1e1b4b' }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Hash-based sticker palette — deterministic rotation + color per skill name.
+const STICKER_PALETTES: Array<{ bg: string; ink: string; dot: string }> = [
+  { bg: '#fef3c7', ink: '#92400e', dot: '#f59e0b' },
+  { bg: '#dbeafe', ink: '#1e40af', dot: '#3b82f6' },
+  { bg: '#ede9fe', ink: '#5b21b6', dot: '#8b5cf6' },
+  { bg: '#ccfbf1', ink: '#115e59', dot: '#14b8a6' },
+  { bg: '#fce7f3', ink: '#9d174d', dot: '#ec4899' },
+  { bg: '#dcfce7', ink: '#14532d', dot: '#22c55e' },
+  { bg: '#ffedd5', ink: '#9a3412', dot: '#f97316' },
+  { bg: '#e0e7ff', ink: '#3730a3', dot: '#6366f1' },
+];
+
+function stickerHash(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+// ─── Skill Codex — Pokedex-style collection grid ───────────────────────────
+
+function SkillCodex({ collected, all }: { collected: string[]; all: string[] }) {
+  const mastered = new Set(collected);
+  return (
+    <div
+      className="relative rounded-2xl border-2 border-slate-200 bg-white p-5 overflow-hidden"
+      style={{ boxShadow: '0 1px 0 rgba(15,23,42,0.03), 0 20px 40px -30px rgba(15,23,42,0.2)' }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px)',
+          backgroundSize: '22px 22px',
+        }}
+      />
+      <div className="relative flex items-center justify-between mb-3 pb-3 border-b-2 border-dashed border-slate-200">
+        <div className="flex items-center gap-2">
+          <BookOpen size={12} strokeWidth={2.5} className="text-slate-700" />
+          <span className="text-[10px] font-mono font-bold tracking-[0.22em] uppercase text-slate-700">
+            Skill Codex
+          </span>
+        </div>
+        <span className="text-[11px] font-mono font-bold tabular-nums tracking-[0.16em] text-slate-800">
+          {collected.length}
+          <span className="text-slate-400 font-normal"> / {all.length}</span>
+          <span className="text-slate-400 font-normal uppercase ml-1">discovered</span>
+        </span>
+      </div>
+
+      <div className="relative grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {all.map((skill, i) => {
+          const earned = mastered.has(skill);
+          const h = stickerHash(skill);
+          const palette = STICKER_PALETTES[h % STICKER_PALETTES.length];
+          const slotNum = String(i + 1).padStart(3, '0');
+          return (
+            <div
+              key={skill}
+              className={cn(
+                'relative rounded-lg border-2 p-2.5 flex flex-col gap-1.5 overflow-hidden',
+                'transition-transform',
+                earned ? 'hover:-translate-y-0.5' : '',
+              )}
+              style={
+                earned
+                  ? {
+                      background: palette.bg,
+                      borderColor: palette.dot,
+                      boxShadow: `2px 2px 0 ${palette.dot}aa`,
+                    }
+                  : { background: '#f8fafc', borderColor: '#e2e8f0', borderStyle: 'dashed' }
+              }
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={cn(
+                    'font-mono text-[9px] font-bold tabular-nums tracking-[0.12em]',
+                  )}
+                  style={{ color: earned ? palette.dot : '#cbd5e1' }}
+                >
+                  #{slotNum}
+                </span>
+                {earned ? (
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: palette.dot, boxShadow: `0 0 6px ${palette.dot}` }}
+                  />
+                ) : (
+                  <Lock size={10} strokeWidth={2.5} className="text-slate-300" />
+                )}
+              </div>
+              <p
+                className={cn('text-[11.5px] font-bold leading-tight tracking-[-0.005em]')}
+                style={{ color: earned ? palette.ink : '#cbd5e1', ...SG }}
+              >
+                {earned ? skill : '???'}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -2589,14 +3233,14 @@ export function ProgressView({
               Start with {nextUp.path.title}
             </p>
             <p
-              className="text-[20px] font-semibold leading-snug text-white mb-2 tracking-[-0.01em]"
+              className="text-[20px] font-semibold leading-snug text-slate-900 mb-2 tracking-[-0.01em]"
               style={SG}
             >
               {nextUp.block.title}
             </p>
             {isLesson(nextUp.block) && (
               <>
-                <p className="text-[13.5px] leading-relaxed text-slate-300 mb-4">
+                <p className="text-[13.5px] leading-relaxed text-slate-700 mb-4">
                   {nextUp.block.subtitle}
                 </p>
                 <div className="flex items-center gap-4 mb-5 text-[12px] font-medium tabular-nums text-blue-200">
@@ -2612,7 +3256,7 @@ export function ProgressView({
               </>
             )}
             {isPractice(nextUp.block) && (
-              <p className="text-[13.5px] leading-relaxed text-slate-300 mb-4">
+              <p className="text-[13.5px] leading-relaxed text-slate-700 mb-4">
                 Practice problem · {nextUp.block.difficulty}
               </p>
             )}
@@ -2620,7 +3264,7 @@ export function ProgressView({
               type="button"
               onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
               className={cn(
-                'inline-flex items-center h-11 px-6 rounded-md text-[14px] font-semibold text-white',
+                'inline-flex items-center h-11 px-6 rounded-md text-[14px] font-semibold text-slate-900',
                 'bg-blue-500 hover:bg-blue-400 border border-blue-400/60',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70',
                 'transition-colors',
@@ -2648,216 +3292,172 @@ export function ProgressView({
     );
   }
 
+  // Gamification precompute — XP/level, achievements, codex universe.
+  const pathsComplete  = stats.filter(s => s.pathStatus === 'complete').length;
+  const halfwayTarget  = Math.ceil(totalBlocks / 2);
+  const { totalXp, level, xpIntoLevel, xpToNext, levelPct } = computeXp(
+    totalComplete, totalLessons, totalProblems, skillsMastered.length,
+  );
+
+  const allSkills = Array.from(new Set(
+    CURRICULUM.flatMap(p => p.blocks).filter(isLesson).flatMap(b => b.skills),
+  ));
+
+  const achievements: Array<{
+    id: string; name: string; hint: string;
+    icon: React.ComponentType<{ size?: number; strokeWidth?: number; color?: string }>;
+    earned: boolean; tier: AchievementTier;
+  }> = [
+    { id: 'first',         name: 'First Strike',   hint: 'Clear 1 block',                        icon: Zap,    earned: totalComplete >= 1,                       tier: 'bronze' },
+    { id: 'warming',       name: 'Warming Up',     hint: 'Clear 5 blocks',                       icon: Flame,  earned: totalComplete >= 5,                       tier: 'bronze' },
+    { id: 'momentum',      name: 'Momentum',       hint: 'Clear 10 blocks',                      icon: Swords, earned: totalComplete >= 10,                      tier: 'silver' },
+    { id: 'pathfinder',    name: 'Pathfinder',     hint: 'Defeat a boss',                        icon: Shield, earned: pathsComplete >= 1,                       tier: 'silver' },
+    { id: 'polymath',      name: 'Polymath',       hint: 'Master 10 skills',                     icon: Brain,  earned: skillsMastered.length >= 10,              tier: 'silver' },
+    { id: 'halfway',       name: 'Halfway Hero',   hint: `Clear ${halfwayTarget} blocks`,        icon: Star,   earned: totalComplete >= halfwayTarget,            tier: 'gold' },
+    { id: 'champion',      name: 'Champion',       hint: 'Defeat 3 bosses',                      icon: Crown,  earned: pathsComplete >= 3,                        tier: 'gold' },
+    { id: 'completionist', name: 'Completionist',  hint: 'Defeat every boss',                    icon: Trophy, earned: pathsComplete === CURRICULUM.length,       tier: 'gold' },
+  ];
+  const earnedCount = achievements.filter(a => a.earned).length;
+
+  // Active bosses = unlocked paths that aren't complete (show most-engaged first).
+  const activeBosses = stats
+    .filter(s => s.pathStatus !== 'locked' && s.pathStatus !== 'complete')
+    .sort((a, b) => b.pct - a.pct);
+  const defeatedBosses = stats.filter(s => s.pathStatus === 'complete');
+
   return (
     <div className="w-full max-w-[720px] mx-auto py-8 px-8 lg:px-12">
       <PageHeader
-        eyebrow="Progress"
-        title="Your Progress"
+        eyebrow="Season 1"
+        title="Your Campaign"
         subtitle={
           totalComplete === 0
             ? "You haven't started yet. Pick a block from the Path tab and begin."
-            : `${totalComplete} of ${totalBlocks} blocks complete across ${CURRICULUM.length} paths.`
+            : `Level ${level} · ${totalXp.toLocaleString()} XP earned · ${earnedCount} / ${achievements.length} achievements.`
         }
         right={
-          <div className="relative flex items-center justify-center"
-               style={{ width: 110, height: 110 }}>
-          {/* Circular track */}
-          <svg className="absolute inset-0" width="110" height="110" viewBox="0 0 110 110">
-            <circle cx="55" cy="55" r="48" fill="none" stroke="#1e293b" strokeWidth="8" />
-            <circle
-              cx="55" cy="55" r="48"
-              fill="none"
-              strokeWidth="8"
-              strokeLinecap="round"
-              stroke="url(#progressGrad)"
-              strokeDasharray={`${2 * Math.PI * 48}`}
-              strokeDashoffset={`${2 * Math.PI * 48 * (1 - overallPct / 100)}`}
-              style={{
-                transform: 'rotate(-90deg)',
-                transformOrigin: '55px 55px',
-                transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-            />
-            <defs>
-              <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#6366f1" />
-                <stop offset="50%" stopColor="#3b82f6" />
-                <stop offset="100%" stopColor="#06b6d4" />
-              </linearGradient>
-            </defs>
-          </svg>
-          {/* Big number */}
-          <div className="relative text-center">
-            <span
-              className="text-[32px] font-extrabold tabular-nums leading-none"
+          <div className="flex flex-col items-end gap-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-[0.18em] uppercase text-slate-500">
+              <Medal size={12} strokeWidth={2.5} className="text-amber-500" />
+              Mastery
+            </div>
+            <div
+              className="text-[38px] font-extrabold tabular-nums leading-none"
               style={{
                 ...SG,
-                background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
+                background: 'linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                filter: `drop-shadow(0 0 ${overallPct > 0 ? 12 : 0}px rgba(99,102,241,0.5))`,
-                transition: 'filter 0.6s ease',
+                filter: `drop-shadow(0 0 ${overallPct > 0 ? 10 : 0}px rgba(236,72,153,0.45))`,
               }}
             >
-              {overallPct}
-            </span>
-            <span
-              className="text-[13px] font-bold ml-0.5"
-              style={{
-                background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              %
-            </span>
-            <p className="text-[9px] font-semibold tracking-[0.12em] uppercase text-slate-500 mt-0.5">
-              mastery
-            </p>
-          </div>
+              {overallPct}%
+            </div>
+            <div className="text-[9.5px] font-mono tabular-nums text-slate-500">
+              {pathsStarted}/{CURRICULUM.length} paths engaged
+            </div>
           </div>
         }
       />
 
-      {/* Overview */}
-      <section className="mb-8">
-        <SectionHeader>Overview</SectionHeader>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <StatBox value={`${totalComplete}`}                       label="blocks complete"  accent="linear-gradient(90deg, #6366f1, #818cf8)" />
-          <StatBox value={`${totalLessons}`}                        label="lessons done"     accent="linear-gradient(90deg, #8b5cf6, #a78bfa)" />
-          <StatBox value={`${totalProblems}`}                       label="problems done"    accent="linear-gradient(90deg, #f59e0b, #f97316)" />
-          <StatBox value={`${pathsStarted} / ${CURRICULUM.length}`} label="paths started"    accent="linear-gradient(90deg, #14b8a6, #06b6d4)" />
+      {/* § 01 — Player Card */}
+      <section className="mb-10">
+        <DossierHeader number="01" label="Player Card" right={`XP ${totalXp.toLocaleString()}`} />
+        <PlayerCard
+          level={level}
+          xpIntoLevel={xpIntoLevel}
+          xpToNext={xpToNext}
+          levelPct={levelPct}
+          totalXp={totalXp}
+          totalComplete={totalComplete}
+          totalProblems={totalProblems}
+          skillsCount={skillsMastered.length}
+        />
+      </section>
+
+      {/* § 02 — Achievements */}
+      <section className="mb-10">
+        <DossierHeader
+          number="02"
+          label="Trophy Cabinet"
+          icon={Trophy}
+          iconColor="#f59e0b"
+          right={`${earnedCount} / ${achievements.length} earned`}
+        />
+        <div className="grid grid-cols-4 gap-2">
+          {achievements.map(a => (
+            <AchievementTile
+              key={a.id}
+              icon={a.icon}
+              name={a.name}
+              hint={a.hint}
+              earned={a.earned}
+              tier={a.tier}
+            />
+          ))}
         </div>
       </section>
 
-      {/* Strengths */}
-      <section className="mb-8">
-        <SectionHeader>Strengths</SectionHeader>
-        {strengths.length > 0 ? (
-          <div className="space-y-2">
-            {strengths.map(s => (
-              <ProgressPathCard
-                key={s.path.id}
-                stats={s}
-                onClick={() => onNavigateToPath(s.path.id)}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyHint>
-            Complete at least half of a path to see strengths here.
-          </EmptyHint>
-        )}
-      </section>
-
-      {/* Focus Areas */}
-      <section className="mb-8">
-        <SectionHeader>Focus Areas</SectionHeader>
-        {focusAreas.length > 0 ? (
-          <div className="space-y-2">
-            {focusAreas.map(s => (
-              <ProgressPathCard
-                key={s.path.id}
-                stats={s}
-                onClick={() => onNavigateToPath(s.path.id)}
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyHint>
-            Nothing to focus on right now.
-          </EmptyHint>
-        )}
-      </section>
-
-      {/* What's Next */}
-      <section className="mb-8">
-        <SectionHeader>What&apos;s Next</SectionHeader>
+      {/* § 03 — Active Quest */}
+      <section className="mb-10">
+        <DossierHeader number="03" label="Available Quest" icon={Sparkles} iconColor="#fbbf24" />
         {nextUp ? (
-          <div
-            className="rounded-lg px-4 py-4 border border-blue-400/30"
-            style={{
-              background: `linear-gradient(135deg, ${pathColor(nextUp.path.order).bg.replace('0.06', '0.1')}, rgba(59,130,246,0.06))`,
-            }}
-          >
-            <p
-              className="text-[10px] font-bold tracking-[0.16em] uppercase mb-2"
-              style={{ color: pathColor(nextUp.path.order).accent }}
-            >
-              Up next in {nextUp.path.title}
-            </p>
-            <p
-              className="text-[15px] font-semibold leading-snug text-white mb-1 tracking-[-0.01em]"
-              style={SG}
-            >
-              {nextUp.block.title}
-            </p>
-            {isLesson(nextUp.block) && (
-              <>
-                <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
-                  {nextUp.block.subtitle}
-                </p>
-                <div className="flex items-center gap-4 mb-4 text-[11px] font-medium tabular-nums text-blue-200">
-                  <span className="flex items-center gap-1.5">
-                    <BookOpen size={11} strokeWidth={2.25} />
-                    {nextUp.block.lessonCount} {nextUp.block.lessonCount === 1 ? 'lesson' : 'lessons'}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Target size={11} strokeWidth={2.25} />
-                    {nextUp.block.problemCount} {nextUp.block.problemCount === 1 ? 'problem' : 'problems'}
-                  </span>
-                </div>
-              </>
-            )}
-            {isPractice(nextUp.block) && (
-              <p className="text-[12.5px] leading-relaxed text-slate-300 mb-3">
-                Practice problem · {nextUp.block.difficulty}
-              </p>
-            )}
-            <button
-              type="button"
-              onClick={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
-              className={cn(
-                'inline-flex items-center h-9 px-4 rounded-md text-[12px] font-semibold text-white',
-                'bg-blue-500 hover:bg-blue-400 border border-blue-400/60',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70',
-                'transition-colors',
-              )}
-              style={SG}
-            >
-              Resume
-            </button>
-          </div>
+          <QuestCard
+            block={nextUp.block}
+            path={nextUp.path}
+            onAccept={() => onResumeBlock(nextUp!.path.id, nextUp!.block.id)}
+          />
         ) : (
-          <EmptyHint>
-            No unlocked blocks remaining.
-          </EmptyHint>
+          <EmptyHint>All quests completed. Victory.</EmptyHint>
         )}
       </section>
 
-      {/* Skills Mastered */}
-      <section className="mb-6">
-        <SectionHeader count={skillsMastered.length}>Skills Mastered</SectionHeader>
-        {skillsMastered.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
-            {skillsMastered.map((skill, i) => {
-              const pc = pathColor((i % 5) + 1);
-              return (
-                <span
-                  key={skill}
-                  className="rounded-md px-2.5 py-1 text-[11.5px] font-medium border border-slate-700/60"
-                  style={{ background: pc.pill, color: pc.accent }}
-                >
-                  {skill}
-                </span>
-              );
-            })}
+      {/* § 04 — Bosses */}
+      <section className="mb-10">
+        <DossierHeader
+          number="04"
+          label="Boss Encounters"
+          icon={Swords}
+          iconColor="#ef4444"
+          right={`${defeatedBosses.length} / ${stats.length} defeated`}
+        />
+        {activeBosses.length > 0 ? (
+          <div className="space-y-2 mb-2">
+            {activeBosses.map(s => (
+              <BossCard
+                key={s.path.id}
+                stats={s}
+                onClick={() => onNavigateToPath(s.path.id)}
+              />
+            ))}
           </div>
-        ) : (
-          <EmptyHint>
-            Complete your first block to start collecting skills here.
-          </EmptyHint>
+        ) : null}
+        {defeatedBosses.length > 0 && (
+          <div className="space-y-2">
+            {defeatedBosses.map(s => (
+              <BossCard
+                key={s.path.id}
+                stats={s}
+                onClick={() => onNavigateToPath(s.path.id)}
+              />
+            ))}
+          </div>
         )}
+        {activeBosses.length === 0 && defeatedBosses.length === 0 && (
+          <EmptyHint>No bosses available. Unlock a path to engage.</EmptyHint>
+        )}
+      </section>
+
+      {/* § 05 — Skill Codex */}
+      <section className="mb-6">
+        <DossierHeader
+          number="05"
+          label="Skill Codex"
+          icon={Brain}
+          iconColor="#8b5cf6"
+          count={skillsMastered.length}
+        />
+        <SkillCodex collected={skillsMastered} all={allSkills} />
       </section>
     </div>
   );
@@ -2882,16 +3482,16 @@ function MobileGate() {
         className="w-full max-w-sm rounded-xl border p-6"
         style={{ background: C.cardBg, borderColor: C.borderMid }}
       >
-        <h3 className="text-[17px] font-semibold text-white mb-2" style={SG}>
+        <h3 className="text-[17px] font-semibold text-slate-900 mb-2" style={SG}>
           Opening mobile view
         </h3>
-        <p className="text-[13.5px] text-slate-400 mb-5 leading-relaxed" style={SG}>
+        <p className="text-[13.5px] text-slate-600 mb-5 leading-relaxed" style={SG}>
           Redirecting to the LeetLockin mobile site.
         </p>
         <button
           type="button"
           onClick={() => router.replace('/m')}
-          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold transition-colors w-full"
+          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold transition-colors w-full"
           style={SG}
         >
           Continue
@@ -3086,7 +3686,7 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
             'rounded-xl text-[15px] lg:text-[16px] font-semibold text-white tracking-[-0.005em]',
             isPractice(nextBlock)
               ? 'bg-amber-500 hover:bg-amber-400 border border-amber-400/60 shadow-[0_10px_30px_-10px_rgba(251,191,36,0.7),0_0_0_1px_rgba(251,191,36,0.35)]'
-              : 'bg-blue-500 hover:bg-blue-400 border border-blue-400/60 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.7),0_0_0_1px_rgba(96,165,250,0.35)]',
+              : 'bg-blue-600 hover:bg-blue-500 border border-blue-500/60 shadow-[0_14px_38px_-10px_rgba(37,99,235,0.75),0_4px_14px_-4px_rgba(37,99,235,0.4),0_0_0_1px_rgba(96,165,250,0.35)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
             'transition-colors',
           )}
@@ -3104,7 +3704,7 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/40 backdrop-blur-sm"
             onClick={() => setShowGuestGate(false)}
           >
             <motion.div
@@ -3117,18 +3717,18 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
             >
               <Lock size={28} className="mx-auto text-blue-400 mb-3" />
               <h3
-                className="text-[16px] font-semibold text-white mb-1.5"
+                className="text-[16px] font-semibold text-slate-900 mb-1.5"
                 style={SG}
               >
                 Sign in to save progress
               </h3>
-              <p className="text-[13px] text-slate-400 mb-5" style={SG}>
+              <p className="text-[13px] text-slate-600 mb-5" style={SG}>
                 Create a free account to track completed lessons and unlock your full learning path.
               </p>
               <div className="flex flex-col gap-2.5">
                 <Link
                   href={`/sign-in?next=${encodeURIComponent(pathname)}`}
-                  className="inline-flex items-center justify-center h-10 rounded-lg bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-500 transition-colors"
+                  className="inline-flex items-center justify-center h-10 rounded-lg bg-blue-600 text-slate-900 text-[13px] font-semibold hover:bg-blue-500 transition-colors"
                   style={SG}
                 >
                   Sign in
@@ -3136,7 +3736,7 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
                 <button
                   type="button"
                   onClick={() => setShowGuestGate(false)}
-                  className="text-[12.5px] text-slate-500 hover:text-slate-300 transition-colors"
+                  className="text-[12.5px] text-slate-500 hover:text-slate-700 transition-colors"
                   style={SG}
                 >
                   Keep browsing

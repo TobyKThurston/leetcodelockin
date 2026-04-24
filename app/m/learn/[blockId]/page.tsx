@@ -42,7 +42,7 @@ export default async function MobileLessonPage({
       {/* Back link */}
       <Link
         href="/m/learn"
-        className="inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-300 transition-colors"
+        className="inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-700 transition-colors"
       >
         <ArrowLeft size={13} strokeWidth={2.5} />
         All lessons
@@ -70,22 +70,22 @@ export default async function MobileLessonPage({
             )}
           </div>
 
-          <h1 className="mt-2 text-[22px] font-bold text-white tracking-tight leading-tight" style={SG}>
+          <h1 className="mt-2 text-[22px] font-bold text-slate-900 tracking-tight leading-tight" style={SG}>
             {block.title}
           </h1>
-          <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed">{block.subtitle}</p>
+          <p className="mt-1.5 text-[13px] text-slate-600 leading-relaxed">{block.subtitle}</p>
 
           {/* Meta row */}
           <div className="mt-4 flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <BookOpen size={12} strokeWidth={2} className="text-slate-500" />
-              <span className="text-[11px] font-semibold text-slate-400 tabular-nums">
+              <span className="text-[11px] font-semibold text-slate-600 tabular-nums">
                 {block.lessonCount} lesson{block.lessonCount === 1 ? '' : 's'}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <Code2 size={12} strokeWidth={2} className="text-slate-500" />
-              <span className="text-[11px] font-semibold text-slate-400 tabular-nums">
+              <span className="text-[11px] font-semibold text-slate-600 tabular-nums">
                 {block.problemCount} problem{block.problemCount === 1 ? '' : 's'}
               </span>
             </div>
@@ -98,7 +98,7 @@ export default async function MobileLessonPage({
         <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-2.5">
           About this block
         </p>
-        <p className="text-[14.5px] text-slate-300 leading-relaxed">{block.description}</p>
+        <p className="text-[14.5px] text-slate-700 leading-relaxed">{block.description}</p>
       </section>
 
       {/* Skills list */}
@@ -115,7 +115,7 @@ export default async function MobileLessonPage({
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-300" />
                   </div>
                 </div>
-                <span className="text-[13.5px] text-slate-300 leading-snug">{skill}</span>
+                <span className="text-[13.5px] text-slate-700 leading-snug">{skill}</span>
               </li>
             ))}
           </ul>
@@ -127,15 +127,15 @@ export default async function MobileLessonPage({
         <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-blue-300/90">
           Ready to practice?
         </p>
-        <h3 className="mt-1.5 text-[15px] font-bold text-white" style={SG}>
+        <h3 className="mt-1.5 text-[15px] font-bold text-slate-900" style={SG}>
           Open this block on your laptop
         </h3>
-        <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed">
+        <p className="mt-1.5 text-[13px] text-slate-600 leading-relaxed">
           The full lesson, interactive code, and AI tutor walk-throughs live in the desktop editor.
         </p>
         <a
           href={`/dashboard?block=${block.id}`}
-          className="mt-4 h-12 px-5 rounded-xl bg-white text-zinc-900 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
+          className="mt-4 h-12 px-5 rounded-xl bg-white text-slate-200 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
         >
           Open in desktop editor
           <ArrowRight size={16} strokeWidth={2.5} />

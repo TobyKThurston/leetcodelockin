@@ -86,13 +86,13 @@ function HistoryWelcome({
               border: '1px solid rgba(59,130,246,0.2)',
             }}
           >
-            <Trophy size={28} style={{ color: 'rgba(96,165,250,0.8)' }} />
+            <Trophy size={28} style={{ color: '#1d4ed8' }} />
           </div>
           <div className="space-y-2">
-            <h2 className="text-[24px] font-bold text-white tracking-tight" style={SG}>
+            <h2 className="text-[24px] font-bold text-slate-900 tracking-tight" style={SG}>
               Ready to test yourself?
             </h2>
-            <p className="text-[14px] text-slate-400 leading-relaxed" style={SG}>
+            <p className="text-[14px] text-slate-600 leading-relaxed" style={SG}>
               Take your first mock interview — 2 problems, 45 minutes, AI debrief after.
             </p>
           </div>
@@ -103,7 +103,7 @@ function HistoryWelcome({
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
               boxShadow:
-                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
+                '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 12px 32px -12px rgba(59,130,246,0.75), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >
@@ -141,7 +141,7 @@ function HistoryWelcome({
             >
               Fresh Interview
             </p>
-            <p className="text-[15px] text-slate-200 font-medium" style={SG}>
+            <p className="text-[15px] text-slate-800 font-medium" style={SG}>
               Randomized problems from your unlocked set.
             </p>
             <p className="text-[12px] text-slate-500 mt-0.5" style={SG}>
@@ -155,7 +155,7 @@ function HistoryWelcome({
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
               border: '1px solid rgba(147,197,253,0.55)',
               boxShadow:
-                '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+                '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
               ...SG,
             }}
           >
@@ -190,9 +190,9 @@ function HistoryWelcome({
                 key={s.id}
                 onClick={() => onRedo(s.id, s.difficulty)}
                 disabled={isLoading}
-                className="group w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-white/[0.03] disabled:opacity-60 disabled:cursor-wait"
+                className="group w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-slate-50 disabled:opacity-60 disabled:cursor-wait"
                 style={{
-                  background: '#0f1729',
+                  background: 'var(--ll-bg-elevated)',
                   border: `1px solid ${C.border}`,
                 }}
               >
@@ -211,7 +211,7 @@ function HistoryWelcome({
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span
-                          className="text-[13px] font-semibold text-slate-200"
+                          className="text-[13px] font-semibold text-slate-800"
                           style={SG}
                         >
                           {formatDate(s.createdAt)}
@@ -267,7 +267,7 @@ function HistoryWelcome({
                       </span>
                     )}
                     <span
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-300 border border-white/[0.06] bg-white/[0.03] transition-all group-hover:text-white group-hover:bg-blue-500/10 group-hover:border-blue-400/30"
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-700 border border-slate-200 bg-slate-50/70 transition-all group-hover:text-slate-900 group-hover:bg-blue-500/10 group-hover:border-blue-400/30"
                       style={SG}
                     >
                       {isLoading ? (

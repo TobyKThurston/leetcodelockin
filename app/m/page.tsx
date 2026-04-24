@@ -36,7 +36,7 @@ const OPTIONS = [
     title: 'Go to desktop',
     desc: 'The real experience — editor, interviews, curriculum — lives on your laptop.',
     Icon: Monitor,
-    iconColor: 'text-slate-200',
+    iconColor: 'text-slate-800',
     iconBg: 'rgba(148,163,184,0.08)',
     iconBorder: 'rgba(148,163,184,0.2)',
     ring: 'ring-white/10',
@@ -53,12 +53,12 @@ export default function MobileHomePage() {
           LeetLockin · Mobile
         </p>
         <h1
-          className="mt-1.5 text-[28px] font-bold text-white tracking-tight leading-tight"
+          className="mt-1.5 text-[28px] font-bold text-slate-900 tracking-tight leading-tight"
           style={SG}
         >
           Pick one.
         </h1>
-        <p className="mt-2 text-[14px] text-slate-400 leading-relaxed">
+        <p className="mt-2 text-[14px] text-slate-600 leading-relaxed">
           Mobile keeps it simple. For the full editor and mock interviews, grab your laptop.
         </p>
       </div>
@@ -82,15 +82,15 @@ export default function MobileHomePage() {
                 <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500">
                   {eyebrow}
                 </p>
-                <h2 className="mt-1 text-[17px] font-bold text-white leading-tight" style={SG}>
+                <h2 className="mt-1 text-[17px] font-bold text-slate-900 leading-tight" style={SG}>
                   {title}
                 </h2>
-                <p className="mt-1 text-[13px] text-slate-400 leading-relaxed">{desc}</p>
+                <p className="mt-1 text-[13px] text-slate-600 leading-relaxed">{desc}</p>
               </div>
               <ArrowRight
                 size={18}
                 strokeWidth={2}
-                className="shrink-0 mt-2 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 transition-all"
+                className="shrink-0 mt-2 text-slate-500 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all"
               />
             </div>
           </Link>

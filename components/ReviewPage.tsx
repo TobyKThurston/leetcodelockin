@@ -103,7 +103,7 @@ function CodeBlock({
         return (
           <div key={i} className="flex">
             <span className="text-slate-600 select-none w-6 text-right mr-2">{i + 1}</span>
-            <span className="text-slate-300">{line || ' '}</span>
+            <span className="text-slate-700">{line || ' '}</span>
           </div>
         );
       })}
@@ -117,7 +117,7 @@ function KeyLinesFront({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
   return (
     <div className="space-y-3">
-      <p className="text-[14px] text-slate-400">
+      <p className="text-[14px] text-slate-600">
         Fill in the blanked-out lines from your solution:
       </p>
       <CodeBlock
@@ -147,7 +147,7 @@ function KeyLinesBack({ card }: { card: ReviewCard }) {
 function ApproachFront({ card }: { card: ReviewCard }) {
   return (
     <div className="space-y-3">
-      <p className="text-[14px] text-slate-400">
+      <p className="text-[14px] text-slate-600">
         What pattern and approach did you use to solve this problem?
       </p>
       <p className="text-[13px] text-slate-500 italic">
@@ -163,11 +163,11 @@ function ApproachBack({ card }: { card: ReviewCard }) {
     <div className="space-y-4">
       <div>
         <span className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">Pattern</span>
-        <p className="text-[15px] text-white font-semibold mt-1" style={SG}>{content.pattern}</p>
+        <p className="text-[15px] text-slate-900 font-semibold mt-1" style={SG}>{content.pattern}</p>
       </div>
       <div>
         <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Approach</span>
-        <p className="text-[14px] text-slate-300 leading-relaxed mt-1">{content.explanation}</p>
+        <p className="text-[14px] text-slate-700 leading-relaxed mt-1">{content.explanation}</p>
       </div>
       <div>
         <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Your Code</span>
@@ -180,7 +180,7 @@ function ApproachBack({ card }: { card: ReviewCard }) {
 function ComplexityFront({ card }: { card: ReviewCard }) {
   return (
     <div className="space-y-3">
-      <p className="text-[14px] text-slate-400">
+      <p className="text-[14px] text-slate-600">
         What is the time and space complexity of your solution?
       </p>
       <CodeBlock code={card.codeSnapshot} revealed={true} />
@@ -195,14 +195,14 @@ function ComplexityBack({ card }: { card: ReviewCard }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Time</span>
-          <p className="text-[20px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.time}</p>
+          <p className="text-[20px] text-slate-900 font-bold mt-1" style={{ fontFamily: MONO }}>{content.time}</p>
         </div>
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Space</span>
-          <p className="text-[20px] text-white font-bold mt-1" style={{ fontFamily: MONO }}>{content.space}</p>
+          <p className="text-[20px] text-slate-900 font-bold mt-1" style={{ fontFamily: MONO }}>{content.space}</p>
         </div>
       </div>
-      <p className="text-[14px] text-slate-400 leading-relaxed">{content.reasoning}</p>
+      <p className="text-[14px] text-slate-600 leading-relaxed">{content.reasoning}</p>
     </div>
   );
 }
@@ -228,7 +228,7 @@ function MCQCard({
 
   return (
     <div className="space-y-5">
-      <p className="text-[15px] text-slate-200 leading-relaxed">
+      <p className="text-[15px] text-slate-800 leading-relaxed">
         {card.question}
       </p>
 
@@ -240,7 +240,7 @@ function MCQCard({
           {card.code.split('\n').map((line, i) => (
             <div key={i} className="flex">
               <span className="text-slate-600 select-none w-6 text-right mr-3">{i + 1}</span>
-              <span className="text-slate-300">{line || ' '}</span>
+              <span className="text-slate-700">{line || ' '}</span>
             </div>
           ))}
         </pre>
@@ -251,11 +251,11 @@ function MCQCard({
           const isThis = selected === idx;
           const isCorrectChoice = idx === card.correctChoice;
 
-          let borderColor = 'border-slate-700/60';
-          let bg = 'bg-slate-800/40';
-          let textColor = 'text-slate-200';
+          let borderColor = 'border-slate-200';
+          let bg = 'bg-white';
+          let textColor = 'text-slate-800';
           let labelColor = 'text-slate-500';
-          let labelBg = 'bg-slate-700/40';
+          let labelBg = 'bg-slate-100';
 
           if (answered && isCorrectChoice) {
             borderColor = 'border-emerald-500/50';
@@ -281,7 +281,7 @@ function MCQCard({
                 'w-full text-left rounded-lg px-4 py-3.5 border transition-all duration-150',
                 'flex items-center gap-3',
                 borderColor, bg,
-                !answered && 'hover:bg-slate-700/50 hover:border-slate-600/80 cursor-pointer',
+                !answered && 'hover:bg-slate-200/50 hover:border-slate-300/80 cursor-pointer',
                 answered && 'cursor-default',
               )}
             >
@@ -310,8 +310,8 @@ function MCQCard({
           className={cn(
             'rounded-lg p-4 border text-[14px] leading-relaxed',
             isCorrect
-              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-300'
-              : 'bg-red-500/[0.06] border-red-500/20 text-slate-300',
+              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-700'
+              : 'bg-red-500/[0.06] border-red-500/20 text-slate-700',
           )}
         >
           <p className={cn(
@@ -358,7 +358,7 @@ function TypeAnswerCard({
 
   return (
     <div className="space-y-5">
-      <p className="text-[15px] text-slate-200 leading-relaxed">
+      <p className="text-[15px] text-slate-800 leading-relaxed">
         {card.question}
       </p>
 
@@ -370,7 +370,7 @@ function TypeAnswerCard({
           {card.code.split('\n').map((line, i) => (
             <div key={i} className="flex">
               <span className="text-slate-600 select-none w-6 text-right mr-3">{i + 1}</span>
-              <span className="text-slate-300">{line || ' '}</span>
+              <span className="text-slate-700">{line || ' '}</span>
             </div>
           ))}
         </pre>
@@ -390,8 +390,8 @@ function TypeAnswerCard({
             placeholder="Your answer..."
             className={cn(
               'flex-1 rounded-lg px-4 py-3 text-[15px] font-medium border outline-none transition-colors',
-              'bg-slate-800/60 text-white placeholder:text-slate-600',
-              !submitted && 'border-slate-700/60 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20',
+              'bg-slate-100/70 text-slate-900 placeholder:text-slate-600',
+              !submitted && 'border-slate-200 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20',
               submitted && isCorrect && 'border-emerald-500/50 bg-emerald-500/[0.06]',
               submitted && !isCorrect && 'border-red-500/50 bg-red-500/[0.06]',
             )}
@@ -401,7 +401,7 @@ function TypeAnswerCard({
             <Button
               type="submit"
               disabled={!input.trim()}
-              className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-5 shrink-0"
+              className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold px-5 shrink-0"
             >
               Check
             </Button>
@@ -414,8 +414,8 @@ function TypeAnswerCard({
           className={cn(
             'rounded-lg p-4 border text-[14px] leading-relaxed',
             isCorrect
-              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-300'
-              : 'bg-red-500/[0.06] border-red-500/20 text-slate-300',
+              ? 'bg-emerald-500/[0.06] border-emerald-500/20 text-slate-700'
+              : 'bg-red-500/[0.06] border-red-500/20 text-slate-700',
           )}
         >
           <p className={cn(
@@ -452,8 +452,8 @@ function SidebarCardRow({
         'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150 cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
         isActive && 'bg-blue-500/[0.08] border-blue-400/50',
-        !isActive && isReviewed && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
-        !isActive && !isReviewed && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+        !isActive && isReviewed && 'bg-slate-50 border-emerald-500/25 hover:border-emerald-500/40',
+        !isActive && !isReviewed && 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300',
       )}
     >
       <div className="flex items-center justify-between mb-1">
@@ -469,9 +469,9 @@ function SidebarCardRow({
       <p
         className={cn(
           'text-[12.5px] font-semibold leading-tight mb-0.5 tracking-[-0.005em] truncate',
-          isActive && 'text-white',
-          !isActive && isReviewed && 'text-slate-300',
-          !isActive && !isReviewed && 'text-slate-200',
+          isActive && 'text-slate-900',
+          !isActive && isReviewed && 'text-slate-700',
+          !isActive && !isReviewed && 'text-slate-800',
         )}
         style={SG}
       >
@@ -514,9 +514,9 @@ function ReviewSidebar({
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
               <span className="text-slate-500 font-medium">Session</span>
-              <span className="text-slate-300 font-semibold tabular-nums">{pct}%</span>
+              <span className="text-slate-700 font-semibold tabular-nums">{pct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[3px] rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${pct}%`, background: C.blue }}
@@ -525,7 +525,7 @@ function ReviewSidebar({
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-slate-500">Reviewed</span>
-            <span className="text-slate-400 font-medium tabular-nums">
+            <span className="text-slate-600 font-medium tabular-nums">
               {reviewedCount} / {totalCards}
             </span>
           </div>
@@ -603,13 +603,13 @@ function ReviewRightRail({
                   </span>
                 </div>
                 <p
-                  className="text-[12.5px] font-semibold leading-tight text-white tracking-[-0.005em]"
+                  className="text-[12.5px] font-semibold leading-tight text-slate-900 tracking-[-0.005em]"
                   style={SG}
                 >
                   {card.problemTitle}
                 </p>
                 {card.pattern && (
-                  <p className="text-[10px] text-slate-400 mt-0.5">{card.pattern}</p>
+                  <p className="text-[10px] text-slate-600 mt-0.5">{card.pattern}</p>
                 )}
                 {card.reviewCount > 0 && (
                   <p className="text-[10px] text-slate-500 mt-1">
@@ -652,7 +652,7 @@ function ReviewRightRail({
                       <meta.icon size={11} style={{ color: meta.color }} />
                       <span className="text-slate-500">{meta.label}</span>
                     </div>
-                    <span className="text-slate-300 font-medium tabular-nums">
+                    <span className="text-slate-700 font-medium tabular-nums">
                       {typeCounts[type]}
                     </span>
                   </div>
@@ -723,8 +723,8 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
       <div
         className="relative w-full max-w-2xl rounded-2xl"
         style={{
-          background: '#0b1220',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--ll-bg)',
+          border: '1px solid rgba(15,23,42,0.10)',
           boxShadow: '0 30px 80px -20px rgba(0,0,0,0.6)',
         }}
         onClick={e => e.stopPropagation()}
@@ -733,7 +733,7 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
         >
           <X size={16} />
         </button>
@@ -747,7 +747,7 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
               Upgrade to Pro
             </p>
             <h2
-              className="text-[22px] sm:text-[24px] font-bold text-white tracking-tight"
+              className="text-[22px] sm:text-[24px] font-bold text-slate-900 tracking-tight"
               style={SG}
             >
               You&apos;ve reached the free limit
@@ -758,13 +758,13 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
-            <Card className="bg-white/[0.02] ring-white/[0.06] rounded-xl py-0 gap-0">
+            <Card className="bg-slate-50/50 ring-white/[0.06] rounded-xl py-0 gap-0">
               <CardHeader className="px-5 pt-5 pb-0">
-                <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-400" style={SG}>
+                <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-600" style={SG}>
                   Pro Monthly
                 </span>
                 <div className="mt-2.5 flex items-baseline gap-1">
-                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>{MONTHLY_PRICE_LABEL}</span>
+                  <span className="text-[32px] font-bold text-slate-900 leading-none" style={SG}>{MONTHLY_PRICE_LABEL}</span>
                   <span className="text-[13px] text-slate-500">/month</span>
                 </div>
                 <p className="text-[11px] text-slate-600 mt-1">Cancel anytime</p>
@@ -774,14 +774,14 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                   {PRO_FEATURES.map(f => (
                     <li key={f} className="flex items-start gap-2">
                       <Check className="size-3 shrink-0 mt-0.5 text-slate-500" strokeWidth={2.5} />
-                      <span className="text-[11.5px] text-slate-300 leading-snug">{f}</span>
+                      <span className="text-[11.5px] text-slate-700 leading-snug">{f}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
               <CardFooter className="px-5 pb-5 pt-4 bg-transparent border-0">
                 <Button
-                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-slate-300 bg-slate-50 text-slate-900 hover:bg-slate-100"
                   variant="outline"
                   onClick={() => handleCheckout('monthly')}
                   disabled={loading !== null}
@@ -802,11 +802,11 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                   </span>
                 </div>
                 <div className="mt-2.5 flex items-baseline gap-1">
-                  <span className="text-[32px] font-bold text-white leading-none" style={SG}>{YEARLY_PRICE_LABEL}</span>
+                  <span className="text-[32px] font-bold text-slate-900 leading-none" style={SG}>{YEARLY_PRICE_LABEL}</span>
                   <span className="text-[13px] text-slate-500">/year</span>
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
-                  That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span>
+                  That&apos;s <span className="text-slate-700">{YEARLY_PER_MONTH_LABEL}/mo</span>
                 </p>
               </CardHeader>
               <CardContent className="px-5 pt-4 flex-1">
@@ -814,14 +814,14 @@ function ProUpgradeModal({ open, onClose }: { open: boolean; onClose: () => void
                   {PRO_FEATURES.map(f => (
                     <li key={f} className="flex items-start gap-2">
                       <Check className="size-3 shrink-0 mt-0.5 text-blue-400" strokeWidth={2.5} />
-                      <span className="text-[11.5px] text-slate-300 leading-snug">{f}</span>
+                      <span className="text-[11.5px] text-slate-700 leading-snug">{f}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
               <CardFooter className="px-5 pb-5 pt-4 bg-transparent border-0">
                 <Button
-                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  className="w-full h-10 rounded-lg text-[12.5px] font-semibold border border-slate-300 bg-slate-50 text-slate-900 hover:bg-slate-100"
                   variant="outline"
                   onClick={() => handleCheckout('yearly')}
                   disabled={loading !== null}
@@ -859,9 +859,9 @@ function QuickSidebarRow({
         'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150 cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
         isActive && 'bg-blue-500/[0.08] border-blue-400/50',
-        !isActive && isReviewed && result === 'correct' && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
-        !isActive && isReviewed && result === 'incorrect' && 'bg-slate-800/30 border-red-500/25 hover:border-red-500/40',
-        !isActive && !isReviewed && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+        !isActive && isReviewed && result === 'correct' && 'bg-slate-50 border-emerald-500/25 hover:border-emerald-500/40',
+        !isActive && isReviewed && result === 'incorrect' && 'bg-slate-50 border-red-500/25 hover:border-red-500/40',
+        !isActive && !isReviewed && 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300',
       )}
     >
       <div className="flex items-center justify-between mb-1">
@@ -878,9 +878,9 @@ function QuickSidebarRow({
       <p
         className={cn(
           'text-[12.5px] font-semibold leading-tight tracking-[-0.005em] truncate',
-          isActive && 'text-white',
-          !isActive && isReviewed && 'text-slate-300',
-          !isActive && !isReviewed && 'text-slate-200',
+          isActive && 'text-slate-900',
+          !isActive && isReviewed && 'text-slate-700',
+          !isActive && !isReviewed && 'text-slate-800',
         )}
         style={SG}
       >
@@ -936,20 +936,20 @@ function QuickReviewRightRail({
                 </>
               ) : (
                 <div className="space-y-2.5">
-                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                  <p className="text-[11.5px] text-slate-600 leading-relaxed">
                     Pro generates personalized flashcards every time you solve a problem. Cards come back at increasing intervals so you review right before you forget.
                   </p>
                   <div className="space-y-1.5 pt-1 border-t" style={{ borderColor: C.border }}>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                       <span className="text-[11px] text-slate-500">Day 1: first review</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                       <span className="text-[11px] text-slate-500">Day 2: second review</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                       <span className="text-[11px] text-slate-500">Day 4, 8, 16, 30...</span>
                     </div>
                   </div>
@@ -965,20 +965,20 @@ function QuickReviewRightRail({
               <div className="space-y-2.5">
                 <div className="flex items-start gap-2.5">
                   <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/15 text-blue-400 flex items-center justify-center text-[10px] font-bold mt-0.5">1</span>
-                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
-                    <span className="text-slate-300 font-medium">Quick Review</span> -- random fundamentals to test Big-O, patterns, and code reading
+                  <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                    <span className="text-slate-700 font-medium">Quick Review</span> -- random fundamentals to test Big-O, patterns, and code reading
                   </p>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="shrink-0 w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-[10px] font-bold mt-0.5">2</span>
-                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
-                    <span className="text-slate-300 font-medium">Solve problems</span> -- AI generates flashcards from your accepted code
+                  <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                    <span className="text-slate-700 font-medium">Solve problems</span> -- AI generates flashcards from your accepted code
                   </p>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="shrink-0 w-5 h-5 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center text-[10px] font-bold mt-0.5">3</span>
-                  <p className="text-[11.5px] text-slate-400 leading-relaxed">
-                    <span className="text-slate-300 font-medium">Spaced repetition</span> -- your cards come back at optimized intervals so you never forget
+                  <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                    <span className="text-slate-700 font-medium">Spaced repetition</span> -- your cards come back at optimized intervals so you never forget
                   </p>
                 </div>
               </div>
@@ -989,21 +989,21 @@ function QuickReviewRightRail({
           <section>
             <RailHeader>Coming Up</RailHeader>
             <div className={cn(RAIL_BOX, 'space-y-2.5')}>
-              <p className="text-[11.5px] text-slate-400 leading-relaxed">
+              <p className="text-[11.5px] text-slate-600 leading-relaxed">
                 The more problems you solve, the more personalized this page becomes. Instead of random fundamentals, you will review:
               </p>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <Code2 size={11} className="text-blue-400 shrink-0" />
-                  <span className="text-[11px] text-slate-300">Key lines from your solutions</span>
+                  <span className="text-[11px] text-slate-700">Key lines from your solutions</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Brain size={11} className="text-emerald-400 shrink-0" />
-                  <span className="text-[11px] text-slate-300">Patterns and approaches you used</span>
+                  <span className="text-[11px] text-slate-700">Patterns and approaches you used</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Timer size={11} className="text-amber-400 shrink-0" />
-                  <span className="text-[11px] text-slate-300">Time and space complexity</span>
+                  <span className="text-[11px] text-slate-700">Time and space complexity</span>
                 </div>
               </div>
             </div>
@@ -1052,9 +1052,9 @@ function QuickReviewSidebar({
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
               <span className="text-slate-500 font-medium">Session</span>
-              <span className="text-slate-300 font-semibold tabular-nums">{pct}%</span>
+              <span className="text-slate-700 font-semibold tabular-nums">{pct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[3px] rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${pct}%`, background: C.blue }}
@@ -1063,7 +1063,7 @@ function QuickReviewSidebar({
           </div>
           <div className="flex justify-between text-[11.5px]">
             <span className="text-slate-500">Score</span>
-            <span className="text-slate-400 font-medium tabular-nums">
+            <span className="text-slate-600 font-medium tabular-nums">
               {correctCount} / {reviewedCount} correct
             </span>
           </div>
@@ -1279,14 +1279,14 @@ export default function ReviewPageClient({
       <CenteredMessage>
         <div className="max-w-lg mx-auto mt-24 text-center space-y-4">
           <Brain size={32} className="text-slate-500 mx-auto" />
-          <h2 className="text-[18px] font-bold text-white" style={SG}>Sign in to review</h2>
-          <p className="text-[13px] text-slate-400">
+          <h2 className="text-[18px] font-bold text-slate-900" style={SG}>Sign in to review</h2>
+          <p className="text-[13px] text-slate-600">
             Spaced repetition review requires an account to track your progress.
           </p>
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 border-slate-700 text-slate-200"
+            className="mt-2 border-slate-200 text-slate-800"
             nativeButton={false}
             render={<Link href="/sign-in?next=/review" />}
           >
@@ -1355,7 +1355,7 @@ export default function ReviewPageClient({
                     <span className="text-[12px] text-slate-500 font-medium tabular-nums">
                       {srCurrentIdx + 1} of {srCards.length}
                     </span>
-                    <div className="flex-1 h-[3px] rounded-full bg-slate-800 overflow-hidden">
+                    <div className="flex-1 h-[3px] rounded-full bg-slate-100 overflow-hidden">
                       <div
                         className="h-full rounded-full bg-blue-500 transition-all duration-300"
                         style={{ width: `${((srCurrentIdx + 1) / srCards.length) * 100}%` }}
@@ -1401,7 +1401,7 @@ export default function ReviewPageClient({
                       <button
                         type="button"
                         onClick={handleDismiss}
-                        className="text-slate-600 hover:text-slate-400 transition-colors p-1"
+                        className="text-slate-600 hover:text-slate-600 transition-colors p-1"
                         title="Dismiss this card"
                       >
                         <X size={14} />
@@ -1410,7 +1410,7 @@ export default function ReviewPageClient({
 
                     {/* Problem title */}
                     <div className="px-5 pt-4 pb-2">
-                      <h2 className="text-[16px] font-bold text-white" style={SG}>
+                      <h2 className="text-[16px] font-bold text-slate-900" style={SG}>
                         {card.problemTitle}
                       </h2>
                       {card.pattern && (
@@ -1443,7 +1443,7 @@ export default function ReviewPageClient({
                       {!srRevealed ? (
                         <Button
                           onClick={() => setSrRevealed(true)}
-                          className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-6"
+                          className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold px-6"
                         >
                           <Eye size={14} className="mr-2" />
                           Reveal Answer
@@ -1460,7 +1460,7 @@ export default function ReviewPageClient({
                           </Button>
                           <Button
                             onClick={() => handleSrResult('got_it')}
-                            className="bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] font-semibold px-5"
+                            className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 text-[13px] font-semibold px-5"
                           >
                             <Check size={14} className="mr-2" />
                             Got it
@@ -1515,8 +1515,8 @@ export default function ReviewPageClient({
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 mb-6 flex items-center gap-3">
               <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
               <div>
-                <p className="text-[13px] text-white font-semibold" style={SG}>All caught up</p>
-                <p className="text-[12px] text-slate-400">
+                <p className="text-[13px] text-slate-900 font-semibold" style={SG}>All caught up</p>
+                <p className="text-[12px] text-slate-600">
                   You reviewed {srReviewed} spaced repetition card{srReviewed === 1 ? '' : 's'} this session. Keep sharp with the fundamentals below.
                 </p>
               </div>
@@ -1535,7 +1535,7 @@ export default function ReviewPageClient({
             <span className="text-[12px] text-slate-500 font-medium tabular-nums">
               {quickIdx + 1} / {currentBatch.length}
             </span>
-            <div className="flex-1 h-[3px] rounded-full bg-slate-800 overflow-hidden">
+            <div className="flex-1 h-[3px] rounded-full bg-slate-100 overflow-hidden">
               <div
                 className="h-full rounded-full bg-blue-500 transition-all duration-300"
                 style={{ width: `${((quickIdx + 1) / currentBatch.length) * 100}%` }}
@@ -1544,7 +1544,7 @@ export default function ReviewPageClient({
             {quickReviewedSet.size > 0 && (() => {
               const correct = Array.from(quickResults.values()).filter(r => r === 'correct').length;
               return (
-                <span className="text-[11px] text-slate-400 font-medium tabular-nums">
+                <span className="text-[11px] text-slate-600 font-medium tabular-nums">
                   {correct}/{quickReviewedSet.size} correct
                 </span>
               );
@@ -1566,15 +1566,15 @@ export default function ReviewPageClient({
               >
                 <Lock size={18} className="text-blue-400" />
               </div>
-              <h2 className="text-[20px] font-bold text-white mb-2" style={SG}>
+              <h2 className="text-[20px] font-bold text-slate-900 mb-2" style={SG}>
                 Free limit reached
               </h2>
-              <p className="text-[13px] text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
+              <p className="text-[13px] text-slate-600 max-w-md mx-auto mb-6 leading-relaxed">
                 You&apos;ve used all {FREE_LIMIT} free Quick Review questions. Upgrade to Pro for unlimited practice and personalized spaced repetition from the problems you solve.
               </p>
               <Button
                 onClick={() => setShowUpgradeModal(true)}
-                className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6 h-10"
+                className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6 h-10"
               >
                 Upgrade to Pro
                 <ArrowRight size={15} className="ml-2" />
@@ -1611,7 +1611,7 @@ export default function ReviewPageClient({
 
               {/* Card title */}
               <div className="px-6 pt-5 pb-1">
-                <h2 className="text-[18px] font-bold text-white" style={SG}>
+                <h2 className="text-[18px] font-bold text-slate-900" style={SG}>
                   {quickCard.title}
                 </h2>
               </div>
@@ -1634,7 +1634,7 @@ export default function ReviewPageClient({
                 >
                   <Button
                     onClick={handleQuickNext}
-                    className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-8 py-2.5"
+                    className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-8 py-2.5"
                   >
                     Next Question
                     <ArrowRight size={15} className="ml-2" />
@@ -1648,10 +1648,10 @@ export default function ReviewPageClient({
                   className="flex flex-col items-center justify-center px-6 py-6 border-t gap-3"
                   style={{ borderColor: C.border }}
                 >
-                  <p className="text-[15px] font-semibold text-white" style={SG}>
+                  <p className="text-[15px] font-semibold text-slate-900" style={SG}>
                     Round {currentBatchNum} complete
                   </p>
-                  <p className="text-[13px] text-slate-400">
+                  <p className="text-[13px] text-slate-600">
                     {Array.from(quickResults.values()).filter(r => r === 'correct').length} / {currentBatch.length} correct this round.
                     {cumulativeTotal > 0 && (
                       <> Session total: {cumulativeCorrect + Array.from(quickResults.values()).filter(r => r === 'correct').length} / {cumulativeTotal + quickReviewedSet.size} correct.</>
@@ -1661,7 +1661,7 @@ export default function ReviewPageClient({
                     {hasMoreBatches && isPro && (
                       <Button
                         onClick={handleNextBatch}
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
+                        className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6"
                       >
                         Next {Math.min(BATCH_SIZE, shuffledAllCards.length - batchStart - BATCH_SIZE)} questions
                         <ArrowRight size={15} className="ml-2" />
@@ -1670,7 +1670,7 @@ export default function ReviewPageClient({
                     {hasMoreBatches && !isPro && (
                       <Button
                         onClick={() => setShowUpgradeModal(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
+                        className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6"
                       >
                         <Lock size={13} className="mr-2" />
                         Unlock more with Pro
@@ -1688,7 +1688,7 @@ export default function ReviewPageClient({
                         autoOpenedUpgradeRef.current = false;
                       }}
                       variant="outline"
-                      className="border-slate-700 text-slate-300 hover:bg-slate-800 text-[13px]"
+                      className="border-slate-200 text-slate-700 hover:bg-slate-100 text-[13px]"
                     >
                       <RotateCcw size={13} className="mr-2" />
                       Start Over

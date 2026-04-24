@@ -35,9 +35,9 @@ function ProgressSidebar({
           <div>
             <div className="flex justify-between text-[11.5px] mb-1.5">
               <span className="text-slate-500 font-medium">Mastery</span>
-              <span className="text-slate-300 font-semibold tabular-nums">{masteryPct}%</span>
+              <span className="text-slate-700 font-semibold tabular-nums">{masteryPct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[3px] rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${masteryPct}%`, background: C.blue }}
@@ -50,7 +50,7 @@ function ProgressSidebar({
           ] as [string, string][]).map(([label, value]) => (
             <div key={label} className="flex justify-between text-[11.5px]">
               <span className="text-slate-500">{label}</span>
-              <span className="text-slate-400 font-medium tabular-nums">{value}</span>
+              <span className="text-slate-600 font-medium tabular-nums">{value}</span>
             </div>
           ))}
         </div>
@@ -76,10 +76,10 @@ function ProgressSidebar({
             className={cn(
               'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-              locked && 'cursor-default opacity-45 bg-slate-900/30 border-slate-800/40',
+              locked && 'cursor-default opacity-45 bg-slate-50/80 border-slate-200/60',
               !locked && 'cursor-pointer',
-              complete && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
-              !complete && !locked && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+              complete && 'bg-slate-50 border-emerald-500/25 hover:border-emerald-500/40',
+              !complete && !locked && 'bg-white border-slate-200 hover:bg-slate-100 hover:border-slate-300',
             )}
           >
             <div className="flex items-center justify-between mb-1.5">
@@ -100,8 +100,8 @@ function ProgressSidebar({
               className={cn(
                 'text-[12.5px] font-semibold leading-tight mb-0.5 tracking-[-0.005em]',
                 locked && 'text-slate-600',
-                complete && 'text-slate-300',
-                !complete && !locked && 'text-slate-200',
+                complete && 'text-slate-700',
+                !complete && !locked && 'text-slate-800',
               )}
               style={SG}
             >
@@ -112,7 +112,7 @@ function ProgressSidebar({
                 'text-[10.5px] leading-snug mb-2.5',
                 locked && 'text-slate-800',
                 complete && 'text-slate-500',
-                !complete && !locked && 'text-slate-400',
+                !complete && !locked && 'text-slate-600',
               )}
             >
               {path.description}
@@ -123,13 +123,13 @@ function ProgressSidebar({
                   className={cn(
                     'flex justify-between mb-1 text-[9.5px] font-medium',
                     complete && 'text-slate-500',
-                    !complete && 'text-slate-400',
+                    !complete && 'text-slate-600',
                   )}
                 >
                   <span>{blocksComplete} / {path.blocks.length} blocks</span>
                   <span className="tabular-nums">{pct}%</span>
                 </div>
-                <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+                <div className="h-[2px] rounded-full bg-white/80 overflow-hidden">
                   <div
                     className={cn(
                       'h-full rounded-full transition-all',
@@ -217,7 +217,7 @@ function ProgressRightRail({
                   className={cn(RAIL_BOX, 'flex items-center gap-2.5')}
                 >
                   <CheckCircle2 size={13} strokeWidth={2.25} className="text-emerald-400 shrink-0" />
-                  <span className="text-[11.5px] text-slate-300 font-medium">{m.label}</span>
+                  <span className="text-[11.5px] text-slate-700 font-medium">{m.label}</span>
                 </div>
               ))}
               {upcoming.slice(0, 3).map(m => (
@@ -249,7 +249,7 @@ function ProgressRightRail({
                       </span>
                       <div className="min-w-0">
                         <p
-                          className="text-[12px] font-semibold leading-tight text-slate-200 tracking-[-0.005em] truncate"
+                          className="text-[12px] font-semibold leading-tight text-slate-800 tracking-[-0.005em] truncate"
                           style={SG}
                         >
                           {block.title}

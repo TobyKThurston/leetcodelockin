@@ -10,13 +10,9 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Zap } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
-
-const C = {
-  panelBg: '#070c17',
-  border:  'rgba(255,255,255,0.06)',
-};
 
 type UserSummary = { name?: string; image?: string };
 
@@ -105,14 +101,17 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50"
-      style={{ background: C.panelBg, borderBottom: `1px solid ${C.border}` }}
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-[10px]"
+      style={{
+        background: 'var(--ll-nav-bg)',
+        borderBottom: '1px solid var(--ll-border)',
+      }}
     >
       <div className="w-full relative flex items-center gap-3 px-5 h-12">
         <Link
           href="/?home=1"
-          className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight text-white whitespace-nowrap"
-          style={SG}
+          className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight whitespace-nowrap"
+          style={{ ...SG, color: 'var(--ll-ink-strong)' }}
         >
           <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
           LeetLockin
@@ -121,8 +120,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
           {TABS.map(tab => {
             const active = tab.label === activeTab;
             const classes = cn(
-              'text-[12px] px-3',
-              active ? 'text-white font-medium' : 'text-slate-400 hover:text-slate-200',
+              'text-[12px] px-3 transition-colors',
+              active
+                ? 'font-semibold text-[color:var(--ll-ink-strong)]'
+                : 'text-[color:var(--ll-ink-muted)] hover:text-[color:var(--ll-ink)]',
             );
             return (
               <Button
@@ -139,6 +140,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
           {isPro === null && !isGuest && checked && (
             <Skeleton className="h-7 w-[72px] rounded-[min(var(--radius-md),12px)]" />
           )}
@@ -146,7 +148,12 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
             <Button
               variant="outline"
               size="sm"
-              className="text-[12px] font-medium text-slate-200 border-slate-700 bg-transparent hover:bg-slate-800 hover:text-white"
+              className="text-[12px] font-medium"
+              style={{
+                color: 'var(--ll-ink)',
+                borderColor: 'var(--ll-border-strong)',
+                background: 'var(--ll-bg-elevated)',
+              }}
               onClick={async () => {
                 const res = await fetch('/api/stripe/checkout', {
                   method: 'POST',
@@ -160,7 +167,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
                 if (url) window.location.href = url;
               }}
             >
-              <Zap size={12} />
+              <Zap size={12} style={{ color: 'var(--ll-accent)' }} />
               Get Pro
             </Button>
           )}
@@ -168,7 +175,12 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
             <Button
               variant="outline"
               size="sm"
-              className="h-7 px-3 text-[12px] font-medium text-slate-200 border-slate-700 bg-transparent hover:bg-slate-800 hover:text-white"
+              className="h-7 px-3 text-[12px] font-medium"
+              style={{
+                color: 'var(--ll-ink)',
+                borderColor: 'var(--ll-border-strong)',
+                background: 'var(--ll-bg-elevated)',
+              }}
               nativeButton={false}
               render={<Link href={`/sign-in?next=${encodeURIComponent(pathname)}`} />}
             >
@@ -178,7 +190,10 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
             <>
               <Avatar size="sm" className="size-7">
                 <AvatarImage src={user?.image} referrerPolicy="no-referrer" />
-                <AvatarFallback className="text-[11px] font-semibold bg-slate-700 text-slate-200">
+                <AvatarFallback
+                  className="text-[11px] font-semibold"
+                  style={{ background: 'var(--ll-accent-soft)', color: 'var(--ll-accent-ink)' }}
+                >
                   {initial}
                 </AvatarFallback>
               </Avatar>
@@ -186,8 +201,8 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
                   `visibility: hidden` preserves the intrinsic width of the text. */}
               <span
                 aria-hidden={!hasName}
-                className="hidden sm:inline text-[12px] text-slate-300 font-medium max-w-[160px] truncate"
-                style={{ ...SG, visibility: hasName ? 'visible' : 'hidden' }}
+                className="hidden sm:inline text-[12px] font-medium max-w-[160px] truncate"
+                style={{ ...SG, color: 'var(--ll-ink)', visibility: hasName ? 'visible' : 'hidden' }}
               >
                 {user?.name ?? 'Loading user'}
               </span>

@@ -81,9 +81,9 @@ export default function SubscriptionCard({
     : null;
 
   return (
-    <Card className="bg-white/[0.025] border-white/10">
+    <Card className="bg-slate-50/60 border-slate-200">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2" style={SG}>
+        <CardTitle className="text-slate-900 flex items-center gap-2" style={SG}>
           {isPro ? <Crown size={16} className="text-amber-400" /> : <Zap size={16} className="text-slate-500" />}
           Subscription
         </CardTitle>
@@ -97,8 +97,8 @@ export default function SubscriptionCard({
             <div className="rounded-lg bg-amber-500/[0.06] border border-amber-500/20 px-4 py-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[13px] font-semibold text-white" style={SG}>Pro Plan</p>
-                  <p className="text-[12px] text-slate-400 mt-0.5" style={SG}>
+                  <p className="text-[13px] font-semibold text-slate-900" style={SG}>Pro Plan</p>
+                  <p className="text-[12px] text-slate-600 mt-0.5" style={SG}>
                     Unlimited tutor, mock interviews, spaced review
                   </p>
                 </div>
@@ -129,15 +129,15 @@ export default function SubscriptionCard({
           </>
         ) : (
           <>
-            <div className="rounded-lg bg-slate-800/40 border border-slate-700/60 px-4 py-3">
-              <p className="text-[13px] font-semibold text-white" style={SG}>Free Plan</p>
-              <p className="text-[12px] text-slate-400 mt-0.5" style={SG}>
+            <div className="rounded-lg bg-white border border-slate-200 px-4 py-3">
+              <p className="text-[13px] font-semibold text-slate-900" style={SG}>Free Plan</p>
+              <p className="text-[12px] text-slate-600 mt-0.5" style={SG}>
                 5 AI tutor messages per week
               </p>
             </div>
             <Button
               size="sm"
-              className="bg-white text-zinc-900 hover:bg-zinc-100 text-[12px] font-semibold w-fit"
+              className="bg-white text-slate-800 hover:bg-slate-100 text-[12px] font-semibold w-fit"
               onClick={() => handleUpgrade()}
               disabled={loading !== null}
             >

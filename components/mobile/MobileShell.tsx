@@ -3,7 +3,7 @@ import BottomTabBar from './BottomTabBar';
 
 export default function MobileShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-[#070c17] text-white">
+    <div className="min-h-[100dvh] flex flex-col bg-white text-slate-900">
       <MobileHeader />
       <main
         className="flex-1 px-4 pt-5 overflow-y-auto"

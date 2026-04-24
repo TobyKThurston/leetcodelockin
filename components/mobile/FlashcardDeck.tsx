@@ -49,7 +49,7 @@ const TYPE_ACCENT: Record<QuickCardType, string> = {
 };
 
 const TOPIC_ACCENT_ON = 'text-indigo-200 bg-indigo-500/10 border-indigo-400/30';
-const CHIP_OFF = 'text-slate-500 bg-white/[0.02] border-white/5';
+const CHIP_OFF = 'text-slate-500 bg-white/[0.02] border-slate-100';
 
 type PersistedFilters = { types?: string[]; topics?: string[] };
 
@@ -181,7 +181,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
             Flashcards
           </p>
-          <h1 className="mt-1 text-[22px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="mt-1 text-[22px] font-bold text-slate-900 tracking-tight" style={SG}>
             Quick review
           </h1>
         </div>
@@ -189,7 +189,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className="h-10 w-10 rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 hover:text-white hover:bg-white/[0.06] inline-flex items-center justify-center transition-colors"
+            className="h-10 w-10 rounded-lg border border-slate-200 bg-slate-50/70 text-slate-700 hover:text-slate-900 hover:bg-white/[0.06] inline-flex items-center justify-center transition-colors"
             aria-label="Filter cards"
           >
             <Settings2 size={15} strokeWidth={2.25} />
@@ -197,7 +197,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           <button
             type="button"
             onClick={reshuffle}
-            className="h-10 px-3 rounded-lg border border-white/10 bg-white/[0.03] text-[12px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] inline-flex items-center gap-1.5 transition-colors"
+            className="h-10 px-3 rounded-lg border border-slate-200 bg-slate-50/70 text-[12px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/[0.06] inline-flex items-center gap-1.5 transition-colors"
             aria-label="Shuffle"
           >
             <Shuffle size={13} strokeWidth={2.5} />
@@ -208,7 +208,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
 
       {/* Counter */}
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-1 rounded-full bg-white/[0.05] overflow-hidden">
+        <div className="flex-1 h-1 rounded-full bg-slate-50 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all"
             style={{
@@ -228,26 +228,26 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
             No cards match
           </p>
           <h2
-            className="mt-3 text-[18px] font-bold text-white leading-tight"
+            className="mt-3 text-[18px] font-bold text-slate-900 leading-tight"
             style={SG}
           >
             Every card is filtered out
           </h2>
-          <p className="mt-2 text-[13px] text-slate-400 max-w-xs">
+          <p className="mt-2 text-[13px] text-slate-600 max-w-xs">
             Turn a question format or topic back on to see cards here.
           </p>
           <div className="mt-6 flex gap-2">
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
-              className="h-10 px-4 rounded-xl border border-white/10 bg-white/[0.03] text-[13px] font-semibold text-slate-200 hover:bg-white/[0.06] transition-all"
+              className="h-10 px-4 rounded-xl border border-slate-200 bg-slate-50/70 text-[13px] font-semibold text-slate-800 hover:bg-white/[0.06] transition-all"
             >
               Adjust filters
             </button>
             <button
               type="button"
               onClick={resetFilters}
-              className="h-10 px-4 rounded-xl bg-white text-zinc-900 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] transition-all"
+              className="h-10 px-4 rounded-xl bg-white text-slate-200 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] transition-all"
             >
               Reset all
             </button>
@@ -279,17 +279,17 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           </div>
 
           {/* Title */}
-          <h2 className="mt-4 text-[17px] font-bold text-white leading-tight" style={SG}>
+          <h2 className="mt-4 text-[17px] font-bold text-slate-900 leading-tight" style={SG}>
             {card.title}
           </h2>
 
           {/* Question */}
-          <p className="mt-2.5 text-[14px] text-slate-300 leading-relaxed">{card.question}</p>
+          <p className="mt-2.5 text-[14px] text-slate-700 leading-relaxed">{card.question}</p>
 
           {/* Code block */}
           {card.code && (
             <pre
-              className="mt-4 bg-black/40 ring-1 ring-white/[0.05] rounded-xl p-3 overflow-x-auto text-[12px] leading-relaxed text-slate-300"
+              className="mt-4 bg-slate-100 ring-1 ring-white/[0.05] rounded-xl p-3 overflow-x-auto text-[12px] leading-relaxed text-slate-700"
               style={MONO}
             >
               {card.code}
@@ -314,10 +314,10 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
                       }}
                       className={cn(
                         'w-full text-left px-4 h-12 rounded-xl border text-[13px] font-medium transition-all',
-                        !show && 'border-white/10 bg-white/[0.03] text-slate-200 hover:bg-white/[0.06] active:scale-[0.99]',
+                        !show && 'border-slate-200 bg-slate-50/70 text-slate-800 hover:bg-white/[0.06] active:scale-[0.99]',
                         show && isCorrect && 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
                         show && !isCorrect && isPicked && 'border-rose-500/40 bg-rose-500/10 text-rose-200',
-                        show && !isCorrect && !isPicked && 'border-white/5 bg-white/[0.02] text-slate-500',
+                        show && !isCorrect && !isPicked && 'border-slate-100 bg-white/[0.02] text-slate-500',
                       )}
                     >
                       {choice}
@@ -333,7 +333,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
             <button
               type="button"
               onClick={() => setRevealed(true)}
-              className="mt-auto h-12 px-5 rounded-xl border border-white/15 bg-white/5 text-[14px] font-semibold text-white hover:bg-white/10 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
+              className="mt-auto h-12 px-5 rounded-xl border border-white/15 bg-slate-50 text-[14px] font-semibold text-slate-900 hover:bg-slate-100 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
             >
               <Eye size={15} strokeWidth={2} />
               Tap to reveal
@@ -342,11 +342,11 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
 
           {/* Answer reveal */}
           {revealed && (
-            <div className="mt-5 pt-4 border-t border-white/[0.06]">
+            <div className="mt-5 pt-4 border-t border-slate-200">
               <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-slate-500">
                 Answer
               </p>
-              <p className="mt-2 text-[13px] text-slate-300 leading-relaxed whitespace-pre-wrap">
+              <p className="mt-2 text-[13px] text-slate-700 leading-relaxed whitespace-pre-wrap">
                 {card.answer}
               </p>
             </div>
@@ -360,7 +360,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           type="button"
           onClick={goPrev}
           disabled={!card}
-          className="flex-1 h-12 rounded-xl border border-white/10 bg-white/[0.03] text-[13px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          className="flex-1 h-12 rounded-xl border border-slate-200 bg-slate-50/70 text-[13px] font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/[0.06] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
         >
           <ChevronLeft size={16} strokeWidth={2.5} />
           Previous
@@ -369,7 +369,7 @@ export default function FlashcardDeck({ cards }: { cards: QuickCard[] }) {
           type="button"
           onClick={goNext}
           disabled={!card}
-          className="flex-1 h-12 rounded-xl bg-white text-zinc-900 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
+          className="flex-1 h-12 rounded-xl bg-white text-slate-200 text-[13px] font-semibold hover:bg-zinc-100 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5 transition-all"
         >
           Next
           <ChevronRight size={16} strokeWidth={2.5} />
@@ -416,15 +416,15 @@ function FilterDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          'sm:max-w-md bg-[#0b1220] text-slate-200 ring-white/10',
+          'sm:max-w-md bg-[var(--ll-bg)] text-slate-800 ring-white/10',
           'max-h-[85vh] overflow-y-auto',
         )}
       >
         <DialogHeader>
-          <DialogTitle className="text-[16px] text-white" style={SG}>
+          <DialogTitle className="text-[16px] text-slate-900" style={SG}>
             Card filters
           </DialogTitle>
-          <p className="text-[12px] text-slate-400">
+          <p className="text-[12px] text-slate-600">
             Choose the formats and topics you want to see in this deck.
           </p>
         </DialogHeader>
@@ -479,15 +479,15 @@ function FilterDialog({
           </div>
         </section>
 
-        <div className="mt-5 flex items-center justify-between pt-4 border-t border-white/[0.06]">
-          <span className="text-[12px] text-slate-400 tabular-nums">
-            <span className="text-white font-semibold">{matching}</span>
+        <div className="mt-5 flex items-center justify-between pt-4 border-t border-slate-200">
+          <span className="text-[12px] text-slate-600 tabular-nums">
+            <span className="text-slate-900 font-semibold">{matching}</span>
             <span className="text-slate-500"> of {total} cards</span>
           </span>
           <button
             type="button"
             onClick={onReset}
-            className="text-[12px] font-semibold text-slate-300 hover:text-white transition-colors"
+            className="text-[12px] font-semibold text-slate-700 hover:text-slate-900 transition-colors"
           >
             Reset
           </button>

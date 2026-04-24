@@ -48,7 +48,7 @@ export default function ProfileForm({
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="name" className="text-zinc-300" style={SG}>
+          <Label htmlFor="name" className="text-slate-300" style={SG}>
             Display name
           </Label>
           <Input
@@ -56,11 +56,11 @@ export default function ProfileForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
-            className="h-10 bg-white/[0.03] border-white/10 text-white placeholder:text-zinc-600"
+            className="h-10 bg-slate-50/70 border-slate-200 text-slate-900 placeholder:text-slate-600"
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email" className="text-zinc-300" style={SG}>
+          <Label htmlFor="email" className="text-slate-300" style={SG}>
             Email
           </Label>
           <Input
@@ -68,7 +68,7 @@ export default function ProfileForm({
             type="email"
             defaultValue={email}
             disabled
-            className="h-10 bg-white/[0.03] border-white/10 text-white placeholder:text-zinc-600"
+            className="h-10 bg-slate-50/70 border-slate-200 text-slate-900 placeholder:text-slate-600"
           />
         </div>
       </div>

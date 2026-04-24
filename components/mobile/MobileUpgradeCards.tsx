@@ -60,20 +60,20 @@ export default function MobileUpgradeCards() {
           </span>
         </div>
         <div className="mt-3 flex items-baseline gap-1.5">
-          <span className="text-[44px] leading-none font-bold text-white tracking-tight" style={SG}>
+          <span className="text-[44px] leading-none font-bold text-slate-900 tracking-tight" style={SG}>
             {YEARLY_PRICE_LABEL}
           </span>
           <span className="text-[15px] text-slate-500">/year</span>
         </div>
         <p className="text-[12px] text-slate-500 mt-1">
-          That&apos;s <span className="text-slate-300">{YEARLY_PER_MONTH_LABEL}/mo</span> — save {YEARLY_SAVINGS_LABEL}
+          That&apos;s <span className="text-slate-700">{YEARLY_PER_MONTH_LABEL}/mo</span> — save {YEARLY_SAVINGS_LABEL}
         </p>
 
         <ul className="mt-5 space-y-2.5">
           {PRO_FEATURES.map((f) => (
             <li key={f} className="flex items-start gap-2.5">
               <Check size={14} strokeWidth={2.5} className="shrink-0 mt-0.5 text-blue-400" />
-              <span className="text-[13px] text-slate-300 leading-snug">{f}</span>
+              <span className="text-[13px] text-slate-700 leading-snug">{f}</span>
             </li>
           ))}
         </ul>
@@ -83,7 +83,7 @@ export default function MobileUpgradeCards() {
           onClick={() => handleCheckout('yearly')}
           disabled={loading !== null}
           className={cn(
-            'mt-5 h-12 w-full rounded-xl bg-white text-zinc-900 text-[14px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all',
+            'mt-5 h-12 w-full rounded-xl bg-white text-slate-200 text-[14px] font-semibold inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all',
             loading !== null && 'opacity-70 cursor-not-allowed',
           )}
         >
@@ -101,25 +101,25 @@ export default function MobileUpgradeCards() {
       {/* Monthly */}
       <div className="bg-white/[0.02] ring-1 ring-white/[0.06] rounded-2xl p-5">
         <span
-          className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-400"
+          className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-600"
           style={SG}
         >
           Pro Monthly
         </span>
         <div className="mt-3 flex items-baseline gap-1.5">
-          <span className="text-[36px] leading-none font-bold text-white tracking-tight" style={SG}>
+          <span className="text-[36px] leading-none font-bold text-slate-900 tracking-tight" style={SG}>
             {MONTHLY_PRICE_LABEL}
           </span>
           <span className="text-[15px] text-slate-500">/month</span>
         </div>
-        <p className="text-[12px] text-slate-600 mt-1">Cancel anytime</p>
+        <p className="text-[12px] text-slate-400 mt-1">Cancel anytime</p>
 
         <button
           type="button"
           onClick={() => handleCheckout('monthly')}
           disabled={loading !== null}
           className={cn(
-            'mt-5 h-12 w-full rounded-xl border border-white/15 bg-white/[0.04] text-[14px] font-semibold text-white hover:bg-white/[0.08] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2',
+            'mt-5 h-12 w-full rounded-xl border border-white/15 bg-slate-50 text-[14px] font-semibold text-slate-900 hover:bg-white/[0.08] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2',
             loading !== null && 'opacity-70 cursor-not-allowed',
           )}
         >
@@ -135,7 +135,7 @@ export default function MobileUpgradeCards() {
       </div>
 
       {/* Security line */}
-      <p className="text-center text-[11px] text-slate-600 px-2">
+      <p className="text-center text-[11px] text-slate-400 px-2">
         Secured by Stripe. Checkout works on mobile. You can manage or cancel anytime from Settings
         on desktop.
       </p>

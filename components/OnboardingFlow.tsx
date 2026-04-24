@@ -7,6 +7,7 @@ import { ArrowRight, ArrowLeft, Check, ChevronRight } from 'lucide-react';
 
 import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
+import ThemeToggle from '@/components/ThemeToggle';
 import { completeOnboarding } from '@/lib/onboarding';
 import { computeSkippedBlocks, type OnboardingAnswers } from '@/lib/onboarding-logic';
 import { CURRICULUM } from '@/lib/curriculum';
@@ -136,7 +137,7 @@ export default function OnboardingFlow() {
   return (
     <div className="relative z-10 flex min-h-dvh flex-col items-center justify-center px-4 py-12">
       {step > 0 && (
-        <div className="fixed top-0 inset-x-0 h-0.5 bg-white/[0.06] z-50">
+        <div className="fixed top-0 inset-x-0 h-0.5 bg-slate-100 z-50">
           <div
             className="h-full bg-blue-500"
             style={{
@@ -150,12 +151,16 @@ export default function OnboardingFlow() {
       {step > 0 && step < 5 && (
         <button
           onClick={() => go(step - 1)}
-          className="fixed top-5 left-5 flex items-center gap-1 text-[13px] text-slate-500 hover:text-white transition-colors z-50"
+          className="fixed top-5 left-5 flex items-center gap-1 text-[13px] text-slate-500 hover:text-slate-900 transition-colors z-50"
         >
           <ArrowLeft size={14} />
           Back
         </button>
       )}
+
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
 
       <AnimatePresence mode="wait" custom={direction}>
         {step === 0 && (
@@ -246,12 +251,12 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
         LeetLockin
       </p>
       <h1
-        className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-white leading-tight"
+        className="text-[28px] sm:text-[34px] font-semibold tracking-tight text-slate-900 leading-tight"
         style={SG}
       >
         Let&apos;s build your plan
       </h1>
-      <p className="mt-3 text-[15px] text-slate-400 leading-relaxed max-w-xs mx-auto">
+      <p className="mt-3 text-[15px] text-slate-600 leading-relaxed max-w-xs mx-auto">
         3 quick questions so we can skip what you already know.
       </p>
       <Button
@@ -288,7 +293,7 @@ function QuestionStep({
       <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
         Question {questionIndex} of 3
       </p>
-      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-slate-900 leading-snug" style={SG}>
         {question.title}
       </h2>
       <motion.div
@@ -308,22 +313,22 @@ function QuestionStep({
               className={`w-full rounded-lg border px-4 py-3.5 text-left transition-colors duration-150 ${
                 isSelected
                   ? 'border-blue-500/60 bg-blue-500/[0.07]'
-                  : 'border-white/[0.07] bg-white/[0.015] hover:border-white/[0.14] hover:bg-white/[0.03]'
+                  : 'border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[13px] font-medium text-white">{opt.label}</p>
+                  <p className="text-[13px] font-medium text-slate-900">{opt.label}</p>
                   <p className="mt-0.5 text-[12px] text-slate-500 leading-snug">{opt.subtitle}</p>
                 </div>
                 <div
                   className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border transition-colors duration-150 ${
                     isSelected
                       ? 'border-blue-500 bg-blue-500'
-                      : 'border-white/[0.15] bg-transparent'
+                      : 'border-slate-300 bg-transparent'
                   }`}
                 >
-                  {isSelected && <Check size={10} className="text-white" strokeWidth={3} />}
+                  {isSelected && <Check size={10} className="text-slate-900" strokeWidth={3} />}
                 </div>
               </div>
             </motion.button>
@@ -359,7 +364,7 @@ function ResultsStep({
       <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
         Your plan
       </p>
-      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-slate-900 leading-snug" style={SG}>
         {totalSkipped > 0
           ? `Skipping ${totalSkipped} blocks you already know`
           : 'Starting from the beginning'}
@@ -386,11 +391,11 @@ function ResultsStep({
             <motion.div
               key={path.id}
               variants={fadeUp}
-              className="rounded-lg border border-white/[0.07] bg-white/[0.015] px-4 py-3.5"
+              className="rounded-lg border border-slate-200 bg-slate-50/40 px-4 py-3.5"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[13px] font-medium text-white truncate">{path.title}</p>
+                  <p className="text-[13px] font-medium text-slate-900 truncate">{path.title}</p>
                   <p className="mt-0.5 text-[11px] text-slate-600">
                     {total} blocks{pathSkipped > 0 && (
                       <span className="text-emerald-500 ml-1.5">
@@ -406,7 +411,7 @@ function ResultsStep({
                 )}
               </div>
 
-              <div className="mt-2.5 h-1 rounded-full bg-white/[0.06] overflow-hidden">
+              <div className="mt-2.5 h-1 rounded-full bg-slate-100 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-emerald-500/60 transition-all duration-500"
                   style={{ width: `${pct}%` }}
@@ -435,7 +440,7 @@ function ResultsStep({
         </Button>
         <button
           onClick={onAdjust}
-          className="text-[11px] text-slate-600 hover:text-slate-400 transition-colors"
+          className="text-[11px] text-slate-600 hover:text-slate-600 transition-colors"
         >
           Change answers
         </button>
@@ -480,7 +485,7 @@ function ProStep({
       <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
         One more thing
       </p>
-      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-white leading-snug" style={SG}>
+      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-slate-900 leading-snug" style={SG}>
         Learn faster with Pro
       </h2>
       <p className="mt-2 text-[13px] text-slate-500">
@@ -495,9 +500,9 @@ function ProStep({
         animate="show"
       >
         {/* Price header */}
-        <div className="px-5 pt-5 pb-4 border-b border-white/[0.06]">
+        <div className="px-5 pt-5 pb-4 border-b border-slate-200">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-bold text-white" style={SG}>$9</span>
+            <span className="text-3xl font-bold text-slate-900" style={SG}>$9</span>
             <span className="text-[13px] text-slate-500">/month</span>
           </div>
           <p className="mt-1 text-[11px] text-slate-600">
@@ -512,7 +517,7 @@ function ProStep({
               <div className="flex items-start gap-2.5">
                 <Check size={14} className="text-blue-400 shrink-0 mt-0.5" strokeWidth={2.5} />
                 <div>
-                  <p className="text-[13px] font-medium text-white">{feat.title}</p>
+                  <p className="text-[13px] font-medium text-slate-900">{feat.title}</p>
                   <p className="text-[12px] text-slate-500 leading-snug mt-0.5">{feat.desc}</p>
                 </div>
               </div>
@@ -521,7 +526,7 @@ function ProStep({
         </div>
 
         {/* Free comparison */}
-        <div className="px-5 py-3 bg-white/[0.02] border-t border-white/[0.06]">
+        <div className="px-5 py-3 bg-slate-50/50 border-t border-slate-200">
           <p className="text-[11px] text-slate-600">
             Free includes 5 AI tutor messages per week. All content and problems are free forever.
           </p>
@@ -533,20 +538,20 @@ function ProStep({
         <Button
           onClick={() => onCheckout('yearly')}
           disabled={!!checkoutLoading}
-          className="h-12 w-full text-[13px] font-semibold bg-white text-zinc-900 hover:bg-zinc-100 rounded-lg"
+          className="h-12 w-full text-[13px] font-semibold bg-white text-slate-800 hover:bg-slate-100 rounded-lg"
         >
           {checkoutLoading === 'yearly' ? 'Loading...' : 'Start Pro yearly ($59/year)'}
         </Button>
         <button
           onClick={() => onCheckout('monthly')}
           disabled={!!checkoutLoading}
-          className="h-10 w-full rounded-lg border border-white/[0.1] bg-white/[0.02] text-[12px] font-medium text-slate-400 hover:text-white hover:border-white/[0.2] transition-colors"
+          className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50/50 text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
         >
           {checkoutLoading === 'monthly' ? 'Loading...' : 'Start Pro monthly ($9/mo)'}
         </button>
         <button
           onClick={onStartFree}
-          className="mt-1 text-[12px] text-slate-600 hover:text-slate-400 transition-colors py-1"
+          className="mt-1 text-[12px] text-slate-600 hover:text-slate-600 transition-colors py-1"
         >
           Continue with free plan
         </button>

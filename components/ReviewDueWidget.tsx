@@ -35,7 +35,7 @@ export default function ReviewDueWidget() {
       >
         <div className="flex items-center gap-2 mb-1.5">
           <Brain size={14} className="text-amber-400" />
-          <span className="text-[12.5px] font-semibold text-white" style={SG}>
+          <span className="text-[12.5px] font-semibold text-slate-900" style={SG}>
             {dueCount} card{dueCount === 1 ? '' : 's'} due
           </span>
         </div>

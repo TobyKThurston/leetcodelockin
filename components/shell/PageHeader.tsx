@@ -22,20 +22,20 @@ export default function PageHeader({
       <div className="min-w-0">
         {eyebrow && (
           <p
-            className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2"
+            className="text-[11px] font-bold tracking-[0.18em] uppercase mb-2"
             style={{ color: C.textMuted }}
           >
             {eyebrow}
           </p>
         )}
         <h1
-          className="text-[22px] font-semibold"
+          className="text-[24px] font-semibold"
           style={{ ...SG, color: C.text, letterSpacing: '-0.02em' }}
         >
           {title}
         </h1>
         {subtitle && (
-          <p className="text-[12.5px] mt-1.5" style={{ color: C.textMuted }}>
+          <p className="text-[13.5px] mt-1.5 leading-snug" style={{ color: C.textSub }}>
             {subtitle}
           </p>
         )}

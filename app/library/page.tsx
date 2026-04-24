@@ -19,9 +19,9 @@ const categoryAnchor = (id: string) => `cat-${id}`;
 
 // Matches ProblemPage.tsx DIFF_STYLE — Easy green / Medium amber / Hard red.
 const DIFF_STYLE: Record<Difficulty, React.CSSProperties> = {
-  Easy:   { color: 'rgba(52,211,153,0.9)',  border: '1px solid rgba(52,211,153,0.2)',   background: 'rgba(16,185,129,0.07)'  },
-  Medium: { color: 'rgba(251,191,36,0.9)',  border: '1px solid rgba(251,191,36,0.2)',   background: 'rgba(245,158,11,0.07)'  },
-  Hard:   { color: 'rgba(248,113,113,0.9)', border: '1px solid rgba(248,113,113,0.2)',  background: 'rgba(239,68,68,0.07)'   },
+  Easy:   { color: '#047857', border: '1px solid #a7f3d0', background: '#ecfdf5', fontWeight: 600 },
+  Medium: { color: '#b45309', border: '1px solid #fde68a', background: '#fffbeb', fontWeight: 600 },
+  Hard:   { color: '#b91c1c', border: '1px solid #fecaca', background: '#fef2f2', fontWeight: 600 },
 };
 
 const SOLVED_STORAGE_KEY = 'zl-lib-solved';
@@ -47,60 +47,41 @@ function SidebarCategoryCard({
       type="button"
       onClick={onClick}
       className={cn(
-        'group w-full text-left rounded-lg px-3 py-2.5 border transition-colors duration-150 cursor-pointer',
+        'group w-full text-left rounded-xl px-4 py-3.5 border transition-colors duration-150 cursor-pointer',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        isViewing && 'bg-blue-500/[0.08] border-blue-400/50',
-        !isViewing && complete && 'bg-slate-800/30 border-emerald-500/25 hover:border-emerald-500/40',
-        !isViewing && !complete && 'bg-slate-800/40 border-slate-700/60 hover:bg-slate-800/60 hover:border-slate-600/70',
+        isViewing && 'bg-white dark:bg-[var(--ll-bg-elevated)] border-blue-400/60 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(59,130,246,0.25)]',
+        !isViewing && complete && 'bg-[var(--ll-bg-card)] border-emerald-500/30 hover:border-emerald-500/50',
+        !isViewing && !complete && 'bg-[var(--ll-bg-card)] border-[var(--ll-border)] hover:bg-white dark:hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
       )}
     >
-      <div className="flex items-center justify-between mb-1.5">
+      <div className="flex items-center justify-between mb-2">
         <span
           className={cn(
-            'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-            isViewing && 'text-blue-300',
-            !isViewing && complete && 'text-emerald-400/70',
-            !isViewing && !complete && 'text-slate-500',
+            'font-mono text-[12px] font-bold tabular-nums tracking-wider',
+            isViewing && 'text-blue-600 dark:text-blue-400',
+            !isViewing && complete && 'text-emerald-600 dark:text-emerald-400',
+            !isViewing && !complete && 'text-[var(--ll-ink-subtle)]',
           )}
         >
           {n}
         </span>
-        {complete && <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />}
+        {complete && <CheckCircle2 size={16} strokeWidth={2.25} className="text-emerald-600 dark:text-emerald-400" />}
       </div>
       <p
-        className={cn(
-          'text-[12.5px] font-semibold leading-tight mb-0.5 tracking-[-0.005em]',
-          isViewing && 'text-white',
-          !isViewing && complete && 'text-slate-300',
-          !isViewing && !complete && 'text-slate-200',
-        )}
+        className="text-[15px] font-semibold leading-tight mb-1.5 tracking-[-0.005em] text-[var(--ll-ink)]"
         style={SG}
       >
         {category.title}
       </p>
-      <p
-        className={cn(
-          'text-[10.5px] leading-snug mb-2.5',
-          isViewing && 'text-slate-300',
-          !isViewing && complete && 'text-slate-500',
-          !isViewing && !complete && 'text-slate-400',
-        )}
-      >
+      <p className="text-[13px] leading-snug mb-3 line-clamp-2 text-[var(--ll-ink-muted)]">
         {category.description}
       </p>
       <div>
-        <div
-          className={cn(
-            'flex justify-between mb-1 text-[9.5px] font-medium',
-            isViewing && 'text-slate-300',
-            !isViewing && complete && 'text-slate-500',
-            !isViewing && !complete && 'text-slate-400',
-          )}
-        >
+        <div className="flex justify-between mb-1.5 text-[12px] font-medium text-[var(--ll-ink-muted)]">
           <span>{solvedCount} / {total} solved</span>
           <span className="tabular-nums">{pct}%</span>
         </div>
-        <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+        <div className="h-[4px] rounded-full bg-[var(--ll-bg-subtle)] overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all',
@@ -130,29 +111,29 @@ function LibrarySidebar({
   return (
     <ShellSidebar
       footer={
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           <div>
-            <div className="flex justify-between text-[11.5px] mb-1.5">
-              <span className="text-slate-500 font-medium">Mastery</span>
-              <span className="text-slate-300 font-semibold tabular-nums">{masteryPct}%</span>
+            <div className="flex justify-between text-[13px] mb-1.5">
+              <span className="font-medium text-[var(--ll-ink-muted)]">Mastery</span>
+              <span className="font-semibold tabular-nums text-[var(--ll-ink)]">{masteryPct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[5px] rounded-full bg-[var(--ll-bg-subtle)]">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${masteryPct}%`, background: C.blue }}
               />
             </div>
           </div>
-          <div className="flex justify-between text-[11.5px]">
-            <span className="text-slate-500">Solved</span>
-            <span className="text-slate-400 font-medium tabular-nums">
+          <div className="flex justify-between text-[13px]">
+            <span className="text-[var(--ll-ink-muted)]">Solved</span>
+            <span className="font-medium tabular-nums text-[var(--ll-ink)]">
               {totalSolved} / {totalProblems}
             </span>
           </div>
         </div>
       }
     >
-      <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3 px-1">
+      <p className="text-[12px] font-bold text-[var(--ll-ink-subtle)] tracking-[0.16em] uppercase mb-3 px-1">
         Categories
       </p>
       {LIBRARY.map(category => (
@@ -187,14 +168,14 @@ function ProblemRow({
     <div
       onClick={published ? onOpen : undefined}
       className={cn(
-        'group flex items-center gap-3 px-3 py-2.5 rounded-md border transition-colors',
+        'group flex items-center gap-3.5 px-4 py-3.5 rounded-lg border transition-colors',
         published && 'cursor-pointer',
         !published && 'cursor-not-allowed opacity-50',
         published && solved
-          ? 'bg-emerald-500/[0.04] border-emerald-500/25 hover:border-emerald-500/40'
+          ? 'bg-emerald-500/[0.06] border-emerald-500/30 hover:border-emerald-500/50'
           : published
-          ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50 hover:border-slate-600/70'
-          : 'bg-slate-800/20 border-slate-800/60',
+          ? 'bg-[var(--ll-bg-card)] border-[var(--ll-border)] hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]'
+          : 'bg-[var(--ll-bg-subtle)] border-[var(--ll-border)]',
       )}
     >
       {/* Solved checkbox */}
@@ -205,15 +186,15 @@ function ProblemRow({
         aria-label={solved ? 'Mark unsolved' : 'Mark solved'}
       >
         {solved ? (
-          <CheckCircle2 size={18} strokeWidth={2.25} className="text-emerald-400" />
+          <CheckCircle2 size={22} strokeWidth={2.25} className="text-emerald-600 dark:text-emerald-400" />
         ) : (
-          <Circle size={18} strokeWidth={1.75} className="text-slate-600 hover:text-slate-400 transition-colors" />
+          <Circle size={22} strokeWidth={1.75} className="text-[var(--ll-ink-faint)] hover:text-[var(--ll-ink-subtle)] transition-colors" />
         )}
       </button>
 
       {/* LeetCode number */}
       <span
-        className="shrink-0 text-[11px] text-slate-500 tabular-nums w-10"
+        className="shrink-0 text-[13px] tabular-nums w-12 text-[var(--ll-ink-subtle)]"
         style={{ fontFamily: MONO_FONT }}
       >
         [{String(number).padStart(2, '0')}]
@@ -222,8 +203,8 @@ function ProblemRow({
       {/* Title */}
       <span
         className={cn(
-          'flex-1 text-[13px] font-semibold leading-tight truncate',
-          solved ? 'text-slate-300' : 'text-slate-100',
+          'flex-1 text-[15.5px] font-semibold leading-tight truncate',
+          solved ? 'text-[var(--ll-ink-muted)]' : 'text-[var(--ll-ink)]',
         )}
         style={SG}
       >
@@ -232,7 +213,7 @@ function ProblemRow({
 
       {/* Difficulty */}
       <span
-        className="shrink-0 px-2 py-0.5 rounded-md text-[10.5px] font-medium"
+        className="shrink-0 px-2.5 py-1 rounded-md text-[12.5px]"
         style={DIFF_STYLE[difficulty]}
       >
         {difficulty}
@@ -240,8 +221,8 @@ function ProblemRow({
 
       {/* Pattern chip */}
       <span
-        className="shrink-0 hidden md:inline-block px-2 py-0.5 rounded-md text-[10.5px] text-slate-400"
-        style={{ border: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.015)' }}
+        className="shrink-0 hidden md:inline-block px-2.5 py-1 rounded-md text-[12.5px] font-medium text-[var(--ll-ink-muted)]"
+        style={{ border: `1px solid var(--ll-border)`, background: 'var(--ll-bg-subtle)' }}
       >
         {pattern}
       </span>
@@ -249,8 +230,8 @@ function ProblemRow({
       {/* Coming soon chip — only when not yet published */}
       {!published && (
         <span
-          className="shrink-0 hidden md:inline-block px-2 py-0.5 rounded-md text-[10.5px] text-slate-500"
-          style={{ border: `1px solid ${C.border}`, background: 'rgba(255,255,255,0.015)' }}
+          className="shrink-0 hidden md:inline-block px-2.5 py-1 rounded-md text-[12.5px] font-medium text-[var(--ll-ink-subtle)]"
+          style={{ border: `1px solid var(--ll-border)`, background: 'var(--ll-bg-subtle)' }}
         >
           Coming soon
         </span>
@@ -262,10 +243,10 @@ function ProblemRow({
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="shrink-0 text-slate-600 hover:text-slate-300 transition-colors p-1"
+        className="shrink-0 p-1.5 rounded-md text-[var(--ll-ink-muted)] hover:text-[var(--ll-ink)] hover:bg-[var(--ll-bg-hover)] transition-colors"
         aria-label="Open on LeetCode"
       >
-        <ExternalLink size={13} />
+        <ExternalLink size={16} />
       </a>
     </div>
   );
@@ -293,37 +274,37 @@ function CategorySection({
       className="scroll-mt-20 pt-10 pb-12 border-b last:border-b-0"
       style={{ borderColor: C.border }}
     >
-      <h2 className="text-[16px] font-semibold text-white tracking-[-0.01em] mb-1.5" style={SG}>
+      <h2 className="text-[22px] font-bold tracking-[-0.015em] mb-2 text-[var(--ll-ink)]" style={SG}>
         {category.title}
       </h2>
-      <p className="text-[12.5px] text-slate-400 mb-5">{category.description}</p>
+      <p className="text-[14px] leading-snug mb-6 text-[var(--ll-ink-muted)]">{category.description}</p>
 
       {total === 0 ? (
         <div
-          className="rounded-lg border border-dashed p-8 text-center"
-          style={{ borderColor: C.border, background: 'rgba(255,255,255,0.015)' }}
+          className="rounded-xl border border-dashed p-10 text-center"
+          style={{ borderColor: 'var(--ll-border)', background: 'var(--ll-bg-subtle)' }}
         >
-          <p className="text-[13px] text-slate-400" style={SG}>
+          <p className="text-[14px] text-[var(--ll-ink)]" style={SG}>
             Coming soon.
           </p>
-          <p className="text-[11.5px] text-slate-600 mt-1">
+          <p className="text-[12.5px] text-[var(--ll-ink-muted)] mt-1">
             This category is on the roadmap but not yet populated.
           </p>
         </div>
       ) : (
         <>
           {/* Summary bar */}
-          <div className="mb-6">
-            <div className="flex justify-between text-[11.5px] mb-1.5">
-              <span className="text-slate-500">
-                <span className="text-slate-300 font-semibold tabular-nums">{solved}</span>
+          <div className="mb-7">
+            <div className="flex justify-between text-[13px] mb-1.5">
+              <span className="text-[var(--ll-ink-muted)]">
+                <span className="font-semibold tabular-nums text-[var(--ll-ink)]">{solved}</span>
                 {' '}of{' '}
-                <span className="text-slate-300 font-semibold tabular-nums">{total}</span>
+                <span className="font-semibold tabular-nums text-[var(--ll-ink)]">{total}</span>
                 {' '}solved
               </span>
-              <span className="text-slate-400 tabular-nums">{pct}%</span>
+              <span className="tabular-nums text-[var(--ll-ink-muted)]">{pct}%</span>
             </div>
-            <div className="h-[3px] rounded-full bg-slate-800">
+            <div className="h-[5px] rounded-full bg-[var(--ll-bg-subtle)]">
               <div
                 className="h-full rounded-full transition-all"
                 style={{
@@ -334,11 +315,11 @@ function CategorySection({
             </div>
           </div>
 
-          <p className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase mb-3">
+          <p className="text-[11.5px] font-bold text-[var(--ll-ink-subtle)] tracking-[0.16em] uppercase mb-3.5">
             Problems
           </p>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {category.problems.map(problem => (
               <ProblemRow
                 key={problem.slug}
@@ -391,36 +372,36 @@ function LibraryRightRail({
             <RailHeader>Category Progress</RailHeader>
             <div
               className={cn(
-                'rounded-lg px-3 py-2.5 border',
+                'rounded-xl px-4 py-3.5 border',
                 categoryDone
-                  ? 'bg-slate-800/30 border-emerald-500/25'
+                  ? 'bg-[var(--ll-bg-card)] border-emerald-500/30'
                   : 'bg-blue-500/[0.08] border-blue-400/50',
               )}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <span
                   className={cn(
-                    'font-mono text-[10px] font-bold tabular-nums tracking-wider',
-                    categoryDone ? 'text-emerald-400/70' : 'text-blue-300',
+                    'font-mono text-[12px] font-bold tabular-nums tracking-wider',
+                    categoryDone ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400',
                   )}
                 >
                   {n}
                 </span>
                 {categoryDone && (
-                  <CheckCircle2 size={12} strokeWidth={2.25} className="text-emerald-400" />
+                  <CheckCircle2 size={16} strokeWidth={2.25} className="text-emerald-600 dark:text-emerald-400" />
                 )}
               </div>
               <p
-                className="text-[12.5px] font-semibold leading-tight mb-2.5 tracking-[-0.005em] text-white"
+                className="text-[14.5px] font-semibold leading-tight mb-3 tracking-[-0.005em] text-[var(--ll-ink)]"
                 style={SG}
               >
                 {category.title}
               </p>
-              <div className="flex justify-between mb-1 text-[9.5px] font-medium text-slate-300">
+              <div className="flex justify-between mb-1.5 text-[12px] font-medium text-[var(--ll-ink-muted)]">
                 <span>{solvedInCategory} / {categoryTotal} solved</span>
                 <span className="tabular-nums">{categoryPct}%</span>
               </div>
-              <div className="h-[2px] rounded-full bg-slate-900/60 overflow-hidden">
+              <div className="h-[4px] rounded-full bg-[var(--ll-bg-subtle)] overflow-hidden">
                 <div
                   className={cn(
                     'h-full rounded-full transition-all',
@@ -459,15 +440,16 @@ function LibraryRightRail({
               type="button"
               onClick={onRandomProblem}
               className={cn(
-                RAIL_BOX,
-                'w-full flex items-center gap-2.5 transition-colors',
-                'hover:bg-slate-700/40 hover:border-slate-600/60 cursor-pointer',
+                'w-full flex items-center justify-center gap-2.5 rounded-xl border transition-colors cursor-pointer',
+                'px-4 py-3 text-[13.5px] font-semibold',
+                'bg-[var(--ll-bg-card)] border-[var(--ll-border)] text-[var(--ll-ink)]',
+                'hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
               )}
+              style={SG}
             >
-              <Shuffle size={14} className="text-slate-400" />
-              <span className="text-[12px] font-medium text-slate-300" style={SG}>
-                Random problem
-              </span>
+              <Shuffle size={16} className="text-[var(--ll-ink-muted)]" />
+              Random problem
             </button>
           </section>
     </ShellRail>
@@ -670,7 +652,7 @@ export default function LibraryPage() {
         subtitle={`${LIBRARY.length} curated categories · ${totalProblems} problems`}
         right={
           <div className="text-right">
-            <div className="h-[4px] w-28 rounded-full bg-slate-800 mb-1.5">
+            <div className="h-[4px] w-28 rounded-full bg-slate-100 mb-1.5">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${overallPct}%`, background: C.blue }}

@@ -37,7 +37,7 @@ export default async function MobileUpgradePage() {
           <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500">
             Your plan
           </p>
-          <h1 className="mt-1 text-[26px] font-bold text-white tracking-tight" style={SG}>
+          <h1 className="mt-1 text-[26px] font-bold text-slate-900 tracking-tight" style={SG}>
             You&apos;re Pro
           </h1>
         </div>
@@ -52,23 +52,23 @@ export default async function MobileUpgradePage() {
           >
             <Check size={22} strokeWidth={2.5} className="text-blue-300" />
           </div>
-          <h2 className="mt-4 text-[18px] font-bold text-white" style={SG}>
+          <h2 className="mt-4 text-[18px] font-bold text-slate-900" style={SG}>
             All features unlocked
           </h2>
-          <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed">
+          <p className="mt-1.5 text-[13px] text-slate-600 leading-relaxed">
             Mock interviews, AI feedback, review queue, and unlimited tutor are active on your
             account. Everything runs on desktop.
           </p>
           <Link
             href="/dashboard"
-            className="mt-5 h-12 px-5 rounded-xl bg-white text-zinc-900 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
+            className="mt-5 h-12 px-5 rounded-xl bg-white text-slate-200 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
           >
             Open desktop site
             <ArrowRight size={15} strokeWidth={2.5} />
           </Link>
         </div>
 
-        <p className="text-center text-[12px] text-slate-600">
+        <p className="text-center text-[12px] text-slate-400">
           Manage or cancel your subscription in Settings on desktop.
         </p>
       </div>
@@ -94,10 +94,10 @@ export default async function MobileUpgradePage() {
             Upgrade
           </p>
         </div>
-        <h1 className="mt-2 text-[26px] font-bold text-white tracking-tight leading-tight" style={SG}>
+        <h1 className="mt-2 text-[26px] font-bold text-slate-900 tracking-tight leading-tight" style={SG}>
           Unlock interview mode
         </h1>
-        <p className="mt-2 text-[14px] text-slate-400 leading-relaxed">
+        <p className="mt-2 text-[14px] text-slate-600 leading-relaxed">
           Pro unlocks the full interview-prep toolkit on desktop. The free curriculum stays free
           forever.
         </p>
@@ -111,7 +111,7 @@ export default async function MobileUpgradePage() {
               <Check size={14} strokeWidth={2.5} className="text-blue-300" />
             </div>
             <div className="min-w-0">
-              <p className="text-[14px] font-semibold text-white" style={SG}>
+              <p className="text-[14px] font-semibold text-slate-900" style={SG}>
                 {f.title}
               </p>
               <p className="mt-0.5 text-[12.5px] text-slate-500 leading-snug">{f.desc}</p>
@@ -125,7 +125,7 @@ export default async function MobileUpgradePage() {
 
       {/* Free tier reassurance */}
       <div className="text-center">
-        <p className="text-[11.5px] text-slate-600 leading-relaxed max-w-xs mx-auto">
+        <p className="text-[11.5px] text-slate-400 leading-relaxed max-w-xs mx-auto">
           Not ready? The full curriculum, 212+ problems, and 5 tutor messages stay free forever.
         </p>
       </div>

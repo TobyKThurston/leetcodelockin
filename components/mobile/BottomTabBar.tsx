@@ -20,7 +20,7 @@ export default function BottomTabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur bg-[#070c17]/90 border-t border-white/[0.06]"
+      className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur bg-white/90 border-t border-slate-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="grid grid-cols-3 h-16">
@@ -33,7 +33,7 @@ export default function BottomTabBar() {
                 href={href}
                 className={cn(
                   'flex-1 flex flex-col items-center justify-center gap-1 min-h-[44px] transition-colors',
-                  active ? 'text-white' : 'text-slate-500 hover:text-slate-300',
+                  active ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700',
                 )}
               >
                 <Icon

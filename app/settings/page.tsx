@@ -35,25 +35,25 @@ export default async function SettingsPage() {
   const initial = (name || email || '?').charAt(0).toUpperCase();
 
   return (
-    <div className="min-h-screen" style={{ background: '#0b1220' }}>
+    <div className="min-h-screen" style={{ background: 'var(--ll-bg)' }}>
       <SettingsNav />
 
       {/* Body */}
       <main className="pt-20 pb-16 px-5">
         <div className="mx-auto w-full max-w-2xl flex flex-col gap-6">
           <div>
-            <h1 className="text-[22px] font-bold text-white tracking-tight" style={SG}>
+            <h1 className="text-[22px] font-bold text-slate-900 tracking-tight" style={SG}>
               Settings
             </h1>
-            <p className="text-[13px] text-slate-400 mt-1" style={SG}>
+            <p className="text-[13px] text-slate-600 mt-1" style={SG}>
               Manage your account and preferences.
             </p>
           </div>
 
           {/* Profile */}
-          <Card className="bg-white/[0.025] border-white/10">
+          <Card className="bg-slate-50/60 border-slate-200">
             <CardHeader>
-              <CardTitle className="text-white" style={SG}>
+              <CardTitle className="text-slate-900" style={SG}>
                 Profile
               </CardTitle>
               <CardDescription style={SG}>
@@ -64,12 +64,12 @@ export default async function SettingsPage() {
               <div className="flex items-center gap-4">
                 <Avatar className="size-14">
                   <AvatarImage src={avatar} referrerPolicy="no-referrer" />
-                  <AvatarFallback className="bg-slate-700 text-slate-200 text-base font-semibold">
+                  <AvatarFallback className="bg-slate-200 text-slate-800 text-base font-semibold">
                     {initial}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="text-[14px] font-medium text-white truncate" style={SG}>
+                  <p className="text-[14px] font-medium text-slate-900 truncate" style={SG}>
                     {name || 'Unnamed'}
                   </p>
                   <p className="text-[12.5px] text-slate-500 truncate" style={SG}>
@@ -78,7 +78,7 @@ export default async function SettingsPage() {
                 </div>
               </div>
 
-              <Separator className="bg-white/10" />
+              <Separator className="bg-slate-100" />
 
               <ProfileForm initialName={name} email={email} />
             </CardContent>
@@ -93,9 +93,9 @@ export default async function SettingsPage() {
           />
 
           {/* Feedback */}
-          <Card className="bg-white/[0.025] border-white/10">
+          <Card className="bg-slate-50/60 border-slate-200">
             <CardHeader>
-              <CardTitle className="text-white" style={SG}>
+              <CardTitle className="text-slate-900" style={SG}>
                 Feedback & suggestions
               </CardTitle>
               <CardDescription style={SG}>
@@ -105,7 +105,7 @@ export default async function SettingsPage() {
             <CardContent>
               <a
                 href="mailto:tobykthurston@gmail.com?subject=LeetCode%20Lockin%20feedback"
-                className="inline-flex items-center justify-center rounded-md bg-white/10 hover:bg-white/15 text-white text-[13px] font-medium px-4 py-2 transition-colors"
+                className="inline-flex items-center justify-center rounded-md bg-slate-100 hover:bg-slate-200 text-slate-900 text-[13px] font-medium px-4 py-2 transition-colors"
                 style={SG}
               >
                 Send feedback
@@ -114,9 +114,9 @@ export default async function SettingsPage() {
           </Card>
 
           {/* Account */}
-          <Card className="bg-white/[0.025] border-white/10">
+          <Card className="bg-slate-50/60 border-slate-200">
             <CardHeader>
-              <CardTitle className="text-white" style={SG}>
+              <CardTitle className="text-slate-900" style={SG}>
                 Account
               </CardTitle>
               <CardDescription style={SG}>

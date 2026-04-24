@@ -38,7 +38,7 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
   const smsHref = `sms:?&body=${encodeURIComponent(smsBody)}`;
 
   return (
-    <div className="min-h-[100dvh] bg-[#070c17] text-white overflow-x-hidden">
+    <div className="min-h-[100dvh] bg-white text-slate-900 overflow-x-hidden">
       {/* Background glow */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -67,12 +67,12 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
           </div>
 
           <h1
-            className="mt-5 text-[24px] font-bold text-white tracking-tight text-center leading-tight"
+            className="mt-5 text-[24px] font-bold text-slate-900 tracking-tight text-center leading-tight"
             style={SG}
           >
             Built for your laptop
           </h1>
-          <p className="mt-2 text-[14px] text-slate-400 leading-relaxed text-center max-w-sm mx-auto">
+          <p className="mt-2 text-[14px] text-slate-600 leading-relaxed text-center max-w-sm mx-auto">
             LeetLockin is a real coding environment — editor, split-screen, mock interviews.
             For the full thing, open this on your laptop.
           </p>
@@ -82,7 +82,7 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
             {DESKTOP_FEATURES.map(({ Icon, label }) => (
               <li key={label} className="flex items-start gap-3">
                 <Icon size={15} strokeWidth={2} className="shrink-0 mt-0.5 text-blue-300/80" />
-                <span className="text-[13px] text-slate-300 leading-relaxed">{label}</span>
+                <span className="text-[13px] text-slate-700 leading-relaxed">{label}</span>
               </li>
             ))}
           </ul>
@@ -91,7 +91,7 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
           <div className="mt-6 space-y-2.5">
             <a
               href={smsHref}
-              className="h-12 px-5 rounded-xl bg-white text-zinc-900 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
+              className="h-12 px-5 rounded-xl bg-white text-slate-200 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 hover:bg-zinc-100 active:scale-[0.98] transition-all"
             >
               <MessageSquare size={16} strokeWidth={2.5} />
               Text link to myself
@@ -99,7 +99,7 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
             <button
               type="button"
               onClick={handleCopy}
-              className="h-12 px-5 rounded-xl border border-white/15 bg-white/5 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 text-white hover:bg-white/10 active:scale-[0.98] transition-all"
+              className="h-12 px-5 rounded-xl border border-white/15 bg-slate-50 text-[14px] font-semibold w-full inline-flex items-center justify-center gap-2 text-slate-900 hover:bg-slate-100 active:scale-[0.98] transition-all"
             >
               {copied ? (
                 <>
@@ -115,7 +115,7 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
             </button>
           </div>
 
-          <p className="mt-4 text-[11px] text-slate-600 text-center break-all">{siteUrl}</p>
+          <p className="mt-4 text-[11px] text-slate-400 text-center break-all">{siteUrl}</p>
         </div>
 
         {/* Secondary — keep browsing on mobile */}
@@ -123,16 +123,16 @@ export default function MobileHandoffScreen({ siteUrl }: { siteUrl: string }) {
           <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-slate-500">
             Still here?
           </p>
-          <h2 className="mt-1.5 text-[15px] font-semibold text-white" style={SG}>
+          <h2 className="mt-1.5 text-[15px] font-semibold text-slate-900" style={SG}>
             Keep studying on your phone
           </h2>
-          <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed">
+          <p className="mt-1.5 text-[13px] text-slate-600 leading-relaxed">
             Read lessons, flip through flashcards, and track progress. The full editor will
             be waiting when you get to your laptop.
           </p>
           <Link
             href="/m"
-            className="mt-4 h-11 px-4 rounded-lg border border-white/10 bg-white/[0.03] text-[13px] font-semibold text-slate-200 hover:text-white hover:bg-white/[0.06] inline-flex items-center justify-center gap-1.5 w-full transition-colors"
+            className="mt-4 h-11 px-4 rounded-lg border border-slate-200 bg-slate-50/70 text-[13px] font-semibold text-slate-800 hover:text-slate-900 hover:bg-white/[0.06] inline-flex items-center justify-center gap-1.5 w-full transition-colors"
           >
             Continue on mobile
             <ArrowRight size={14} strokeWidth={2.5} />

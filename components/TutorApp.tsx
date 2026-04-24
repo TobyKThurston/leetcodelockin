@@ -31,7 +31,7 @@ function patternColor(pattern: string) {
   for (const [k, v] of Object.entries(PATTERN_COLORS)) {
     if (key.includes(k)) return v;
   }
-  return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30';
+  return 'bg-zinc-500/20 text-slate-300 border-slate-300/60';
 }
 
 function PatternStats({ patterns }: { patterns: Record<string, number> }) {
@@ -68,7 +68,7 @@ function CodeBlock({ code }: { code: string }) {
     setTimeout(() => setCopied(false), 1500);
   }
   return (
-    <div className="relative rounded-lg border border-border bg-zinc-950 overflow-hidden">
+    <div className="relative rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 border-b border-border">
         <span className="text-xs text-muted-foreground font-mono">python</span>
         <button
@@ -78,7 +78,7 @@ function CodeBlock({ code }: { code: string }) {
           {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
-      <pre className="p-4 text-sm text-zinc-100 font-mono overflow-x-auto leading-relaxed whitespace-pre">
+      <pre className="p-4 text-sm text-slate-900 font-mono overflow-x-auto leading-relaxed whitespace-pre">
         {code}
       </pre>
     </div>

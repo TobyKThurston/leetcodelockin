@@ -8,11 +8,11 @@ interface Props {
 }
 
 function getColor(count: number, frozen: boolean): string {
-  if (frozen) return 'rgba(59,130,246,0.2)';
-  if (count >= 6) return '#10b981';
-  if (count >= 3) return 'rgba(16,185,129,0.5)';
-  if (count >= 1) return 'rgba(16,185,129,0.25)';
-  return 'rgba(255,255,255,0.04)';
+  if (frozen) return 'rgba(59,130,246,0.22)';
+  if (count >= 6) return 'var(--ll-success)';
+  if (count >= 3) return 'rgba(5,150,105,0.55)';
+  if (count >= 1) return 'rgba(5,150,105,0.28)';
+  return 'var(--ll-bg-hover)';
 }
 
 function getBorder(frozen: boolean): string | undefined {
@@ -71,8 +71,8 @@ export default function ActivityHeatmap({ data, weeks = 7 }: Props) {
         {DAY_LABELS.map((label, i) => (
           <div
             key={i}
-            className="text-[8px] text-slate-600 leading-none flex items-center justify-end"
-            style={{ width: 10, height: 12 }}
+            className="text-[10px] font-medium text-slate-500 leading-none flex items-center justify-end"
+            style={{ width: 12, height: 12 }}
           >
             {label}
           </div>

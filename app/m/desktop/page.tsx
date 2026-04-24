@@ -20,12 +20,12 @@ export default function MobileDesktopPage() {
           <Monitor size={24} strokeWidth={2} className="text-blue-300" />
         </div>
         <h1
-          className="mt-6 text-[22px] font-bold text-white tracking-tight leading-tight"
+          className="mt-6 text-[22px] font-bold text-slate-900 tracking-tight leading-tight"
           style={SG}
         >
           Go to desktop to get the actual experience.
         </h1>
-        <p className="mt-3 text-[14px] text-slate-400 leading-relaxed max-w-xs mx-auto">
+        <p className="mt-3 text-[14px] text-slate-600 leading-relaxed max-w-xs mx-auto">
           The editor, mock interviews, and full curriculum live on your laptop.
         </p>
       </div>
