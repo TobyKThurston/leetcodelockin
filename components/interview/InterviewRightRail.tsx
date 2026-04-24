@@ -66,9 +66,6 @@ export default function InterviewRightRail({
   const bestScore =
     completed.length > 0 ? Math.max(...completed.map(s => s.overallScore ?? 0)) : 0;
 
-  // Trend sparkline — last 10 completed, chronological (oldest → newest).
-  const last10 = completed.slice(0, 10).reverse();
-
   // Difficulty mix across all sessions.
   const easyMedCount = sessions.filter(s => s.difficulty === 'easy-medium').length;
   const medHardCount = sessions.filter(s => s.difficulty === 'medium-hard').length;
@@ -144,33 +141,6 @@ export default function InterviewRightRail({
               />
             </div>
           </section>
-
-          {/* Trend sparkline */}
-          {last10.length >= 2 && (
-            <section>
-              <RailHeader>Last {last10.length} scores</RailHeader>
-              <div className={cn(RAIL_BOX, 'py-3')}>
-                <div className="flex items-end gap-1.5 h-9">
-                  {last10.map((s, i) => {
-                    const score = s.overallScore ?? 0;
-                    const h = Math.max(4, (score / 10) * 32);
-                    return (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-sm transition-all"
-                        style={{
-                          height: h,
-                          background: scoreColor(score),
-                          opacity: 0.75,
-                        }}
-                        title={`${score}/10`}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* Difficulty Mix */}
           {sessions.length > 0 && (

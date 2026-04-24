@@ -13,6 +13,9 @@ interface Props {
 
 export default function VoiceQuotaBadge({ quota, variant = 'compact' }: Props) {
   if (!quota) return null;
+  // Pro on the happy path has nothing interesting to say — showing
+  // "Unlimited voice mocks / Included with Pro" is just noise.
+  if (quota.isPro && quota.allowed) return null;
 
   const capped = !quota.allowed;
   const lineParts = quotaLine(quota);
