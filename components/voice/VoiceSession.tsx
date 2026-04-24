@@ -35,7 +35,8 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false 
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const VAD_THRESHOLD = 0.025;       // RMS above this = user is speaking
+const VAD_THRESHOLD = 0.012;       // RMS above this = user is speaking (lowered so
+                                   // quiet/soft-spoken mics still trigger the recorder)
 const SILENCE_FLUSH_MS = 900;      // 900ms of quiet ends a user utterance
 const MIN_UTTERANCE_MS = 400;      // drop blips shorter than this
 const BARGE_IN_HOLD_MS = 250;      // sustained speech to cut off AI TTS
@@ -183,6 +184,15 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
+  // Surface the result of the last /api/voice/turn call so the user isn't
+  // stuck wondering whether their speech made it through the pipeline.
+  const [turnStatus, setTurnStatus] = useState<
+    | { kind: 'idle' }
+    | { kind: 'sending' }
+    | { kind: 'ok' }
+    | { kind: 'empty' }  // route returned 200 but transcribedText was ''
+    | { kind: 'error'; message: string }
+  >({ kind: 'idle' });
 
   const appTheme = useAppTheme();
 
@@ -426,9 +436,16 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     turnAbortRef.current?.abort();
     const ctrl = new AbortController();
     turnAbortRef.current = ctrl;
+    setTurnStatus({ kind: 'sending' });
     try {
       const res = await fetch('/api/voice/turn', { method: 'POST', body: form, signal: ctrl.signal });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        const message = errBody.error ?? `Turn failed (${res.status})`;
+        setTurnStatus({ kind: 'error', message });
+        try { posthog.capture('voice_turn_failed', { status: res.status, message }); } catch { /* ignore */ }
+        return;
+      }
       const data = await res.json() as {
         transcribedText: string;
         shouldSpeak: boolean;
@@ -436,13 +453,25 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         audioBase64: string | null;
       };
       const elapsed = Math.floor((Date.now() - sessionStartMsRef.current) / 1000);
-      if (data.transcribedText) appendTurn({ role: 'user', text: data.transcribedText, tSec: elapsed });
+      if (data.transcribedText) {
+        appendTurn({ role: 'user', text: data.transcribedText, tSec: elapsed });
+        setTurnStatus({ kind: 'ok' });
+      } else {
+        // Whisper returned empty — mic picked up sound, but no words were
+        // recognized (breath, noise, too short, or model didn't hear anything).
+        setTurnStatus({ kind: 'empty' });
+      }
       if (data.shouldSpeak && data.aiText) {
         appendTurn({ role: 'ai', text: data.aiText, tSec: elapsed });
         if (data.audioBase64) playTtsAudio(data.audioBase64);
       }
-    } catch {
-      // Network error / abort. Degrade silently; the session continues.
+    } catch (err) {
+      // Abort during a rapid re-post is expected; anything else is a real
+      // network/runtime failure we want the user to see.
+      if ((err as { name?: string })?.name === 'AbortError') return;
+      const message = err instanceof Error ? err.message : 'Network error';
+      setTurnStatus({ kind: 'error', message });
+      try { posthog.capture('voice_turn_failed', { message }); } catch { /* ignore */ }
     }
   }, [session, appendTurn, playTtsAudio]);
 
@@ -902,17 +931,36 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           )}
         </div>
 
-        {/* Editor pane */}
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-4 py-2" style={{ background: 'var(--ll-bg-elevated)', borderBottom: '1px solid rgba(15,23,42,0.08)' }}>
-            <span className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-semibold" style={SG}>Python</span>
+        {/* Editor pane — chrome styled to match /solve */}
+        <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--ll-bg-code)' }}>
+          <div
+            className="flex items-center justify-between px-4 shrink-0 backdrop-blur-[4px]"
+            style={{
+              height: 42,
+              borderBottom: '1px solid var(--ll-border)',
+              background: 'var(--ll-glass-bg)',
+            }}
+          >
+            <div
+              className="flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium"
+              style={{
+                background: 'var(--ll-accent-soft)',
+                border: '1px solid var(--ll-accent-ring)',
+                color: 'var(--ll-accent-ink)',
+                ...SG,
+              }}
+            >
+              Python
+            </div>
             <div className="flex items-center gap-2">
               {runResults && (
                 <span
                   className="text-[11px] font-semibold"
                   style={{
                     ...MONO,
-                    color: runResults.passed === runResults.total ? '#34d399' : '#fca5a5',
+                    color: runResults.passed === runResults.total
+                      ? 'var(--ll-success-ink)'
+                      : 'var(--ll-danger-ink)',
                   }}
                 >
                   {runResults.passed} / {runResults.total} passed
@@ -921,15 +969,16 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               <button
                 onClick={onRunTests}
                 disabled={runStatus === 'running'}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[12px] font-semibold text-slate-900 disabled:opacity-60"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[12px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   ...SG,
-                  background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-                  border: '1px solid rgba(147,197,253,0.35)',
+                  color: runStatus === 'running' ? 'var(--ll-ink-faint)' : 'var(--ll-ink)',
+                  border: '1px solid var(--ll-border-strong)',
+                  background: 'var(--ll-bg-hover)',
                 }}
               >
-                {runStatus === 'running' ? <Loader2 size={12} className="animate-spin" /> : <Play size={12} />}
-                Run tests
+                {runStatus === 'running' ? <Loader2 size={12} className="animate-spin" /> : <Play size={11} />}
+                {runStatus === 'running' ? 'Running…' : 'Run'}
               </button>
             </div>
           </div>
@@ -957,7 +1006,12 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         {/* Live transcription overlay — bottom-left, always-on during an
             active voice session so the user can see mic → STT is working. */}
         {!isPractice && (
-          <LiveTranscriptionOverlay transcript={transcript} muted={muted} micLevel={micLevel} />
+          <LiveTranscriptionOverlay
+            transcript={transcript}
+            muted={muted}
+            micLevel={micLevel}
+            turnStatus={turnStatus}
+          />
         )}
 
         {/* Transcript drawer */}
@@ -1004,14 +1058,23 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
 // ─── Live transcription overlay ──────────────────────────────────────────────
 
+type TurnStatus =
+  | { kind: 'idle' }
+  | { kind: 'sending' }
+  | { kind: 'ok' }
+  | { kind: 'empty' }
+  | { kind: 'error'; message: string };
+
 function LiveTranscriptionOverlay({
   transcript,
   muted,
   micLevel,
+  turnStatus,
 }: {
   transcript: Turn[];
   muted: boolean;
   micLevel: number;
+  turnStatus: TurnStatus;
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const recent = transcript.slice(-3);
@@ -1023,16 +1086,28 @@ function LiveTranscriptionOverlay({
   const speaking = !muted && micLevel > VAD_THRESHOLD;
   const statusLabel = muted
     ? 'Mic muted'
-    : speaking
-      ? 'Listening…'
-      : transcript.length === 0
-        ? 'Waiting for you to speak…'
-        : 'Idle';
+    : turnStatus.kind === 'sending'
+      ? 'Transcribing…'
+      : turnStatus.kind === 'error'
+        ? 'Pipeline error'
+        : turnStatus.kind === 'empty'
+          ? 'Heard nothing — try again'
+          : speaking
+            ? 'Listening…'
+            : transcript.length === 0
+              ? 'Waiting for you to speak…'
+              : 'Idle';
   const statusColor = muted
     ? '#fca5a5'
-    : speaking
-      ? '#34d399'
-      : 'rgba(148,163,184,0.85)';
+    : turnStatus.kind === 'error'
+      ? '#fca5a5'
+      : turnStatus.kind === 'sending'
+        ? '#60a5fa'
+        : turnStatus.kind === 'empty'
+          ? '#fbbf24'
+          : speaking
+            ? '#34d399'
+            : 'rgba(148,163,184,0.85)';
 
   return (
     <div
@@ -1074,9 +1149,17 @@ function LiveTranscriptionOverlay({
       <div
         ref={scrollRef}
         className="px-3 py-2.5 space-y-2 overflow-y-auto"
-        style={{ maxHeight: 140 }}
+        style={{ maxHeight: 160 }}
       >
-        {recent.length === 0 ? (
+        {turnStatus.kind === 'error' && (
+          <p
+            className="text-[11.5px] font-medium leading-snug"
+            style={{ ...SG, color: '#b91c1c' }}
+          >
+            {turnStatus.message}
+          </p>
+        )}
+        {recent.length === 0 && turnStatus.kind !== 'error' ? (
           <p className="text-[12px] text-slate-400 italic" style={SG}>
             Say something — your words will appear here as you speak.
           </p>
