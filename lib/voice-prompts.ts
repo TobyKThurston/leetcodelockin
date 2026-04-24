@@ -20,7 +20,7 @@ import { INJECTION_GUARD } from './prompt-safety';
 // Voice: `ash` — grounded, peer-engineer tone. Not overly warm, not robotic.
 // Speed: 1.1 — perceptibly snappier than default without sounding rushed.
 export const VOICE_TTS_MODEL = 'gpt-4o-mini-tts';
-export const VOICE_TTS_VOICE = 'ash';
+export const VOICE_TTS_VOICE = 'alloy';
 export const VOICE_TTS_SPEED = 1.1;
 export const VOICE_TTS_INSTRUCTIONS =
   `Speak as a senior software engineer running a mock technical interview. ` +
@@ -33,11 +33,9 @@ export const VOICE_TTS_INSTRUCTIONS =
 // session time while the candidate is listening.
 
 export const INTERVIEWER_INTRO_TEXT =
-  `Hey, I'm your interviewer for this round. Quick note on how this works. ` +
-  `I'm mainly measuring how you think through the problem out loud — the reasoning you share as you work. ` +
-  `This isn't a conversation, so I'll stay quiet while you code. ` +
-  `I'll only chime in if you ask me something directly, or if you go silent long enough that you clearly want a nudge. ` +
-  `Your problem's on the screen. Walk me through what you see when you're ready.`;
+  `Hey, I'm your interviewer. I'm mainly judging how you think out loud — ` +
+  `this isn't a conversation, so I'll stay quiet unless you ask me something ` +
+  `or go silent for a while. Problem's on the screen. Whenever you're ready.`;
 
 // ─── Per-turn policy prompt ──────────────────────────────────────────────────
 // gpt-4o-mini decides, in one call, whether to speak and what to say. We
