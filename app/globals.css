@@ -159,10 +159,10 @@ html, body {
   --ll-accent-ink:   #1d4ed8;   /* text on soft tint */
   --ll-accent-ring:  rgba(59,130,246,0.22);
 
-  /* Borders — soft blue-tinted */
-  --ll-border:         #e6edff;
-  --ll-border-strong:  #dce6ff;
-  --ll-border-subtle:  #f0f4ff;
+  /* Borders — soft blue-tinted, strong enough to read against pale surfaces */
+  --ll-border:         #c5d1e8;
+  --ll-border-strong:  #a9bada;
+  --ll-border-subtle:  #dfe6f4;
 
   /* Semantic — success (emerald) */
   --ll-success:        #059669;
@@ -284,9 +284,9 @@ html, body {
   --ll-bg-tinted:    #dfe7f4;
   --ll-bg-code:      #d8e1f0;
 
-  --ll-border:         #c5d1e5;
-  --ll-border-strong:  #b0bfd9;
-  --ll-border-subtle:  #d7dfed;
+  --ll-border:         #adbbd4;
+  --ll-border-strong:  #93a4c3;
+  --ll-border-subtle:  #c7d2e7;
 
   --ll-nav-bg:   rgba(216,225,240,0.92);
   --ll-glass-bg: rgba(216,225,240,0.82);

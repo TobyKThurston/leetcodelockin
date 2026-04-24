@@ -40,7 +40,7 @@ function VoiceInterviewPageInner() {
   }
 
   return (
-    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="theme-light interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="flex-1 flex items-center justify-center px-6" style={{ paddingTop: 48 }}>
         <div className="max-w-md w-full space-y-6">

@@ -60,7 +60,8 @@ const MonacoEditor = dynamic(
 // ─── Design tokens (matches dashboard palette) ────────────────────────────────
 
 const BG_BASE    = 'var(--ll-bg)';             // app canvas
-const BG_PANEL   = 'var(--ll-bg-panel)';        // problem (left) panel
+const BG_CHROME  = 'var(--ll-bg-subtle)';       // chrome bars (nav, footer, test-case bar) — one step darker
+const BG_PANEL   = 'var(--ll-bg-panel)';        // problem (left) panel — content surface
 const BG_EDITOR  = 'var(--ll-bg-code)';         // editor (right) panel — blue-tinted "workspace"
 const BORDER     = 'var(--ll-border)';
 const BORDER_MED = 'var(--ll-border-strong)';
@@ -170,7 +171,7 @@ function TopNav({ problem, solved }: { problem: ProblemContent; solved: boolean 
       className="flex items-center gap-3 px-5 shrink-0"
       style={{
         height: 48,
-        background: BG_PANEL,
+        background: BG_CHROME,
         borderBottom: `1px solid ${BORDER}`,
       }}
     >
@@ -1107,7 +1108,7 @@ function EditorPanel({
         style={{
           height: 52,
           borderTop: `1px solid ${BORDER}`,
-          background: BG_PANEL,
+          background: BG_CHROME,
         }}
       >
         {/* Verdict */}
@@ -1634,7 +1635,7 @@ function TestCasePanel({
   return (
     <div
       className="shrink-0 flex flex-col"
-      style={{ background: BG_PANEL }}
+      style={{ background: BG_CHROME }}
     >
       {open ? (
         <VerticalResizer onDrag={(dy) => onResize(-dy)} />

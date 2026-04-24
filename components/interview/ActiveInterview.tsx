@@ -37,55 +37,62 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 // ─── Design tokens ─────────────────────────────────────────────────��────────
 
-const BG_BASE   = 'var(--ll-bg)';
-const BG_PANEL  = 'var(--ll-bg-panel)';
-const BG_EDITOR = 'var(--ll-bg-elevated)';
+const BG_BASE    = 'var(--ll-bg)';
+const BG_CHROME  = 'var(--ll-bg-panel)';      // chrome bars (timer, toolbar, footer) — darker
+const BG_PANEL   = 'var(--ll-bg-card)';       // content surfaces (question pane, modal) — lighter
+const BG_EDITOR  = 'var(--ll-bg-elevated)';
 const BORDER    = 'var(--ll-border)';
 const BORDER_MED = 'var(--ll-border-strong)';
 
 const SG: React.CSSProperties   = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
 
+// Matches /solve (ProblemPage) so difficulty badges read identically.
 const DIFF_STYLE: Record<string, React.CSSProperties> = {
-  Easy:   { color: '#047857',  border: '1px solid rgba(52,211,153,0.2)',  background: 'rgba(16,185,129,0.07)' },
-  Medium: { color: '#b45309',  border: '1px solid rgba(251,191,36,0.2)',  background: 'rgba(245,158,11,0.07)' },
-  Hard:   { color: '#b91c1c', border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(239,68,68,0.07)' },
+  Easy:   { color: 'var(--ll-success-ink)', border: '1px solid rgba(52,211,153,0.2)',  background: 'rgba(16,185,129,0.07)' },
+  Medium: { color: 'var(--ll-warning-ink)', border: '1px solid rgba(251,191,36,0.2)',  background: 'rgba(245,158,11,0.07)' },
+  Hard:   { color: 'var(--ll-danger-ink)',  border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(239,68,68,0.07)' },
 };
 
 // ─── Monaco theme ───────────────────────────────────────────────────────────
 
 const defineTheme: BeforeMount = (monaco) => {
-  monaco.editor.defineTheme('lc-dark', {
-    base: 'vs-dark',
+  // Light theme matching the /solve editor — readable syntax colors on the
+  // interview-surfaces card background.
+  monaco.editor.defineTheme('lc-light', {
+    base: 'vs',
     inherit: true,
     rules: [
-      { token: 'keyword',  foreground: '79b8ff' },
-      { token: 'string',   foreground: '9ecbff' },
-      { token: 'comment',  foreground: '6a737d', fontStyle: 'italic' },
-      { token: 'number',   foreground: 'f8cc7a' },
-      { token: 'type',     foreground: 'b392f0' },
-      { token: 'function', foreground: 'b392f0' },
+      { token: 'keyword',  foreground: 'cf222e' },
+      { token: 'string',   foreground: '0a3069' },
+      { token: 'comment',  foreground: '6e7781', fontStyle: 'italic' },
+      { token: 'number',   foreground: '0550ae' },
+      { token: 'type',     foreground: '953800' },
+      { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      // Monaco theme colors must be hex (#RRGGBB or #RRGGBBAA) — rgba()
-      // strings silently fall back to pure red, painting the selection red.
-      // Tinted off-white (not #ffffff) so the editor sits as a clear surface
-      // against the darker chrome in the interview-surfaces light palette.
-      'editor.background':               '#f3f6fc',
-      'editor.foreground':               '#1e293b',
-      'editor.lineHighlightBackground':  '#e7edf8',
-      'editor.selectionBackground':      '#3b82f640',
-      'editorLineNumber.foreground':     '#334155',
-      'editorLineNumber.activeForeground':'#94a3b8',
-      'editorCursor.foreground':         '#60a5fa',
-      'editor.inactiveSelectionBackground': '#ffffff0d',
-      'editorIndentGuide.background1':   '#dfe7f4',
-      'editorWidget.background':         '#f3f6fc',
-      'editorSuggestWidget.background':  '#f3f6fc',
-      'editorSuggestWidget.border':      '#c5d1e5',
-      'scrollbarSlider.background':      '#ffffff08',
-      'scrollbarSlider.hoverBackground': '#ffffff0f',
-      'scrollbarSlider.activeBackground':'#ffffff14',
+      'editor.background':                  '#f3f6fc',
+      'editor.foreground':                  '#0f172a',
+      'editor.lineHighlightBackground':     '#e7edf8',
+      'editor.lineHighlightBorder':         '#00000000',
+      'editor.selectionBackground':         '#3b82f640',
+      'editor.inactiveSelectionBackground': '#94a3b81a',
+      'editorLineNumber.foreground':        '#94a3b8',
+      'editorLineNumber.activeForeground':  '#2563eb',
+      'editorCursor.foreground':            '#2563eb',
+      'editorIndentGuide.background1':      '#dfe7f4',
+      'editorIndentGuide.activeBackground1':'#94a3b8',
+      'editorWidget.background':            '#ffffff',
+      'editorWidget.border':                '#bfdbfe',
+      'editorSuggestWidget.background':     '#ffffff',
+      'editorSuggestWidget.border':         '#bfdbfe',
+      'editorSuggestWidget.foreground':     '#0f172a',
+      'editorSuggestWidget.selectedBackground': '#eff6ff',
+      'scrollbarSlider.background':         '#2563eb14',
+      'scrollbarSlider.hoverBackground':    '#2563eb26',
+      'scrollbarSlider.activeBackground':   '#2563eb40',
+      'editorError.foreground':             '#dc2626',
+      'editorWarning.foreground':           '#d97706',
     },
   });
 };
@@ -124,13 +131,31 @@ const EDITOR_OPTIONS = {
 // ─── Markdown components ────────────────────────────────────────────────────
 
 const MD_COMPONENTS = {
-  p:      (props: React.HTMLAttributes<HTMLParagraphElement>) => <p {...props} className="text-[13.5px] leading-[1.75] text-[var(--ll-ink)] mb-3 last:mb-0" />,
-  strong: (props: React.HTMLAttributes<HTMLElement>) => <strong {...props} className="font-semibold text-slate-900" />,
-  em:     (props: React.HTMLAttributes<HTMLElement>) => <em {...props} className="not-italic text-slate-800" />,
-  code:   (props: React.HTMLAttributes<HTMLElement>) => <code {...props} className="px-1.5 py-0.5 rounded text-[12.5px]" style={{ background: 'rgba(15,23,42,0.09)', color: '#1e293b', ...MONO }} />,
-  ul:     (props: React.HTMLAttributes<HTMLUListElement>) => <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-[var(--ll-ink)]" />,
-  ol:     (props: React.OlHTMLAttributes<HTMLOListElement>) => <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-[var(--ll-ink)]" />,
-  li:     (props: React.LiHTMLAttributes<HTMLLIElement>) => <li {...props} className="text-[13.5px] leading-[1.6] text-[var(--ll-ink)]" />,
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p {...props} className="text-[13.5px] leading-[1.75] mb-3 last:mb-0" style={{ color: 'var(--ll-ink)' }} />
+  ),
+  strong: (props: React.HTMLAttributes<HTMLElement>) => (
+    <strong {...props} className="font-semibold" style={{ color: 'var(--ll-ink-strong)' }} />
+  ),
+  em: (props: React.HTMLAttributes<HTMLElement>) => (
+    <em {...props} className="not-italic" style={{ color: 'var(--ll-ink)' }} />
+  ),
+  code: (props: React.HTMLAttributes<HTMLElement>) => (
+    <code
+      {...props}
+      className="px-1.5 py-0.5 rounded text-[12.5px]"
+      style={{ background: 'var(--ll-bg-subtle)', color: 'var(--ll-ink-strong)', ...MONO }}
+    />
+  ),
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65]" style={{ color: 'var(--ll-ink)' }} />
+  ),
+  ol: (props: React.OlHTMLAttributes<HTMLOListElement>) => (
+    <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65]" style={{ color: 'var(--ll-ink)' }} />
+  ),
+  li: (props: React.LiHTMLAttributes<HTMLLIElement>) => (
+    <li {...props} className="text-[13.5px] leading-[1.6]" style={{ color: 'var(--ll-ink)' }} />
+  ),
 };
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -422,22 +447,24 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
   const passCount = results.filter(r => r.passed).length;
 
   return (
-    <div className="interview-surfaces flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
+    <div className="theme-light interview-surfaces flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
       {/* Timer bar */}
       <div
         className="flex items-center justify-between px-5 shrink-0"
-        style={{ height: 48, background: BG_PANEL, borderBottom: `1px solid ${BORDER}` }}
+        style={{ height: 48, background: BG_CHROME, borderBottom: `1px solid ${BORDER}` }}
       >
         {/* Left: Home + Problem tabs */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowExitConfirm(true)}
-            className="flex items-center justify-center w-8 h-8 rounded-lg transition-all hover:brightness-125"
+            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
             style={{
-              background: 'rgba(15,23,42,0.05)',
+              background: 'var(--ll-bg-hover)',
               border: `1px solid ${BORDER_MED}`,
-              color: '#64748b',
+              color: 'var(--ll-ink-muted)',
             }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-tinted)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
             title="Return home"
             aria-label="Return home"
           >
@@ -450,18 +477,21 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               <button
                 key={i}
                 onClick={() => switchProblem(i as 0 | 1)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors"
                 style={{
-                  background: active ? 'rgba(59,130,246,0.08)' : 'transparent',
-                  border: active ? '1px solid rgba(59,130,246,0.2)' : '1px solid transparent',
-                  color: active ? '#1e293b' : '#cbd5e1',
+                  background: active ? 'var(--ll-bg-hover)' : 'transparent',
+                  border: active ? `1px solid ${BORDER_MED}` : '1px solid transparent',
+                  color: active ? 'var(--ll-ink-strong)' : 'var(--ll-ink-muted)',
                   ...SG,
                 }}
               >
-                <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style={{
-                  background: active ? 'rgba(59,130,246,0.15)' : 'rgba(15,23,42,0.05)',
-                  color: active ? '#93c5fd' : '#cbd5e1',
-                }}>
+                <span
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold"
+                  style={{
+                    background: active ? 'var(--ll-accent-soft)' : 'var(--ll-bg-subtle)',
+                    color: active ? 'var(--ll-accent-ink)' : 'var(--ll-ink-subtle)',
+                  }}
+                >
                   {i + 1}
                 </span>
                 <span className="hidden sm:inline">{p.title}</span>
@@ -479,19 +509,17 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         {/* Timer */}
         <InterviewTimer deadlineMs={deadlineMs} />
 
-        {/* Submit button */}
+        {/* Submit button — matches /solve footer Submit */}
         <button
           onClick={handleSubmit}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-all hover:brightness-110 active:brightness-95"
+          className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-colors bg-blue-500 hover:bg-blue-400"
           style={{
-            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
-            border: '1px solid rgba(147,197,253,0.55)',
-            boxShadow:
-              '0 1px 0 rgba(15,23,42,0.2) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+            border: '1px solid rgba(96,165,250,0.6)',
+            boxShadow: '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
             ...SG,
           }}
         >
-          <Send size={12} />
+          <Send size={11} />
           Submit Interview
         </button>
       </div>
@@ -504,17 +532,30 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             className={fullscreen === 'left' ? 'flex flex-col flex-1 min-w-0' : 'flex flex-col shrink-0'}
             style={fullscreen === 'left' ? { background: BG_PANEL } : { width: leftWidth, minWidth: 280, background: BG_PANEL }}
           >
-            {/* Tab bar — Question only (no hints/solution/tutor) */}
+            {/* Tab bar — Question only (no hints/solution/tutor). Styled as an
+                active tab pill to match /solve's Question/Solution/Tutor bar. */}
             <div
-              className="flex items-center justify-between shrink-0 px-4"
+              className="flex items-center justify-between shrink-0"
               style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
             >
-              <span className="text-[12.5px] font-medium" style={{ color: '#1e293b', ...SG }}>
-                Question
-              </span>
+              <div className="flex items-center h-full">
+                <div
+                  className="flex items-center gap-1.5 h-full px-4 text-[12.5px] font-medium"
+                  style={{
+                    color: 'var(--ll-ink-strong)',
+                    background: 'var(--ll-bg-hover)',
+                    ...SG,
+                  }}
+                >
+                  Question
+                </div>
+              </div>
               <button
                 onClick={() => setFullscreen(fs => fs === 'left' ? null : 'left')}
-                className="p-1.5 rounded hover:bg-slate-100 text-slate-600 hover:text-slate-700 transition-colors"
+                className="p-1.5 mr-2 rounded transition-colors"
+                style={{ color: 'var(--ll-ink-muted)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink)'; (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink-muted)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
               >
                 {fullscreen === 'left' ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
               </button>
@@ -545,22 +586,28 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               <div className="space-y-4">
                 {problem.examples.map((ex, i) => (
                   <div key={i}>
-                    <p className="text-[12px] font-semibold text-[var(--ll-ink-subtle)] mb-2 uppercase tracking-[0.08em]" style={SG}>
+                    <p className="text-[12px] font-semibold text-slate-600 mb-2 uppercase tracking-[0.08em]" style={SG}>
                       Example {i + 1}
                     </p>
                     <div
                       className="rounded-lg px-4 py-3 space-y-1.5"
-                      style={{ background: 'rgba(15,23,42,0.04)', border: `1px solid ${BORDER}` }}
+                      style={{
+                        background: 'var(--ll-bg-subtle)',
+                        border: `1px solid ${BORDER}`,
+                        backdropFilter: 'blur(4px)',
+                      }}
                     >
                       <p className="text-[12.5px]" style={MONO}>
-                        <span style={{ color: '#1d4ed8' }}>Input: </span>
-                        <span style={{ color: '#1e293b' }}>{ex.input}</span>
+                        <span style={{ color: 'var(--ll-accent-ink)' }}>Input: </span>
+                        <span style={{ color: 'var(--ll-ink)' }}>{ex.input}</span>
                       </p>
                       <p className="text-[12.5px]" style={MONO}>
-                        <span style={{ color: '#1d4ed8' }}>Output: </span>
-                        <span style={{ color: '#1e293b' }}>{ex.output}</span>
+                        <span style={{ color: 'var(--ll-accent-ink)' }}>Output: </span>
+                        <span style={{ color: 'var(--ll-ink)' }}>{ex.output}</span>
                       </p>
-                      {ex.explanation && <p className="text-[11.5px] text-slate-600 pt-0.5">{ex.explanation}</p>}
+                      {ex.explanation && (
+                        <p className="text-[11.5px] text-slate-600 pt-0.5">{ex.explanation}</p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -590,27 +637,44 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             {/* Toolbar */}
             <div
               className="flex items-center justify-between px-4 shrink-0"
-              style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
+              style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_CHROME }}
             >
               <div className="flex items-center gap-2">
-                <span className="text-[12px] font-medium text-[var(--ll-ink-subtle)]" style={SG}>Python</span>
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px] font-medium"
+                  style={{
+                    background: 'var(--ll-accent-soft)',
+                    border: '1px solid var(--ll-accent-ring)',
+                    color: 'var(--ll-accent-ink)',
+                    ...SG,
+                  }}
+                >
+                  Python
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="hidden sm:flex items-center gap-1 text-[11px] text-slate-700 select-none">
-                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(15,23,42,0.05)', border: `1px solid ${BORDER}`, ...MONO }}>⌘</kbd>
-                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'rgba(15,23,42,0.05)', border: `1px solid ${BORDER}`, ...MONO }}>↵</kbd>
+                <span className="hidden sm:flex items-center gap-1 text-[11px] select-none" style={{ color: 'var(--ll-ink-muted)' }}>
+                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'var(--ll-bg-subtle)', border: `1px solid ${BORDER}`, color: 'var(--ll-ink)', ...MONO }}>⌘</kbd>
+                  <kbd className="px-1 py-0.5 rounded text-[10px]" style={{ background: 'var(--ll-bg-subtle)', border: `1px solid ${BORDER}`, color: 'var(--ll-ink)', ...MONO }}>↵</kbd>
                   <span className="ml-0.5" style={SG}>Run</span>
                 </span>
                 <button
                   onClick={() => setCode(problem.starterCode.python)}
-                  className="p-1.5 rounded hover:bg-slate-100 text-slate-700 hover:text-slate-600 transition-colors"
+                  className="p-1.5 rounded transition-colors"
+                  style={{ color: 'var(--ll-ink-muted)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink-muted)'; }}
                   title="Reset to starter code"
                 >
                   <RotateCcw size={13} />
                 </button>
                 <button
                   onClick={() => setFullscreen(fs => fs === 'editor' ? null : 'editor')}
-                  className="p-1.5 rounded hover:bg-slate-100 text-slate-700 hover:text-slate-600 transition-colors"
+                  className="p-1.5 rounded transition-colors"
+                  style={{ color: 'var(--ll-ink-muted)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink-muted)'; }}
+                  title={fullscreen === 'editor' ? 'Exit fullscreen' : 'Fullscreen editor'}
                 >
                   {fullscreen === 'editor' ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
                 </button>
@@ -623,7 +687,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 height="100%"
                 language="python"
                 value={code}
-                theme="lc-dark"
+                theme="lc-light"
                 options={EDITOR_OPTIONS}
                 beforeMount={defineTheme}
                 onMount={handleMount}
@@ -632,7 +696,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             </div>
 
             {/* Test panel */}
-            <div className="shrink-0 flex flex-col" style={{ background: BG_PANEL }}>
+            <div className="shrink-0 flex flex-col" style={{ background: BG_CHROME }}>
               {panelOpen ? (
                 <VerticalResizer onDrag={(dy) => onTestResize(-dy)} />
               ) : (
@@ -644,7 +708,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 <button
                   onClick={() => setPanelOpen(o => !o)}
                   className="flex items-center gap-2 text-[12px] font-medium transition-colors"
-                  style={{ color: panelOpen ? '#475569' : '#cbd5e1', ...SG }}
+                  style={{ color: panelOpen ? 'var(--ll-ink)' : 'var(--ll-ink-muted)', ...SG }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = panelOpen ? 'var(--ll-ink)' : 'var(--ll-ink-muted)'; }}
                 >
                   <ChevronUp size={12} className={panelOpen ? '' : 'rotate-180'} style={{ transition: 'transform 0.18s' }} />
                   Test Cases
@@ -680,21 +746,21 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                           className="flex items-center gap-1.5 shrink-0 select-none transition-colors"
                           style={{
                             height: 26, paddingLeft: 9, paddingRight: t.custom ? 4 : 9, borderRadius: 6, cursor: 'pointer',
-                            background: isActive ? 'rgba(59,130,246,0.08)' : 'transparent',
-                            border: isActive ? '1px solid rgba(59,130,246,0.18)' : '1px solid transparent',
+                            background: isActive ? 'var(--ll-bg-hover)' : 'transparent',
+                            border: isActive ? `1px solid ${BORDER_MED}` : '1px solid transparent',
                           }}
                         >
                           <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: dot }} />
-                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#1e293b' : '#cbd5e1' }}>{t.label}</span>
+                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? 'var(--ll-ink-strong)' : 'var(--ll-ink-muted)' }}>{t.label}</span>
                           {t.custom && (
-                            <button className="ml-0.5 p-0.5 rounded hover:bg-slate-100" style={{ color: '#cbd5e1' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
+                            <button className="ml-0.5 p-0.5 rounded hover:bg-slate-100" style={{ color: 'var(--ll-ink-subtle)' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
                               <X size={9} />
                             </button>
                           )}
                         </div>
                       );
                     })}
-                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-slate-100 ml-1" style={{ color: '#cbd5e1' }}>
+                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-slate-100 ml-1" style={{ color: 'var(--ll-ink-subtle)' }}>
                       <Plus size={11} />
                     </button>
                   </div>
@@ -703,25 +769,25 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                   {activeTest && (
                     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5" style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Input</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--ll-ink-subtle)' }}>Input</p>
                         <textarea
                           value={activeTest.inputJson}
                           onChange={e => updateTestInput(activeTest.id, e.target.value)}
                           spellCheck={false}
                           rows={2}
                           className="w-full resize-none rounded-md px-2.5 py-1.5 text-[12px] outline-none"
-                          style={{ background: 'rgba(15,23,42,0.04)', border: `1px solid ${BORDER}`, color: '#1e293b', ...MONO }}
+                          style={{ background: 'var(--ll-bg-subtle)', border: `1px solid ${BORDER}`, color: 'var(--ll-ink)', ...MONO }}
                         />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Expected</p>
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]" style={{ background: 'rgba(15,23,42,0.05)', color: '#1d4ed8', ...MONO }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--ll-ink-subtle)' }}>Expected</p>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]" style={{ background: 'var(--ll-bg-subtle)', color: 'var(--ll-accent-ink)', ...MONO }}>
                           {activeTest.expectedJson || '—'}
                         </span>
                       </div>
                       {activeResult && (
                         <div>
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#cbd5e1' }}>Output</p>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--ll-ink-subtle)' }}>Output</p>
                           {activeResult.error ? (
                             <pre className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: '#b91c1c', ...MONO }}>
                               {activeResult.error}
@@ -747,16 +813,22 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             {/* Footer: Run only (no Submit — that's in the top bar) */}
             <div
               className="flex items-center justify-end px-5 shrink-0"
-              style={{ height: 48, borderTop: `1px solid ${BORDER}`, background: BG_PANEL }}
+              style={{ height: 48, borderTop: `1px solid ${BORDER}`, background: BG_CHROME }}
             >
               <button
                 onClick={execTests}
                 disabled={running}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ color: running ? '#cbd5e1' : '#475569', border: `1px solid ${BORDER_MED}`, background: 'rgba(15,23,42,0.05)' }}
+                style={{
+                  color: running ? 'var(--ll-ink-faint)' : 'var(--ll-ink)',
+                  border: `1px solid ${BORDER_MED}`,
+                  background: 'var(--ll-bg-hover)',
+                }}
+                onMouseEnter={e => { if (!running) (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-tinted)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
               >
                 <Play size={11} />
-                {running ? 'Running…' : 'Run Tests'}
+                {running ? 'Running…' : 'Run'}
               </button>
             </div>
           </div>

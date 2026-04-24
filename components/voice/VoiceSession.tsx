@@ -14,25 +14,9 @@ import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import AppNav from '@/components/AppNav';
-import ThemeToggle from '@/components/ThemeToggle';
 import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
 import { getVoiceQuota } from '@/app/interview/actions';
 import type { VoiceQuotaResult } from '@/lib/voice-quota';
-
-// Observe the body's `theme-dark` / `theme-light` class so Monaco (whose
-// colors must be literal hex) re-renders when the user flips the theme.
-function useAppTheme(): 'light' | 'dark' {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  useEffect(() => {
-    const read = () =>
-      setTheme(document.body.classList.contains('theme-dark') ? 'dark' : 'light');
-    read();
-    const obs = new MutationObserver(read);
-    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    return () => obs.disconnect();
-  }, []);
-  return theme;
-}
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -149,9 +133,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#eef3ff',
+      'editor.background':                  '#f3f6fc',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#e6edff',
+      'editor.lineHighlightBackground':     '#e7edf8',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',
@@ -256,8 +240,6 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     | { kind: 'empty' }  // route returned 200 but transcribedText was ''
     | { kind: 'error'; message: string }
   >({ kind: 'idle' });
-
-  const appTheme = useAppTheme();
 
   // Load the voice quota once on mount so the intro screen can show it.
   useEffect(() => {
@@ -1044,7 +1026,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   if (phase === 'ending') {
     return (
-      <div className="interview-surfaces min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
+      <div className="theme-light interview-surfaces min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
         <div className="flex items-center gap-3 text-slate-700 text-[14px]" style={SG}>
           <Loader2 size={18} className="animate-spin text-blue-400" />
           Grading your interview…
@@ -1074,7 +1056,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const isPractice = phase === 'practice';
 
   return (
-    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="theme-light interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       {/* Top bar */}
       <div
         className="flex items-center justify-between px-6 py-3"
@@ -1123,7 +1105,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-semibold"
               style={{
                 ...SG,
-                color: muted ? '#fca5a5' : '#cbd5e1',
+                color: muted ? '#b91c1c' : 'var(--ll-ink-muted)',
                 background: muted ? 'rgba(239,68,68,0.08)' : 'rgba(15,23,42,0.05)',
                 border: `1px solid ${muted ? 'rgba(239,68,68,0.25)' : 'rgba(15,23,42,0.10)'}`,
               }}
@@ -1148,7 +1130,6 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               />
             </div>
           )}
-          <ThemeToggle />
           <button
             onClick={() => setShowTranscript(s => !s)}
             className="p-1.5 rounded-md text-slate-600 hover:text-slate-800"
@@ -1179,7 +1160,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         {/* Problem pane */}
         <div
           className="w-[420px] shrink-0 overflow-y-auto p-6"
-          style={{ background: 'var(--ll-bg-panel)', borderRight: '1px solid rgba(15,23,42,0.08)' }}
+          style={{ background: 'var(--ll-bg-card)', borderRight: '1px solid rgba(15,23,42,0.08)' }}
         >
           <div className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-semibold mb-2" style={SG}>
             {session.problem.difficulty} · {session.problem.pattern}
@@ -1298,7 +1279,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         </div>
 
         {/* Editor pane — chrome styled to match /solve */}
-        <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--ll-bg-code)' }}>
+        <div className="flex-1 flex flex-col min-w-0" style={{ background: 'var(--ll-bg-card)' }}>
           <div
             className="flex items-center justify-between px-4 shrink-0 backdrop-blur-[4px]"
             style={{
@@ -1350,7 +1331,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               value={code}
               beforeMount={defineTheme}
               onChange={v => setCode(v ?? '')}
-              theme={appTheme === 'dark' ? 'lc-dark' : 'lc-light'}
+              theme="lc-light"
               options={{
                 fontSize: 14,
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
@@ -1499,7 +1480,7 @@ function TranscriptDrawer({
     <div
       className="w-[340px] shrink-0 flex flex-col"
       style={{
-        background: 'var(--ll-bg-panel)',
+        background: 'var(--ll-bg-card)',
         borderLeft: '1px solid var(--ll-border)',
       }}
       aria-live="polite"
@@ -1622,7 +1603,7 @@ function IntroPhase({
         : 'rgba(148,163,184,0.6)';
 
   return (
-    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="theme-light interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="flex-1 flex items-center justify-center p-8" style={{ paddingTop: 48 }}>
         <div className="max-w-md w-full space-y-6">
@@ -1770,7 +1751,7 @@ function ScorecardPhase({
   onContinueCoding: () => void;
 }) {
   return (
-    <div className="interview-surfaces min-h-screen" style={{ background: 'var(--ll-bg)' }}>
+    <div className="theme-light interview-surfaces min-h-screen" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="max-w-3xl mx-auto space-y-6 py-10 px-6" style={{ paddingTop: 76 }}>
         {isFreeTrial && (
