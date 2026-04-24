@@ -39,14 +39,15 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false 
 // don't record on room tone), but a lower one marks the utterance as still
 // ongoing (so brief pauses inside a sentence don't flush early). Background
 // noise typically sits around ~0.008 RMS on a decent laptop mic.
-const VAD_START_THRESHOLD  = 0.020;
-const VAD_SILENCE_THRESHOLD = 0.010;
-const SILENCE_FLUSH_MS     = 900;   // quiet-below-silence-threshold → flush
-const MIN_UTTERANCE_MS     = 400;   // drop blips shorter than this
-const MAX_UTTERANCE_MS     = 12_000; // force-flush long monologues so Whisper
-                                    // always sees regular updates
-const BARGE_IN_HOLD_MS     = 250;   // sustained speech to cut off AI TTS
-const TICK_MS              = 50;
+const VAD_START_THRESHOLD   = 0.020;
+const VAD_SILENCE_THRESHOLD = 0.005;  // low enough to accumulate silence even
+                                      // on mics with non-trivial room tone
+const SILENCE_FLUSH_MS      = 900;    // quiet-below-silence-threshold → flush
+const MIN_UTTERANCE_MS      = 400;    // drop blips shorter than this
+const MAX_UTTERANCE_MS      = 5_000;  // hard cap so recordings always post,
+                                      // even under continuous background noise
+const BARGE_IN_HOLD_MS      = 250;    // sustained speech to cut off AI TTS
+const TICK_MS               = 50;
 
 // Back-compat for the live-transcription overlay's green-dot "Listening…"
 // indicator — we want the dot to light up the moment speech starts, so the
@@ -546,6 +547,14 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         silenceAccumRef.current = 0;
       };
 
+      // Hard cap: no matter the VAD state, a recording older than
+      // MAX_UTTERANCE_MS gets flushed. Protects against the mic getting
+      // stuck above the silence threshold (continuous room tone, fan, etc.)
+      // and against any VAD logic edge case trapping the recorder.
+      if (isRecordingRef.current && Date.now() - speechStartAtRef.current >= MAX_UTTERANCE_MS) {
+        flushRecording();
+      }
+
       // Start a new recording on first speech.
       if (talking) {
         if (!isRecordingRef.current && streamRef.current) {
@@ -587,11 +596,6 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           }
         } else {
           silenceAccumRef.current = 0;
-        }
-        // Cap recording length so a continuous monologue (or a mic stuck
-        // above the silence threshold from room noise) still posts.
-        if (isRecordingRef.current && Date.now() - speechStartAtRef.current >= MAX_UTTERANCE_MS) {
-          flushRecording();
         }
       } else if (isRecordingRef.current) {
         silenceAccumRef.current += TICK_MS;

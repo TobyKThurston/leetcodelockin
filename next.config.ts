@@ -16,6 +16,12 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
+      // The voice mock interview plays TTS audio by decoding base64 into a
+      // Blob and handing the resulting blob: URL to an <audio> element. CSP
+      // falls back to default-src for media if media-src isn't set, which
+      // blocks blob: playback outright — breaking both the intro voice and
+      // the AI interviewer's replies.
+      "media-src 'self' blob:",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://api.stripe.com https://cdn.jsdelivr.net https://va.vercel-scripts.com https://vitals.vercel-insights.com",
       "frame-src https://js.stripe.com https://checkout.stripe.com https://accounts.google.com",
       "object-src 'none'",
