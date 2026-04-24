@@ -51,6 +51,41 @@ const MAX_UTTERANCE_MS      = 5_000;  // hard cap so recordings always post,
                                       // even under continuous background noise
 const BARGE_IN_HOLD_MS      = 250;    // sustained speech to cut off AI TTS
 const TICK_MS               = 50;
+const SILENCE_TURN_FLUSH_MS = 2500;   // if the user stops speaking for this
+                                      // long after a finalized speech segment,
+                                      // treat it as "end of thought" and send
+                                      // the accumulated text to the LLM.
+
+// ─── Web Speech API types (not in the default TS DOM lib) ────────────────────
+interface SpeechRecognitionAlt { transcript: string }
+interface SpeechRecognitionResultLike {
+  isFinal: boolean;
+  0: SpeechRecognitionAlt;
+}
+interface SpeechRecognitionEventLike extends Event {
+  resultIndex: number;
+  results: ArrayLike<SpeechRecognitionResultLike>;
+}
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((e: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((e: Event & { error: string }) => void) | null;
+  onend: (() => void) | null;
+}
+type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
+function getSpeechRecognitionCtor(): SpeechRecognitionCtor | null {
+  if (typeof window === 'undefined') return null;
+  const w = window as unknown as {
+    SpeechRecognition?: SpeechRecognitionCtor;
+    webkitSpeechRecognition?: SpeechRecognitionCtor;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
 
 // Back-compat for the live-transcription overlay's green-dot "Listening…"
 // indicator — we want the dot to light up the moment speech starts, so the
@@ -205,6 +240,10 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   // Surface the recorder + turn pipeline in the live-transcription overlay
   // so the user can see whether the mic → Whisper → TTS loop is healthy.
   const [isRecording, setIsRecording] = useState(false);
+  // Live transcription (Web Speech API) — these populate word-by-word as
+  // the user speaks so they see the transcript build in real time.
+  const [liveInterim, setLiveInterim] = useState('');
+  const [liveFinal, setLiveFinal] = useState('');
   const [turnStatus, setTurnStatus] = useState<
     | { kind: 'idle' }
     | { kind: 'sending' }
@@ -234,6 +273,12 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const timerRef = useRef<number | null>(null);
   const turnAbortRef = useRef<AbortController | null>(null);
   const sessionStartMsRef = useRef(0);
+  // Web Speech API refs for live transcription.
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const recognitionActiveRef = useRef(false);
+  const recognitionShouldRunRef = useRef(false);
+  const accumulatedFinalRef = useRef('');
+  const lastSpeechAtRef = useRef(0);
 
   // ─── Cleanup ───────────────────────────────────────────────────────────────
 
@@ -244,6 +289,13 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     }
     recorderRef.current = null;
     isRecordingRef.current = false;
+    // Tear down live transcription.
+    recognitionShouldRunRef.current = false;
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch { /* ignore */ }
+      recognitionRef.current = null;
+      recognitionActiveRef.current = false;
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
@@ -410,6 +462,73 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   // ─── TTS playback with barge-in hook ───────────────────────────────────────
 
+  // ─── Live transcription via Web Speech API ──────────────────────────────
+  const safeStartRecognition = useCallback(() => {
+    const rec = recognitionRef.current;
+    if (!rec || recognitionActiveRef.current) return;
+    try {
+      rec.start();
+      recognitionActiveRef.current = true;
+    } catch {
+      // `.start()` throws if it was already started; the onend handler will
+      // flip the flag and retry on the next opportunity.
+    }
+  }, []);
+
+  const safeStopRecognition = useCallback(() => {
+    const rec = recognitionRef.current;
+    if (!rec || !recognitionActiveRef.current) return;
+    try { rec.stop(); } catch { /* ignore */ }
+    recognitionActiveRef.current = false;
+  }, []);
+
+  const initRecognition = useCallback(() => {
+    if (recognitionRef.current) return true;
+    const Ctor = getSpeechRecognitionCtor();
+    if (!Ctor) return false;
+    const rec = new Ctor();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+    rec.onresult = (e) => {
+      if (mutedRef.current) return;
+      let interim = '';
+      let appended = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        const t = r[0]?.transcript ?? '';
+        if (r.isFinal) appended += (appended ? ' ' : '') + t.trim();
+        else interim += (interim ? ' ' : '') + t.trim();
+      }
+      if (appended) {
+        accumulatedFinalRef.current = (
+          accumulatedFinalRef.current ? accumulatedFinalRef.current + ' ' : ''
+        ) + appended;
+        setLiveFinal(accumulatedFinalRef.current);
+      }
+      setLiveInterim(interim);
+      if (appended || interim) lastSpeechAtRef.current = Date.now();
+    };
+    rec.onerror = (e) => {
+      // 'no-speech' fires all the time in normal use; others are worth logging.
+      if (e.error && e.error !== 'no-speech' && e.error !== 'aborted') {
+        try { posthog.capture('voice_recognition_error', { error: e.error }); } catch { /* ignore */ }
+      }
+    };
+    rec.onend = () => {
+      recognitionActiveRef.current = false;
+      // Continuous mode stops itself periodically (every ~60s on Chrome, or
+      // on silence). Restart unless we've been explicitly paused (e.g. for
+      // TTS playback) or the session has ended.
+      if (recognitionShouldRunRef.current) {
+        // Tiny delay to avoid tight loops if start() is failing.
+        setTimeout(safeStartRecognition, 100);
+      }
+    };
+    recognitionRef.current = rec;
+    return true;
+  }, [safeStartRecognition]);
+
   const playTtsAudio = useCallback((b64: string, onEnd?: () => void) => {
     stopTts();
     const blob = base64ToBlob(b64, 'audio/mpeg');
@@ -417,22 +536,40 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     const audio = new Audio(url);
     ttsAudioRef.current = audio;
     ttsBargeMsRef.current = 0;
+    // Pause live transcription while the interviewer is speaking so we don't
+    // accidentally transcribe the TTS output as user speech. The onend /
+    // onerror handlers resume it.
+    const wasRunning = recognitionShouldRunRef.current;
+    if (wasRunning) {
+      recognitionShouldRunRef.current = false;
+      safeStopRecognition();
+    }
+    const resumeRecognition = () => {
+      if (wasRunning) {
+        recognitionShouldRunRef.current = true;
+        // Small delay so the TTS audio tail doesn't sneak into the mic.
+        setTimeout(safeStartRecognition, 150);
+      }
+    };
     audio.onended = () => {
       URL.revokeObjectURL(url);
       if (ttsAudioRef.current === audio) ttsAudioRef.current = null;
+      resumeRecognition();
       onEnd?.();
     };
     audio.onerror = () => {
       URL.revokeObjectURL(url);
       if (ttsAudioRef.current === audio) ttsAudioRef.current = null;
+      resumeRecognition();
       onEnd?.();
     };
     audio.play().catch(() => {
       URL.revokeObjectURL(url);
       if (ttsAudioRef.current === audio) ttsAudioRef.current = null;
+      resumeRecognition();
       onEnd?.();
     });
-  }, [stopTts]);
+  }, [stopTts, safeStartRecognition, safeStopRecognition]);
 
   // ─── Turn loop: VAD + chunked MediaRecorder + POST ─────────────────────────
 
@@ -445,6 +582,59 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   useEffect(() => { runResultsRef.current = runResults; }, [runResults]);
   useEffect(() => { mutedRef.current = muted; }, [muted]);
   useEffect(() => { transcriptRef.current = transcript; }, [transcript]);
+
+  // ─── Text turn (Web Speech API path) ────────────────────────────────────
+  const postTurnText = useCallback(async (userText: string) => {
+    if (!session) return;
+    const text = userText.trim();
+    if (!text) return;
+    const elapsed = Math.floor((Date.now() - sessionStartMsRef.current) / 1000);
+    // Commit the user turn immediately — it's already been transcribed
+    // locally, the server call only needs to produce the interviewer's reply.
+    appendTurn({ role: 'user', text, tSec: elapsed });
+    setTurnStatus({ kind: 'sending' });
+
+    turnAbortRef.current?.abort();
+    const ctrl = new AbortController();
+    turnAbortRef.current = ctrl;
+    try {
+      const res = await fetch('/api/voice/turn-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          sessionId: session.sessionId,
+          userText: text,
+          codeSnapshot: codeRef.current.slice(0, 10_000),
+          transcriptHistory: transcriptRef.current.slice(-20),
+          elapsedSec: elapsed,
+          testResults: runResultsRef.current,
+          problemTitle: session.problem.title,
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        const message = errBody.error ?? `Turn failed (${res.status})`;
+        setTurnStatus({ kind: 'error', message });
+        try { posthog.capture('voice_turn_failed', { status: res.status, message, via: 'text' }); } catch { /* ignore */ }
+        return;
+      }
+      const data = await res.json() as {
+        shouldSpeak: boolean;
+        aiText: string | null;
+        audioBase64: string | null;
+      };
+      setTurnStatus({ kind: 'ok' });
+      if (data.shouldSpeak && data.aiText) {
+        appendTurn({ role: 'ai', text: data.aiText, tSec: elapsed });
+        if (data.audioBase64) playTtsAudio(data.audioBase64);
+      }
+    } catch (err) {
+      if ((err as { name?: string })?.name === 'AbortError') return;
+      const message = err instanceof Error ? err.message : 'Network error';
+      setTurnStatus({ kind: 'error', message });
+    }
+  }, [session, appendTurn, playTtsAudio]);
 
   const postTurn = useCallback(async (audioBlob: Blob) => {
     if (!session) return;
@@ -504,6 +694,15 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     if (!streamRef.current || !analyserRef.current) return;
     turnLoopRunningRef.current = true;
 
+    // Start live transcription if supported. Everything below (VAD, recorder
+    // fallback) still runs, but when Web Speech API is available we don't
+    // need to send audio to Whisper at all — the recorder fallback only
+    // activates when recognition isn't available.
+    if (initRecognition()) {
+      recognitionShouldRunRef.current = true;
+      safeStartRecognition();
+    }
+
     // Recreate the tick interval — the intro-phase one was volume-only.
     if (tickTimerRef.current) { clearInterval(tickTimerRef.current); tickTimerRef.current = null; }
 
@@ -547,6 +746,10 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           ttsBargeMsRef.current = 0;
         }
       }
+
+      // If Web Speech API is active, the live transcription + silence-watch
+      // useEffect below drives turn flushes. Skip the MediaRecorder fallback.
+      if (recognitionRef.current) return;
 
       const flushRecording = () => {
         try { recorderRef.current?.stop(); } catch { /* ignore */ }
@@ -615,7 +818,27 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         }
       }
     }, TICK_MS);
-  }, [postTurn, stopTts]);
+  }, [postTurn, stopTts, initRecognition, safeStartRecognition]);
+
+  // Silence-after-final watcher. When the Web Speech API has produced
+  // finalized text and the user has been silent for SILENCE_TURN_FLUSH_MS,
+  // treat it as "end of thought" and send the accumulated text to the LLM.
+  useEffect(() => {
+    if (phase !== 'active') return;
+    const timer = setInterval(() => {
+      const acc = accumulatedFinalRef.current.trim();
+      if (!acc) return;
+      if (Date.now() - lastSpeechAtRef.current < SILENCE_TURN_FLUSH_MS) return;
+      // Don't flush while TTS is playing — we'll catch the text once the
+      // interviewer finishes speaking.
+      if (ttsAudioRef.current && !ttsAudioRef.current.paused) return;
+      accumulatedFinalRef.current = '';
+      setLiveFinal('');
+      setLiveInterim('');
+      void postTurnText(acc);
+    }, 400);
+    return () => clearInterval(timer);
+  }, [phase, postTurnText]);
 
   // ─── Countdown timer ───────────────────────────────────────────────────────
 
@@ -1076,6 +1299,8 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
             muted={muted}
             micLevel={micLevel}
             isRecording={isRecording}
+            liveInterim={liveInterim}
+            liveFinal={liveFinal}
             turnStatus={turnStatus}
           />
         )}
@@ -1136,50 +1361,60 @@ function LiveTranscriptionOverlay({
   muted,
   micLevel,
   isRecording,
+  liveInterim,
+  liveFinal,
   turnStatus,
 }: {
   transcript: Turn[];
   muted: boolean;
   micLevel: number;
   isRecording: boolean;
+  liveInterim: string;
+  liveFinal: string;
   turnStatus: TurnStatus;
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const recent = transcript.slice(-3);
+  const livePreview = `${liveFinal}${liveFinal && liveInterim ? ' ' : ''}${liveInterim}`.trim();
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [transcript.length]);
+  }, [transcript.length, livePreview]);
 
   const speaking = !muted && micLevel > VAD_THRESHOLD;
+  const hasLive = livePreview.length > 0;
   const statusLabel = muted
     ? 'Mic muted'
     : turnStatus.kind === 'error'
       ? 'Pipeline error'
       : turnStatus.kind === 'sending'
-        ? 'Transcribing…'
-        : isRecording
-          ? 'Recording…'
-          : turnStatus.kind === 'empty'
-            ? 'Heard nothing — try again'
-            : speaking
-              ? 'Listening…'
-              : transcript.length === 0
-                ? 'Waiting for you to speak…'
-                : 'Idle';
+        ? 'Sending to interviewer…'
+        : hasLive
+          ? 'Transcribing…'
+          : isRecording
+            ? 'Recording…'
+            : turnStatus.kind === 'empty'
+              ? 'Heard nothing — try again'
+              : speaking
+                ? 'Listening…'
+                : transcript.length === 0
+                  ? 'Waiting for you to speak…'
+                  : 'Idle';
   const statusColor = muted
     ? '#fca5a5'
     : turnStatus.kind === 'error'
       ? '#fca5a5'
       : turnStatus.kind === 'sending'
         ? '#60a5fa'
-        : isRecording
-          ? '#ef4444'       // red dot = recording
-          : turnStatus.kind === 'empty'
-            ? '#fbbf24'
-            : speaking
-              ? '#34d399'
-              : 'rgba(148,163,184,0.85)';
+        : hasLive
+          ? '#34d399'       // green dot = actively transcribing speech
+          : isRecording
+            ? '#ef4444'
+            : turnStatus.kind === 'empty'
+              ? '#fbbf24'
+              : speaking
+                ? '#34d399'
+                : 'rgba(148,163,184,0.85)';
 
   return (
     <div
@@ -1221,8 +1456,25 @@ function LiveTranscriptionOverlay({
       <div
         ref={scrollRef}
         className="px-3 py-2.5 space-y-2 overflow-y-auto"
-        style={{ maxHeight: 160 }}
+        style={{ maxHeight: 200 }}
       >
+        {hasLive && (
+          <div>
+            <p
+              className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
+              style={{ ...SG, color: 'rgba(100,116,139,0.85)' }}
+            >
+              You (live)
+            </p>
+            <p className="text-[12.5px] leading-snug" style={SG}>
+              <span style={{ color: 'var(--ll-ink)' }}>{liveFinal}</span>
+              {liveFinal && liveInterim && ' '}
+              <span style={{ color: 'rgba(100,116,139,0.75)', fontStyle: 'italic' }}>
+                {liveInterim}
+              </span>
+            </p>
+          </div>
+        )}
         {turnStatus.kind === 'error' && (
           <p
             className="text-[11.5px] font-medium leading-snug"
@@ -1231,7 +1483,7 @@ function LiveTranscriptionOverlay({
             {turnStatus.message}
           </p>
         )}
-        {recent.length === 0 && turnStatus.kind !== 'error' ? (
+        {recent.length === 0 && !hasLive && turnStatus.kind !== 'error' ? (
           <p className="text-[12px] text-slate-400 italic" style={SG}>
             Say something — your words will appear here as you speak.
           </p>
