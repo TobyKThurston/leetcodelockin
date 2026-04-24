@@ -380,18 +380,11 @@ export default async function SignInPage({
           </CardFooter>
         </Card>
 
-        <Link
-          href={`${nextUrl}${nextUrl.includes('?') ? '&' : '?'}guest=1`}
-          className="mt-5 block text-center text-[12.5px] transition-colors hover:text-[var(--ll-ink)]"
-          style={{ ...SANS, color: 'var(--ll-ink-muted)' }}
-        >
-          Continue as guest →
-        </Link>
         <p
-          className="mt-2 text-center text-[11px]"
+          className="mt-5 text-center text-[11px]"
           style={{ ...SANS, color: 'var(--ll-ink-subtle)' }}
         >
-          You can browse everything — sign in to save progress.
+          Sign in to save progress and unlock your dashboard.
         </p>
       </div>
     </div>
