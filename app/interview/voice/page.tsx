@@ -129,7 +129,7 @@ function VoiceInterviewPageInner() {
         </button>
 
         <p className="text-[11px] text-slate-400 text-center leading-relaxed" style={SG}>
-          Free users get one trial · Pro users get 10 per month
+          Free users get one trial · Pro users get unlimited
         </p>
         </div>
       </div>

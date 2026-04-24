@@ -1,7 +1,11 @@
 // ─── Voice mock interview quota ──────────────────────────────────────────────
 //
 // Free tier: 1 voice mock ever (lifetime).
-// Pro tier: 10 voice mocks per 30-day rolling window.
+// Pro tier: "unlimited" publicly, but with a 50/30-day abuse fuse. Real
+// active users run 3-6 mocks/month; hitting 50 in a month almost certainly
+// means automation or a runaway bug, so we pause and ask the user to ping
+// support. The fuse is invisible to users below the limit — the UI just
+// reads "Unlimited voice mocks".
 //
 // Quota is consumed at /api/voice/start (one voice_usage row per start), NOT
 // per turn. /api/voice/turn does not touch this module — a single session can
@@ -10,7 +14,7 @@
 import { getSupabase } from './supabase';
 import { getUserSubscription } from './subscription';
 
-const PRO_MONTHLY_LIMIT = 10;
+const PRO_MONTHLY_LIMIT = 50;
 const FREE_LIFETIME_LIMIT = 1;
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 

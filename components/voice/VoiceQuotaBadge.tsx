@@ -66,23 +66,32 @@ export default function VoiceQuotaBadge({ quota, variant = 'compact' }: Props) {
 
 function quotaLine(q: VoiceQuotaResult): { label: string; sub?: string; tooltip: string } {
   if (q.isPro) {
-    const label = `${q.used} / ${q.limit} voice mocks this month`;
-    const sub = q.allowed
-      ? `${q.limit - q.used} remaining in your 30-day window.`
-      : 'Monthly cap reached — resets as older sessions roll off.';
-    return { label, sub, tooltip: label };
+    if (q.allowed) {
+      return {
+        label: 'Unlimited voice mocks',
+        sub: 'Included with Pro.',
+        tooltip: 'Unlimited voice mocks with Pro.',
+      };
+    }
+    // Hit the hidden abuse fuse. This is exceedingly rare — intentional,
+    // runaway, or a bug. Don't expose the raw limit number.
+    return {
+      label: 'Unusually high usage detected',
+      sub: 'Voice mocks are paused on this account. Reach out if this is unexpected.',
+      tooltip: 'Contact support to lift the pause.',
+    };
   }
   // Free tier — limit is 1 lifetime trial.
   if (q.used === 0) {
     return {
       label: 'Free trial available (1 voice mock)',
-      sub: 'Upgrade to Pro for 10 voice mocks per month.',
-      tooltip: 'One free voice mock, then upgrade to Pro for 10/month.',
+      sub: 'Upgrade to Pro for unlimited voice mocks.',
+      tooltip: 'One free voice mock, then upgrade to Pro for unlimited.',
     };
   }
   return {
     label: 'Free trial used',
-    sub: 'Upgrade to Pro for 10 voice mocks per month.',
-    tooltip: 'Upgrade to Pro for 10/month.',
+    sub: 'Upgrade to Pro for unlimited voice mocks.',
+    tooltip: 'Upgrade to Pro for unlimited voice mocks.',
   };
 }

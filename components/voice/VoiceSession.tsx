@@ -1786,7 +1786,7 @@ function ScorecardPhase({
                 Free trial used
               </p>
               <p className="text-[13px] text-slate-800 mt-0.5" style={SG}>
-                That was your free voice mock. Upgrade to Pro for 10 more every month.
+                That was your free voice mock. Upgrade to Pro for unlimited voice mocks.
               </p>
             </div>
             <Link

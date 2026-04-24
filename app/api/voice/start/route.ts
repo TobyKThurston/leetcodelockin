@@ -48,11 +48,9 @@ export async function POST(req: NextRequest) {
         {
           error:
             quota.reason === 'free_lifetime'
-              ? "You've used your free voice mock. Upgrade to Pro for more."
-              : "You've hit your monthly voice mock cap.",
+              ? "You've used your free voice mock. Upgrade to Pro for unlimited."
+              : "Voice mocks are paused on this account due to unusually high usage. Reach out if this is unexpected.",
           isPro: quota.isPro,
-          used: quota.used,
-          limit: quota.limit,
           reason: quota.reason,
         },
         { status: 403 },
