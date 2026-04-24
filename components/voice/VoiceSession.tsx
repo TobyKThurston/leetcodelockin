@@ -198,6 +198,13 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
       const audioCtx = new AudioContext();
+      // Browsers create AudioContext in a suspended state when there's no
+      // prior user gesture (e.g. after a router.push navigation). A suspended
+      // context feeds the analyser zeros, so micLevel stays flat even though
+      // the mic is granted. Resume explicitly.
+      if (audioCtx.state === 'suspended') {
+        await audioCtx.resume().catch(() => { /* ignore — UI will retry */ });
+      }
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
@@ -574,7 +581,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         durationMin={durationMin}
         micLevel={micLevel}
         micState={micState}
-        canStart={phase === 'intro' && micState === 'granted' && micLevel > 0.001}
+        canStart={phase === 'intro' && micState === 'granted'}
         starting={phase === 'starting'}
         error={startError}
         onRequestMic={initMic}

@@ -45,8 +45,17 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
   const [selected, setSelected] = useState<InterviewDifficulty>('easy-medium');
   const [duration, setDuration] = useState<Duration>(30);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (format === 'voice') {
+      // Request mic permission in the click handler so the browser shows the
+      // prompt on a fresh user gesture. The destination page re-opens the
+      // stream; once permission is granted here it won't re-prompt there.
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop());
+      } catch {
+        // If denied, the voice page's intro screen handles the denied state.
+      }
       router.push(`/interview/voice?difficulty=${selected}&duration=${duration}&auto=1`);
       return;
     }
