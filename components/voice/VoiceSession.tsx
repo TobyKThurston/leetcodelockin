@@ -80,7 +80,7 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: 'b392f0' },
     ],
     colors: {
-      'editor.background': 'var(--ll-bg-elevated)',
+      'editor.background': '#ffffff',
       'editor.foreground': '#1e293b',
       'editor.lineHighlightBackground': '#f1f5f9',
       'editor.selectionBackground': '#3b82f640',

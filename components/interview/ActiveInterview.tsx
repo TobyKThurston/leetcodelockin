@@ -69,7 +69,7 @@ const defineTheme: BeforeMount = (monaco) => {
     colors: {
       // Monaco theme colors must be hex (#RRGGBB or #RRGGBBAA) — rgba()
       // strings silently fall back to pure red, painting the selection red.
-      'editor.background':               'var(--ll-bg-elevated)',
+      'editor.background':               '#ffffff',
       'editor.foreground':               '#1e293b',
       'editor.lineHighlightBackground':  '#f1f5f9',
       'editor.selectionBackground':      '#3b82f640',
@@ -78,8 +78,8 @@ const defineTheme: BeforeMount = (monaco) => {
       'editorCursor.foreground':         '#60a5fa',
       'editor.inactiveSelectionBackground': '#ffffff0d',
       'editorIndentGuide.background1':   '#f1f5f9',
-      'editorWidget.background':         'var(--ll-bg-elevated)',
-      'editorSuggestWidget.background':  'var(--ll-bg-elevated)',
+      'editorWidget.background':         '#ffffff',
+      'editorSuggestWidget.background':  '#ffffff',
       'editorSuggestWidget.border':      '#f1f5f9',
       'scrollbarSlider.background':      '#ffffff08',
       'scrollbarSlider.hoverBackground': '#ffffff0f',
