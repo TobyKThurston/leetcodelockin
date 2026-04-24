@@ -35,12 +35,23 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false 
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const VAD_THRESHOLD = 0.012;       // RMS above this = user is speaking (lowered so
-                                   // quiet/soft-spoken mics still trigger the recorder)
-const SILENCE_FLUSH_MS = 900;      // 900ms of quiet ends a user utterance
-const MIN_UTTERANCE_MS = 400;      // drop blips shorter than this
-const BARGE_IN_HOLD_MS = 250;      // sustained speech to cut off AI TTS
-const TICK_MS = 50;
+// Hysteresis: a higher threshold must be crossed to START recording (so we
+// don't record on room tone), but a lower one marks the utterance as still
+// ongoing (so brief pauses inside a sentence don't flush early). Background
+// noise typically sits around ~0.008 RMS on a decent laptop mic.
+const VAD_START_THRESHOLD  = 0.020;
+const VAD_SILENCE_THRESHOLD = 0.010;
+const SILENCE_FLUSH_MS     = 900;   // quiet-below-silence-threshold → flush
+const MIN_UTTERANCE_MS     = 400;   // drop blips shorter than this
+const MAX_UTTERANCE_MS     = 12_000; // force-flush long monologues so Whisper
+                                    // always sees regular updates
+const BARGE_IN_HOLD_MS     = 250;   // sustained speech to cut off AI TTS
+const TICK_MS              = 50;
+
+// Back-compat for the live-transcription overlay's green-dot "Listening…"
+// indicator — we want the dot to light up the moment speech starts, so the
+// overlay uses the start threshold.
+const VAD_THRESHOLD = VAD_START_THRESHOLD;
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -184,8 +195,9 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
-  // Surface the result of the last /api/voice/turn call so the user isn't
-  // stuck wondering whether their speech made it through the pipeline.
+  // Surface the recorder + turn pipeline in the live-transcription overlay
+  // so the user can see whether the mic → Whisper → TTS loop is healthy.
+  const [isRecording, setIsRecording] = useState(false);
   const [turnStatus, setTurnStatus] = useState<
     | { kind: 'idle' }
     | { kind: 'sending' }
@@ -499,9 +511,19 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
       if (mutedRef.current) return;
 
-      const talking = rms > VAD_THRESHOLD;
+      const wasRecording = isRecordingRef.current;
+      // Hysteresis: use the higher threshold to start a recording, the lower
+      // one to decide "still speaking" while recording. Background noise
+      // between the two won't end the utterance OR start a spurious one.
+      const talking = wasRecording
+        ? rms > VAD_SILENCE_THRESHOLD
+        : rms > VAD_START_THRESHOLD;
 
-      // Barge-in: if TTS is playing and user sustains speech, cut TTS.
+      // Barge-in: if TTS is playing and user sustains speech, cut TTS off so
+      // we can start recording. Crucially we no longer early-return here —
+      // that used to prevent the recorder from ever starting while TTS was
+      // playing (or stuck in a weird state), which could silently break the
+      // entire pipeline.
       if (ttsAudioRef.current && !ttsAudioRef.current.paused) {
         if (talking) {
           ttsBargeMsRef.current += TICK_MS;
@@ -512,9 +534,17 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         } else {
           ttsBargeMsRef.current = 0;
         }
-        // Don't record while TTS is playing (avoids echo double-listen).
-        return;
       }
+
+      const flushRecording = () => {
+        try { recorderRef.current?.stop(); } catch { /* ignore */ }
+        // onstop will post the blob. We null refs/flags so the next tick can
+        // start a fresh recording immediately if the user keeps talking.
+        recorderRef.current = null;
+        isRecordingRef.current = false;
+        setIsRecording(false);
+        silenceAccumRef.current = 0;
+      };
 
       // Start a new recording on first speech.
       if (talking) {
@@ -529,6 +559,13 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
             rec.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
             rec.onstop = () => {
               const dur = Date.now() - speechStartAtRef.current;
+              try {
+                posthog.capture('voice_recorder_stop', {
+                  duration_ms: dur,
+                  chunk_count: chunks.length,
+                  mime: rec.mimeType,
+                });
+              } catch { /* ignore */ }
               if (dur >= MIN_UTTERANCE_MS && chunks.length > 0) {
                 const blob = new Blob(chunks, { type: rec.mimeType });
                 void postTurn(blob);
@@ -537,21 +574,29 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
             rec.start();
             recorderRef.current = rec;
             isRecordingRef.current = true;
+            setIsRecording(true);
             speechStartAtRef.current = Date.now();
             silenceAccumRef.current = 0;
-          } catch {
+            try { posthog.capture('voice_recorder_start', { mime: rec.mimeType }); } catch { /* ignore */ }
+          } catch (recErr) {
             isRecordingRef.current = false;
+            setIsRecording(false);
+            const message = recErr instanceof Error ? recErr.message : 'MediaRecorder failed';
+            setTurnStatus({ kind: 'error', message: `Recorder unavailable: ${message}` });
+            try { posthog.capture('voice_recorder_unavailable', { message }); } catch { /* ignore */ }
           }
         } else {
           silenceAccumRef.current = 0;
         }
+        // Cap recording length so a continuous monologue (or a mic stuck
+        // above the silence threshold from room noise) still posts.
+        if (isRecordingRef.current && Date.now() - speechStartAtRef.current >= MAX_UTTERANCE_MS) {
+          flushRecording();
+        }
       } else if (isRecordingRef.current) {
         silenceAccumRef.current += TICK_MS;
         if (silenceAccumRef.current >= SILENCE_FLUSH_MS) {
-          try { recorderRef.current?.stop(); } catch { /* ignore */ }
-          recorderRef.current = null;
-          isRecordingRef.current = false;
-          silenceAccumRef.current = 0;
+          flushRecording();
         }
       }
     }, TICK_MS);
@@ -1010,6 +1055,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
             transcript={transcript}
             muted={muted}
             micLevel={micLevel}
+            isRecording={isRecording}
             turnStatus={turnStatus}
           />
         )}
@@ -1069,11 +1115,13 @@ function LiveTranscriptionOverlay({
   transcript,
   muted,
   micLevel,
+  isRecording,
   turnStatus,
 }: {
   transcript: Turn[];
   muted: boolean;
   micLevel: number;
+  isRecording: boolean;
   turnStatus: TurnStatus;
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -1086,28 +1134,32 @@ function LiveTranscriptionOverlay({
   const speaking = !muted && micLevel > VAD_THRESHOLD;
   const statusLabel = muted
     ? 'Mic muted'
-    : turnStatus.kind === 'sending'
-      ? 'Transcribing…'
-      : turnStatus.kind === 'error'
-        ? 'Pipeline error'
-        : turnStatus.kind === 'empty'
-          ? 'Heard nothing — try again'
-          : speaking
-            ? 'Listening…'
-            : transcript.length === 0
-              ? 'Waiting for you to speak…'
-              : 'Idle';
+    : turnStatus.kind === 'error'
+      ? 'Pipeline error'
+      : turnStatus.kind === 'sending'
+        ? 'Transcribing…'
+        : isRecording
+          ? 'Recording…'
+          : turnStatus.kind === 'empty'
+            ? 'Heard nothing — try again'
+            : speaking
+              ? 'Listening…'
+              : transcript.length === 0
+                ? 'Waiting for you to speak…'
+                : 'Idle';
   const statusColor = muted
     ? '#fca5a5'
     : turnStatus.kind === 'error'
       ? '#fca5a5'
       : turnStatus.kind === 'sending'
         ? '#60a5fa'
-        : turnStatus.kind === 'empty'
-          ? '#fbbf24'
-          : speaking
-            ? '#34d399'
-            : 'rgba(148,163,184,0.85)';
+        : isRecording
+          ? '#ef4444'       // red dot = recording
+          : turnStatus.kind === 'empty'
+            ? '#fbbf24'
+            : speaking
+              ? '#34d399'
+              : 'rgba(148,163,184,0.85)';
 
   return (
     <div
