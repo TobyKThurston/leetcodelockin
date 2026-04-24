@@ -47,7 +47,9 @@ export interface InterviewSession {
   difficulty: InterviewDifficulty;
   status: InterviewStatus;
   problem1Slug: string;
-  problem2Slug: string;
+  // Voice mock interviews only use problem1; silent mocks use both. Null on
+  // voice rows means "single-problem voice session".
+  problem2Slug: string | null;
   problem1Code: string | null;
   problem2Code: string | null;
   problem1Results: { passed: number; total: number } | null;
@@ -194,7 +196,7 @@ export function dbRowToInterviewSession(row: Record<string, unknown>): Interview
     difficulty: row.difficulty as InterviewDifficulty,
     status: row.status as InterviewStatus,
     problem1Slug: row.problem1_slug as string,
-    problem2Slug: row.problem2_slug as string,
+    problem2Slug: (row.problem2_slug as string | null) ?? null,
     problem1Code: (row.problem1_code as string) ?? null,
     problem2Code: (row.problem2_code as string) ?? null,
     problem1Results: (row.problem1_results as { passed: number; total: number }) ?? null,

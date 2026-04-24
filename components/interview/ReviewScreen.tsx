@@ -182,7 +182,7 @@ export default function ReviewScreen({
                       Problem {idx + 1}
                     </span>
                     <span className="text-[14px] font-medium text-[var(--ll-ink)]" style={SG}>
-                      {slug.replace(/-/g, ' ')}
+                      {(slug ?? '').replace(/-/g, ' ')}
                     </span>
                   </div>
                   <span

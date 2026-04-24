@@ -250,8 +250,9 @@ function HistoryWelcome({
                         )}
                       </div>
                       <p className="text-[12px] text-slate-500 truncate" style={SG}>
-                        {s.problem1Slug.replace(/-/g, ' ')} +{' '}
-                        {s.problem2Slug.replace(/-/g, ' ')}
+                        {s.problem2Slug
+                          ? `${s.problem1Slug.replace(/-/g, ' ')} + ${s.problem2Slug.replace(/-/g, ' ')}`
+                          : `Voice · ${s.problem1Slug.replace(/-/g, ' ')}`}
                       </p>
                     </div>
                   </div>
@@ -315,9 +316,11 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
     if (!saved) return;
     try {
       const { sessionId, startedAt } = JSON.parse(saved);
-      // Check if the session is still in_progress in history
+      // Check if the session is still in_progress in history. Voice mocks
+      // don't use this localStorage key, so any in-progress voice row with a
+      // null problem2Slug should be ignored here.
       const session = initialHistory.find(s => s.id === sessionId && s.status === 'in_progress');
-      if (session && startedAt) {
+      if (session && startedAt && session.problem2Slug) {
         // Re-fetch problems and resume
         Promise.all([
           getProblemBySlug(session.problem1Slug),
@@ -353,6 +356,12 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
       }
 
       const session = result.session;
+      // startInterviewSession always returns a silent mock (two slugs); this
+      // guard is belt-and-suspenders for the type system.
+      if (!session.problem2Slug) {
+        setError('Failed to start interview (missing second problem). Please try again.');
+        return;
+      }
       const [p1, p2] = await Promise.all([
         getProblemBySlug(session.problem1Slug),
         getProblemBySlug(session.problem2Slug),
@@ -514,7 +523,9 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
 
   const handleRetryFeedback = useCallback(async (sessionId: string) => {
     const session = history.find(s => s.id === sessionId);
-    if (!session || !session.problem1Code || !session.problem2Code) return;
+    // Silent interviews only — voice sessions have a scorecard, not this
+    // two-problem feedback path.
+    if (!session || !session.problem1Code || !session.problem2Code || !session.problem2Slug) return;
 
     const [p1, p2] = await Promise.all([
       getProblemBySlug(session.problem1Slug),

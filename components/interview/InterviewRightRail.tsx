@@ -106,12 +106,14 @@ export default function InterviewRightRail({
                 >
                   {currentSession.problem1Slug.replace(/-/g, ' ')}
                 </p>
-                <p
-                  className="text-[11.5px] text-slate-400 leading-tight truncate mt-0.5"
-                  style={SG}
-                >
-                  + {currentSession.problem2Slug.replace(/-/g, ' ')}
-                </p>
+                {currentSession.problem2Slug && (
+                  <p
+                    className="text-[11.5px] text-slate-400 leading-tight truncate mt-0.5"
+                    style={SG}
+                  >
+                    + {currentSession.problem2Slug.replace(/-/g, ' ')}
+                  </p>
+                )}
                 {currentSession.timeUsedMs != null && (
                   <div
                     className="flex items-center gap-1 mt-2 text-[10.5px] text-slate-500"

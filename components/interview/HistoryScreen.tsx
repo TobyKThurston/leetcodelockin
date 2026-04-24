@@ -279,7 +279,9 @@ export default function HistoryScreen({
                         )}
                       </div>
                       <p className="text-[12px] text-[var(--ll-ink-subtle)] mt-0.5 truncate">
-                        {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
+                        {s.problem2Slug
+                          ? `${s.problem1Slug.replace(/-/g, ' ')} + ${s.problem2Slug.replace(/-/g, ' ')}`
+                          : `Voice · ${s.problem1Slug.replace(/-/g, ' ')}`}
                       </p>
                     </div>
                   </div>
