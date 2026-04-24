@@ -123,16 +123,6 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
 
-  // Desktop gate
-  const [isDesktop, setIsDesktop] = useState(true);
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    setIsDesktop(mq.matches);
-    const on = () => setIsDesktop(mq.matches);
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-
   // Audio infra refs (persist across renders, don't cause re-renders)
   const streamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -193,26 +183,52 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     if (streamRef.current) return;
     setMicState('requesting');
     setStartError(null);
+
+    // Step 1: get the stream. This is the only step that determines whether
+    // permission is actually granted/denied — don't conflate it with audio-
+    // pipeline errors, or a harmless AudioContext hiccup ends up showing the
+    // scary "Microphone access is blocked" banner.
+    let stream: MediaStream;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       });
+    } catch (err) {
+      const e = err as Error & { name?: string };
+      const isDenied =
+        e?.name === 'NotAllowedError' ||
+        e?.name === 'SecurityError' ||
+        e?.message === 'Permission denied';
+      if (isDenied) {
+        setMicState('denied');
+        setStartError('Microphone access was blocked. Allow it in your browser and click the button to retry.');
+      } else {
+        // Hardware missing, mic in use by another app, unsupported constraints,
+        // etc. Keep the state as 'unrequested' so the user can retry without
+        // the "blocked" UI and its misleading unblock instructions.
+        setMicState('unrequested');
+        setStartError(`Could not open your microphone${e?.name ? ` (${e.name})` : ''}. Check that a mic is connected and not in use, then retry.`);
+      }
+      return;
+    }
+
+    streamRef.current = stream;
+    // Permission is granted — commit that now, independent of the level meter.
+    setMicState('granted');
+
+    // Step 2: set up the level-meter pipeline. Best-effort: if AudioContext
+    // creation or resume() fails, the mic is still usable for recording.
+    try {
       const audioCtx = new AudioContext();
-      // Browsers create AudioContext in a suspended state when there's no
-      // prior user gesture (e.g. after a router.push navigation). A suspended
-      // context feeds the analyser zeros, so micLevel stays flat even though
-      // the mic is granted. Resume explicitly.
       if (audioCtx.state === 'suspended') {
-        await audioCtx.resume().catch(() => { /* ignore — UI will retry */ });
+        await audioCtx.resume().catch(() => { /* ignore */ });
       }
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       source.connect(analyser);
-      streamRef.current = stream;
       audioCtxRef.current = audioCtx;
       analyserRef.current = analyser;
-      setMicState('granted');
 
       // Volume meter only (no VAD / recording yet — that starts in active phase)
       const buf = new Uint8Array(analyser.fftSize);
@@ -227,14 +243,8 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         const rms = Math.sqrt(sum / buf.length);
         setMicLevel(rms);
       }, TICK_MS);
-    } catch (err) {
-      const e = err as Error & { name?: string };
-      setMicState('denied');
-      setStartError(
-        e?.name === 'NotAllowedError' || e?.message === 'Permission denied'
-          ? 'Microphone access was blocked. Allow it in your browser and click the button to retry.'
-          : 'Could not open your microphone. Check your system settings and retry.',
-      );
+    } catch {
+      // No level meter, but the session can still run.
     }
   }, []);
 
@@ -556,21 +566,6 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     if (!session) return 0;
     return Math.max(0, session.durationSec - elapsedSec);
   }, [session, elapsedSec]);
-
-  // ─── Render: desktop gate ──────────────────────────────────────────────────
-
-  if (!isDesktop) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-8" style={{ background: 'var(--ll-bg)' }}>
-        <div className="max-w-sm text-center space-y-4">
-          <h1 className="text-[22px] font-bold text-slate-900" style={SG}>Desktop only</h1>
-          <p className="text-[14px] text-slate-600 leading-relaxed" style={SG}>
-            Voice mock interviews need a real keyboard and a stable mic. Open this page on your laptop or desktop to begin.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // ─── Render: phases ────────────────────────────────────────────────────────
 
