@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, AlertCircle, BarChart3 } from 'lucide-react';
+import { Loader2, AlertCircle, History as HistoryIcon, Mic } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { cn } from '@/lib/utils';
 import ShellSidebar from '@/components/shell/ShellSidebar';
@@ -70,19 +70,31 @@ function SessionRow({
         )}
       </div>
 
-      {/* Date + difficulty */}
+      {/* Date + mode + difficulty */}
       <div className="flex-1 min-w-0">
-        <p
-          className="text-[12px] text-[var(--ll-ink)] font-medium leading-tight"
-          style={SG}
-        >
-          {formatDate(session.createdAt)}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p
+            className="text-[12px] text-[var(--ll-ink)] font-medium leading-tight"
+            style={SG}
+          >
+            {formatDate(session.createdAt)}
+          </p>
+          {session.mode === 'voice' && (
+            <Mic
+              size={10}
+              strokeWidth={2.5}
+              style={{ color: 'rgb(168,85,247)' }}
+              aria-label="Voice mock"
+            />
+          )}
+        </div>
         <p
           className="text-[10px] text-[var(--ll-ink-muted)] leading-tight mt-0.5"
           style={SG}
         >
-          {isEasyMed ? 'Easy + Med' : 'Med + Hard'}
+          {session.mode === 'voice'
+            ? (isEasyMed ? 'Voice · Easy' : 'Voice · Hard')
+            : (isEasyMed ? 'Easy + Med' : 'Med + Hard')}
         </p>
       </div>
 
@@ -155,12 +167,12 @@ export default function InterviewSidebar({
       }
     >
       <div className="flex items-center gap-2 mb-3 px-1">
-        <BarChart3 size={11} className="text-[var(--ll-ink-subtle)]" strokeWidth={2.5} />
+        <HistoryIcon size={11} className="text-[var(--ll-ink-subtle)]" strokeWidth={2.5} />
         <p
           className="text-[10px] font-bold text-[var(--ll-ink-subtle)] tracking-[0.16em] uppercase"
           style={SG}
         >
-          Debriefs
+          History
         </p>
       </div>
       <div className="space-y-1.5">

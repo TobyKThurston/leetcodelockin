@@ -29,7 +29,7 @@ import { C, SG } from '@/lib/ui-tokens';
 
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
 
-type Phase = 'history' | 'setup' | 'active' | 'review' | 'voice-review';
+type Phase = 'setup' | 'active' | 'review' | 'voice-review';
 
 // localStorage keys for crash recovery
 const LS_ACTIVE_SESSION = 'zl-interview-active';
@@ -60,9 +60,11 @@ function difficultyLabel(d: string): string {
   return d === 'easy-medium' ? 'Easy + Med' : 'Med + Hard';
 }
 
-// ─── Desktop-only history / redo panel for the history phase ──────────────
-
-function HistoryWelcome({
+// Dead code: the old middle-column history panel. History now lives in the
+// left sidebar (InterviewSidebar) and the middle is always the setup
+// screen. Kept around briefly so it can be pulled from git log if needed.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function _UnusedHistoryWelcome({
   sessions,
   pendingFeedbackId,
   feedbackErrorId,
@@ -341,7 +343,10 @@ function HistoryWelcome({
 // ─── Main component ────────────────────────────────────────────────────────
 
 export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Props) {
-  const [phase, setPhase] = useState<Phase>(initialHistory.length > 0 ? 'history' : 'setup');
+  // Middle column is always the "new interview" setup unless the user opens a
+  // past debrief (review / voice-review) or is mid-session (active). History
+  // lives in the left sidebar.
+  const [phase, setPhase] = useState<Phase>('setup');
   const [history, setHistory] = useState(initialHistory);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -546,7 +551,10 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
     });
     setFeedbackError(prev => prev?.sessionId === session.id ? null : prev);
     setPendingFeedbackId(session.id);
-    setPhase('history');
+    // Drop the user back onto the setup screen. The just-finished session
+    // appears in the left-side history with an "Analyzing" spinner; they
+    // click it once feedback is ready to see the full debrief.
+    setPhase('setup');
 
     const problems = activeState.problems;
     const difficulty = activeState.session.difficulty;
@@ -617,15 +625,13 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
 
   // ─── Navigation ─────────────────────────────────────────────────────────────
 
-  const goToHistory = useCallback(() => {
-    setPhase(history.length > 0 ? 'history' : 'setup');
-    setReviewSession(null);
-  }, [history]);
-
+  // Clearing a review returns the user to the setup / "new interview" middle
+  // pane. History stays visible in the left sidebar regardless.
   const goToSetup = useCallback(() => {
     setReviewSession(null);
     setPhase('setup');
   }, []);
+  const goBack = goToSetup;
 
   const router = useRouter();
   // Redo an interview at the same difficulty — kicks straight into an active
@@ -714,51 +720,50 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
       }
       rail={<InterviewRightRail sessions={history} currentSession={reviewSession} />}
     >
-      {phase === 'setup' ? (
-        <div className="flex flex-col">
-          <SetupScreen onStart={handleStart} loading={loading} voiceQuota={voiceQuota} />
-          {error && (
-            <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
-              {error}
-            </p>
-          )}
-        </div>
-      ) : phase === 'review' && reviewSession ? (
+      {phase === 'review' && reviewSession ? (
         <div className="flex flex-col">
           <ReviewScreen
             session={reviewSession}
-            onBack={goToHistory}
+            onBack={goBack}
             onNewInterview={guardedGoToSetup}
           />
         </div>
       ) : phase === 'voice-review' && reviewSession ? (
         <div className="flex flex-col">
-          <VoiceDebriefView session={reviewSession} onBack={goToHistory} />
+          <VoiceDebriefView session={reviewSession} onBack={goBack} />
         </div>
       ) : (
         <>
-          {/* Desktop: history + redo panel (sidebar is for analysis) */}
-          <div className="hidden md:block">
-            <HistoryWelcome
-              sessions={history}
-              pendingFeedbackId={pendingFeedbackId}
-              feedbackErrorId={feedbackErrorId}
-              onNewInterview={guardedGoToSetup}
-              onView={handleViewSession}
-              onRedo={guardedRedo}
-              redoLoadingId={redoLoadingId}
-            />
+          {/* Desktop: middle is always the "new interview" setup; history
+              lives in the left sidebar. */}
+          <div className="hidden md:flex md:flex-col">
+            <SetupScreen onStart={handleStart} loading={loading} voiceQuota={voiceQuota} />
+            {error && (
+              <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
+                {error}
+              </p>
+            )}
           </div>
-          {/* Mobile: full history list fallback (sidebar is hidden) */}
+          {/* Mobile has no sidebar — show history above setup so the user
+              can still view past sessions. */}
           <div className="md:hidden flex flex-col">
-            <HistoryScreen
-              sessions={history}
-              pendingFeedbackId={pendingFeedbackId}
-              feedbackError={feedbackError}
-              onNewInterview={guardedGoToSetup}
-              onViewSession={handleViewSession}
-              onRetryFeedback={handleRetryFeedback}
-            />
+            {history.length > 0 ? (
+              <HistoryScreen
+                sessions={history}
+                pendingFeedbackId={pendingFeedbackId}
+                feedbackError={feedbackError}
+                onNewInterview={guardedGoToSetup}
+                onViewSession={handleViewSession}
+                onRetryFeedback={handleRetryFeedback}
+              />
+            ) : (
+              <SetupScreen onStart={handleStart} loading={loading} voiceQuota={voiceQuota} />
+            )}
+            {error && (
+              <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
+                {error}
+              </p>
+            )}
           </div>
         </>
       )}
