@@ -48,7 +48,7 @@ export default function ProfileForm({
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="name" className="text-slate-300" style={SG}>
+          <Label htmlFor="name" className="text-[var(--ll-ink)]" style={SG}>
             Display name
           </Label>
           <Input
@@ -60,7 +60,7 @@ export default function ProfileForm({
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="email" className="text-slate-300" style={SG}>
+          <Label htmlFor="email" className="text-[var(--ll-ink)]" style={SG}>
             Email
           </Label>
           <Input
@@ -96,7 +96,7 @@ export default function ProfileForm({
           )}
         </Button>
         {error && (
-          <span className="text-[12px] text-rose-400" style={SG}>
+          <span className="text-[12px] text-rose-600 dark:text-rose-400" style={SG}>
             {error}
           </span>
         )}

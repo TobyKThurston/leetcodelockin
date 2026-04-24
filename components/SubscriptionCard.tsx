@@ -81,10 +81,10 @@ export default function SubscriptionCard({
     : null;
 
   return (
-    <Card className="bg-slate-50/60 border-slate-200">
+    <Card className="bg-[var(--ll-bg-card)] border-[var(--ll-border)]">
       <CardHeader>
         <CardTitle className="text-slate-900 flex items-center gap-2" style={SG}>
-          {isPro ? <Crown size={16} className="text-amber-400" /> : <Zap size={16} className="text-slate-500" />}
+          {isPro ? <Crown size={16} className="text-amber-500" /> : <Zap size={16} className="text-slate-500" />}
           Subscription
         </CardTitle>
         <CardDescription style={SG}>
@@ -102,7 +102,7 @@ export default function SubscriptionCard({
                     Unlimited tutor, mock interviews, spaced review
                   </p>
                 </div>
-                <span className="px-2 py-0.5 rounded-md text-[10.5px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="px-2 py-0.5 rounded-md text-[10.5px] font-medium bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
                   {status === 'active' ? 'Active' : status}
                 </span>
               </div>
@@ -124,12 +124,12 @@ export default function SubscriptionCard({
               {loading === 'portal' ? 'Loading...' : 'Manage subscription'}
             </Button>
             {errorMsg && (
-              <p className="text-[11.5px] text-red-400" style={SG}>{errorMsg}</p>
+              <p className="text-[11.5px] text-red-600 dark:text-red-400" style={SG}>{errorMsg}</p>
             )}
           </>
         ) : (
           <>
-            <div className="rounded-lg bg-white border border-slate-200 px-4 py-3">
+            <div className="rounded-lg bg-[var(--ll-bg-subtle)] border border-[var(--ll-border)] px-4 py-3">
               <p className="text-[13px] font-semibold text-slate-900" style={SG}>Free Plan</p>
               <p className="text-[12px] text-slate-600 mt-0.5" style={SG}>
                 5 AI tutor messages per week
@@ -137,14 +137,14 @@ export default function SubscriptionCard({
             </div>
             <Button
               size="sm"
-              className="bg-white text-slate-800 hover:bg-slate-100 text-[12px] font-semibold w-fit"
+              className="bg-blue-600 hover:bg-blue-500 text-white text-[12px] font-semibold w-fit"
               onClick={() => handleUpgrade()}
               disabled={loading !== null}
             >
               {loading === 'checkout' ? 'Loading...' : 'Upgrade to Pro'}
             </Button>
             {errorMsg && (
-              <p className="text-[11.5px] text-red-400" style={SG}>{errorMsg}</p>
+              <p className="text-[11.5px] text-red-600 dark:text-red-400" style={SG}>{errorMsg}</p>
             )}
           </>
         )}

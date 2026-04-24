@@ -66,7 +66,7 @@ export default function LockedScreen({ postFree = false }: { postFree?: boolean 
 
           <div className="relative">
             <Badge
-              className="mb-4 inline-flex bg-blue-500/10 text-blue-400 border-blue-500/20 text-[11px] font-semibold tracking-wide uppercase animate-fade-up"
+              className="mb-4 inline-flex bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20 text-[11px] font-semibold tracking-wide uppercase animate-fade-up"
               style={{ ...SG, animationDelay: '0ms' }}
             >
               Mock Interviews
@@ -84,7 +84,7 @@ export default function LockedScreen({ postFree = false }: { postFree?: boolean 
             </h1>
 
             <p
-              className="text-[15px] sm:text-[16px] text-slate-400 leading-relaxed max-w-lg mx-auto mt-5 animate-fade-up"
+              className="text-[15px] sm:text-[16px] text-[var(--ll-ink-muted)] leading-relaxed max-w-lg mx-auto mt-5 animate-fade-up"
               style={{ animationDelay: '200ms' }}
             >
               {postFree ? (
@@ -169,9 +169,9 @@ export default function LockedScreen({ postFree = false }: { postFree?: boolean 
             <div className="absolute inset-0 flex items-center justify-center bg-[var(--ll-bg)]/70 backdrop-blur-[2px]">
               <div className="text-center space-y-2">
                 <div className="mx-auto w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center">
-                  <Lock size={18} className="text-slate-400" />
+                  <Lock size={18} className="text-[var(--ll-ink-subtle)]" />
                 </div>
-                <p className="text-[13px] font-medium text-slate-300" style={SG}>Available with Pro</p>
+                <p className="text-[13px] font-medium text-[var(--ll-ink)]" style={SG}>Available with Pro</p>
               </div>
             </div>
           </div>
@@ -227,10 +227,10 @@ export default function LockedScreen({ postFree = false }: { postFree?: boolean 
             <Card className="relative bg-gradient-to-b from-blue-500/[0.05] to-blue-500/[0.01] ring-blue-500/20 rounded-2xl py-0 gap-0 shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)]">
               <CardHeader className="px-8 pt-8 pb-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-semibold tracking-wider uppercase text-blue-400" style={SG}>
+                  <span className="text-[13px] font-semibold tracking-wider uppercase text-blue-700 dark:text-blue-400" style={SG}>
                     Pro Yearly
                   </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/25">
                     Save {YEARLY_SAVINGS_LABEL}
                   </span>
                 </div>

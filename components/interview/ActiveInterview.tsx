@@ -122,13 +122,13 @@ const EDITOR_OPTIONS = {
 // ─── Markdown components ────────────────────────────────────────────────────
 
 const MD_COMPONENTS = {
-  p:      (props: React.HTMLAttributes<HTMLParagraphElement>) => <p {...props} className="text-[13.5px] leading-[1.75] text-slate-400 mb-3 last:mb-0" />,
+  p:      (props: React.HTMLAttributes<HTMLParagraphElement>) => <p {...props} className="text-[13.5px] leading-[1.75] text-[var(--ll-ink)] mb-3 last:mb-0" />,
   strong: (props: React.HTMLAttributes<HTMLElement>) => <strong {...props} className="font-semibold text-slate-900" />,
   em:     (props: React.HTMLAttributes<HTMLElement>) => <em {...props} className="not-italic text-slate-800" />,
   code:   (props: React.HTMLAttributes<HTMLElement>) => <code {...props} className="px-1.5 py-0.5 rounded text-[12.5px]" style={{ background: 'rgba(15,23,42,0.09)', color: '#1e293b', ...MONO }} />,
-  ul:     (props: React.HTMLAttributes<HTMLUListElement>) => <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-slate-400" />,
-  ol:     (props: React.OlHTMLAttributes<HTMLOListElement>) => <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-slate-400" />,
-  li:     (props: React.LiHTMLAttributes<HTMLLIElement>) => <li {...props} className="text-[13.5px] leading-[1.6] text-slate-400" />,
+  ul:     (props: React.HTMLAttributes<HTMLUListElement>) => <ul {...props} className="list-disc list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-[var(--ll-ink)]" />,
+  ol:     (props: React.OlHTMLAttributes<HTMLOListElement>) => <ol {...props} className="list-decimal list-outside pl-5 mb-3 space-y-1 text-[13.5px] leading-[1.65] text-[var(--ll-ink)]" />,
+  li:     (props: React.LiHTMLAttributes<HTMLLIElement>) => <li {...props} className="text-[13.5px] leading-[1.6] text-[var(--ll-ink)]" />,
 };
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -543,7 +543,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               <div className="space-y-4">
                 {problem.examples.map((ex, i) => (
                   <div key={i}>
-                    <p className="text-[12px] font-semibold text-slate-400 mb-2 uppercase tracking-[0.08em]" style={SG}>
+                    <p className="text-[12px] font-semibold text-[var(--ll-ink-subtle)] mb-2 uppercase tracking-[0.08em]" style={SG}>
                       Example {i + 1}
                     </p>
                     <div
@@ -591,7 +591,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
             >
               <div className="flex items-center gap-2">
-                <span className="text-[12px] font-medium text-slate-400" style={SG}>Python</span>
+                <span className="text-[12px] font-medium text-[var(--ll-ink-subtle)]" style={SG}>Python</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="hidden sm:flex items-center gap-1 text-[11px] text-slate-700 select-none">

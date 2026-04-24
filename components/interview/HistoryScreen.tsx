@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2, CheckCircle2 } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -84,7 +85,7 @@ export default function HistoryScreen({
             <h2 className="text-[22px] font-bold text-slate-900 tracking-tight" style={SG}>
               Ready to test yourself?
             </h2>
-            <p className="text-[14px] text-slate-400 leading-relaxed">
+            <p className="text-[14px] text-[var(--ll-ink-muted)] leading-relaxed">
               Take your first mock interview — 2 problems, 45 minutes, AI feedback after.
             </p>
           </div>
@@ -201,8 +202,13 @@ export default function HistoryScreen({
               <button
                 key={s.id}
                 onClick={handleClick}
-                className={`w-full text-left rounded-xl px-5 py-4 transition-all ${isPending ? 'cursor-default' : 'hover:bg-slate-50/50'}`}
-                style={{ background: 'rgba(15,23,42,0.03)', border: `1px solid ${BORDER}` }}
+                className={cn(
+                  'w-full text-left rounded-xl px-5 py-4 border transition-colors duration-150',
+                  'bg-[var(--ll-bg-card)] border-[var(--ll-border)]',
+                  isPending
+                    ? 'cursor-default'
+                    : 'hover:bg-white dark:hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
+                )}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0">
@@ -235,21 +241,21 @@ export default function HistoryScreen({
                     )}
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[13px] font-medium text-slate-200" style={SG}>
+                        <span className="text-[13px] font-medium text-[var(--ll-ink)]" style={SG}>
                           {formatDate(s.createdAt)}
                         </span>
                         <span
                           className="text-[11px] px-1.5 py-0.5 rounded font-medium"
                           style={{
-                            color: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.7)' : 'rgba(251,191,36,0.7)',
-                            background: s.difficulty === 'easy-medium' ? 'rgba(52,211,153,0.07)' : 'rgba(251,191,36,0.07)',
+                            color: s.difficulty === 'easy-medium' ? '#047857' : '#b45309',
+                            background: s.difficulty === 'easy-medium' ? 'rgba(16,185,129,0.10)' : 'rgba(234,179,8,0.12)',
                           }}
                         >
                           {difficultyLabel(s.difficulty)}
                         </span>
                         {isPending && (
                           <Badge
-                            className="bg-blue-500/10 text-blue-300 border-blue-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            className="bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25 text-[10px] font-semibold tracking-wide uppercase"
                             style={SG}
                           >
                             Analyzing
@@ -257,7 +263,7 @@ export default function HistoryScreen({
                         )}
                         {hasError && passedAll && (
                           <Badge
-                            className="bg-emerald-500/10 text-emerald-300 border-emerald-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25 text-[10px] font-semibold tracking-wide uppercase"
                             style={SG}
                           >
                             All tests passed
@@ -265,20 +271,20 @@ export default function HistoryScreen({
                         )}
                         {hasError && !passedAll && (
                           <Badge
-                            className="bg-red-500/10 text-red-300 border-red-500/25 text-[10px] font-semibold tracking-wide uppercase"
+                            className="bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25 text-[10px] font-semibold tracking-wide uppercase"
                             style={SG}
                           >
                             Analysis failed
                           </Badge>
                         )}
                       </div>
-                      <p className="text-[12px] text-slate-500 mt-0.5 truncate">
+                      <p className="text-[12px] text-[var(--ll-ink-subtle)] mt-0.5 truncate">
                         {s.problem1Slug.replace(/-/g, ' ')} + {s.problem2Slug.replace(/-/g, ' ')}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-slate-600 shrink-0">
+                  <div className="flex items-center gap-3 text-[var(--ll-ink-subtle)] shrink-0">
                     {s.timeUsedMs != null && (
                       <span className="flex items-center gap-1 text-[12px]" style={MONO}>
                         <Clock size={12} />
@@ -307,7 +313,7 @@ export default function HistoryScreen({
               <AlertCircle size={16} style={{ color: '#b91c1c' }} />
               Analysis unavailable
             </DialogTitle>
-            <DialogDescription className="text-[13px] text-slate-400 leading-relaxed">
+            <DialogDescription className="text-[13px] text-[var(--ll-ink-muted)] leading-relaxed">
               {dialogErrorMessage ?? 'We couldn\u2019t generate feedback for this session. Your code and results are still saved.'}
             </DialogDescription>
           </DialogHeader>

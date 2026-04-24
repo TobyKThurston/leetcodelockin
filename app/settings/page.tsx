@@ -51,7 +51,7 @@ export default async function SettingsPage() {
           </div>
 
           {/* Profile */}
-          <Card className="bg-slate-50/60 border-slate-200">
+          <Card className="bg-[var(--ll-bg-card)] border-[var(--ll-border)]">
             <CardHeader>
               <CardTitle className="text-slate-900" style={SG}>
                 Profile
@@ -93,7 +93,7 @@ export default async function SettingsPage() {
           />
 
           {/* Feedback */}
-          <Card className="bg-slate-50/60 border-slate-200">
+          <Card className="bg-[var(--ll-bg-card)] border-[var(--ll-border)]">
             <CardHeader>
               <CardTitle className="text-slate-900" style={SG}>
                 Feedback & suggestions
@@ -114,7 +114,7 @@ export default async function SettingsPage() {
           </Card>
 
           {/* Account */}
-          <Card className="bg-slate-50/60 border-slate-200">
+          <Card className="bg-[var(--ll-bg-card)] border-[var(--ll-border)]">
             <CardHeader>
               <CardTitle className="text-slate-900" style={SG}>
                 Account

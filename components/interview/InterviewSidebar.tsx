@@ -38,10 +38,12 @@ function SessionRow({
     <button
       onClick={onClick}
       className={cn(
-        'w-full text-left rounded-lg px-3 py-2.5 transition-all border flex items-center gap-3',
-        isActive
-          ? 'bg-blue-500/[0.08] border-blue-400/45'
-          : 'bg-white/[0.015] border-white/[0.05] hover:bg-white/[0.035]',
+        'w-full text-left rounded-lg px-3 py-2.5 transition-colors duration-150 border flex items-center gap-3',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
+        isActive &&
+          'bg-white dark:bg-[var(--ll-bg-elevated)] border-blue-400/60 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(59,130,246,0.25)]',
+        !isActive &&
+          'bg-[var(--ll-bg-card)] border-[var(--ll-border)] hover:bg-white dark:hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
       )}
     >
       {/* Score badge */}
@@ -62,7 +64,7 @@ function SessionRow({
             {score}
           </span>
         ) : (
-          <span className="text-[14px] text-slate-600 leading-none" style={MONO}>
+          <span className="text-[14px] text-[var(--ll-ink-subtle)] leading-none" style={MONO}>
             —
           </span>
         )}
@@ -70,10 +72,16 @@ function SessionRow({
 
       {/* Date + difficulty */}
       <div className="flex-1 min-w-0">
-        <p className="text-[12px] text-slate-300 font-medium leading-tight" style={SG}>
+        <p
+          className="text-[12px] text-[var(--ll-ink)] font-medium leading-tight"
+          style={SG}
+        >
           {formatDate(session.createdAt)}
         </p>
-        <p className="text-[10px] text-slate-500 leading-tight mt-0.5" style={SG}>
+        <p
+          className="text-[10px] text-[var(--ll-ink-muted)] leading-tight mt-0.5"
+          style={SG}
+        >
           {isEasyMed ? 'Easy + Med' : 'Med + Hard'}
         </p>
       </div>
@@ -82,7 +90,7 @@ function SessionRow({
       <div
         className="w-1 self-stretch rounded-full shrink-0"
         style={{
-          background: isEasyMed ? 'rgba(52,211,153,0.55)' : 'rgba(251,191,36,0.55)',
+          background: isEasyMed ? 'rgba(16,185,129,0.7)' : 'rgba(234,179,8,0.7)',
         }}
       />
     </button>
@@ -118,26 +126,26 @@ export default function InterviewSidebar({
       footer={
         <div className="space-y-2.5">
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-slate-500 font-medium">Completed</span>
-            <span className="text-slate-300 font-semibold tabular-nums">{completed.length}</span>
+            <span className="text-[var(--ll-ink-muted)] font-medium">Completed</span>
+            <span className="text-[var(--ll-ink)] font-semibold tabular-nums">{completed.length}</span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-slate-500 font-medium">Avg score</span>
+            <span className="text-[var(--ll-ink-muted)] font-medium">Avg score</span>
             <span
               className="font-semibold tabular-nums"
               style={{
-                color: completed.length > 0 ? scoreColor(avgScore) : 'rgba(148,163,184,0.6)',
+                color: completed.length > 0 ? scoreColor(avgScore) : 'var(--ll-ink-faint)',
               }}
             >
               {completed.length > 0 ? avgScore.toFixed(1) : '—'}
             </span>
           </div>
           <div className="flex justify-between text-[11.5px]">
-            <span className="text-slate-500 font-medium">Best</span>
+            <span className="text-[var(--ll-ink-muted)] font-medium">Best</span>
             <span
               className="font-semibold tabular-nums"
               style={{
-                color: completed.length > 0 ? scoreColor(bestScore) : 'rgba(148,163,184,0.6)',
+                color: completed.length > 0 ? scoreColor(bestScore) : 'var(--ll-ink-faint)',
               }}
             >
               {completed.length > 0 ? `${bestScore}/10` : '—'}
@@ -147,9 +155,9 @@ export default function InterviewSidebar({
       }
     >
       <div className="flex items-center gap-2 mb-3 px-1">
-        <BarChart3 size={11} className="text-slate-600" strokeWidth={2.5} />
+        <BarChart3 size={11} className="text-[var(--ll-ink-subtle)]" strokeWidth={2.5} />
         <p
-          className="text-[10px] font-bold text-slate-600 tracking-[0.16em] uppercase"
+          className="text-[10px] font-bold text-[var(--ll-ink-subtle)] tracking-[0.16em] uppercase"
           style={SG}
         >
           Debriefs
@@ -158,7 +166,7 @@ export default function InterviewSidebar({
       <div className="space-y-1.5">
         {sessions.length === 0 ? (
           <p
-            className="text-[11.5px] text-slate-600 leading-relaxed px-1 py-6 text-center"
+            className="text-[11.5px] text-[var(--ll-ink-muted)] leading-relaxed px-1 py-6 text-center"
             style={SG}
           >
             No mock interviews yet.

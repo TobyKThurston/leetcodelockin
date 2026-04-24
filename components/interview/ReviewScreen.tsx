@@ -65,15 +65,15 @@ export default function ReviewScreen({
     return (
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="max-w-sm text-center space-y-4">
-          <p className="text-[15px] text-slate-300" style={SG}>
+          <p className="text-[15px] text-[var(--ll-ink)]" style={SG}>
             {headline}
           </p>
-          <p className="text-[12px] text-slate-500 leading-relaxed">
+          <p className="text-[12px] text-[var(--ll-ink-muted)] leading-relaxed">
             {detail}
           </p>
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium text-slate-200 transition-colors hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium text-[var(--ll-ink)] transition-colors hover:text-slate-900 dark:hover:text-white"
             style={{ border: `1px solid ${BORDER}`, ...SG }}
           >
             <ArrowLeft size={13} />
@@ -128,7 +128,7 @@ export default function ReviewScreen({
               {feedback.timeManagement.score}/10
             </span>
           </div>
-          <p className="text-[13px] text-slate-400 leading-relaxed">{feedback.timeManagement.commentary}</p>
+          <p className="text-[13px] text-[var(--ll-ink-muted)] leading-relaxed">{feedback.timeManagement.commentary}</p>
         </div>
 
         {/* Overall strengths & improvements */}
@@ -139,7 +139,7 @@ export default function ReviewScreen({
             </p>
             <ul className="space-y-2">
               {feedback.overallStrengths.map((s, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px] text-slate-300 leading-relaxed">
+                <li key={i} className="flex items-start gap-2 text-[13px] text-[var(--ll-ink)] leading-relaxed">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'rgba(52,211,153,0.6)' }} />
                   {s}
                 </li>
@@ -152,7 +152,7 @@ export default function ReviewScreen({
             </p>
             <ul className="space-y-2">
               {feedback.overallImprovements.map((s, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px] text-slate-300 leading-relaxed">
+                <li key={i} className="flex items-start gap-2 text-[13px] text-[var(--ll-ink)] leading-relaxed">
                   <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'rgba(251,191,36,0.6)' }} />
                   {s}
                 </li>
@@ -181,7 +181,7 @@ export default function ReviewScreen({
                     <span className="text-[11px] text-slate-600 uppercase tracking-wider" style={SG}>
                       Problem {idx + 1}
                     </span>
-                    <span className="text-[14px] font-medium text-slate-200" style={SG}>
+                    <span className="text-[14px] font-medium text-[var(--ll-ink)]" style={SG}>
                       {slug.replace(/-/g, ' ')}
                     </span>
                   </div>
@@ -218,7 +218,7 @@ export default function ReviewScreen({
                 {/* Optimal approach */}
                 <div>
                   <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1" style={SG}>Optimal Approach</p>
-                  <p className="text-[13px] text-slate-400 leading-relaxed">{pf.optimalApproach}</p>
+                  <p className="text-[13px] text-[var(--ll-ink-muted)] leading-relaxed">{pf.optimalApproach}</p>
                 </div>
 
                 {/* Strengths & improvements */}
@@ -226,13 +226,13 @@ export default function ReviewScreen({
                   <div>
                     <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1.5" style={SG}>Strengths</p>
                     {pf.strengths.map((s, i) => (
-                      <p key={i} className="text-[12px] text-slate-400 leading-relaxed">• {s}</p>
+                      <p key={i} className="text-[12px] text-[var(--ll-ink-muted)] leading-relaxed">• {s}</p>
                     ))}
                   </div>
                   <div>
                     <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1.5" style={SG}>Improve</p>
                     {pf.improvements.map((s, i) => (
-                      <p key={i} className="text-[12px] text-slate-400 leading-relaxed">• {s}</p>
+                      <p key={i} className="text-[12px] text-[var(--ll-ink-muted)] leading-relaxed">• {s}</p>
                     ))}
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export default function ReviewScreen({
                     href={`/solve/${slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-[12px] text-blue-400/70 hover:text-blue-400 transition-colors"
+                    className="flex items-center gap-1 text-[12px] text-blue-700 dark:text-blue-400/70 hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
                     style={SG}
                   >
                     View solution
@@ -282,15 +282,15 @@ export default function ReviewScreen({
           className="rounded-xl px-5 py-4"
           style={{ background: 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.15)' }}
         >
-          <p className="text-[11px] text-blue-400/60 uppercase tracking-wider mb-2" style={SG}>Tip for next time</p>
-          <p className="text-[14px] text-slate-200 leading-relaxed" style={SG}>{feedback.tip}</p>
+          <p className="text-[11px] text-blue-700 dark:text-blue-400/60 uppercase tracking-wider mb-2" style={SG}>Tip for next time</p>
+          <p className="text-[14px] text-[var(--ll-ink)] leading-relaxed" style={SG}>{feedback.tip}</p>
         </div>
 
         {/* Actions */}
         <div className="flex items-center justify-center gap-3 pb-8">
           <button
             onClick={onBack}
-            className="px-5 py-2 rounded-lg text-[13px] font-medium text-slate-400 transition-colors hover:text-slate-800"
+            className="px-5 py-2 rounded-lg text-[13px] font-medium text-[var(--ll-ink-muted)] transition-colors hover:text-[var(--ll-ink)]"
             style={{ border: `1px solid ${BORDER}`, ...SG }}
           >
             Back to History
