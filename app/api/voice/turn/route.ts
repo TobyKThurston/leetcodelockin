@@ -8,7 +8,13 @@ import {
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { getSupabase, getSupabaseUser } from '@/lib/supabase';
-import { TURN_POLICY_SYSTEM } from '@/lib/voice-prompts';
+import {
+  TURN_POLICY_SYSTEM,
+  VOICE_TTS_MODEL,
+  VOICE_TTS_VOICE,
+  VOICE_TTS_SPEED,
+  VOICE_TTS_INSTRUCTIONS,
+} from '@/lib/voice-prompts';
 import { fenceUserContent } from '@/lib/prompt-safety';
 import { logApiError } from '@/lib/log';
 
@@ -143,9 +149,11 @@ export async function POST(req: NextRequest) {
     if (shouldSpeak) {
       try {
         const speech = await generateSpeech({
-          model: openai.speech('tts-1'),
+          model: openai.speech(VOICE_TTS_MODEL),
           text: output.text,
-          voice: 'alloy',
+          voice: VOICE_TTS_VOICE,
+          speed: VOICE_TTS_SPEED,
+          instructions: VOICE_TTS_INSTRUCTIONS,
           outputFormat: 'mp3',
         });
         const buf = speech.audio.uint8Array;

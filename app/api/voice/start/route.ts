@@ -13,7 +13,13 @@ import {
   getUserSolvedSlugs,
 } from '@/lib/problems-server';
 import { checkVoiceQuota, recordVoiceUsage } from '@/lib/voice-quota';
-import { INTERVIEWER_INTRO_TEXT } from '@/lib/voice-prompts';
+import {
+  INTERVIEWER_INTRO_TEXT,
+  VOICE_TTS_MODEL,
+  VOICE_TTS_VOICE,
+  VOICE_TTS_SPEED,
+  VOICE_TTS_INSTRUCTIONS,
+} from '@/lib/voice-prompts';
 import { getPostHogClient } from '@/lib/posthog-server';
 import { logApiError } from '@/lib/log';
 
@@ -136,9 +142,11 @@ export async function POST(req: NextRequest) {
     let introAudioBase64: string | null = null;
     try {
       const speech = await generateSpeech({
-        model: openai.speech('tts-1'),
+        model: openai.speech(VOICE_TTS_MODEL),
         text: INTERVIEWER_INTRO_TEXT,
-        voice: 'alloy',
+        voice: VOICE_TTS_VOICE,
+        speed: VOICE_TTS_SPEED,
+        instructions: VOICE_TTS_INSTRUCTIONS,
         outputFormat: 'mp3',
       });
       introAudioBase64 = Buffer.from(speech.audio.uint8Array).toString('base64');

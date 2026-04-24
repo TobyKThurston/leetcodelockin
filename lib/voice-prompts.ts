@@ -11,6 +11,23 @@
 
 import { INJECTION_GUARD } from './prompt-safety';
 
+// ─── TTS voice config ────────────────────────────────────────────────────────
+// Centralized so the intro, per-turn replies, and any future TTS call always
+// render in the same voice. gpt-4o-mini-tts is the 2025 model — noticeably
+// more natural than tts-1, supports a persona `instructions` channel, and
+// still finishes inside our per-turn latency budget.
+//
+// Voice: `ash` — grounded, peer-engineer tone. Not overly warm, not robotic.
+// Speed: 1.1 — perceptibly snappier than default without sounding rushed.
+export const VOICE_TTS_MODEL = 'gpt-4o-mini-tts';
+export const VOICE_TTS_VOICE = 'ash';
+export const VOICE_TTS_SPEED = 1.1;
+export const VOICE_TTS_INSTRUCTIONS =
+  `Speak as a senior software engineer running a mock technical interview. ` +
+  `Calm, clear, efficient pacing — slightly quicker than conversational. ` +
+  `Natural cadence, not over-enunciated. No filler, no excess warmth, ` +
+  `no rising-intonation questions at the end of statements. Professional peer.`;
+
 // ─── Scripted intro ──────────────────────────────────────────────────────────
 // ~15s when spoken by tts-1 alloy. Intentionally short so the timer doesn't eat
 // session time while the candidate is listening.
