@@ -14,6 +14,22 @@ import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import AppNav from '@/components/AppNav';
+import ThemeToggle from '@/components/ThemeToggle';
+
+// Observe the body's `theme-dark` / `theme-light` class so Monaco (whose
+// colors must be literal hex) re-renders when the user flips the theme.
+function useAppTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  useEffect(() => {
+    const read = () =>
+      setTheme(document.body.classList.contains('theme-dark') ? 'dark' : 'light');
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -65,29 +81,74 @@ interface Props {
   durationMin: 30 | 45;
 }
 
-// ─── Monaco theme ────────────────────────────────────────────────────────────
-
+// ─── Monaco themes ───────────────────────────────────────────────────────────
+// Monaco requires literal hex colors, so we ship a light and a dark theme and
+// switch the `theme` prop based on useAppTheme(). Colors kept in sync with
+// ProblemPage.tsx so the voice editor looks identical to the solve-page one.
 const defineTheme: BeforeMount = (monaco) => {
+  monaco.editor.defineTheme('lc-light', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'keyword',  foreground: 'cf222e' },
+      { token: 'string',   foreground: '0a3069' },
+      { token: 'comment',  foreground: '6e7781', fontStyle: 'italic' },
+      { token: 'number',   foreground: '0550ae' },
+      { token: 'type',     foreground: '953800' },
+      { token: 'function', foreground: '8250df' },
+    ],
+    colors: {
+      'editor.background':                  '#eef3ff',
+      'editor.foreground':                  '#0f172a',
+      'editor.lineHighlightBackground':     '#e6edff',
+      'editor.lineHighlightBorder':         '#00000000',
+      'editor.selectionBackground':         '#3b82f640',
+      'editor.inactiveSelectionBackground': '#94a3b81a',
+      'editorLineNumber.foreground':        '#cbd5e1',
+      'editorLineNumber.activeForeground':  '#2563eb',
+      'editorCursor.foreground':            '#2563eb',
+      'editorIndentGuide.background1':      '#e2e8f0',
+      'editorIndentGuide.activeBackground1':'#cbd5e1',
+      'editorWidget.background':            '#ffffff',
+      'editorWidget.border':                '#bfdbfe',
+      'editorSuggestWidget.background':     '#ffffff',
+      'editorSuggestWidget.border':         '#bfdbfe',
+      'editorSuggestWidget.foreground':     '#0f172a',
+      'editorSuggestWidget.selectedBackground': '#eff6ff',
+      'scrollbarSlider.background':         '#2563eb14',
+      'scrollbarSlider.hoverBackground':    '#2563eb26',
+      'scrollbarSlider.activeBackground':   '#2563eb40',
+    },
+  });
+
   monaco.editor.defineTheme('lc-dark', {
     base: 'vs-dark',
     inherit: true,
     rules: [
-      { token: 'keyword', foreground: '79b8ff' },
-      { token: 'string', foreground: '9ecbff' },
-      { token: 'comment', foreground: '6a737d', fontStyle: 'italic' },
-      { token: 'number', foreground: 'f8cc7a' },
-      { token: 'type', foreground: 'b392f0' },
+      { token: 'keyword',  foreground: '79b8ff' },
+      { token: 'string',   foreground: '9ecbff' },
+      { token: 'comment',  foreground: '6a737d', fontStyle: 'italic' },
+      { token: 'number',   foreground: 'f8cc7a' },
+      { token: 'type',     foreground: 'b392f0' },
       { token: 'function', foreground: 'b392f0' },
     ],
     colors: {
-      'editor.background': '#ffffff',
-      'editor.foreground': '#1e293b',
-      'editor.lineHighlightBackground': '#f1f5f9',
-      'editor.selectionBackground': '#3b82f640',
-      'editorLineNumber.foreground': '#334155',
-      'editorLineNumber.activeForeground': '#94a3b8',
-      'editorCursor.foreground': '#60a5fa',
+      'editor.background':                  '#0f1729',
+      'editor.foreground':                  '#e5e7eb',
+      'editor.lineHighlightBackground':     '#131b30',
+      'editor.lineHighlightBorder':         '#00000000',
+      'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#ffffff0d',
+      'editorLineNumber.foreground':        '#334155',
+      'editorLineNumber.activeForeground':  '#94a3b8',
+      'editorCursor.foreground':            '#60a5fa',
+      'editorIndentGuide.background1':      '#1e293b',
+      'editorWidget.background':            '#0f1729',
+      'editorSuggestWidget.background':     '#0f1729',
+      'editorSuggestWidget.border':         '#1e293b',
+      'scrollbarSlider.background':         '#ffffff08',
+      'scrollbarSlider.hoverBackground':    '#ffffff0f',
+      'scrollbarSlider.activeBackground':   '#ffffff14',
     },
   });
 };
@@ -122,6 +183,8 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
+
+  const appTheme = useAppTheme();
 
   // Audio infra refs (persist across renders, don't cause re-renders)
   const streamRef = useRef<MediaStream | null>(null);
@@ -690,6 +753,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               />
             </div>
           )}
+          <ThemeToggle />
           <button
             onClick={() => setShowTranscript(s => !s)}
             className="p-1.5 rounded-md text-slate-600 hover:text-slate-800"
@@ -736,6 +800,106 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               {session.problem.descriptionMd}
             </ReactMarkdown>
           </div>
+
+          {session.problem.examples.length > 0 && (
+            <div className="mt-6 space-y-3">
+              {session.problem.examples.map((ex, i) => (
+                <div key={i}>
+                  <p
+                    className="text-[11px] font-semibold uppercase tracking-[0.08em] mb-1.5"
+                    style={{ ...SG, color: 'var(--ll-ink-subtle)' }}
+                  >
+                    Example {i + 1}
+                  </p>
+                  <div
+                    className="rounded-lg px-3 py-2.5 space-y-1"
+                    style={{
+                      background: 'var(--ll-bg-subtle)',
+                      border: '1px solid var(--ll-border)',
+                    }}
+                  >
+                    <p className="text-[12px] leading-relaxed" style={MONO}>
+                      <span style={{ color: 'var(--ll-accent-ink)' }}>Input: </span>
+                      <span style={{ color: 'var(--ll-ink)' }}>{ex.input}</span>
+                    </p>
+                    <p className="text-[12px] leading-relaxed" style={MONO}>
+                      <span style={{ color: 'var(--ll-accent-ink)' }}>Output: </span>
+                      <span style={{ color: 'var(--ll-ink)' }}>{ex.output}</span>
+                    </p>
+                    {ex.explanation && (
+                      <p className="text-[11.5px] pt-0.5" style={{ ...SG, color: 'var(--ll-ink-subtle)' }}>
+                        {ex.explanation}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {session.problem.constraints.length > 0 && (
+            <div className="mt-6">
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.12em] mb-2"
+                style={{ ...SG, color: 'var(--ll-ink-subtle)' }}
+              >
+                Constraints
+              </p>
+              <ul className="space-y-1.5">
+                {session.problem.constraints.map(c => (
+                  <li
+                    key={c}
+                    className="flex items-start gap-2.5 text-[12px]"
+                    style={{ ...MONO, color: 'var(--ll-ink-subtle)' }}
+                  >
+                    <span
+                      className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0"
+                      style={{ background: 'rgba(15,23,42,0.25)' }}
+                    />
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {session.problem.defaultTests.length > 0 && (
+            <div className="mt-6">
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.12em] mb-2"
+                style={{ ...SG, color: 'var(--ll-ink-subtle)' }}
+              >
+                Sample test cases
+              </p>
+              <div className="space-y-2">
+                {session.problem.defaultTests.map((t, i) => (
+                  <div
+                    key={i}
+                    className="rounded-lg px-3 py-2 space-y-0.5"
+                    style={{
+                      background: 'var(--ll-bg-subtle)',
+                      border: '1px solid var(--ll-border)',
+                    }}
+                  >
+                    <p
+                      className="text-[10.5px] font-semibold uppercase tracking-wider"
+                      style={{ ...SG, color: 'var(--ll-ink-subtle)' }}
+                    >
+                      {t.label || `Test ${i + 1}`}
+                    </p>
+                    <p className="text-[11.5px] leading-relaxed break-words" style={MONO}>
+                      <span style={{ color: 'var(--ll-accent-ink)' }}>in: </span>
+                      <span style={{ color: 'var(--ll-ink)' }}>{t.inputJson}</span>
+                    </p>
+                    <p className="text-[11.5px] leading-relaxed break-words" style={MONO}>
+                      <span style={{ color: 'var(--ll-accent-ink)' }}>out: </span>
+                      <span style={{ color: 'var(--ll-ink)' }}>{t.expectedJson}</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Editor pane */}
@@ -776,7 +940,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               value={code}
               beforeMount={defineTheme}
               onChange={v => setCode(v ?? '')}
-              theme="lc-dark"
+              theme={appTheme === 'dark' ? 'lc-dark' : 'lc-light'}
               options={{
                 fontSize: 14,
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
