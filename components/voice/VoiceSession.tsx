@@ -15,6 +15,9 @@ import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import AppNav from '@/components/AppNav';
 import ThemeToggle from '@/components/ThemeToggle';
+import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
+import { getVoiceQuota } from '@/app/interview/actions';
+import type { VoiceQuotaResult } from '@/lib/voice-quota';
 
 // Observe the body's `theme-dark` / `theme-light` class so Monaco (whose
 // colors must be literal hex) re-renders when the user flips the theme.
@@ -196,6 +199,9 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
+  // Voice quota for the counter UI. Fetched once on mount and refreshed
+  // after a session ends so the scorecard shows the updated count.
+  const [voiceQuota, setVoiceQuota] = useState<VoiceQuotaResult | null>(null);
   // Surface the recorder + turn pipeline in the live-transcription overlay
   // so the user can see whether the mic → Whisper → TTS loop is healthy.
   const [isRecording, setIsRecording] = useState(false);
@@ -208,6 +214,11 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   >({ kind: 'idle' });
 
   const appTheme = useAppTheme();
+
+  // Load the voice quota once on mount so the intro screen can show it.
+  useEffect(() => {
+    void getVoiceQuota().then(setVoiceQuota).catch(() => { /* ignore — UI hides */ });
+  }, []);
 
   // Audio infra refs (persist across renders, don't cause re-renders)
   const streamRef = useRef<MediaStream | null>(null);
@@ -682,6 +693,9 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
       setScorecard(data);
       setPhase('scorecard');
 
+      // Refresh the quota so the scorecard reflects the newly-consumed slot.
+      void getVoiceQuota().then(setVoiceQuota).catch(() => { /* ignore */ });
+
       try {
         posthog.capture('voice_mock_ended', {
           session_id: session.sessionId,
@@ -717,9 +731,10 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         durationMin={durationMin}
         micLevel={micLevel}
         micState={micState}
-        canStart={phase === 'intro' && micState === 'granted'}
+        canStart={phase === 'intro' && micState === 'granted' && (voiceQuota?.allowed ?? true)}
         starting={phase === 'starting'}
         error={startError}
+        voiceQuota={voiceQuota}
         onRequestMic={initMic}
         onStart={beginSession}
       />
@@ -746,6 +761,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         finalCode={codeRef.current}
         problem={session.problem}
         runResults={runResultsRef.current}
+        voiceQuota={voiceQuota}
         onContinueCoding={() => setPhase('practice')}
       />
     );
@@ -1245,7 +1261,7 @@ function LiveTranscriptionOverlay({
 // ─── Intro phase ─────────────────────────────────────────────────────────────
 
 function IntroPhase({
-  difficulty, durationMin, micLevel, micState, canStart, starting, error, onRequestMic, onStart,
+  difficulty, durationMin, micLevel, micState, canStart, starting, error, voiceQuota, onRequestMic, onStart,
 }: {
   difficulty: string;
   durationMin: number;
@@ -1254,9 +1270,11 @@ function IntroPhase({
   canStart: boolean;
   starting: boolean;
   error: string | null;
+  voiceQuota: VoiceQuotaResult | null;
   onRequestMic: () => void;
   onStart: () => void;
 }) {
+  const voiceCapped = voiceQuota ? !voiceQuota.allowed : false;
   const statusLabel =
     micState === 'granted'
       ? (micLevel > 0.001 ? 'Hearing you' : 'Ready')
@@ -1373,6 +1391,8 @@ function IntroPhase({
             </div>
           ) : null}
 
+          <VoiceQuotaBadge quota={voiceQuota} variant="card" />
+
           <button
             onClick={onStart}
             disabled={!canStart || starting}
@@ -1384,13 +1404,19 @@ function IntroPhase({
               boxShadow: '0 10px 24px -12px rgba(59,130,246,0.6)',
             }}
           >
-            {starting ? (<><Loader2 size={14} className="animate-spin" /> Starting…</>) : (<>Begin Interview <ArrowRight size={15} /></>)}
+            {starting
+              ? (<><Loader2 size={14} className="animate-spin" /> Starting…</>)
+              : voiceCapped
+                ? 'Voice cap reached'
+                : (<>Begin Interview <ArrowRight size={15} /></>)}
           </button>
 
           <p className="text-[11px] text-slate-400 text-center" style={SG}>
-            {micState === 'granted'
-              ? 'You\u2019ll hear a short intro, then your problem will appear.'
-              : 'Enable your mic to continue.'}
+            {voiceCapped
+              ? 'Monthly cap reached \u2014 older sessions will roll off your 30-day window.'
+              : micState === 'granted'
+                ? 'You\u2019ll hear a short intro, then your problem will appear.'
+                : 'Enable your mic to continue.'}
           </p>
         </div>
       </div>
@@ -1401,7 +1427,7 @@ function IntroPhase({
 // ─── Scorecard phase ─────────────────────────────────────────────────────────
 
 function ScorecardPhase({
-  scorecard, error, isFreeTrial, finalCode, problem, runResults, onContinueCoding,
+  scorecard, error, isFreeTrial, finalCode, problem, runResults, voiceQuota, onContinueCoding,
 }: {
   scorecard: Scorecard | null;
   error: string | null;
@@ -1409,6 +1435,7 @@ function ScorecardPhase({
   finalCode: string;
   problem: ProblemContent;
   runResults: { passed: number; total: number } | null;
+  voiceQuota: VoiceQuotaResult | null;
   onContinueCoding: () => void;
 }) {
   return (
@@ -1451,6 +1478,9 @@ function ScorecardPhase({
             Interview complete
           </p>
           <h1 className="text-[26px] font-bold text-slate-900 mt-1" style={SG}>{problem.title} — debrief</h1>
+          <div className="mt-3">
+            <VoiceQuotaBadge quota={voiceQuota} variant="compact" />
+          </div>
         </div>
 
         {error ? (

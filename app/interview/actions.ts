@@ -3,6 +3,7 @@
 import { getSupabase, getSupabaseUser } from '@/lib/supabase';
 import { getUserSubscription } from '@/lib/subscription';
 import { getPublishedSlugs, getUserSolvedSlugs } from '@/lib/problems-server';
+import { checkVoiceQuota, type VoiceQuotaResult } from '@/lib/voice-quota';
 import {
   pickInterviewProblems,
   dbRowToInterviewSession,
@@ -10,6 +11,14 @@ import {
   type InterviewSession,
   type InterviewFeedback,
 } from '@/lib/interview';
+
+// ─── Voice quota (for the counter UI) ─────────────────────────────────────────
+
+export async function getVoiceQuota(): Promise<VoiceQuotaResult> {
+  const user = await getSupabaseUser();
+  if (!user) return { allowed: false, used: 0, limit: 0, isPro: false, reason: 'no_db' };
+  return checkVoiceQuota(user.id);
+}
 
 // ─── Read history ────────────────────────────────────────────────────────────
 

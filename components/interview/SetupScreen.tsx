@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clock, Zap, Mic, MicOff, ArrowRight } from 'lucide-react';
 import type { InterviewDifficulty } from '@/lib/interview';
+import type { VoiceQuotaResult } from '@/lib/voice-quota';
+import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -13,6 +15,7 @@ type Duration = 30 | 45;
 interface SetupScreenProps {
   onStart: (difficulty: InterviewDifficulty) => void;
   loading: boolean;
+  voiceQuota: VoiceQuotaResult;
 }
 
 const DIFFICULTIES: { id: InterviewDifficulty; label: string; sub: string; tag: string; tagColor: string; tagBg: string }[] = [
@@ -39,11 +42,12 @@ const DURATIONS: { v: Duration; label: string; sub: string }[] = [
   { v: 45, label: '45 min', sub: 'onsite round' },
 ];
 
-export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
+export default function SetupScreen({ onStart, loading, voiceQuota }: SetupScreenProps) {
   const router = useRouter();
   const [format, setFormat] = useState<Format>('silent');
   const [selected, setSelected] = useState<InterviewDifficulty>('easy-medium');
   const [duration, setDuration] = useState<Duration>(30);
+  const voiceCapped = format === 'voice' && !voiceQuota.allowed;
 
   const handleStart = async () => {
     if (format === 'voice') {
@@ -181,6 +185,11 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
           </div>
         </div>
 
+        {/* Voice quota counter */}
+        {format === 'voice' && (
+          <VoiceQuotaBadge quota={voiceQuota} variant="card" />
+        )}
+
         {/* Duration (voice only) */}
         {format === 'voice' && (
           <div>
@@ -242,7 +251,7 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
         <div className="flex justify-center">
           <button
             onClick={handleStart}
-            disabled={loading}
+            disabled={loading || voiceCapped}
             className="flex items-center gap-2 px-8 py-3 rounded-xl text-[15px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
@@ -252,8 +261,12 @@ export default function SetupScreen({ onStart, loading }: SetupScreenProps) {
               ...SG,
             }}
           >
-            {loading ? 'Setting up…' : (format === 'voice' ? 'Continue to mic check' : 'Start Interview')}
-            {!loading && <ArrowRight size={16} />}
+            {loading
+              ? 'Setting up…'
+              : voiceCapped
+                ? 'Voice cap reached'
+                : (format === 'voice' ? 'Continue to mic check' : 'Start Interview')}
+            {!loading && !voiceCapped && <ArrowRight size={16} />}
           </button>
         </div>
       </div>

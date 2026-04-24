@@ -22,6 +22,7 @@ import {
 import { getProblemBySlug } from '@/app/interview/client-helpers';
 import type { InterviewSession, InterviewDifficulty, InterviewFeedback } from '@/lib/interview';
 import type { ProblemContent } from '@/lib/problem-types';
+import type { VoiceQuotaResult } from '@/lib/voice-quota';
 import { C, SG } from '@/lib/ui-tokens';
 
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -40,6 +41,7 @@ interface ActiveState {
 interface Props {
   initialHistory: InterviewSession[];
   isPro: boolean;
+  voiceQuota: VoiceQuotaResult;
 }
 
 function formatDate(iso: string): string {
@@ -291,7 +293,7 @@ function HistoryWelcome({
 
 // ─── Main component ────────────────────────────────────────────────────────
 
-export default function InterviewPage({ initialHistory, isPro }: Props) {
+export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Props) {
   const [phase, setPhase] = useState<Phase>(initialHistory.length > 0 ? 'history' : 'setup');
   const [history, setHistory] = useState(initialHistory);
   const [loading, setLoading] = useState(false);
@@ -657,7 +659,7 @@ export default function InterviewPage({ initialHistory, isPro }: Props) {
     >
       {phase === 'setup' ? (
         <div className="flex flex-col">
-          <SetupScreen onStart={handleStart} loading={loading} />
+          <SetupScreen onStart={handleStart} loading={loading} voiceQuota={voiceQuota} />
           {error && (
             <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
               {error}
