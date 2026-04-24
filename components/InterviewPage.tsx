@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
-import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle, Mic, Eye } from 'lucide-react';
 import AppNav from '@/components/AppNav';
 import AppShell from '@/components/shell/AppShell';
 import PageHeader from '@/components/shell/PageHeader';
@@ -13,6 +14,7 @@ import ReviewScreen from '@/components/interview/ReviewScreen';
 import InterviewSidebar from '@/components/interview/InterviewSidebar';
 import InterviewRightRail from '@/components/interview/InterviewRightRail';
 import ActiveInterview, { type InterviewResults } from '@/components/interview/ActiveInterview';
+import VoiceDebriefView from '@/components/voice/VoiceDebriefView';
 import {
   startInterviewSession,
   submitInterview,
@@ -27,7 +29,7 @@ import { C, SG } from '@/lib/ui-tokens';
 
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
 
-type Phase = 'history' | 'setup' | 'active' | 'review';
+type Phase = 'history' | 'setup' | 'active' | 'review' | 'voice-review';
 
 // localStorage keys for crash recovery
 const LS_ACTIVE_SESSION = 'zl-interview-active';
@@ -65,6 +67,7 @@ function HistoryWelcome({
   pendingFeedbackId,
   feedbackErrorId,
   onNewInterview,
+  onView,
   onRedo,
   redoLoadingId,
 }: {
@@ -72,7 +75,8 @@ function HistoryWelcome({
   pendingFeedbackId: string | null;
   feedbackErrorId: string | null;
   onNewInterview: () => void;
-  onRedo: (sessionId: string, difficulty: InterviewDifficulty) => void;
+  onView: (session: InterviewSession) => void;
+  onRedo: (sessionId: string, difficulty: InterviewDifficulty, mode: 'voice' | 'silent') => void;
   redoLoadingId: string | null;
 }) {
   const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
@@ -177,7 +181,7 @@ function HistoryWelcome({
             History
           </p>
           <p className="text-[10px] text-slate-600" style={SG}>
-            Click any row to redo at the same difficulty
+            Click a row to open the debrief · Redo button launches a fresh session
           </p>
         </div>
         <div className="space-y-2">
@@ -186,20 +190,23 @@ function HistoryWelcome({
             const hasError = s.id === feedbackErrorId;
             const isLoading = s.id === redoLoadingId;
             const isEasyMed = s.difficulty === 'easy-medium';
+            const isVoice = s.mode === 'voice';
 
             return (
-              <button
+              <div
                 key={s.id}
-                onClick={() => onRedo(s.id, s.difficulty)}
-                disabled={isLoading}
-                className="group w-full text-left rounded-xl px-5 py-4 transition-all hover:bg-slate-50 disabled:opacity-60 disabled:cursor-wait"
+                className="group relative rounded-xl px-5 py-4 transition-all hover:bg-slate-50 aria-disabled:opacity-60"
                 style={{
                   background: 'var(--ll-bg-elevated)',
                   border: `1px solid ${C.border}`,
                 }}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4 min-w-0">
+                  <button
+                    onClick={() => onView(s)}
+                    className="flex items-center gap-4 min-w-0 flex-1 text-left"
+                    title="Open debrief"
+                  >
                     {/* Difficulty accent */}
                     <div
                       className="w-1 self-stretch rounded-full shrink-0"
@@ -211,13 +218,39 @@ function HistoryWelcome({
                     />
 
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <span
                           className="text-[13px] font-semibold text-slate-800"
                           style={SG}
                         >
                           {formatDate(s.createdAt)}
                         </span>
+                        {isVoice ? (
+                          <span
+                            className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider"
+                            style={{
+                              color: 'rgb(168,85,247)',
+                              background: 'rgba(168,85,247,0.12)',
+                              border: '1px solid rgba(168,85,247,0.3)',
+                              ...SG,
+                            }}
+                          >
+                            <Mic size={9} strokeWidth={2.5} />
+                            Voice
+                          </span>
+                        ) : (
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider"
+                            style={{
+                              color: 'var(--ll-ink-muted)',
+                              background: 'var(--ll-bg-subtle)',
+                              border: '1px solid var(--ll-border)',
+                              ...SG,
+                            }}
+                          >
+                            Silent
+                          </span>
+                        )}
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider"
                           style={{
@@ -230,7 +263,9 @@ function HistoryWelcome({
                             ...SG,
                           }}
                         >
-                          {difficultyLabel(s.difficulty)}
+                          {isVoice
+                            ? (isEasyMed ? 'Easy' : 'Hard')
+                            : difficultyLabel(s.difficulty)}
                         </span>
                         {isPending && (
                           <span
@@ -254,12 +289,12 @@ function HistoryWelcome({
                       <p className="text-[12px] text-slate-500 truncate" style={SG}>
                         {s.problem2Slug
                           ? `${s.problem1Slug.replace(/-/g, ' ')} + ${s.problem2Slug.replace(/-/g, ' ')}`
-                          : `Voice · ${s.problem1Slug.replace(/-/g, ' ')}`}
+                          : s.problem1Slug.replace(/-/g, ' ')}
                       </p>
                     </div>
-                  </div>
+                  </button>
 
-                  <div className="flex items-center gap-4 shrink-0">
+                  <div className="flex items-center gap-3 shrink-0">
                     {s.timeUsedMs != null && (
                       <span
                         className="flex items-center gap-1 text-[12px] text-slate-500"
@@ -269,9 +304,21 @@ function HistoryWelcome({
                         {formatTime(s.timeUsedMs)}
                       </span>
                     )}
-                    <span
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-700 border border-slate-200 bg-slate-50/70 transition-all group-hover:text-slate-900 group-hover:bg-blue-500/10 group-hover:border-blue-400/30"
+                    <button
+                      onClick={() => onView(s)}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-700 border border-slate-200 bg-slate-50/70 transition-all hover:text-slate-900 hover:bg-blue-500/10 hover:border-blue-400/30"
                       style={SG}
+                      title="Open debrief"
+                    >
+                      <Eye size={11} strokeWidth={2.5} />
+                      View
+                    </button>
+                    <button
+                      onClick={() => onRedo(s.id, s.difficulty, isVoice ? 'voice' : 'silent')}
+                      disabled={isLoading}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-700 border border-slate-200 bg-slate-50/70 transition-all hover:text-slate-900 hover:bg-blue-500/10 hover:border-blue-400/30 disabled:opacity-60 disabled:cursor-wait"
+                      style={SG}
+                      title={isVoice ? 'Start another voice mock' : 'Redo at same difficulty'}
                     >
                       {isLoading ? (
                         <Loader2 size={11} className="animate-spin" />
@@ -279,10 +326,10 @@ function HistoryWelcome({
                         <RotateCcw size={11} strokeWidth={2.5} />
                       )}
                       Redo
-                    </span>
+                    </button>
                   </div>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -563,7 +610,9 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
     if (feedbackError?.sessionId === session.id) return;
 
     setReviewSession(session);
-    setPhase('review');
+    // Voice mocks have their own scorecard view with a different schema;
+    // silent mocks get the two-problem ReviewScreen.
+    setPhase(session.mode === 'voice' ? 'voice-review' : 'review');
   }, [pendingFeedbackId, feedbackError]);
 
   // ─── Navigation ─────────────────────────────────────────────────────────────
@@ -578,18 +627,26 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
     setPhase('setup');
   }, []);
 
-  // Redo an interview at the same difficulty — kicks straight into an active session.
+  const router = useRouter();
+  // Redo an interview at the same difficulty — kicks straight into an active
+  // session. Voice rows route to /interview/voice so they restart in the
+  // correct flow; silent rows reuse handleStart which creates a new
+  // two-problem silent session.
   const handleRedo = useCallback(
-    async (sessionId: string, difficulty: InterviewDifficulty) => {
+    async (sessionId: string, difficulty: InterviewDifficulty, mode: 'voice' | 'silent') => {
       setRedoLoadingId(sessionId);
       setReviewSession(null);
       try {
-        await handleStart(difficulty);
+        if (mode === 'voice') {
+          router.push(`/interview/voice?difficulty=${difficulty}&duration=30&auto=1`);
+        } else {
+          await handleStart(difficulty);
+        }
       } finally {
         setRedoLoadingId(null);
       }
     },
-    [handleStart],
+    [handleStart, router],
   );
 
   // Non-pro who already used their free mock: clicking "new interview" or
@@ -600,16 +657,16 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
     goToSetup();
   }, [isPro, history.length, goToSetup]);
   const guardedRedo = useCallback(
-    (sessionId: string, difficulty: InterviewDifficulty) => {
+    (sessionId: string, difficulty: InterviewDifficulty, mode: 'voice' | 'silent') => {
       if (!isPro && history.length > 0) { setShowPaywall(true); return; }
-      return handleRedo(sessionId, difficulty);
+      return handleRedo(sessionId, difficulty, mode);
     },
     [isPro, history.length, handleRedo],
   );
 
   // Selected session id — lights up the matching row in the sidebar.
   const selectedSessionId = useMemo(() => {
-    if (phase === 'review' && reviewSession) return reviewSession.id;
+    if ((phase === 'review' || phase === 'voice-review') && reviewSession) return reviewSession.id;
     return null;
   }, [phase, reviewSession]);
 
@@ -674,6 +731,10 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
             onNewInterview={guardedGoToSetup}
           />
         </div>
+      ) : phase === 'voice-review' && reviewSession ? (
+        <div className="flex flex-col">
+          <VoiceDebriefView session={reviewSession} onBack={goToHistory} />
+        </div>
       ) : (
         <>
           {/* Desktop: history + redo panel (sidebar is for analysis) */}
@@ -683,6 +744,7 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
               pendingFeedbackId={pendingFeedbackId}
               feedbackErrorId={feedbackErrorId}
               onNewInterview={guardedGoToSetup}
+              onView={handleViewSession}
               onRedo={guardedRedo}
               redoLoadingId={redoLoadingId}
             />

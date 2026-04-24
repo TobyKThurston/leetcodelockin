@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2, CheckCircle2 } from 'lucide-react';
+import { Trophy, Clock, ChevronRight, ArrowRight, Plus, AlertCircle, RotateCw, Loader2, CheckCircle2, Mic } from 'lucide-react';
 import type { InterviewSession } from '@/lib/interview';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -240,10 +240,36 @@ export default function HistoryScreen({
                       </span>
                     )}
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-[13px] font-medium text-[var(--ll-ink)]" style={SG}>
                           {formatDate(s.createdAt)}
                         </span>
+                        {s.mode === 'voice' ? (
+                          <span
+                            className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider"
+                            style={{
+                              color: 'rgb(168,85,247)',
+                              background: 'rgba(168,85,247,0.12)',
+                              border: '1px solid rgba(168,85,247,0.3)',
+                              ...SG,
+                            }}
+                          >
+                            <Mic size={9} strokeWidth={2.5} />
+                            Voice
+                          </span>
+                        ) : (
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider"
+                            style={{
+                              color: 'var(--ll-ink-muted)',
+                              background: 'var(--ll-bg-subtle)',
+                              border: '1px solid var(--ll-border)',
+                              ...SG,
+                            }}
+                          >
+                            Silent
+                          </span>
+                        )}
                         <span
                           className="text-[11px] px-1.5 py-0.5 rounded font-medium"
                           style={{
@@ -251,7 +277,9 @@ export default function HistoryScreen({
                             background: s.difficulty === 'easy-medium' ? 'rgba(16,185,129,0.10)' : 'rgba(234,179,8,0.12)',
                           }}
                         >
-                          {difficultyLabel(s.difficulty)}
+                          {s.mode === 'voice'
+                            ? (s.difficulty === 'easy-medium' ? 'Easy' : 'Hard')
+                            : difficultyLabel(s.difficulty)}
                         </span>
                         {isPending && (
                           <Badge
@@ -281,7 +309,7 @@ export default function HistoryScreen({
                       <p className="text-[12px] text-[var(--ll-ink-subtle)] mt-0.5 truncate">
                         {s.problem2Slug
                           ? `${s.problem1Slug.replace(/-/g, ' ')} + ${s.problem2Slug.replace(/-/g, ' ')}`
-                          : `Voice · ${s.problem1Slug.replace(/-/g, ' ')}`}
+                          : s.problem1Slug.replace(/-/g, ' ')}
                       </p>
                     </div>
                   </div>

@@ -41,11 +41,27 @@ export interface InterviewFeedback {
   tip: string;
 }
 
+// Voice-mock scorecard persisted by /api/voice/end. Mirrors the schema used
+// inside that route and in VoiceSession.tsx's ScorecardPhase.
+export interface VoiceScorecard {
+  scores: {
+    correctness: number;
+    communication: number;
+    complexity: number;
+    problemSolving: number;
+  };
+  summaryParagraph: string;
+  quotes: Array<{ text: string; tSec: number; tag: 'strong' | 'weak' }>;
+  suggestedNextProblems: Array<{ slug: string; reason: string }>;
+}
+
 export interface InterviewSession {
   id: string;
   userId: string;
   difficulty: InterviewDifficulty;
   status: InterviewStatus;
+  // Rows written before voice shipped have a null mode; treat those as silent.
+  mode: InterviewMode | null;
   problem1Slug: string;
   // Voice mock interviews only use problem1; silent mocks use both. Null on
   // voice rows means "single-problem voice session".
@@ -58,6 +74,8 @@ export interface InterviewSession {
   completedAt: string | null;
   timeUsedMs: number | null;
   feedback: InterviewFeedback | null;
+  // Voice-mock scorecard — null for silent rows or in-progress voice rows.
+  voiceScorecard: VoiceScorecard | null;
   overallScore: number | null;
   createdAt: string;
 }
@@ -197,6 +215,7 @@ export function dbRowToInterviewSession(row: Record<string, unknown>): Interview
     userId: row.user_id as string,
     difficulty: row.difficulty as InterviewDifficulty,
     status: row.status as InterviewStatus,
+    mode: (row.mode as InterviewMode | null) ?? null,
     problem1Slug: row.problem1_slug as string,
     problem2Slug: (row.problem2_slug as string | null) ?? null,
     problem1Code: (row.problem1_code as string) ?? null,
@@ -207,6 +226,7 @@ export function dbRowToInterviewSession(row: Record<string, unknown>): Interview
     completedAt: (row.completed_at as string) ?? null,
     timeUsedMs: (row.time_used_ms as number) ?? null,
     feedback: (row.feedback as InterviewFeedback) ?? null,
+    voiceScorecard: (row.voice_scorecard as VoiceScorecard) ?? null,
     overallScore: (row.overall_score as number) ?? null,
     createdAt: row.created_at as string,
   };

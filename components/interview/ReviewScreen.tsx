@@ -101,6 +101,19 @@ export default function ReviewScreen({
 
         {/* Score header */}
         <div className="text-center space-y-3">
+          <div className="flex items-center justify-center gap-1.5">
+            <span
+              className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-[0.12em]"
+              style={{
+                ...SG,
+                color: 'var(--ll-ink-muted)',
+                background: 'var(--ll-bg-subtle)',
+                border: '1px solid var(--ll-border)',
+              }}
+            >
+              Silent debrief
+            </span>
+          </div>
           <p className="text-[11px] text-slate-500 uppercase tracking-wider" style={SG}>Overall Score</p>
           <p
             className="text-[56px] font-bold tabular-nums leading-none"
