@@ -149,13 +149,15 @@ export function pickInterviewProblems(
 /**
  * Pick ONE problem for a voice mock (1-problem format).
  *
- * Voice mocks are always a single problem at the HARDER tier of the picker:
- *   - easy-medium → Medium
- *   - medium-hard → Hard
+ * Voice mocks are a single problem chosen from the shared LIBRARY (same set
+ * /library shows), tuned to the tier the user picked:
+ *   - easy-medium  →  Easy  (quick to read, short to code — good for voice)
+ *   - medium-hard  →  Hard  (senior-level stretch)
  *
- * This keeps the existing difficulty selector meaningful (harder label = harder
- * problem) without the 2-problem pacing. Avoids recent + solved; falls back to
- * any problem if the preferred pool is exhausted.
+ * Medium sits in the middle of the full curriculum but ends up being too
+ * long/dense for a 30–45 min voice round, so voice skips it deliberately.
+ * Avoids recent + solved; falls back to any problem if the preferred pool is
+ * exhausted.
  */
 export function pickVoiceInterviewProblem(
   difficulty: InterviewDifficulty,
@@ -174,7 +176,7 @@ export function pickVoiceInterviewProblem(
     }
   }
 
-  const target: Difficulty = difficulty === 'easy-medium' ? 'Medium' : 'Hard';
+  const target: Difficulty = difficulty === 'easy-medium' ? 'Easy' : 'Hard';
   const pool = all.filter(p => p.difficulty === target);
   const recentSet = new Set(recentInterviewSlugs);
 

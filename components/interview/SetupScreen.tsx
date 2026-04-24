@@ -164,7 +164,7 @@ export default function SetupScreen({ onStart, loading, voiceQuota }: SetupScree
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-[14px] font-semibold text-slate-900" style={SG}>
                       {format === 'voice'
-                        ? (d.id === 'easy-medium' ? 'Medium' : 'Hard')
+                        ? (d.id === 'easy-medium' ? 'Easy' : 'Hard')
                         : d.label}
                     </span>
                     <span
@@ -176,7 +176,9 @@ export default function SetupScreen({ onStart, loading, voiceQuota }: SetupScree
                   </div>
                   <p className="text-[12px] text-slate-500 leading-relaxed" style={SG}>
                     {format === 'voice'
-                      ? (d.id === 'easy-medium' ? 'Standard onsite difficulty' : 'Senior-level challenge')
+                      ? (d.id === 'easy-medium'
+                        ? 'Short, focused problems — good for voice'
+                        : 'Senior-level challenge')
                       : d.sub}
                   </p>
                 </button>

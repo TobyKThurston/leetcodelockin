@@ -70,8 +70,8 @@ function VoiceInterviewPageInner() {
             </p>
             <div className="grid grid-cols-2 gap-2">
               {([
-                { v: 'easy-medium' as const, label: 'Medium', sub: 'easy–medium tier' },
-                { v: 'medium-hard' as const, label: 'Hard', sub: 'medium–hard tier' },
+                { v: 'easy-medium' as const, label: 'Easy', sub: 'short, focused problems' },
+                { v: 'medium-hard' as const, label: 'Hard', sub: 'senior-level challenge' },
               ]).map(opt => (
                 <button
                   key={opt.v}

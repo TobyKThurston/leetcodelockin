@@ -1634,7 +1634,7 @@ function IntroPhase({
               Let&apos;s run through one problem.
             </h1>
             <p className="text-[14px] text-slate-600 mt-2 leading-relaxed" style={SG}>
-              {difficulty === 'easy-medium' ? 'Medium' : 'Hard'} difficulty · {durationMin} minutes.
+              {difficulty === 'easy-medium' ? 'Easy' : 'Hard'} difficulty · {durationMin} minutes.
               Your AI interviewer will stay mostly quiet while you think, and interject when it&apos;s time to push you.
             </p>
           </div>
