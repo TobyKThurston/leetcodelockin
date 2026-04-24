@@ -26,13 +26,6 @@ export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   try {
-    if (process.env.VOICE_ENABLED !== 'true') {
-      return NextResponse.json(
-        { error: 'Voice mock is temporarily unavailable.' },
-        { status: 503 },
-      );
-    }
-
     const user = await getSupabaseUser();
     if (!user) {
       return NextResponse.json({ error: 'Sign in required' }, { status: 401 });
