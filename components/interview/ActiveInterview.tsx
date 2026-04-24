@@ -40,8 +40,8 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 const BG_BASE   = 'var(--ll-bg)';
 const BG_PANEL  = 'var(--ll-bg-panel)';
 const BG_EDITOR = 'var(--ll-bg-elevated)';
-const BORDER    = 'rgba(15,23,42,0.08)';
-const BORDER_MED = 'rgba(15,23,42,0.12)';
+const BORDER    = 'var(--ll-border)';
+const BORDER_MED = 'var(--ll-border-strong)';
 
 const SG: React.CSSProperties   = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-monospace, monospace' };
@@ -69,18 +69,20 @@ const defineTheme: BeforeMount = (monaco) => {
     colors: {
       // Monaco theme colors must be hex (#RRGGBB or #RRGGBBAA) — rgba()
       // strings silently fall back to pure red, painting the selection red.
-      'editor.background':               '#ffffff',
+      // Tinted off-white (not #ffffff) so the editor sits as a clear surface
+      // against the darker chrome in the interview-surfaces light palette.
+      'editor.background':               '#f3f6fc',
       'editor.foreground':               '#1e293b',
-      'editor.lineHighlightBackground':  '#f1f5f9',
+      'editor.lineHighlightBackground':  '#e7edf8',
       'editor.selectionBackground':      '#3b82f640',
       'editorLineNumber.foreground':     '#334155',
       'editorLineNumber.activeForeground':'#94a3b8',
       'editorCursor.foreground':         '#60a5fa',
       'editor.inactiveSelectionBackground': '#ffffff0d',
-      'editorIndentGuide.background1':   '#f1f5f9',
-      'editorWidget.background':         '#ffffff',
-      'editorSuggestWidget.background':  '#ffffff',
-      'editorSuggestWidget.border':      '#f1f5f9',
+      'editorIndentGuide.background1':   '#dfe7f4',
+      'editorWidget.background':         '#f3f6fc',
+      'editorSuggestWidget.background':  '#f3f6fc',
+      'editorSuggestWidget.border':      '#c5d1e5',
       'scrollbarSlider.background':      '#ffffff08',
       'scrollbarSlider.hoverBackground': '#ffffff0f',
       'scrollbarSlider.activeBackground':'#ffffff14',
@@ -420,7 +422,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
   const passCount = results.filter(r => r.passed).length;
 
   return (
-    <div className="flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
+    <div className="interview-surfaces flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
       {/* Timer bar */}
       <div
         className="flex items-center justify-between px-5 shrink-0"

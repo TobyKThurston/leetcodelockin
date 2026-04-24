@@ -269,6 +269,29 @@ html, body {
   color: var(--ll-ink);
 }
 
+/* Interview surfaces — deeper contrast in light mode so the chrome (bars,
+   sidebars, panels) reads as clearly separate from the content/editor area.
+   Leaves dark mode alone. Applied to the outer wrapper of any interview view
+   (silent active interview, voice session, debriefs, the /interview page). */
+.theme-light .interview-surfaces,
+.theme-light.interview-surfaces {
+  --ll-bg:           #e7edf8;
+  --ll-bg-panel:     #d8e1f0;
+  --ll-bg-card:      #f3f6fc;
+  --ll-bg-elevated:  #f3f6fc;
+  --ll-bg-subtle:    #c7d2e7;
+  --ll-bg-hover:     #edf1fa;
+  --ll-bg-tinted:    #dfe7f4;
+  --ll-bg-code:      #d8e1f0;
+
+  --ll-border:         #c5d1e5;
+  --ll-border-strong:  #b0bfd9;
+  --ll-border-subtle:  #d7dfed;
+
+  --ll-nav-bg:   rgba(216,225,240,0.92);
+  --ll-glass-bg: rgba(216,225,240,0.82);
+}
+
 /* Soft Stripe-style radial mesh for app canvases — same family as landing
    but cooler/quieter so dense UI doesn't compete with it.                  */
 .ll-gradient-mesh {

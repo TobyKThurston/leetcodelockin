@@ -1044,7 +1044,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   if (phase === 'ending') {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
+      <div className="interview-surfaces min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
         <div className="flex items-center gap-3 text-slate-700 text-[14px]" style={SG}>
           <Loader2 size={18} className="animate-spin text-blue-400" />
           Grading your interview…
@@ -1074,7 +1074,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const isPractice = phase === 'practice';
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       {/* Top bar */}
       <div
         className="flex items-center justify-between px-6 py-3"
@@ -1622,7 +1622,7 @@ function IntroPhase({
         : 'rgba(148,163,184,0.6)';
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="flex-1 flex items-center justify-center p-8" style={{ paddingTop: 48 }}>
         <div className="max-w-md w-full space-y-6">
@@ -1770,7 +1770,7 @@ function ScorecardPhase({
   onContinueCoding: () => void;
 }) {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--ll-bg)' }}>
+    <div className="interview-surfaces min-h-screen" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="max-w-3xl mx-auto space-y-6 py-10 px-6" style={{ paddingTop: 76 }}>
         {isFreeTrial && (
