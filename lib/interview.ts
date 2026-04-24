@@ -207,6 +207,23 @@ export function pickVoiceInterviewProblem(
   return shuffle(candidates)[0];
 }
 
+// ─── Rating helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Unified "headline rating" for a session, 1-10. Silent rows use the feedback
+ * overall score; voice rows prefer the persisted overall_score but fall back
+ * to the average of the four scorecard dimensions for legacy rows that
+ * predate the overall_score write in /api/voice/end.
+ */
+export function getSessionRating(session: InterviewSession): number | null {
+  if (session.overallScore != null) return session.overallScore;
+  if (session.voiceScorecard) {
+    const { correctness, communication, complexity, problemSolving } = session.voiceScorecard.scores;
+    return Math.round((correctness + communication + complexity + problemSolving) / 4);
+  }
+  return null;
+}
+
 // ─── Supabase row conversion ─────────────────────────────────────────────────
 
 export function dbRowToInterviewSession(row: Record<string, unknown>): InterviewSession {

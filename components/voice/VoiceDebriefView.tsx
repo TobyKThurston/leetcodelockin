@@ -255,7 +255,7 @@ function ScoreGrid({ scores }: { scores: VoiceScorecard['scores'] }) {
       {axes.map(a => {
         const v = scores[a.key];
         const color =
-          v >= 4 ? 'var(--ll-success-ink)' : v >= 3 ? 'var(--ll-ink)' : 'var(--ll-danger-ink)';
+          v >= 8 ? 'var(--ll-success-ink)' : v >= 5 ? 'var(--ll-ink)' : 'var(--ll-danger-ink)';
         return (
           <div
             key={a.key}
@@ -277,7 +277,7 @@ function ScoreGrid({ scores }: { scores: VoiceScorecard['scores'] }) {
                 className="text-[12px] font-normal"
                 style={{ ...SG, color: 'var(--ll-ink-muted)' }}
               >
-                {' '}/ 5
+                {' '}/ 10
               </span>
             </p>
           </div>

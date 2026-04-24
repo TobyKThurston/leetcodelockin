@@ -1959,9 +1959,9 @@ function ScoreGrid({ scores }: { scores: Scorecard['scores'] }) {
             <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold" style={SG}>
               {a.label}
             </p>
-            <p className="text-[22px] font-bold text-slate-900 mt-1 tabular-nums" style={{ ...SG, color: v >= 4 ? '#34d399' : v >= 3 ? '#1e293b' : '#fca5a5' }}>
+            <p className="text-[22px] font-bold text-slate-900 mt-1 tabular-nums" style={{ ...SG, color: v >= 8 ? '#34d399' : v >= 5 ? '#1e293b' : '#fca5a5' }}>
               {v}
-              <span className="text-[12px] text-slate-400 font-normal" style={SG}> / 5</span>
+              <span className="text-[12px] text-slate-400 font-normal" style={SG}> / 10</span>
             </p>
           </div>
         );

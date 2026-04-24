@@ -1,7 +1,7 @@
 'use client';
 
 import { Loader2, AlertCircle, History as HistoryIcon, Mic } from 'lucide-react';
-import type { InterviewSession } from '@/lib/interview';
+import { type InterviewSession, getSessionRating } from '@/lib/interview';
 import { cn } from '@/lib/utils';
 import ShellSidebar from '@/components/shell/ShellSidebar';
 import { SG } from '@/lib/ui-tokens';
@@ -31,7 +31,9 @@ function SessionRow({
   hasError: boolean;
   onClick: () => void;
 }) {
-  const score = session.overallScore;
+  // Combined rating works for both voice (avg of 4 dims) and silent
+  // (feedback.overallScore). Returned value is already 1-10.
+  const score = getSessionRating(session);
   const isEasyMed = session.difficulty === 'easy-medium';
 
   return (
@@ -124,13 +126,15 @@ export default function InterviewSidebar({
   feedbackErrorId,
   onSelectSession,
 }: InterviewSidebarProps) {
-  const completed = sessions.filter(s => s.status === 'completed' && s.overallScore != null);
-  const avgScore =
-    completed.length > 0
-      ? completed.reduce((sum, s) => sum + (s.overallScore ?? 0), 0) / completed.length
-      : 0;
-  const bestScore =
-    completed.length > 0 ? Math.max(...completed.map(s => s.overallScore ?? 0)) : 0;
+  // Footer stats include both voice and silent — getSessionRating returns
+  // the right combined rating regardless of mode.
+  const rated = sessions
+    .filter(s => s.status === 'completed')
+    .map(s => getSessionRating(s))
+    .filter((r): r is number => r != null);
+  const completed = { length: rated.length };
+  const avgScore = rated.length > 0 ? rated.reduce((a, b) => a + b, 0) / rated.length : 0;
+  const bestScore = rated.length > 0 ? Math.max(...rated) : 0;
 
   return (
     <ShellSidebar

@@ -34,10 +34,10 @@ const requestSchema = z.object({
 
 const scorecardSchema = z.object({
   scores: z.object({
-    correctness: z.number().int().min(1).max(5),
-    communication: z.number().int().min(1).max(5),
-    complexity: z.number().int().min(1).max(5),
-    problemSolving: z.number().int().min(1).max(5),
+    correctness: z.number().int().min(1).max(10),
+    communication: z.number().int().min(1).max(10),
+    complexity: z.number().int().min(1).max(10),
+    problemSolving: z.number().int().min(1).max(10),
   }),
   summaryParagraph: z.string().min(20).max(1_200),
   quotes: z
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
       `Write the scorecard now. Ground every claim in something that actually happened in the transcript or code.`;
 
     const { output } = await generateText({
-      model: openai('gpt-4o'),
+      model: openai('gpt-4o-mini'),
       system: VOICE_SCORECARD_SYSTEM,
       prompt: userPrompt,
       output: Output.object({ schema: scorecardSchema }),
@@ -129,6 +129,14 @@ export async function POST(req: NextRequest) {
       suggestedNextProblems: cleanedRecs,
     };
 
+    // Average the four dimensions and round to the nearest int so the
+    // sidebar / history rows have a single rating to show. All four
+    // dimensions are 1-10, so the average is too.
+    const { correctness, communication, complexity, problemSolving } = finalScorecard.scores;
+    const overallScore = Math.round(
+      (correctness + communication + complexity + problemSolving) / 4,
+    );
+
     const { error: updateErr } = await db
       .from('mock_interviews')
       .update({
@@ -138,6 +146,7 @@ export async function POST(req: NextRequest) {
         completed_at: new Date().toISOString(),
         status: 'completed',
         voice_scorecard: finalScorecard,
+        overall_score: overallScore,
       })
       .eq('id', sessionId)
       .eq('user_id', user.id);
