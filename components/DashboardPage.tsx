@@ -3491,7 +3491,7 @@ function MobileGate() {
         <button
           type="button"
           onClick={() => router.replace('/m')}
-          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold transition-colors w-full"
+          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold transition-colors w-full"
           style={SG}
         >
           Continue

@@ -73,8 +73,8 @@ function CodeBlock({
 
   return (
     <pre
-      className="rounded-lg p-4 text-[13px] leading-[1.7] overflow-x-auto"
-      style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
+      className="rounded-lg p-4 text-[13px] leading-[1.7] overflow-x-auto border border-[var(--ll-border)]"
+      style={{ background: 'var(--ll-bg-code)', fontFamily: MONO }}
     >
       {lines.map((line, i) => {
         const isBlanked = blanks.has(i);
@@ -82,7 +82,7 @@ function CodeBlock({
           return (
             <div key={i} className="flex items-center gap-2">
               <span className="text-slate-600 select-none w-6 text-right mr-2">{i + 1}</span>
-              <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-[11px] font-medium">
+              <span className="bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded text-[11px] font-medium">
                 {'_'.repeat(Math.max(line.trim().length, 12))} -- recall this line
               </span>
             </div>
@@ -94,7 +94,7 @@ function CodeBlock({
           return (
             <div key={i} className="flex items-center gap-2">
               <span className="text-slate-600 select-none w-6 text-right mr-2">{i + 1}</span>
-              <span className="bg-emerald-500/15 text-emerald-300 px-1 rounded">
+              <span className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 px-1 rounded">
                 {original}
               </span>
             </div>
@@ -234,8 +234,8 @@ function MCQCard({
 
       {card.code && (
         <pre
-          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto"
-          style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
+          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto border border-[var(--ll-border)]"
+          style={{ background: 'var(--ll-bg-code)', fontFamily: MONO }}
         >
           {card.code.split('\n').map((line, i) => (
             <div key={i} className="flex">
@@ -364,8 +364,8 @@ function TypeAnswerCard({
 
       {card.code && (
         <pre
-          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto"
-          style={{ background: 'rgba(0,0,0,0.4)', fontFamily: MONO }}
+          className="rounded-lg p-5 text-[13px] leading-[1.7] overflow-x-auto border border-[var(--ll-border)]"
+          style={{ background: 'var(--ll-bg-code)', fontFamily: MONO }}
         >
           {card.code.split('\n').map((line, i) => (
             <div key={i} className="flex">
@@ -401,7 +401,7 @@ function TypeAnswerCard({
             <Button
               type="submit"
               disabled={!input.trim()}
-              className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold px-5 shrink-0"
+              className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-5 shrink-0"
             >
               Check
             </Button>
@@ -1443,7 +1443,7 @@ export default function ReviewPageClient({
                       {!srRevealed ? (
                         <Button
                           onClick={() => setSrRevealed(true)}
-                          className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[13px] font-semibold px-6"
+                          className="bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold px-6"
                         >
                           <Eye size={14} className="mr-2" />
                           Reveal Answer
@@ -1460,7 +1460,7 @@ export default function ReviewPageClient({
                           </Button>
                           <Button
                             onClick={() => handleSrResult('got_it')}
-                            className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 text-[13px] font-semibold px-5"
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] font-semibold px-5"
                           >
                             <Check size={14} className="mr-2" />
                             Got it
@@ -1574,7 +1574,7 @@ export default function ReviewPageClient({
               </p>
               <Button
                 onClick={() => setShowUpgradeModal(true)}
-                className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6 h-10"
+                className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6 h-10"
               >
                 Upgrade to Pro
                 <ArrowRight size={15} className="ml-2" />
@@ -1634,7 +1634,7 @@ export default function ReviewPageClient({
                 >
                   <Button
                     onClick={handleQuickNext}
-                    className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-8 py-2.5"
+                    className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-8 py-2.5"
                   >
                     Next Question
                     <ArrowRight size={15} className="ml-2" />
@@ -1661,7 +1661,7 @@ export default function ReviewPageClient({
                     {hasMoreBatches && isPro && (
                       <Button
                         onClick={handleNextBatch}
-                        className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6"
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
                       >
                         Next {Math.min(BATCH_SIZE, shuffledAllCards.length - batchStart - BATCH_SIZE)} questions
                         <ArrowRight size={15} className="ml-2" />
@@ -1670,7 +1670,7 @@ export default function ReviewPageClient({
                     {hasMoreBatches && !isPro && (
                       <Button
                         onClick={() => setShowUpgradeModal(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6"
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
                       >
                         <Lock size={13} className="mr-2" />
                         Unlock more with Pro

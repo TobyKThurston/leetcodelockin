@@ -97,7 +97,7 @@ export default function LockedScreen({ postFree = false }: { postFree?: boolean 
             <div className="mt-8 animate-fade-up" style={{ animationDelay: '400ms' }}>
               <Button
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-500 text-slate-900 text-[14px] font-semibold px-6 h-10 gap-2 transition-all"
+                className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6 h-10 gap-2 transition-all"
                 style={SG}
                 onClick={() => pricingRef.current?.scrollIntoView({ behavior: 'smooth' })}
               >

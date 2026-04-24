@@ -328,7 +328,7 @@ export default function HistoryScreen({
             </Button>
             {onRetryFeedback && dialogSession && (
               <Button
-                className="h-9 text-[13px] bg-blue-600 hover:bg-blue-500 text-slate-900 gap-1.5"
+                className="h-9 text-[13px] bg-blue-600 hover:bg-blue-500 text-white gap-1.5"
                 style={SG}
                 onClick={() => {
                   const id = dialogSession.id;

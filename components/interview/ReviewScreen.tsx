@@ -266,8 +266,8 @@ export default function ReviewScreen({
               {isExpanded && code && (
                 <div style={{ borderTop: `1px solid ${BORDER}` }}>
                   <pre
-                    className="px-5 py-4 text-[12px] text-slate-300 overflow-x-auto leading-relaxed"
-                    style={{ ...MONO, background: 'rgba(0,0,0,0.15)' }}
+                    className="px-5 py-4 text-[12px] text-[var(--ll-ink)] overflow-x-auto leading-relaxed"
+                    style={{ ...MONO, background: 'var(--ll-bg-code)' }}
                   >
                     {code}
                   </pre>
