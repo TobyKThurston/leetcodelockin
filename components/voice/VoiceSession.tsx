@@ -7,8 +7,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import posthog from 'posthog-js';
 import {
-  Mic, MicOff, Play, Square, X, PanelRight, PanelRightClose,
-  ArrowRight, Loader2, AlertCircle,
+  Mic, MicOff, Play, Send, Square, X, PanelRight, PanelRightClose,
+  ArrowRight, Loader2, AlertCircle, Check,
 } from 'lucide-react';
 import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
@@ -228,9 +228,14 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const [micLevel, setMicLevel] = useState(0);
   const [muted, setMuted] = useState(false);
   const [transcript, setTranscript] = useState<Turn[]>([]);
-  const [showTranscript, setShowTranscript] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(true);
   const [runResults, setRunResults] = useState<{ passed: number; total: number } | null>(null);
   const [runStatus, setRunStatus] = useState<'idle' | 'running' | 'done'>('idle');
+  // Submit: runs visible + hidden tests and shows a verdict, matching /solve.
+  const [hiddenResults, setHiddenResults] = useState<{ passed: number; total: number } | null>(null);
+  const [verdict, setVerdict] = useState<'accepted' | 'wrong' | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'done'>('idle');
+  const [firstFail, setFirstFail] = useState<{ where: 'visible' | 'hidden'; label: string } | null>(null);
   const [scorecard, setScorecard] = useState<Scorecard | null>(null);
   const [scorecardError, setScorecardError] = useState<string | null>(null);
   const [micState, setMicState] = useState<MicState>('unrequested');
@@ -885,6 +890,79 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     }
   }, [session]);
 
+  // ─── Submit: runs visible + hidden tests, sets verdict ─────────────────
+  const onSubmit = useCallback(async () => {
+    if (!session) return;
+    setSubmitStatus('submitting');
+    setVerdict(null);
+    setFirstFail(null);
+    try {
+      // Visible tests first, same as Run.
+      const { results: visibleResults } = await runTests({
+        code: codeRef.current,
+        tests: session.problem.defaultTests.map((t, i) => ({
+          id: `visible-${i}`,
+          inputJson: t.inputJson,
+          expectedJson: t.expectedJson,
+        })),
+        methodName: session.problem.methodName,
+        argKeys: session.problem.argKeys,
+        resultCompare: session.problem.resultCompare,
+      });
+      const visiblePassed = visibleResults.filter(r => r.passed).length;
+      setRunResults({ passed: visiblePassed, total: visibleResults.length });
+
+      // Hidden tests.
+      let hiddenDefs: Array<{ label: string; inputJson: string; expectedJson: string }> = [];
+      try {
+        const res = await fetch(`/api/hidden-tests/${session.problem.slug}`, { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.tests)) hiddenDefs = data.tests;
+        }
+      } catch { /* ignore — treat as no hidden */ }
+
+      let hiddenPassed = 0;
+      if (hiddenDefs.length > 0) {
+        const { results: hiddenRun } = await runTests({
+          code: codeRef.current,
+          tests: hiddenDefs.map((t, i) => ({
+            id: `hidden-${i}`,
+            inputJson: t.inputJson,
+            expectedJson: t.expectedJson,
+          })),
+          methodName: session.problem.methodName,
+          argKeys: session.problem.argKeys,
+          resultCompare: session.problem.resultCompare,
+        });
+        hiddenPassed = hiddenRun.filter(r => r.passed).length;
+        setHiddenResults({ passed: hiddenPassed, total: hiddenRun.length });
+        const hiddenFailIdx = hiddenRun.findIndex(r => !r.passed);
+        if (hiddenFailIdx >= 0) {
+          const def = hiddenDefs[hiddenFailIdx];
+          setFirstFail({ where: 'hidden', label: def.label || `Hidden ${hiddenFailIdx + 1}` });
+        }
+      } else {
+        setHiddenResults(null);
+      }
+
+      const visibleFailIdx = visibleResults.findIndex(r => !r.passed);
+      if (visibleFailIdx >= 0 && !firstFail) {
+        const def = session.problem.defaultTests[visibleFailIdx];
+        setFirstFail({ where: 'visible', label: def?.label || `Example ${visibleFailIdx + 1}` });
+      }
+
+      const allPassed =
+        visiblePassed === visibleResults.length &&
+        hiddenPassed === hiddenDefs.length;
+      setVerdict(allPassed ? 'accepted' : 'wrong');
+    } catch {
+      setVerdict('wrong');
+    } finally {
+      setSubmitStatus('done');
+    }
+  }, [session, firstFail]);
+
   // ─── End session ───────────────────────────────────────────────────────────
 
   const endSession = useCallback(async (timeUsedMs: number) => {
@@ -1240,34 +1318,29 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
             >
               Python
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 text-[11.5px]" style={{ ...MONO, color: 'var(--ll-ink-muted)' }}>
               {runResults && (
                 <span
-                  className="text-[11px] font-semibold"
                   style={{
-                    ...MONO,
                     color: runResults.passed === runResults.total
                       ? 'var(--ll-success-ink)'
                       : 'var(--ll-danger-ink)',
                   }}
                 >
-                  {runResults.passed} / {runResults.total} passed
+                  {runResults.passed}/{runResults.total} visible
                 </span>
               )}
-              <button
-                onClick={onRunTests}
-                disabled={runStatus === 'running'}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-md text-[12px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{
-                  ...SG,
-                  color: runStatus === 'running' ? 'var(--ll-ink-faint)' : 'var(--ll-ink)',
-                  border: '1px solid var(--ll-border-strong)',
-                  background: 'var(--ll-bg-hover)',
-                }}
-              >
-                {runStatus === 'running' ? <Loader2 size={12} className="animate-spin" /> : <Play size={11} />}
-                {runStatus === 'running' ? 'Running…' : 'Run'}
-              </button>
+              {hiddenResults && (
+                <span
+                  style={{
+                    color: hiddenResults.passed === hiddenResults.total
+                      ? 'var(--ll-success-ink)'
+                      : 'var(--ll-danger-ink)',
+                  }}
+                >
+                  {hiddenResults.passed}/{hiddenResults.total} hidden
+                </span>
+              )}
             </div>
           </div>
           <div className="flex-1 min-h-0">
@@ -1289,58 +1362,75 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               }}
             />
           </div>
+
+          {/* Footer: verdict + Run + Submit, matching /solve */}
+          <div
+            className="flex items-center justify-between px-5 shrink-0"
+            style={{
+              height: 52,
+              borderTop: '1px solid var(--ll-border)',
+              background: 'var(--ll-bg-panel)',
+            }}
+          >
+            <div className="text-[12px]" style={SG}>
+              {verdict === 'accepted' ? (
+                <span className="font-medium flex items-center gap-1.5" style={{ color: 'var(--ll-success-ink)' }}>
+                  <Check size={13} strokeWidth={2.5} />
+                  Accepted
+                </span>
+              ) : verdict === 'wrong' ? (
+                <span className="font-medium flex items-center gap-1.5" style={{ color: 'var(--ll-danger-ink)' }}>
+                  <X size={13} strokeWidth={2.5} />
+                  Wrong answer{firstFail ? ` on ${firstFail.label}` : ''}
+                </span>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onRunTests}
+                disabled={runStatus === 'running' || submitStatus === 'submitting'}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  ...SG,
+                  color: runStatus === 'running' ? 'var(--ll-ink-faint)' : 'var(--ll-ink)',
+                  border: '1px solid var(--ll-border-strong)',
+                  background: 'var(--ll-bg-hover)',
+                }}
+              >
+                {runStatus === 'running' ? <Loader2 size={11} className="animate-spin" /> : <Play size={11} />}
+                {runStatus === 'running' ? 'Running…' : 'Run'}
+              </button>
+              <button
+                onClick={onSubmit}
+                disabled={runStatus === 'running' || submitStatus === 'submitting'}
+                className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-blue-500 hover:bg-blue-400"
+                style={{
+                  border: '1px solid rgba(96,165,250,0.6)',
+                  boxShadow: verdict === 'accepted'
+                    ? 'none'
+                    : '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+                }}
+              >
+                {submitStatus === 'submitting' ? <Loader2 size={11} className="animate-spin" /> : <Send size={11} />}
+                {submitStatus === 'submitting' ? 'Submitting…' : 'Submit'}
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Live transcription overlay — bottom-left, always-on during an
-            active voice session so the user can see mic → STT is working. */}
-        {!isPractice && (
-          <LiveTranscriptionOverlay
+        {/* Transcript drawer — includes the live-interim preview at the
+            top so the user can watch text populate as they speak. Replaces
+            the old bottom-left floating overlay. */}
+        {showTranscript && !isPractice && (
+          <TranscriptDrawer
             transcript={transcript}
             muted={muted}
             micLevel={micLevel}
-            isRecording={isRecording}
             liveInterim={liveInterim}
             liveFinal={liveFinal}
             turnStatus={turnStatus}
+            onClose={() => setShowTranscript(false)}
           />
-        )}
-
-        {/* Transcript drawer */}
-        {showTranscript && (
-          <div
-            className="w-[320px] shrink-0 flex flex-col"
-            style={{ background: 'var(--ll-bg-panel)', borderLeft: '1px solid rgba(15,23,42,0.08)' }}
-          >
-            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid rgba(15,23,42,0.08)' }}>
-              <span className="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold" style={SG}>Transcript</span>
-              <button
-                onClick={() => setShowTranscript(false)}
-                className="text-slate-500 hover:text-slate-700"
-                title="Close transcript"
-              >
-                <X size={14} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {transcript.length === 0 && (
-                <p className="text-[12px] text-slate-400" style={SG}>Your conversation will appear here.</p>
-              )}
-              {transcript.map((t, i) => (
-                <div key={i}>
-                  <p
-                    className="text-[10px] uppercase tracking-wider mb-0.5"
-                    style={{
-                      ...SG,
-                      color: t.role === 'ai' ? 'rgba(147,197,253,0.75)' : 'rgba(148,163,184,0.7)',
-                    }}
-                  >
-                    {t.role === 'ai' ? 'Interviewer' : 'You'} · {fmtTime(t.tSec)}
-                  </p>
-                  <p className="text-[13px] text-slate-800 leading-relaxed" style={SG}>{t.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         )}
       </div>
     </div>
@@ -1356,33 +1446,32 @@ type TurnStatus =
   | { kind: 'empty' }
   | { kind: 'error'; message: string };
 
-function LiveTranscriptionOverlay({
+function TranscriptDrawer({
   transcript,
   muted,
   micLevel,
-  isRecording,
   liveInterim,
   liveFinal,
   turnStatus,
+  onClose,
 }: {
   transcript: Turn[];
   muted: boolean;
   micLevel: number;
-  isRecording: boolean;
   liveInterim: string;
   liveFinal: string;
   turnStatus: TurnStatus;
+  onClose: () => void;
 }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const recent = transcript.slice(-3);
   const livePreview = `${liveFinal}${liveFinal && liveInterim ? ' ' : ''}${liveInterim}`.trim();
+  const hasLive = livePreview.length > 0;
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [transcript.length, livePreview]);
 
   const speaking = !muted && micLevel > VAD_THRESHOLD;
-  const hasLive = livePreview.length > 0;
   const statusLabel = muted
     ? 'Mic muted'
     : turnStatus.kind === 'error'
@@ -1391,51 +1480,37 @@ function LiveTranscriptionOverlay({
         ? 'Sending to interviewer…'
         : hasLive
           ? 'Transcribing…'
-          : isRecording
-            ? 'Recording…'
-            : turnStatus.kind === 'empty'
-              ? 'Heard nothing — try again'
-              : speaking
-                ? 'Listening…'
-                : transcript.length === 0
-                  ? 'Waiting for you to speak…'
-                  : 'Idle';
+          : speaking
+            ? 'Listening…'
+            : transcript.length === 0
+              ? 'Waiting for you to speak…'
+              : 'Idle';
   const statusColor = muted
-    ? '#fca5a5'
+    ? 'var(--ll-danger-ink)'
     : turnStatus.kind === 'error'
-      ? '#fca5a5'
+      ? 'var(--ll-danger-ink)'
       : turnStatus.kind === 'sending'
         ? '#60a5fa'
-        : hasLive
-          ? '#34d399'       // green dot = actively transcribing speech
-          : isRecording
-            ? '#ef4444'
-            : turnStatus.kind === 'empty'
-              ? '#fbbf24'
-              : speaking
-                ? '#34d399'
-                : 'rgba(148,163,184,0.85)';
+        : hasLive || speaking
+          ? 'var(--ll-success-ink)'
+          : 'var(--ll-ink-muted)';
 
   return (
     <div
-      className="fixed bottom-4 left-4 w-[340px] rounded-xl overflow-hidden pointer-events-auto"
+      className="w-[340px] shrink-0 flex flex-col"
       style={{
-        background: 'rgba(255,255,255,0.92)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid rgba(15,23,42,0.10)',
-        boxShadow: '0 10px 28px -14px rgba(15,23,42,0.25)',
-        zIndex: 30,
+        background: 'var(--ll-bg-panel)',
+        borderLeft: '1px solid var(--ll-border)',
       }}
       aria-live="polite"
     >
       <div
-        className="flex items-center justify-between px-3 py-2"
-        style={{ borderBottom: '1px solid rgba(15,23,42,0.06)' }}
+        className="flex items-center justify-between px-4 py-3 shrink-0"
+        style={{ borderBottom: '1px solid var(--ll-border)' }}
       >
         <div className="flex items-center gap-2">
           <span
-            className="h-1.5 w-1.5 rounded-full"
+            className="h-1.5 w-1.5 rounded-full shrink-0"
             style={{
               background: statusColor,
               boxShadow: speaking ? `0 0 8px ${statusColor}` : 'none',
@@ -1449,61 +1524,65 @@ function LiveTranscriptionOverlay({
             {statusLabel}
           </span>
         </div>
-        <span className="text-[10px] text-slate-400" style={SG}>
-          Live transcript
-        </span>
+        <button
+          onClick={onClose}
+          className="text-slate-500 hover:text-slate-700"
+          title="Close transcript"
+        >
+          <X size={14} />
+        </button>
       </div>
-      <div
-        ref={scrollRef}
-        className="px-3 py-2.5 space-y-2 overflow-y-auto"
-        style={{ maxHeight: 200 }}
-      >
-        {hasLive && (
-          <div>
-            <p
-              className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
-              style={{ ...SG, color: 'rgba(100,116,139,0.85)' }}
-            >
-              You (live)
-            </p>
-            <p className="text-[12.5px] leading-snug" style={SG}>
-              <span style={{ color: 'var(--ll-ink)' }}>{liveFinal}</span>
-              {liveFinal && liveInterim && ' '}
-              <span style={{ color: 'rgba(100,116,139,0.75)', fontStyle: 'italic' }}>
-                {liveInterim}
-              </span>
-            </p>
-          </div>
+
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+        {transcript.length === 0 && !hasLive && turnStatus.kind !== 'error' && (
+          <p className="text-[12px] italic" style={{ ...SG, color: 'var(--ll-ink-muted)' }}>
+            Say something — your words will appear here as you speak.
+          </p>
         )}
         {turnStatus.kind === 'error' && (
           <p
             className="text-[11.5px] font-medium leading-snug"
-            style={{ ...SG, color: '#b91c1c' }}
+            style={{ ...SG, color: 'var(--ll-danger-ink)' }}
           >
             {turnStatus.message}
           </p>
         )}
-        {recent.length === 0 && !hasLive && turnStatus.kind !== 'error' ? (
-          <p className="text-[12px] text-slate-400 italic" style={SG}>
-            Say something — your words will appear here as you speak.
-          </p>
-        ) : (
-          recent.map((t, i) => (
-            <div key={`${transcript.length - recent.length + i}`}>
-              <p
-                className="text-[9px] uppercase tracking-[0.12em] font-semibold mb-0.5"
-                style={{
-                  ...SG,
-                  color: t.role === 'ai' ? 'rgba(59,130,246,0.85)' : 'rgba(100,116,139,0.85)',
-                }}
-              >
-                {t.role === 'ai' ? 'Interviewer' : 'You'}
-              </p>
-              <p className="text-[12.5px] text-slate-800 leading-snug" style={SG}>
-                {t.text}
-              </p>
-            </div>
-          ))
+
+        {transcript.map((t, i) => (
+          <div key={i}>
+            <p
+              className="text-[10px] uppercase tracking-wider mb-0.5"
+              style={{
+                ...SG,
+                color: t.role === 'ai' ? 'rgba(59,130,246,0.85)' : 'var(--ll-ink-muted)',
+              }}
+            >
+              {t.role === 'ai' ? 'Interviewer' : 'You'} · {fmtTime(t.tSec)}
+            </p>
+            <p className="text-[13px] leading-relaxed" style={{ ...SG, color: 'var(--ll-ink)' }}>
+              {t.text}
+            </p>
+          </div>
+        ))}
+
+        {/* Live preview — pinned to the bottom so it appears as the current
+            utterance being spoken, word by word. */}
+        {hasLive && (
+          <div>
+            <p
+              className="text-[10px] uppercase tracking-wider mb-0.5"
+              style={{ ...SG, color: 'var(--ll-ink-muted)' }}
+            >
+              You (live)
+            </p>
+            <p className="text-[13px] leading-relaxed" style={SG}>
+              <span style={{ color: 'var(--ll-ink)' }}>{liveFinal}</span>
+              {liveFinal && liveInterim && ' '}
+              <span style={{ color: 'var(--ll-ink-muted)', fontStyle: 'italic' }}>
+                {liveInterim}
+              </span>
+            </p>
+          </div>
         )}
       </div>
     </div>
