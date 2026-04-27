@@ -1935,6 +1935,23 @@ function PathView({
     return `M ${x1} ${y1} C ${x1} ${m} ${x2} ${m} ${x2} ${y2}`;
   }
 
+  // Responsive scaling: when the surface is narrower than CONTAINER_W, scale
+  // the zigzag to fit. At full width, scale = 1 (layout is unchanged).
+  const fitRef = useRef<HTMLDivElement>(null);
+  const [fitScale, setFitScale] = useState(1);
+  useEffect(() => {
+    const el = fitRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const w = entry.contentRect.width;
+        setFitScale(w >= CONTAINER_W ? 1 : Math.max(0.5, w / CONTAINER_W));
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div className="w-full max-w-[720px] lg:max-w-none py-8 px-8 lg:px-12">
       <PageHeader
@@ -1958,8 +1975,16 @@ function PathView({
 
       {/* Zigzag roadmap — wrapped in a white "main path" surface */}
       <MainSurface className="py-10">
-        <div className="flex justify-center">
-          <div className="relative" style={{ width: CONTAINER_W, height: totalHeight }}>
+        <div ref={fitRef} className="flex justify-center" style={{ height: totalHeight * fitScale }}>
+          <div
+            className="relative"
+            style={{
+              width: CONTAINER_W,
+              height: totalHeight,
+              transform: fitScale === 1 ? undefined : `scale(${fitScale})`,
+              transformOrigin: 'top center',
+            }}
+          >
           <svg style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }} width={CONTAINER_W} height={totalHeight}>
             {blocks.slice(0, -1).map((block, i) => (
               <path

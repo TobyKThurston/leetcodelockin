@@ -66,10 +66,10 @@ function fetchCurrentUser(): Promise<UserSummary | null> {
 
 export type AppNavTab = 'Path' | 'Library' | 'Progress' | 'Interview' | 'Review' | 'Settings';
 
-const TABS: { label: AppNavTab; href: string }[] = [
-  { label: 'Path',      href: '/dashboard'  },
-  { label: 'Library',   href: '/library'    },
-  { label: 'Interview', href: '/interview'  },
+const TABS: { label: AppNavTab; href: string; mobile?: boolean }[] = [
+  { label: 'Path',      href: '/dashboard',  mobile: true },
+  { label: 'Library',   href: '/library',    mobile: true },
+  { label: 'Interview', href: '/interview',  mobile: true },
   { label: 'Review',    href: '/review'     },
   { label: 'Progress',  href: '/progress'   },
   { label: 'Settings',  href: '/settings'   },
@@ -109,7 +109,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
     >
       <div className="w-full relative flex items-center gap-3 px-5 h-12">
         <Link
-          href="/?home=1"
+          href="/"
           className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight whitespace-nowrap"
           style={{ ...SG, color: 'var(--ll-ink-strong)' }}
         >
@@ -121,6 +121,7 @@ export default function AppNav({ activeTab }: { activeTab: AppNavTab }) {
             const active = tab.label === activeTab;
             const classes = cn(
               'text-[12px] px-3 transition-colors',
+              !tab.mobile && 'hidden md:inline-flex',
               active
                 ? 'font-semibold text-[color:var(--ll-ink-strong)]'
                 : 'text-[color:var(--ll-ink-muted)] hover:text-[color:var(--ll-ink)]',

@@ -31,11 +31,11 @@ export default function AppShell({
       {rail}
       <main
         style={{
-          paddingLeft: SHELL.sideWidth,
           paddingTop: SHELL.navHeight,
         }}
         className={cn(
           'min-h-screen overflow-x-auto pb-24',
+          'md:pl-[304px]',
           rail ? 'lg:pr-[304px]' : undefined,
           mainClassName,
         )}
@@ -43,7 +43,7 @@ export default function AppShell({
         {unconstrained ? (
           children
         ) : (
-          <div className="w-full max-w-[720px] lg:max-w-none py-8 px-8 lg:px-12">
+          <div className="w-full max-w-[720px] lg:max-w-none py-8 px-4 sm:px-8 lg:px-12">
             {children}
           </div>
         )}

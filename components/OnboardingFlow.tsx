@@ -55,7 +55,6 @@ export default function OnboardingFlow() {
   const [direction, setDirection] = useState(1);
   const [answers, setAnswers] = useState<(0 | 1 | 2 | null)[]>([null, null, null]);
   const [saving, startTransition] = useTransition();
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const go = useCallback((to: number) => {
     setDirection(to > step ? 1 : -1);
@@ -92,30 +91,6 @@ export default function OnboardingFlow() {
       go(5);
     });
   }, [getOnboardingAnswers, go]);
-
-  const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
-    setCheckoutLoading(plan);
-    posthog.capture('checkout_started', { plan, source: 'onboarding' });
-    try {
-      const res = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          plan,
-          returnPath: window.location.pathname + window.location.search,
-        }),
-      });
-      const { url, error } = await res.json();
-      if (url) {
-        window.location.href = url;
-      } else {
-        console.error('Checkout error:', error);
-        setCheckoutLoading(null);
-      }
-    } catch {
-      setCheckoutLoading(null);
-    }
-  }, []);
 
   const stepVariants: Variants = {
     enter: (d: number) => ({ opacity: 0, x: d * 20 }),
@@ -199,8 +174,6 @@ export default function OnboardingFlow() {
           <StepWrap key="pro" direction={direction} variants={stepVariants} dur={dur}>
             <ProStep
               onStartFree={() => router.push('/dashboard')}
-              onCheckout={handleCheckout}
-              checkoutLoading={checkoutLoading}
               stagger={stagger}
               fadeUp={fadeUp}
             />
@@ -451,111 +424,73 @@ function ResultsStep({
 
 // ─── Pro ───────────────────────────────────────────────────────────────────────
 
-const PRO_FEATURES = [
+type ProFeature = {
+  key: string;
+  eyebrow: string;
+  headline: string;
+};
+
+const PRO_FEATURES: ProFeature[] = [
   {
-    title: 'Unlimited AI tutor',
-    desc: 'Get unstuck with guided hints, not answers. The tutor walks you through each problem step by step.',
+    key: 'voice',
+    eyebrow: 'Voice mock interview',
+    headline: 'Practice out loud, not in your head.',
   },
   {
-    title: 'Unlimited follow-up questions',
-    desc: 'Ask as many questions as you need. No daily caps on the conversation.',
+    key: 'srs',
+    eyebrow: 'Spaced-repetition review',
+    headline: "Don't lose what you learned.",
   },
   {
-    title: 'Priority access',
-    desc: 'Your requests go first, even during peak hours.',
+    key: 'tutor',
+    eyebrow: 'Unlimited AI tutor',
+    headline: 'Hints that guide, not solve.',
   },
 ];
 
 function ProStep({
   onStartFree,
-  onCheckout,
-  checkoutLoading,
   stagger,
   fadeUp,
 }: {
   onStartFree: () => void;
-  onCheckout: (plan: 'monthly' | 'yearly') => void;
-  checkoutLoading: string | null;
   stagger: Variants;
   fadeUp: Variants;
 }) {
-
   return (
     <div>
-      <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-slate-500 mb-3" style={SG}>
-        One more thing
-      </p>
-      <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-tight text-slate-900 leading-snug" style={SG}>
-        Learn faster with Pro
-      </h2>
-      <p className="mt-2 text-[13px] text-slate-500">
-        Everything you just set up is free. Pro adds an AI tutor that actually helps you think.
-      </p>
-
-      {/* Pro card */}
       <motion.div
-        className="mt-6 rounded-xl border border-blue-500/20 bg-gradient-to-b from-blue-500/[0.06] to-transparent overflow-hidden"
+        className="flex flex-col gap-3"
         variants={stagger}
         initial="hidden"
         animate="show"
       >
-        {/* Price header */}
-        <div className="px-5 pt-5 pb-4 border-b border-slate-200">
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-bold text-slate-900" style={SG}>$9</span>
-            <span className="text-[13px] text-slate-500">/month</span>
-          </div>
-          <p className="mt-1 text-[11px] text-slate-600">
-            or $59/year (save $49)
-          </p>
-        </div>
-
-        {/* Features */}
-        <div className="px-5 py-4 space-y-3.5">
-          {PRO_FEATURES.map((feat) => (
-            <motion.div key={feat.title} variants={fadeUp}>
-              <div className="flex items-start gap-2.5">
-                <Check size={14} className="text-blue-400 shrink-0 mt-0.5" strokeWidth={2.5} />
-                <div>
-                  <p className="text-[13px] font-medium text-slate-900">{feat.title}</p>
-                  <p className="text-[12px] text-slate-500 leading-snug mt-0.5">{feat.desc}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Free comparison */}
-        <div className="px-5 py-3 bg-slate-50/50 border-t border-slate-200">
-          <p className="text-[11px] text-slate-600">
-            Free includes 5 AI tutor messages per week. All content and problems are free forever.
-          </p>
-        </div>
+        {PRO_FEATURES.map((feat, i) => (
+          <motion.div
+            key={feat.key}
+            variants={fadeUp}
+            className="rounded-lg border border-slate-200 bg-slate-50/40 px-4 py-4"
+          >
+            <p className="text-[10px] font-mono font-semibold tracking-[0.18em] text-blue-400">
+              {`0${i + 1}`}
+            </p>
+            <p className="mt-1 text-[13px] font-semibold text-slate-900" style={SG}>
+              {feat.eyebrow}
+            </p>
+            <p className="mt-1 text-[12px] text-slate-600 leading-snug">
+              {feat.headline}
+            </p>
+          </motion.div>
+        ))}
       </motion.div>
 
-      {/* CTAs */}
-      <div className="mt-6 flex flex-col gap-2.5">
-        <Button
-          onClick={() => onCheckout('yearly')}
-          disabled={!!checkoutLoading}
-          className="h-12 w-full text-[13px] font-semibold bg-white text-slate-800 hover:bg-slate-100 rounded-lg"
-        >
-          {checkoutLoading === 'yearly' ? 'Loading...' : 'Start Pro yearly ($59/year)'}
-        </Button>
-        <button
-          onClick={() => onCheckout('monthly')}
-          disabled={!!checkoutLoading}
-          className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50/50 text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
-        >
-          {checkoutLoading === 'monthly' ? 'Loading...' : 'Start Pro monthly ($9/mo)'}
-        </button>
-        <button
-          onClick={onStartFree}
-          className="mt-1 text-[12px] text-slate-600 hover:text-slate-600 transition-colors py-1"
-        >
-          Continue with free plan
-        </button>
-      </div>
+      <Button
+        onClick={onStartFree}
+        className="mt-6 h-12 w-full text-[13px] font-semibold rounded-lg gap-2"
+      >
+        Go to dashboard
+        <ArrowRight size={15} />
+      </Button>
     </div>
   );
 }
