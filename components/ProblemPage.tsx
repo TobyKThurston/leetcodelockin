@@ -821,11 +821,11 @@ const defineTheme: BeforeMount = (monaco) => {
     base: 'vs',
     inherit: true,
     rules: [
-      { token: 'keyword',  foreground: 'cf222e' },
+      { token: 'keyword',  foreground: '1d4ed8' },
       { token: 'string',   foreground: '0a3069' },
       { token: 'comment',  foreground: '6e7781', fontStyle: 'italic' },
       { token: 'number',   foreground: '0550ae' },
-      { token: 'type',     foreground: '953800' },
+      { token: 'type',     foreground: '1e3a8a' },
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
@@ -1136,13 +1136,17 @@ function EditorPanel({
           <button
             onClick={onSubmit}
             disabled={running}
-            className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-blue-500 hover:bg-blue-400"
+            className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
-              border: '1px solid rgba(96,165,250,0.6)',
+              color: 'var(--ll-ink-strong)',
+              background: 'var(--ll-bg-card)',
+              border: '1px solid var(--ll-border-strong)',
               boxShadow: verdict === 'accepted'
                 ? 'none'
-                : '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+                : '0 1px 2px rgba(15,23,42,0.04), 0 6px 18px -10px rgba(15,23,42,0.18)',
             }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-card)'; }}
           >
             <Send size={11} />
             Submit
