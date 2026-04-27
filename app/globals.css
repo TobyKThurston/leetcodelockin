@@ -137,12 +137,12 @@ html, body {
   /*  Rule: blue = environment, white = interactive objects                 */
   --ll-bg:           #d3e1f3;   /* app canvas — clearly light blue */
   --ll-bg-panel:     #bccee9;   /* sidebar / rail panels — bluer chrome */
-  --ll-bg-card:      #e6eef9;   /* regular card surface — light blue */
-  --ll-bg-elevated:  #e6eef9;   /* hero / active surface */
+  --ll-bg-card:      #ffffff;   /* content surface — pure white for contrast */
+  --ll-bg-elevated:  #ffffff;   /* hero / active surface */
   --ll-bg-subtle:    #a6bedf;   /* sunken strip / inputs / chrome bars */
   --ll-bg-hover:     #cddcf0;   /* hover on card/button */
   --ll-bg-tinted:    #b9cce8;   /* selected card highlight */
-  --ll-bg-code:      #bccee9;   /* coding panel workspace */
+  --ll-bg-code:      #ffffff;   /* coding panel workspace — white editor */
 
   /* Ink */
   --ll-ink:          #0f172a;   /* body text */
@@ -277,12 +277,12 @@ html, body {
 .theme-light.interview-surfaces {
   --ll-bg:           #becfea;
   --ll-bg-panel:     #a3bbdd;
-  --ll-bg-card:      #d4e0f2;
-  --ll-bg-elevated:  #d4e0f2;
+  --ll-bg-card:      #ffffff;
+  --ll-bg-elevated:  #ffffff;
   --ll-bg-subtle:    #8dabd2;
   --ll-bg-hover:     #c0d3ec;
   --ll-bg-tinted:    #a8c0de;
-  --ll-bg-code:      #a3bbdd;
+  --ll-bg-code:      #ffffff;
 
   --ll-border:         #7891b8;
   --ll-border-strong:  #607ca7;

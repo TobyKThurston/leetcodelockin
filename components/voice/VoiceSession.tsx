@@ -150,9 +150,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#d4e0f2',
+      'editor.background':                  '#ffffff',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#bccee9',
+      'editor.lineHighlightBackground':     '#eef3fc',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',
@@ -260,7 +260,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   const appTheme = useAppTheme();
   const monacoTheme = appTheme === 'dark' ? 'lc-dark' : 'lc-light';
-  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#d4e0f2';
+  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#ffffff';
 
   // Load the voice quota once on mount so the intro screen can show it.
   useEffect(() => {

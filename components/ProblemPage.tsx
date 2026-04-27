@@ -142,12 +142,6 @@ const DIFF_STYLE: Record<string, React.CSSProperties> = {
   Hard:   { color: 'var(--ll-danger-ink)',  border: '1px solid rgba(239,68,68,0.45)',   background: 'rgba(239,68,68,0.18)',  fontWeight: 600 },
 };
 
-const DIFF_LABEL_COLOR: Record<string, string> = {
-  Easy:   'rgba(52,211,153,0.7)',
-  Medium: 'rgba(251,191,36,0.7)',
-  Hard:   'rgba(248,113,113,0.7)',
-};
-
 let _customCounter = 0;
 function newCustomId() { return `custom-${++_customCounter}`; }
 
@@ -198,12 +192,12 @@ function TopNav({ problem, solved }: { problem: ProblemContent; solved: boolean 
 
       {/* Problem breadcrumb */}
       <div className="flex items-center gap-2">
-        <span className="text-[13px] font-medium text-slate-800" style={SG}>
+        <span className="text-[13px] font-medium" style={{ ...SG, color: 'var(--ll-ink-strong)' }}>
           {problem.title}
         </span>
         <span
-          className="ml-0.5 text-[11px] font-medium"
-          style={{ color: DIFF_LABEL_COLOR[problem.difficulty] ?? '#9ca3af' }}
+          className="ml-0.5 px-2 py-0.5 rounded-md text-[10.5px] tracking-wide"
+          style={{ ...DIFF_STYLE[problem.difficulty], ...SG }}
         >
           {problem.difficulty}
         </span>
@@ -649,10 +643,10 @@ function ProblemPanel({
     <div
       className={fullscreen ? 'flex flex-col flex-1 min-w-0' : 'flex flex-col shrink-0'}
       style={fullscreen
-        ? { background: BG_PANEL }
-        : { width, minWidth: 280, background: BG_PANEL }}
+        ? { background: 'var(--ll-bg-card)' }
+        : { width, minWidth: 280, background: 'var(--ll-bg-card)' }}
     >
-      {/* Tab bar */}
+      {/* Tab bar — keeps the chrome look so the white content beneath stands out. */}
       <div
         className="flex items-center shrink-0"
         style={{ height: 42, borderBottom: `1px solid ${BORDER}`, background: BG_PANEL }}
@@ -835,9 +829,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#bccee9',
+      'editor.background':                  '#ffffff',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#a6bedf',
+      'editor.lineHighlightBackground':     '#eef3fc',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',

@@ -88,9 +88,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#d4e0f2',
+      'editor.background':                  '#ffffff',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#bccee9',
+      'editor.lineHighlightBackground':     '#eef3fc',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',
@@ -262,7 +262,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
   const monacoTheme = appTheme === 'dark' ? 'lc-dark' : 'lc-light';
   // Match the editor frame to Monaco's literal hex so there's no flicker when
   // the editor remounts on theme change.
-  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#d4e0f2';
+  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#ffffff';
   const deadlineMs = startedAt + INTERVIEW_DURATION_MS;
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -583,7 +583,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         {fullscreen !== 'editor' && (
           <div
             className={fullscreen === 'left' ? 'flex flex-col flex-1 min-w-0' : 'flex flex-col shrink-0'}
-            style={fullscreen === 'left' ? { background: BG_PANEL } : { width: leftWidth, minWidth: 280, background: BG_PANEL }}
+            style={fullscreen === 'left' ? { background: 'var(--ll-bg-card)' } : { width: leftWidth, minWidth: 280, background: 'var(--ll-bg-card)' }}
           >
             {/* Tab bar — Question only (no hints/solution/tutor). Styled as an
                 active tab pill to match /solve's Question/Solution/Tutor bar. */}
