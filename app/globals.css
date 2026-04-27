@@ -127,21 +127,22 @@ html, body {
 /* in app/layout.tsx).                                                       */
 
 .theme-light {
-  /* Surfaces — soft-blue environment, white cards (Linear/Stripe style)    */
+  /* Surfaces — near-white canvas, distinctly tinted chrome, white cards.   */
+  /* The whole point: each layer must visibly separate from its neighbour.  */
   /*                                                                        */
-  /*  canvas  (lightest blue — the environment)                             */
-  /*    └ panel   (side surfaces — sidebar/rail, slightly darker blue)      */
+  /*  canvas  (near-white, faintly tinted — matches homescreen body)        */
+  /*    └ panel   (clearly bluer chrome — sidebar/rail pops)                */
   /*        └ card  (regular card — pure white, the interactive surface)    */
   /*            └ elevated  (hero/active surface — also white)              */
   /*                                                                        */
-  /*  Rule: blue = environment, white = interactive objects                 */
-  --ll-bg:           #d3e1f3;   /* app canvas — clearly light blue */
-  --ll-bg-panel:     #bccee9;   /* sidebar / rail panels — bluer chrome */
+  /*  Rule: cards are white; canvas is near-white; chrome is real blue.     */
+  --ll-bg:           #f1f6fd;   /* app canvas — near-white, faint blue tint */
+  --ll-bg-panel:     #cfdef5;   /* sidebar / rail — clearly visible blue chrome */
   --ll-bg-card:      #ffffff;   /* content surface — pure white for contrast */
   --ll-bg-elevated:  #ffffff;   /* hero / active surface */
-  --ll-bg-subtle:    #a6bedf;   /* sunken strip / inputs / chrome bars */
-  --ll-bg-hover:     #cddcf0;   /* hover on card/button */
-  --ll-bg-tinted:    #b9cce8;   /* selected card highlight */
+  --ll-bg-subtle:    #e3ecf8;   /* sunken strip / inputs / chrome bars */
+  --ll-bg-hover:     #eaf1fb;   /* hover on card/button */
+  --ll-bg-tinted:    #d8e5f6;   /* selected card highlight */
   --ll-bg-code:      #ffffff;   /* coding panel workspace — white editor */
 
   /* Ink */
@@ -159,10 +160,10 @@ html, body {
   --ll-accent-ink:   #1d4ed8;   /* text on soft tint */
   --ll-accent-ring:  rgba(59,130,246,0.22);
 
-  /* Borders — soft blue-tinted, strong enough to read against pale surfaces */
-  --ll-border:         #c5d1e8;
-  --ll-border-strong:  #a9bada;
-  --ll-border-subtle:  #dfe6f4;
+  /* Borders — blue-tinted, strong enough to define cards on a near-white bg */
+  --ll-border:         #bccee9;
+  --ll-border-strong:  #8ba9d3;
+  --ll-border-subtle:  #dde7f5;
 
   /* Semantic — success (emerald) */
   --ll-success:        #059669;
@@ -184,14 +185,14 @@ html, body {
   --ll-danger-border:  #fecaca;
   --ll-danger-ink:     #991b1b;
 
-  /* Shadow (used inline via rgba for tuning) */
-  --ll-shadow-sm:  0 1px 2px rgba(15,23,42,0.04);
-  --ll-shadow-md:  0 4px 14px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
-  --ll-shadow-lg:  0 18px 40px -12px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.04);
+  /* Shadow — slightly stronger so white cards lift off the near-white canvas */
+  --ll-shadow-sm:  0 1px 2px rgba(15,23,42,0.06);
+  --ll-shadow-md:  0 4px 14px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.05);
+  --ll-shadow-lg:  0 18px 40px -12px rgba(15,23,42,0.14), 0 2px 6px rgba(15,23,42,0.06);
 
-  /* Translucent surfaces — subtle nav tint, not a dark fog */
-  --ll-nav-bg:   rgba(188,206,233,0.95);
-  --ll-glass-bg: rgba(205,220,240,0.88);
+  /* Translucent surfaces — clearly tinted nav/glass, not a fog */
+  --ll-nav-bg:   rgba(207,222,245,0.92);
+  --ll-glass-bg: rgba(217,229,247,0.85);
 }
 
 /* Dark theme — same blue-tinted palette as before, but applied with the
@@ -275,21 +276,21 @@ html, body {
    (silent active interview, voice session, debriefs, the /interview page). */
 .theme-light .interview-surfaces,
 .theme-light.interview-surfaces {
-  --ll-bg:           #becfea;
-  --ll-bg-panel:     #a3bbdd;
-  --ll-bg-card:      #ffffff;
+  --ll-bg:           #dbe7f7;   /* clearly blue canvas — focus mode */
+  --ll-bg-panel:     #b1c8ea;   /* darker chrome — sidebar pops */
+  --ll-bg-card:      #ffffff;   /* white card */
   --ll-bg-elevated:  #ffffff;
-  --ll-bg-subtle:    #8dabd2;
-  --ll-bg-hover:     #c0d3ec;
-  --ll-bg-tinted:    #a8c0de;
+  --ll-bg-subtle:    #c4d5ef;   /* sunken strip / inputs */
+  --ll-bg-hover:     #cedcf2;
+  --ll-bg-tinted:    #b9cdee;
   --ll-bg-code:      #ffffff;
 
-  --ll-border:         #7891b8;
-  --ll-border-strong:  #607ca7;
-  --ll-border-subtle:  #9bb1d1;
+  --ll-border:         #9fb6dc;
+  --ll-border-strong:  #7892bc;
+  --ll-border-subtle:  #c2d2ea;
 
-  --ll-nav-bg:   rgba(163,187,221,0.95);
-  --ll-glass-bg: rgba(163,187,221,0.88);
+  --ll-nav-bg:   rgba(177,200,234,0.95);
+  --ll-glass-bg: rgba(177,200,234,0.88);
 }
 
 /* Soft Stripe-style radial mesh for app canvases — same family as landing
@@ -308,12 +309,12 @@ html, body {
   background-color: var(--ll-bg);
 }
 
-/* App shell wash — cool blue gradient, more present so surfaces pop */
+/* App shell wash — cool blue gradient, stronger now that canvas is near-white */
 .ll-app-mesh {
   background:
-    radial-gradient(ellipse 55% 38% at 92% -8%, rgba(59,130,246,0.14), transparent 72%),
-    radial-gradient(ellipse 45% 32% at 4% 16%, rgba(56,189,248,0.10), transparent 72%),
-    radial-gradient(ellipse 65% 45% at 50% 108%, rgba(59,130,246,0.06), transparent 72%),
+    radial-gradient(ellipse 55% 38% at 92% -8%, rgba(59,130,246,0.18), transparent 72%),
+    radial-gradient(ellipse 45% 32% at 4% 16%, rgba(56,189,248,0.13), transparent 72%),
+    radial-gradient(ellipse 65% 45% at 50% 108%, rgba(59,130,246,0.09), transparent 72%),
     var(--ll-bg);
 }
 
