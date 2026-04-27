@@ -157,16 +157,14 @@ function CycleToggle({ value, onChange }: { value: Cycle; onChange: (v: Cycle) =
       style={{ background: 'var(--ll-bg-subtle)', border: '1px solid var(--ll-border)' }}
     >
       <motion.div
-        className="absolute top-1 bottom-1 rounded-full"
+        className="absolute top-1 bottom-1 left-1 rounded-full"
         style={{
+          width: 'calc(50% - 4px)',
           background: 'var(--ll-bg-elevated)',
           boxShadow: '0 1px 2px rgba(15,23,42,0.06), 0 4px 12px -6px rgba(15,23,42,0.10)',
           border: '1px solid var(--ll-border)',
         }}
-        animate={{
-          left: value === 'monthly' ? 4 : '50%',
-          right: value === 'yearly' ? 4 : '50%',
-        }}
+        animate={{ x: value === 'yearly' ? '100%' : '0%' }}
         transition={{ type: 'spring', stiffness: 400, damping: 32 }}
       />
       <ToggleButton selected={value === 'monthly'} onClick={() => onChange('monthly')}>
