@@ -28,17 +28,19 @@ export default function InterviewTimer({ deadlineMs }: InterviewTimerProps) {
   const secs = totalSec % 60;
   const display = `${overtime ? '-' : ''}${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
-  // Color transitions: white > amber < 10min > red < 3min > red (overtime)
-  let color = 'rgba(255,255,255,0.9)';
+  // Color transitions: ink-strong > amber < 10min > red < 3min > red (overtime).
+  // Default uses a theme-aware token so the timer stays readable on both the
+  // pale interview chrome and the dark-mode chrome.
+  let color = 'var(--ll-ink-strong)';
   let glow = 'none';
   if (overtime) {
-    color = 'rgba(248,113,113,1)';
+    color = 'var(--ll-danger-ink)';
     glow = '0 0 16px rgba(239,68,68,0.55)';
   } else if (totalSec <= 180) {
-    color = 'rgba(248,113,113,0.95)';
+    color = 'var(--ll-danger-ink)';
     glow = '0 0 12px rgba(239,68,68,0.4)';
   } else if (totalSec <= 600) {
-    color = 'rgba(251,191,36,0.9)';
+    color = 'var(--ll-warning-ink)';
     glow = '0 0 8px rgba(245,158,11,0.25)';
   }
 

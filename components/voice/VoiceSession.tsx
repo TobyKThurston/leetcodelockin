@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -14,9 +15,25 @@ import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import AppNav from '@/components/AppNav';
+import ThemeToggle from '@/components/ThemeToggle';
 import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
 import { getVoiceQuota } from '@/app/interview/actions';
 import type { VoiceQuotaResult } from '@/lib/voice-quota';
+
+// Observe the body's `theme-dark` / `theme-light` class so Monaco (whose
+// colors must be literal hex) re-renders when the user flips the theme.
+function useAppTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  useEffect(() => {
+    const read = () =>
+      setTheme(document.body.classList.contains('theme-dark') ? 'dark' : 'light');
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -240,6 +257,10 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
     | { kind: 'empty' }  // route returned 200 but transcribedText was ''
     | { kind: 'error'; message: string }
   >({ kind: 'idle' });
+
+  const appTheme = useAppTheme();
+  const monacoTheme = appTheme === 'dark' ? 'lc-dark' : 'lc-light';
+  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#f3f6fc';
 
   // Load the voice quota once on mount so the intro screen can show it.
   useEffect(() => {
@@ -1026,7 +1047,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
 
   if (phase === 'ending') {
     return (
-      <div className="theme-light interview-surfaces min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
+      <div className="interview-surfaces min-h-screen flex items-center justify-center" style={{ background: 'var(--ll-bg)' }}>
         <div className="flex items-center gap-3 text-slate-700 text-[14px]" style={SG}>
           <Loader2 size={18} className="animate-spin text-blue-400" />
           Grading your interview…
@@ -1056,28 +1077,32 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
   const isPractice = phase === 'practice';
 
   return (
-    <div className="theme-light interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
-      {/* Top bar */}
+    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+      {/* Top bar — matches ActiveInterview / /solve chrome */}
       <div
-        className="flex items-center justify-between px-6 py-3"
-        style={{ background: 'var(--ll-bg-panel)', borderBottom: '1px solid rgba(15,23,42,0.08)' }}
+        className="flex items-center justify-between px-5 shrink-0"
+        style={{ height: 48, background: 'var(--ll-bg-panel)', borderBottom: '1px solid var(--ll-border)' }}
       >
-        <div className="flex items-center gap-4">
+        {/* Left: LeetLockin brand + problem breadcrumb */}
+        <div className="flex items-center gap-3">
           <Link
             href="/interview"
-            className="text-[11px] uppercase tracking-[0.16em] text-slate-500 hover:text-slate-700"
-            style={SG}
+            className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight whitespace-nowrap transition-opacity hover:opacity-80"
+            style={{ ...SG, color: 'var(--ll-ink-strong)' }}
           >
-            ← Interview
+            <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
+            LeetLockin
           </Link>
-          <span className="text-[13px] font-semibold text-slate-800" style={SG}>
+          <div className="w-px h-5 mx-1" style={{ background: 'var(--ll-border)' }} />
+          <span className="text-[13px] font-semibold" style={{ ...SG, color: 'var(--ll-ink-strong)' }}>
             {session.problem.title}
           </span>
           <span
             className="text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wider font-semibold"
             style={{
-              color: 'rgba(147,197,253,0.8)',
-              background: 'rgba(59,130,246,0.08)',
+              color: 'var(--ll-accent-ink)',
+              background: 'var(--ll-accent-soft)',
+              border: '1px solid var(--ll-accent-ring)',
               ...SG,
             }}
           >
@@ -1091,9 +1116,9 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               className="px-3 py-1 rounded-md text-[14px] font-semibold tabular-nums"
               style={{
                 ...MONO,
-                color: remainingSec < 120 ? '#fca5a5' : '#1e293b',
-                background: remainingSec < 120 ? 'rgba(239,68,68,0.08)' : 'rgba(15,23,42,0.05)',
-                border: '1px solid rgba(15,23,42,0.08)',
+                color: remainingSec < 120 ? 'var(--ll-danger-ink)' : 'var(--ll-ink-strong)',
+                background: remainingSec < 120 ? 'rgba(239,68,68,0.08)' : 'var(--ll-bg-hover)',
+                border: `1px solid ${remainingSec < 120 ? 'rgba(239,68,68,0.25)' : 'var(--ll-border)'}`,
               }}
             >
               {fmtTime(remainingSec)}
@@ -1102,12 +1127,12 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           {!isPractice && (
             <button
               onClick={() => setMuted(m => !m)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-semibold"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[12px] font-semibold transition-colors"
               style={{
                 ...SG,
-                color: muted ? '#b91c1c' : 'var(--ll-ink-muted)',
-                background: muted ? 'rgba(239,68,68,0.08)' : 'rgba(15,23,42,0.05)',
-                border: `1px solid ${muted ? 'rgba(239,68,68,0.25)' : 'rgba(15,23,42,0.10)'}`,
+                color: muted ? 'var(--ll-danger-ink)' : 'var(--ll-ink-muted)',
+                background: muted ? 'rgba(239,68,68,0.08)' : 'var(--ll-bg-hover)',
+                border: `1px solid ${muted ? 'rgba(239,68,68,0.25)' : 'var(--ll-border)'}`,
               }}
               title={muted ? 'Unmute mic' : 'Mute mic'}
             >
@@ -1118,7 +1143,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           {!isPractice && (
             <div
               className="h-1.5 w-20 rounded-full overflow-hidden"
-              style={{ background: 'rgba(15,23,42,0.08)' }}
+              style={{ background: 'var(--ll-bg-subtle)' }}
               title="Mic level"
             >
               <div
@@ -1130,10 +1155,14 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               />
             </div>
           )}
+          <div className="w-px h-5" style={{ background: 'var(--ll-border)' }} />
+          <ThemeToggle />
           <button
             onClick={() => setShowTranscript(s => !s)}
-            className="p-1.5 rounded-md text-slate-600 hover:text-slate-800"
-            style={{ border: '1px solid rgba(15,23,42,0.08)' }}
+            className="p-1.5 rounded-md transition-colors"
+            style={{ color: 'var(--ll-ink-muted)', border: '1px solid var(--ll-border)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink)'; (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--ll-ink-muted)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             title="Toggle transcript"
           >
             {showTranscript ? <PanelRightClose size={14} /> : <PanelRight size={14} />}
@@ -1141,7 +1170,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
           {!isPractice && (
             <button
               onClick={onEndEarly}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold text-slate-900"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[12px] font-semibold text-white transition-all hover:brightness-110"
               style={{
                 ...SG,
                 background: 'linear-gradient(180deg, #ef4444 0%, #dc2626 100%)',
@@ -1160,7 +1189,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
         {/* Problem pane */}
         <div
           className="w-[420px] shrink-0 overflow-y-auto p-6"
-          style={{ background: 'var(--ll-bg-card)', borderRight: '1px solid rgba(15,23,42,0.08)' }}
+          style={{ background: 'var(--ll-bg-card)', borderRight: '1px solid var(--ll-border)' }}
         >
           <div className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-semibold mb-2" style={SG}>
             {session.problem.difficulty} · {session.problem.pattern}
@@ -1230,7 +1259,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
                   >
                     <span
                       className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0"
-                      style={{ background: 'rgba(15,23,42,0.25)' }}
+                      style={{ background: 'var(--ll-ink-dim)' }}
                     />
                     {c}
                   </li>
@@ -1331,7 +1360,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               value={code}
               beforeMount={defineTheme}
               onChange={v => setCode(v ?? '')}
-              theme="lc-light"
+              theme={monacoTheme}
               options={{
                 fontSize: 14,
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
@@ -1384,7 +1413,7 @@ export default function VoiceSession({ difficulty, durationMin }: Props) {
               <button
                 onClick={onSubmit}
                 disabled={runStatus === 'running' || submitStatus === 'submitting'}
-                className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-blue-500 hover:bg-blue-400"
+                className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-blue-500 hover:bg-blue-400"
                 style={{
                   border: '1px solid rgba(96,165,250,0.6)',
                   boxShadow: verdict === 'accepted'
@@ -1603,7 +1632,7 @@ function IntroPhase({
         : 'rgba(148,163,184,0.6)';
 
   return (
-    <div className="theme-light interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="flex-1 flex items-center justify-center p-8" style={{ paddingTop: 48 }}>
         <div className="max-w-md w-full space-y-6">
@@ -1622,7 +1651,7 @@ function IntroPhase({
 
           <div
             className="rounded-xl p-5 space-y-3"
-            style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+            style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
           >
             <div className="flex items-center justify-between">
               <span className="text-[12px] text-slate-600" style={SG}>Microphone</span>
@@ -1632,7 +1661,7 @@ function IntroPhase({
             </div>
             {micState === 'granted' ? (
               <>
-                <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'rgba(15,23,42,0.08)' }}>
+                <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'var(--ll-bg-subtle)' }}>
                   <div
                     className="h-full transition-[width] duration-100"
                     style={{
@@ -1649,7 +1678,7 @@ function IntroPhase({
               <button
                 onClick={onRequestMic}
                 disabled={micState === 'requesting'}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-[13px] font-semibold text-slate-900 disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-[13px] font-semibold text-white disabled:opacity-60"
                 style={{
                   ...SG,
                   background: 'rgba(59,130,246,0.12)',
@@ -1708,7 +1737,7 @@ function IntroPhase({
           <button
             onClick={onStart}
             disabled={!canStart || starting}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-[14px] font-semibold text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-[14px] font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               ...SG,
               background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
@@ -1751,7 +1780,7 @@ function ScorecardPhase({
   onContinueCoding: () => void;
 }) {
   return (
-    <div className="theme-light interview-surfaces min-h-screen" style={{ background: 'var(--ll-bg)' }}>
+    <div className="interview-surfaces min-h-screen" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="max-w-3xl mx-auto space-y-6 py-10 px-6" style={{ paddingTop: 76 }}>
         {isFreeTrial && (
@@ -1772,7 +1801,7 @@ function ScorecardPhase({
             </div>
             <Link
               href="/pricing"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-slate-900 shrink-0"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-white shrink-0"
               style={{
                 ...SG,
                 background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
@@ -1804,7 +1833,7 @@ function ScorecardPhase({
             <ScoreGrid scores={scorecard.scores} />
             <div
               className="rounded-xl p-5"
-              style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+              style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
             >
               <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-2" style={SG}>Summary</p>
               <p className="text-[14px] text-slate-800 leading-relaxed" style={SG}>{scorecard.summaryParagraph}</p>
@@ -1812,7 +1841,7 @@ function ScorecardPhase({
             {scorecard.quotes.length > 0 && (
               <div
                 className="rounded-xl p-5 space-y-3"
-                style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+                style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
               >
                 <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold" style={SG}>Moments from the session</p>
                 {scorecard.quotes.map((q, i) => (
@@ -1840,7 +1869,7 @@ function ScorecardPhase({
             {scorecard.suggestedNextProblems.length > 0 && (
               <div
                 className="rounded-xl p-5 space-y-3"
-                style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+                style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
               >
                 <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold" style={SG}>Work on these next</p>
                 {scorecard.suggestedNextProblems.map(s => (
@@ -1848,7 +1877,7 @@ function ScorecardPhase({
                     key={s.slug}
                     href={`/solve/${s.slug}`}
                     className="block rounded-lg px-3 py-2 transition-colors hover:bg-slate-50/70"
-                    style={{ border: '1px solid rgba(15,23,42,0.05)' }}
+                    style={{ border: '1px solid var(--ll-border-subtle)' }}
                   >
                     <p className="text-[13px] font-semibold text-slate-900 capitalize" style={SG}>
                       {s.slug.replace(/-/g, ' ')}
@@ -1860,14 +1889,14 @@ function ScorecardPhase({
             )}
           </>
         ) : (
-          <div className="rounded-xl p-5 text-[13px] text-slate-600" style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)', ...SG }}>
+          <div className="rounded-xl p-5 text-[13px] text-slate-600" style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)', ...SG }}>
             Generating your scorecard…
           </div>
         )}
 
         <div
           className="rounded-xl p-5"
-          style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+          style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
         >
           <div className="flex items-center justify-between mb-2">
             <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold" style={SG}>Your final code</p>
@@ -1885,7 +1914,7 @@ function ScorecardPhase({
           </div>
           <pre
             className="text-[12px] leading-relaxed overflow-x-auto rounded-lg p-3"
-            style={{ ...MONO, background: 'var(--ll-bg-panel)', color: '#1e293b', border: '1px solid rgba(15,23,42,0.05)' }}
+            style={{ ...MONO, background: 'var(--ll-bg-panel)', color: 'var(--ll-ink-strong)', border: '1px solid var(--ll-border-subtle)' }}
           >
             {finalCode || '# (no code written)'}
           </pre>
@@ -1897,8 +1926,8 @@ function ScorecardPhase({
             className="flex-1 text-center px-5 py-2.5 rounded-xl text-[13px] font-semibold text-slate-800"
             style={{
               ...SG,
-              background: 'rgba(15,23,42,0.05)',
-              border: '1px solid rgba(15,23,42,0.10)',
+              background: 'var(--ll-bg-hover)',
+              border: '1px solid var(--ll-border)',
             }}
           >
             Back to Interview
@@ -1908,8 +1937,8 @@ function ScorecardPhase({
             className="flex-1 text-center px-5 py-2.5 rounded-xl text-[13px] font-semibold text-slate-800"
             style={{
               ...SG,
-              background: 'rgba(15,23,42,0.05)',
-              border: '1px solid rgba(15,23,42,0.10)',
+              background: 'var(--ll-bg-hover)',
+              border: '1px solid var(--ll-border)',
             }}
           >
             Keep coding (no AI)
@@ -1935,12 +1964,12 @@ function ScoreGrid({ scores }: { scores: Scorecard['scores'] }) {
           <div
             key={a.key}
             className="rounded-xl px-4 py-3"
-            style={{ background: 'var(--ll-bg-elevated)', border: '1px solid rgba(15,23,42,0.08)' }}
+            style={{ background: 'var(--ll-bg-elevated)', border: '1px solid var(--ll-border)' }}
           >
             <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold" style={SG}>
               {a.label}
             </p>
-            <p className="text-[22px] font-bold text-slate-900 mt-1 tabular-nums" style={{ ...SG, color: v >= 8 ? '#34d399' : v >= 5 ? '#1e293b' : '#fca5a5' }}>
+            <p className="text-[22px] font-bold mt-1 tabular-nums" style={{ ...SG, color: v >= 8 ? 'var(--ll-success-ink)' : v >= 5 ? 'var(--ll-ink-strong)' : 'var(--ll-danger-ink)' }}>
               {v}
               <span className="text-[12px] text-slate-400 font-normal" style={SG}> / 10</span>
             </p>

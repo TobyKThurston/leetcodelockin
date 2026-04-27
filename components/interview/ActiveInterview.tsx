@@ -2,19 +2,37 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 import posthog from 'posthog-js';
 import dynamic from 'next/dynamic';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   ChevronLeft, ChevronRight, ChevronUp,
-  Plus, X, Play, RotateCcw, Send, Maximize2, Minimize2, Home, AlertTriangle,
+  Plus, X, Play, RotateCcw, Send, Maximize2, Minimize2, AlertTriangle,
 } from 'lucide-react';
 import type { OnMount, BeforeMount, Monaco } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import { INTERVIEW_DURATION_MS } from '@/lib/interview';
 import InterviewTimer from './InterviewTimer';
+import ThemeToggle from '@/components/ThemeToggle';
+
+// Observe the body's `theme-dark` / `theme-light` class so Monaco (whose
+// colors must be literal hex) re-renders when the user flips the theme.
+function useAppTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  useEffect(() => {
+    const read = () =>
+      setTheme(document.body.classList.contains('theme-dark') ? 'dark' : 'light');
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+  return theme;
+}
 
 // ─── Monaco (browser-only) ──────────────────────────────────────────────────
 
@@ -57,8 +75,7 @@ const DIFF_STYLE: Record<string, React.CSSProperties> = {
 // ─── Monaco theme ───────────────────────────────────────────────────────────
 
 const defineTheme: BeforeMount = (monaco) => {
-  // Light theme matching the /solve editor — readable syntax colors on the
-  // interview-surfaces card background.
+  // Light theme — readable syntax colors on the card background.
   monaco.editor.defineTheme('lc-light', {
     base: 'vs',
     inherit: true,
@@ -93,6 +110,40 @@ const defineTheme: BeforeMount = (monaco) => {
       'scrollbarSlider.activeBackground':   '#2563eb40',
       'editorError.foreground':             '#dc2626',
       'editorWarning.foreground':           '#d97706',
+    },
+  });
+
+  // Dark theme — same navy-blue workspace as /solve.
+  monaco.editor.defineTheme('lc-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'keyword',  foreground: '79b8ff' },
+      { token: 'string',   foreground: '9ecbff' },
+      { token: 'comment',  foreground: '6a737d', fontStyle: 'italic' },
+      { token: 'number',   foreground: 'f8cc7a' },
+      { token: 'type',     foreground: 'b392f0' },
+      { token: 'function', foreground: 'b392f0' },
+    ],
+    colors: {
+      'editor.background':                  '#0f1729',
+      'editor.foreground':                  '#e5e7eb',
+      'editor.lineHighlightBackground':     '#131b30',
+      'editor.lineHighlightBorder':         '#00000000',
+      'editor.selectionBackground':         '#3b82f640',
+      'editor.inactiveSelectionBackground': '#ffffff0d',
+      'editorLineNumber.foreground':        '#334155',
+      'editorLineNumber.activeForeground':  '#94a3b8',
+      'editorCursor.foreground':            '#60a5fa',
+      'editorIndentGuide.background1':      '#1e293b',
+      'editorWidget.background':            '#0f1729',
+      'editorSuggestWidget.background':     '#0f1729',
+      'editorSuggestWidget.border':         '#1e293b',
+      'scrollbarSlider.background':         '#ffffff08',
+      'scrollbarSlider.hoverBackground':    '#ffffff0f',
+      'scrollbarSlider.activeBackground':   '#ffffff14',
+      'editorError.foreground':             '#f87171',
+      'editorWarning.foreground':           '#fbbf24',
     },
   });
 };
@@ -207,6 +258,11 @@ interface ActiveInterviewProps {
 
 export default function ActiveInterview({ problems, startedAt, onSubmit }: ActiveInterviewProps) {
   const router = useRouter();
+  const appTheme = useAppTheme();
+  const monacoTheme = appTheme === 'dark' ? 'lc-dark' : 'lc-light';
+  // Match the editor frame to Monaco's literal hex so there's no flicker when
+  // the editor remounts on theme change.
+  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#f3f6fc';
   const deadlineMs = startedAt + INTERVIEW_DURATION_MS;
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -447,30 +503,25 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
   const passCount = results.filter(r => r.passed).length;
 
   return (
-    <div className="theme-light interview-surfaces flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
+    <div className="interview-surfaces flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
       {/* Timer bar */}
       <div
         className="flex items-center justify-between px-5 shrink-0"
         style={{ height: 48, background: BG_CHROME, borderBottom: `1px solid ${BORDER}` }}
       >
-        {/* Left: Home + Problem tabs */}
+        {/* Left: LeetLockin brand + Problem tabs */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowExitConfirm(true)}
-            className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
-            style={{
-              background: 'var(--ll-bg-hover)',
-              border: `1px solid ${BORDER_MED}`,
-              color: 'var(--ll-ink-muted)',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-tinted)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--ll-bg-hover)'; }}
+            className="flex items-center gap-1.5 font-bold text-[15px] tracking-tight whitespace-nowrap transition-opacity hover:opacity-80"
+            style={{ ...SG, color: 'var(--ll-ink-strong)' }}
             title="Return home"
             aria-label="Return home"
           >
-            <Home size={14} />
+            <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
+            LeetLockin
           </button>
-          <div className="w-px h-5" style={{ background: BORDER }} />
+          <div className="w-px h-5 mx-1" style={{ background: BORDER }} />
           {problems.map((p, i) => {
             const active = i === currentIdx;
             return (
@@ -506,22 +557,24 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
           })}
         </div>
 
-        {/* Timer */}
-        <InterviewTimer deadlineMs={deadlineMs} />
-
-        {/* Submit button — matches /solve footer Submit */}
-        <button
-          onClick={handleSubmit}
-          className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-colors bg-blue-500 hover:bg-blue-400"
-          style={{
-            border: '1px solid rgba(96,165,250,0.6)',
-            boxShadow: '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
-            ...SG,
-          }}
-        >
-          <Send size={11} />
-          Submit Interview
-        </button>
+        {/* Timer + right controls */}
+        <div className="flex items-center gap-3">
+          <InterviewTimer deadlineMs={deadlineMs} />
+          <div className="w-px h-5" style={{ background: BORDER }} />
+          <ThemeToggle />
+          <button
+            onClick={handleSubmit}
+            className="flex items-center gap-1.5 px-5 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-colors bg-blue-500 hover:bg-blue-400"
+            style={{
+              border: '1px solid rgba(96,165,250,0.6)',
+              boxShadow: '0 10px 30px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
+              ...SG,
+            }}
+          >
+            <Send size={11} />
+            Submit Interview
+          </button>
+        </div>
       </div>
 
       {/* Main split layout */}
@@ -618,7 +671,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 <ul className="space-y-1.5">
                   {problem.constraints.map(c => (
                     <li key={c} className="flex items-start gap-2.5 text-[12.5px] text-slate-500" style={MONO}>
-                      <span className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(15,23,42,0.12)' }} />
+                      <span className="mt-[7px] w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'var(--ll-ink-dim)' }} />
                       {c}
                     </li>
                   ))}
@@ -682,12 +735,12 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             </div>
 
             {/* Monaco editor */}
-            <div className="flex-1 overflow-hidden" style={{ background: BG_EDITOR }}>
+            <div className="flex-1 overflow-hidden" style={{ background: editorFrameBg }}>
               <MonacoEditor
                 height="100%"
                 language="python"
                 value={code}
-                theme="lc-light"
+                theme={monacoTheme}
                 options={EDITOR_OPTIONS}
                 beforeMount={defineTheme}
                 onMount={handleMount}
@@ -734,7 +787,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                   >
                     {tests.map(t => {
                       const r = results.find(r => r.caseId === t.id);
-                      const dot = !r ? 'rgba(15,23,42,0.14)' : r.passed ? 'rgba(52,211,153,0.75)' : 'rgba(248,113,113,0.75)';
+                      const dot = !r ? 'var(--ll-ink-dim)' : r.passed ? 'rgba(52,211,153,0.75)' : 'rgba(248,113,113,0.75)';
                       const isActive = t.id === activeTestId;
                       return (
                         <div
@@ -866,9 +919,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 onClick={() => setShowExitConfirm(false)}
                 className="px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-colors"
                 style={{
-                  background: 'rgba(15,23,42,0.05)',
+                  background: 'var(--ll-bg-hover)',
                   border: `1px solid ${BORDER_MED}`,
-                  color: '#475569',
+                  color: 'var(--ll-ink)',
                   ...SG,
                 }}
               >
@@ -876,7 +929,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
               </button>
               <button
                 onClick={handleExitHome}
-                className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-slate-900 transition-all hover:brightness-110"
+                className="px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110"
                 style={{
                   background: 'linear-gradient(180deg, rgba(248,113,113,0.9) 0%, rgba(239,68,68,0.9) 100%)',
                   border: '1px solid rgba(248,113,113,0.5)',
