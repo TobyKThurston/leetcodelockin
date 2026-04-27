@@ -50,8 +50,8 @@ const reviewAiSchema = z.object({
     blank_indices: z
       .array(z.number())
       .min(1)
-      .max(4)
-      .describe('0-based line indices of the 1-4 most critical logic lines in the solution'),
+      .max(1)
+      .describe('0-based line index of the single most critical logic line in the solution'),
   }),
   approach: z.object({
     pattern: z.string().describe('Algorithmic pattern name, e.g. "Sliding Window"'),
@@ -68,7 +68,7 @@ const SYSTEM_PROMPT = `You are an expert algorithm instructor creating spaced re
 
 Given the problem description and the student's accepted Python code, generate review card content:
 
-1. KEY LINES: Identify the 1-4 most critical lines of logic — the lines that represent the core algorithmic insight. Return their 0-based line indices (counting from the first line of the code). Skip blank lines, imports, and boilerplate. Focus on lines where the actual algorithm happens.
+1. KEY LINES: Identify the SINGLE most critical line of logic — the one line that represents the core algorithmic insight. Return its 0-based line index as a single-element array. Skip blank lines, imports, and boilerplate. Focus on the line where the actual algorithm happens.
 
 2. APPROACH: Name the algorithmic pattern and give a concise 2-3 sentence explanation of the approach. Write it as what someone should recall, not a tutorial.
 

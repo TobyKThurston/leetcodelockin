@@ -115,14 +115,15 @@ function CodeBlock({
 
 function KeyLinesFront({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
+  const oneBlank = content.blank_indices.slice(0, 1);
   return (
     <div className="space-y-3">
       <p className="text-[14px] text-slate-400">
-        Fill in the blanked-out lines from your solution:
+        Fill in the blanked-out line from your solution:
       </p>
       <CodeBlock
         code={card.codeSnapshot}
-        blankIndices={content.blank_indices}
+        blankIndices={oneBlank}
         revealed={false}
       />
     </div>
@@ -131,14 +132,16 @@ function KeyLinesFront({ card }: { card: ReviewCard }) {
 
 function KeyLinesBack({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
+  const oneBlank = content.blank_indices.slice(0, 1);
+  const oneOriginal = content.original_lines.slice(0, 1);
   return (
     <div className="space-y-3">
-      <p className="text-[14px] text-emerald-400 font-medium">Here are the key lines:</p>
+      <p className="text-[14px] text-emerald-400 font-medium">Here is the key line:</p>
       <CodeBlock
         code={card.codeSnapshot}
-        blankIndices={content.blank_indices}
+        blankIndices={oneBlank}
         revealed={true}
-        originalLines={content.original_lines}
+        originalLines={oneOriginal}
       />
     </div>
   );
