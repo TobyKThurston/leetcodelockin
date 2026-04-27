@@ -697,7 +697,7 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
   // can still review their one completed session and its feedback.
   if (showPaywall) {
     return (
-      <div className="interview-surfaces flex flex-col" style={{ height: '100vh', background: C.appBg }}>
+      <div className="flex flex-col" style={{ height: '100vh', background: C.appBg }}>
         <AppNav activeTab="Interview" />
         <div className="flex-1 flex flex-col overflow-hidden" style={{ paddingTop: 48 }}>
           <LockedScreen postFree />
@@ -708,7 +708,6 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
 
   // Pro: dashboard-style layout with left sidebar + right rail.
   return (
-    <div className="interview-surfaces">
     <AppShell
       activeTab="Interview"
       sidebar={
@@ -770,6 +769,5 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
         </>
       )}
     </AppShell>
-    </div>
   );
 }
