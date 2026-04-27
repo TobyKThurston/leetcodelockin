@@ -274,21 +274,21 @@ html, body {
    (silent active interview, voice session, debriefs, the /interview page). */
 .theme-light .interview-surfaces,
 .theme-light.interview-surfaces {
-  --ll-bg:           #dbe7f7;   /* clearly blue canvas — focus mode */
-  --ll-bg-panel:     #b1c8ea;   /* darker chrome — sidebar pops */
+  --ll-bg:           #ebf1fa;   /* paler blue canvas */
+  --ll-bg-panel:     #d4e0f2;   /* paler chrome — softer than nav */
   --ll-bg-card:      #ffffff;   /* white card */
   --ll-bg-elevated:  #ffffff;
-  --ll-bg-subtle:    #c4d5ef;   /* sunken strip / inputs */
-  --ll-bg-hover:     #cedcf2;
-  --ll-bg-tinted:    #b9cdee;
+  --ll-bg-subtle:    #dde7f5;   /* sunken strip / inputs */
+  --ll-bg-hover:     #e3ecf7;
+  --ll-bg-tinted:    #d6e2f3;
   --ll-bg-code:      #ffffff;
 
-  --ll-border:         #9fb6dc;
-  --ll-border-strong:  #7892bc;
-  --ll-border-subtle:  #c2d2ea;
+  --ll-border:         #c0d0e8;
+  --ll-border-strong:  #9fb5d8;
+  --ll-border-subtle:  #d8e2f0;
 
   --ll-nav-bg:   rgba(177,200,234,0.95);
-  --ll-glass-bg: rgba(177,200,234,0.88);
+  --ll-glass-bg: rgba(212,224,242,0.88);
 }
 
 /* Soft Stripe-style radial mesh for app canvases — same family as landing
