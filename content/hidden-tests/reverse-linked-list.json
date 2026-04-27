@@ -4,5 +4,8 @@
   { "label": "Already reversed sorted", "inputJson": "{\"values\":[5,4,3,2,1]}" },
   { "label": "Negative and boundary", "inputJson": "{\"values\":[-5000,0,5000,-1,1]}" },
   { "label": "Even length varied", "inputJson": "{\"values\":[10,-10,20,-20,30,-30]}" },
-  { "label": "Palindromic content", "inputJson": "{\"values\":[1,2,3,2,1]}" }
+  { "label": "Palindromic content", "inputJson": "{\"values\":[1,2,3,2,1]}" },
+  { "label": "Three nodes ascending", "inputJson": "{\"values\":[1,2,3]}" },
+  { "label": "Single negative boundary", "inputJson": "{\"values\":[-5000]}" },
+  { "label": "Mix of zero values", "inputJson": "{\"values\":[0,0,1,0,0]}" }
 ]

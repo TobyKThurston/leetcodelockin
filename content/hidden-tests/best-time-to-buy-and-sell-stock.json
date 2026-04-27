@@ -4,5 +4,8 @@
   { "label": "Dip then peak",       "inputJson": "{\"prices\":[5,4,3,2,1,100]}" },
   { "label": "Peak early then sink","inputJson": "{\"prices\":[9,10,0,1,2]}" },
   { "label": "All zeros",           "inputJson": "{\"prices\":[0,0,0,0]}" },
-  { "label": "Max swing at bounds", "inputJson": "{\"prices\":[10000,1,1,1,0,10000]}" }
+  { "label": "Max swing at bounds", "inputJson": "{\"prices\":[10000,1,1,1,0,10000]}" },
+  { "label": "Single price",        "inputJson": "{\"prices\":[5000]}" },
+  { "label": "Profit on last day",  "inputJson": "{\"prices\":[3,2,6,5,0,3]}" },
+  { "label": "Two days drop",       "inputJson": "{\"prices\":[5,3]}" }
 ]

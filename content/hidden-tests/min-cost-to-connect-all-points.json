@@ -4,5 +4,9 @@
   { "label": "Duplicate points",            "inputJson": "{\"points\":[[1,1],[1,1],[1,1]]}" },
   { "label": "Square corners",              "inputJson": "{\"points\":[[0,0],[0,5],[5,0],[5,5]]}" },
   { "label": "Clustered and outlier",       "inputJson": "{\"points\":[[0,0],[1,0],[0,1],[1,1],[20,20]]}" },
-  { "label": "Two identical points",        "inputJson": "{\"points\":[[7,7],[7,7]]}" }
+  { "label": "Two identical points",        "inputJson": "{\"points\":[[7,7],[7,7]]}" },
+  { "label": "Single point",                "inputJson": "{\"points\":[[100,100]]}" },
+  { "label": "Two distant points",          "inputJson": "{\"points\":[[-1000000,-1000000],[1000000,1000000]]}" },
+  { "label": "Cross shape",                 "inputJson": "{\"points\":[[0,0],[2,0],[-2,0],[0,2],[0,-2]]}" },
+  { "label": "Six points scattered",        "inputJson": "{\"points\":[[3,12],[-2,5],[-4,1],[0,0],[5,-4],[8,7]]}" }
 ]

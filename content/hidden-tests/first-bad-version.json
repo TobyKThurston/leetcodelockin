@@ -4,5 +4,7 @@
   { "label": "Bad in middle large", "inputJson": "{\"n\":2147483647,\"bad\":1073741824}" },
   { "label": "Small range bad first", "inputJson": "{\"n\":2,\"bad\":1}" },
   { "label": "Small range bad last", "inputJson": "{\"n\":2,\"bad\":2}" },
-  { "label": "Moderate n bad near end", "inputJson": "{\"n\":50,\"bad\":49}" }
+  { "label": "Moderate n bad near end", "inputJson": "{\"n\":50,\"bad\":49}" },
+  { "label": "Singleton n one", "inputJson": "{\"n\":1,\"bad\":1}" },
+  { "label": "Hundred middle bad", "inputJson": "{\"n\":100,\"bad\":50}" }
 ]

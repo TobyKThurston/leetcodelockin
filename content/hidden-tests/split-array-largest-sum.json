@@ -4,5 +4,10 @@
   { "label": "Zeros with values", "inputJson": "{\"nums\":[0,0,0,0,10],\"k\":2}" },
   { "label": "All zeros", "inputJson": "{\"nums\":[0,0,0,0,0],\"k\":3}" },
   { "label": "Classic medium", "inputJson": "{\"nums\":[7,2,5,10,8],\"k\":2}" },
-  { "label": "Singleton", "inputJson": "{\"nums\":[1000000],\"k\":1}" }
+  { "label": "Singleton", "inputJson": "{\"nums\":[1000000],\"k\":1}" },
+  { "label": "Equal weights three way", "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1,1],\"k\":3}" },
+  { "label": "All max values", "inputJson": "{\"nums\":[1000000,1000000,1000000,1000000],\"k\":2}" },
+  { "label": "Huge max forces", "inputJson": "{\"nums\":[1,2,3,1000000,1,2,3],\"k\":3}" },
+  { "label": "Two elements two splits", "inputJson": "{\"nums\":[5,8],\"k\":2}" },
+  { "label": "Small classic", "inputJson": "{\"nums\":[1,2,3,4,5],\"k\":3}" }
 ]

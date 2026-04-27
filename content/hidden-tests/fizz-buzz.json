@@ -4,5 +4,8 @@
   { "label": "n = 16 beyond FizzBuzz", "inputJson": "{\"n\":16}" },
   { "label": "n = 30 two FizzBuzzes", "inputJson": "{\"n\":30}" },
   { "label": "n = 45 three FizzBuzzes", "inputJson": "{\"n\":45}" },
-  { "label": "n = 100", "inputJson": "{\"n\":100}" }
+  { "label": "n = 100", "inputJson": "{\"n\":100}" },
+  { "label": "n = 4 just before Buzz", "inputJson": "{\"n\":4}" },
+  { "label": "n = 6 first Fizz pair", "inputJson": "{\"n\":6}" },
+  { "label": "n = 10000 max bound", "inputJson": "{\"n\":10000}" }
 ]

@@ -4,5 +4,9 @@
   { "label": "Single blocked cell", "inputJson": "{\"grid\":[[1]]}" },
   { "label": "Path requires winding", "inputJson": "{\"grid\":[[0,0,0],[1,1,0],[1,1,0]]}" },
   { "label": "All ones except corners unreachable", "inputJson": "{\"grid\":[[0,1,1],[1,1,1],[1,1,0]]}" },
-  { "label": "Forces detour around wall", "inputJson": "{\"grid\":[[0,0,0,0],[1,1,1,0],[0,0,0,0],[0,1,1,1],[0,0,0,0]]}" }
+  { "label": "Forces detour around wall", "inputJson": "{\"grid\":[[0,0,0,0],[1,1,1,0],[0,0,0,0],[0,1,1,0]]}" },
+  { "label": "All zeros 4x4", "inputJson": "{\"grid\":[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]}" },
+  { "label": "Diagonal corridor only", "inputJson": "{\"grid\":[[0,1,1],[1,0,1],[1,1,0]]}" },
+  { "label": "Wall blocks completely", "inputJson": "{\"grid\":[[0,0,0],[1,1,1],[0,0,0]]}" },
+  { "label": "Five by five spiral", "inputJson": "{\"grid\":[[0,0,0,0,0],[1,1,1,1,0],[0,0,0,0,0],[0,1,1,1,1],[0,0,0,0,0]]}" }
 ]

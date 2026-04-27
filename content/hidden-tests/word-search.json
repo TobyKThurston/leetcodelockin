@@ -4,5 +4,9 @@
   { "label": "Cannot reuse cell", "inputJson": "{\"board\":[[\"a\",\"a\"]],\"word\":\"aaa\"}" },
   { "label": "Single row path", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\",\"d\"]],\"word\":\"abcd\"}" },
   { "label": "Winding path", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\"],[\"d\",\"e\",\"f\"],[\"g\",\"h\",\"i\"]],\"word\":\"abedh\"}" },
-  { "label": "Char not on board", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"word\":\"z\"}" }
+  { "label": "Char not on board", "inputJson": "{\"board\":[[\"a\",\"b\"],[\"c\",\"d\"]],\"word\":\"z\"}" },
+  { "label": "Single column found", "inputJson": "{\"board\":[[\"a\"],[\"b\"],[\"c\"],[\"d\"]],\"word\":\"abcd\"}" },
+  { "label": "Repeated letters allowed", "inputJson": "{\"board\":[[\"a\",\"a\",\"b\"],[\"a\",\"a\",\"b\"]],\"word\":\"aaab\"}" },
+  { "label": "Word longer than cells", "inputJson": "{\"board\":[[\"a\",\"b\"]],\"word\":\"abab\"}" },
+  { "label": "Snake through full grid", "inputJson": "{\"board\":[[\"a\",\"b\",\"c\"],[\"f\",\"e\",\"d\"],[\"g\",\"h\",\"i\"]],\"word\":\"abcdefghi\"}" }
 ]

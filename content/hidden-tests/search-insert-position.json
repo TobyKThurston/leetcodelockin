@@ -4,5 +4,8 @@
   { "label": "Singleton larger target", "inputJson": "{\"nums\":[5],\"target\":9}" },
   { "label": "Insert at zero", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":-10000}" },
   { "label": "Insert at end", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":10000}" },
-  { "label": "Found middle", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":0}" }
+  { "label": "Found middle", "inputJson": "{\"nums\":[-10,-5,0,5,10],\"target\":0}" },
+  { "label": "Two elements between", "inputJson": "{\"nums\":[1,3],\"target\":2}" },
+  { "label": "Found first", "inputJson": "{\"nums\":[1,3,5,7,9],\"target\":1}" },
+  { "label": "Found last", "inputJson": "{\"nums\":[1,3,5,7,9],\"target\":9}" }
 ]

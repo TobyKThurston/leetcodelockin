@@ -3,5 +3,7 @@
   { "label": "n = 5", "inputJson": "{\"n\":5}" },
   { "label": "n = 15", "inputJson": "{\"n\":15}" },
   { "label": "n = 20", "inputJson": "{\"n\":20}" },
-  { "label": "n = 29", "inputJson": "{\"n\":29}" }
+  { "label": "n = 29", "inputJson": "{\"n\":29}" },
+  { "label": "n = 3", "inputJson": "{\"n\":3}" },
+  { "label": "n = 25", "inputJson": "{\"n\":25}" }
 ]

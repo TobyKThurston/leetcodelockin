@@ -4,5 +4,10 @@
   { "label": "All zeros", "inputJson": "{\"heights\":[0,0,0,0]}" },
   { "label": "Valley between peaks", "inputJson": "{\"heights\":[6,7,0,7,6]}" },
   { "label": "Classic tall pair", "inputJson": "{\"heights\":[2,1,5,6,2,3]}" },
-  { "label": "Single tall bar", "inputJson": "{\"heights\":[0,10000,0]}" }
+  { "label": "Single tall bar", "inputJson": "{\"heights\":[0,10000,0]}" },
+  { "label": "Single bar", "inputJson": "{\"heights\":[7]}" },
+  { "label": "Two equal bars", "inputJson": "{\"heights\":[3,3]}" },
+  { "label": "Zero in middle", "inputJson": "{\"heights\":[5,5,5,0,5,5,5]}" },
+  { "label": "Pyramid shape", "inputJson": "{\"heights\":[1,2,3,4,3,2,1]}" },
+  { "label": "All max value", "inputJson": "{\"heights\":[10000,10000,10000,10000]}" }
 ]

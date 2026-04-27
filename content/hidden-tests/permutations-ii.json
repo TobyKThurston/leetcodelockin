@@ -4,5 +4,9 @@
   { "label": "Two pairs", "inputJson": "{\"nums\":[1,1,2,2]}" },
   { "label": "Distinct three", "inputJson": "{\"nums\":[1,2,3]}" },
   { "label": "Negatives with dup", "inputJson": "{\"nums\":[-1,-1,0]}" },
-  { "label": "Unsorted with dup", "inputJson": "{\"nums\":[3,1,3]}" }
+  { "label": "Unsorted with dup", "inputJson": "{\"nums\":[3,1,3]}" },
+  { "label": "Triple dup with single", "inputJson": "{\"nums\":[2,2,2,3]}" },
+  { "label": "Pair of zeros", "inputJson": "{\"nums\":[0,0]}" },
+  { "label": "Four mixed dup", "inputJson": "{\"nums\":[1,2,2,1]}" },
+  { "label": "All same negative", "inputJson": "{\"nums\":[-5,-5,-5]}" }
 ]

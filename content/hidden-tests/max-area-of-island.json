@@ -4,5 +4,9 @@
   { "label": "Thin column with gap", "inputJson": "{\"grid\":[[1],[1],[0],[1],[1],[1]]}" },
   { "label": "Two equal-size islands", "inputJson": "{\"grid\":[[1,1,0,1,1],[1,1,0,1,1]]}" },
   { "label": "Diagonal disconnected ones", "inputJson": "{\"grid\":[[1,0,1],[0,1,0],[1,0,1]]}" },
-  { "label": "L-shaped island among smalls", "inputJson": "{\"grid\":[[1,0,0,1],[1,0,0,0],[1,1,1,0],[0,0,1,0]]}" }
+  { "label": "L-shaped island among smalls", "inputJson": "{\"grid\":[[1,0,0,1],[1,0,0,0],[1,1,1,0],[0,0,1,0]]}" },
+  { "label": "All water single", "inputJson": "{\"grid\":[[0]]}" },
+  { "label": "Spiral island", "inputJson": "{\"grid\":[[1,1,1,1],[1,0,0,1],[1,0,0,0],[1,1,1,1]]}" },
+  { "label": "Two-by-two island only", "inputJson": "{\"grid\":[[0,0,0],[0,1,1],[0,1,1]]}" },
+  { "label": "Single cells only", "inputJson": "{\"grid\":[[0,1,0],[1,0,1],[0,1,0]]}" }
 ]

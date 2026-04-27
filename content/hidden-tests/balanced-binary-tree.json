@@ -4,5 +4,8 @@
   { "label": "Perfect depth 4", "inputJson": "{\"root\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}" },
   { "label": "Subtly off by two", "inputJson": "{\"root\":[1,2,2,3,null,null,3,4,null,null,4]}" },
   { "label": "Balanced with gaps", "inputJson": "{\"root\":[1,2,3,4,null,null,5]}" },
-  { "label": "Right skew unbalanced", "inputJson": "{\"root\":[1,null,2,null,3,null,4]}" }
+  { "label": "Right skew unbalanced", "inputJson": "{\"root\":[1,null,2,null,3,null,4]}" },
+  { "label": "Two nodes", "inputJson": "{\"root\":[1,2]}" },
+  { "label": "Three nodes balanced", "inputJson": "{\"root\":[1,2,3]}" },
+  { "label": "Negative values balanced", "inputJson": "{\"root\":[-5,-3,-7,-1,-4,-6,-8]}" }
 ]

@@ -4,5 +4,8 @@
   { "label": "Three digits", "inputJson": "{\"digits\":\"234\"}" },
   { "label": "Two four-letter", "inputJson": "{\"digits\":\"79\"}" },
   { "label": "Repeat digit", "inputJson": "{\"digits\":\"22\"}" },
-  { "label": "Four digits", "inputJson": "{\"digits\":\"2345\"}" }
+  { "label": "Four digits", "inputJson": "{\"digits\":\"2345\"}" },
+  { "label": "Single digit two", "inputJson": "{\"digits\":\"2\"}" },
+  { "label": "Two same nines", "inputJson": "{\"digits\":\"99\"}" },
+  { "label": "Mix of three and seven", "inputJson": "{\"digits\":\"37\"}" }
 ]

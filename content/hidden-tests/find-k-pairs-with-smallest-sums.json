@@ -4,5 +4,9 @@
   { "label": "Negatives", "inputJson": "{\"nums1\":[-10,-4,0,7],\"nums2\":[-5,0,3],\"k\":4}" },
   { "label": "Duplicates same sum", "inputJson": "{\"nums1\":[1,1,2],\"nums2\":[1,2,3],\"k\":5}" },
   { "label": "Single in nums1", "inputJson": "{\"nums1\":[5],\"nums2\":[1,2,3,4,5],\"k\":3}" },
-  { "label": "All equal values", "inputJson": "{\"nums1\":[2,2,2],\"nums2\":[2,2],\"k\":4}" }
+  { "label": "All equal values", "inputJson": "{\"nums1\":[2,2,2],\"nums2\":[2,2],\"k\":4}" },
+  { "label": "Both arrays single", "inputJson": "{\"nums1\":[5],\"nums2\":[5],\"k\":1}" },
+  { "label": "Long ascending arrays", "inputJson": "{\"nums1\":[1,2,3,4,5],\"nums2\":[6,7,8,9,10],\"k\":4}" },
+  { "label": "Large negatives big positives", "inputJson": "{\"nums1\":[-1000000000,0,1000000000],\"nums2\":[-1000000000,0,1000000000],\"k\":3}" },
+  { "label": "k equals total product", "inputJson": "{\"nums1\":[1,3],\"nums2\":[2,4],\"k\":4}" }
 ]

@@ -4,5 +4,7 @@
   { "label": "Max n pick middle", "inputJson": "{\"n\":2147483647,\"pick\":1073741823}" },
   { "label": "Small n low pick", "inputJson": "{\"n\":2,\"pick\":1}" },
   { "label": "Small n high pick", "inputJson": "{\"n\":2,\"pick\":2}" },
-  { "label": "Arbitrary mid", "inputJson": "{\"n\":100,\"pick\":37}" }
+  { "label": "Arbitrary mid", "inputJson": "{\"n\":100,\"pick\":37}" },
+  { "label": "Singleton range", "inputJson": "{\"n\":1,\"pick\":1}" },
+  { "label": "Pick near end", "inputJson": "{\"n\":1000,\"pick\":999}" }
 ]

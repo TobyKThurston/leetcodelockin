@@ -4,5 +4,8 @@
   { "label": "All same lowercase", "inputJson": "{\"s\":\"aaaaa\"}" },
   { "label": "Mixed case no bad pair", "inputJson": "{\"s\":\"aBcDeF\"}" },
   { "label": "Cascades then stops", "inputJson": "{\"s\":\"RLlrRLlr\"}" },
-  { "label": "Adjacent same letter same case", "inputJson": "{\"s\":\"AAaa\"}" }
+  { "label": "Adjacent same letter same case", "inputJson": "{\"s\":\"AAaa\"}" },
+  { "label": "Single character", "inputJson": "{\"s\":\"Z\"}" },
+  { "label": "Two char bad pair", "inputJson": "{\"s\":\"Pp\"}" },
+  { "label": "Long no bad pair", "inputJson": "{\"s\":\"abcdefghij\"}" }
 ]

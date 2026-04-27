@@ -4,5 +4,8 @@
   { "label": "Power of two large", "inputJson": "{\"n\":1073741824}" },
   { "label": "Mixed 2x3x5", "inputJson": "{\"n\":30}" },
   { "label": "Has prime 11", "inputJson": "{\"n\":33}" },
-  { "label": "Min int32", "inputJson": "{\"n\":-2147483648}" }
+  { "label": "Min int32", "inputJson": "{\"n\":-2147483648}" },
+  { "label": "Zero", "inputJson": "{\"n\":0}" },
+  { "label": "One", "inputJson": "{\"n\":1}" },
+  { "label": "Power of three", "inputJson": "{\"n\":243}" }
 ]

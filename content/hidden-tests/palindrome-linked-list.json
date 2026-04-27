@@ -4,5 +4,8 @@
   { "label": "Two different", "inputJson": "{\"values\":[3,7]}" },
   { "label": "Long even palindrome", "inputJson": "{\"values\":[1,2,3,4,4,3,2,1]}" },
   { "label": "Long odd palindrome", "inputJson": "{\"values\":[9,8,7,6,7,8,9]}" },
-  { "label": "Near palindrome fails", "inputJson": "{\"values\":[1,2,3,2,2]}" }
+  { "label": "Near palindrome fails", "inputJson": "{\"values\":[1,2,3,2,2]}" },
+  { "label": "Single node", "inputJson": "{\"values\":[5]}" },
+  { "label": "All same value", "inputJson": "{\"values\":[7,7,7,7]}" },
+  { "label": "Last two swapped", "inputJson": "{\"values\":[1,2,3,3,1,2]}" }
 ]

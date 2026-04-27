@@ -4,5 +4,9 @@
   { "label": "Duplicates in matrix", "inputJson": "{\"matrix\":[[1,2],[1,3]],\"k\":2}" },
   { "label": "Negative values", "inputJson": "{\"matrix\":[[-5,-4],[-3,-2]],\"k\":3}" },
   { "label": "All same value", "inputJson": "{\"matrix\":[[7,7,7],[7,7,7],[7,7,7]],\"k\":5}" },
-  { "label": "Classic eight pick", "inputJson": "{\"matrix\":[[1,5,9],[10,11,13],[12,13,15]],\"k\":8}" }
+  { "label": "Classic eight pick", "inputJson": "{\"matrix\":[[1,5,9],[10,11,13],[12,13,15]],\"k\":8}" },
+  { "label": "Single cell", "inputJson": "{\"matrix\":[[42]],\"k\":1}" },
+  { "label": "Two by two with k mid", "inputJson": "{\"matrix\":[[1,4],[2,5]],\"k\":3}" },
+  { "label": "Large values", "inputJson": "{\"matrix\":[[1000000000,1000000000],[1000000000,1000000000]],\"k\":4}" },
+  { "label": "Four by four mid-pick", "inputJson": "{\"matrix\":[[1,3,5,7],[2,4,8,10],[6,9,11,13],[12,14,15,16]],\"k\":7}" }
 ]

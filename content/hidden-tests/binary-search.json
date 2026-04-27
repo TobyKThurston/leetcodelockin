@@ -4,5 +4,8 @@
   { "label": "Target below all", "inputJson": "{\"nums\":[-5,-2,0,3,6,9],\"target\":-9}" },
   { "label": "Target above all", "inputJson": "{\"nums\":[-5,-2,0,3,6,9],\"target\":100}" },
   { "label": "Two elements first", "inputJson": "{\"nums\":[-9999,9999],\"target\":-9999}" },
-  { "label": "Negative extreme hit", "inputJson": "{\"nums\":[-9999,-5000,-1,0,1,5000,9999],\"target\":-9999}" }
+  { "label": "Negative extreme hit", "inputJson": "{\"nums\":[-9999,-5000,-1,0,1,5000,9999],\"target\":-9999}" },
+  { "label": "Two elements second", "inputJson": "{\"nums\":[-9999,9999],\"target\":9999}" },
+  { "label": "Even-length middle hit", "inputJson": "{\"nums\":[1,3,5,7,9,11],\"target\":7}" },
+  { "label": "Just-above-target miss", "inputJson": "{\"nums\":[1,3,5,7,9],\"target\":4}" }
 ]

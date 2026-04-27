@@ -4,5 +4,10 @@
   { "label": "Single zero", "inputJson": "{\"nums\":[0]}" },
   { "label": "Extremes boundary", "inputJson": "{\"nums\":[10000,-10000,10000,-10000,10000]}" },
   { "label": "Prefix best then drop", "inputJson": "{\"nums\":[8,-1,-2,-10,-3]}" },
-  { "label": "Best is suffix", "inputJson": "{\"nums\":[-5,-4,-3,1,2,3,4]}" }
+  { "label": "Best is suffix", "inputJson": "{\"nums\":[-5,-4,-3,1,2,3,4]}" },
+  { "label": "Classic LC sample", "inputJson": "{\"nums\":[-2,1,-3,4,-1,2,1,-5,4]}" },
+  { "label": "Single max value", "inputJson": "{\"nums\":[-10000]}" },
+  { "label": "All same negative", "inputJson": "{\"nums\":[-3,-3,-3,-3]}" },
+  { "label": "Best in middle", "inputJson": "{\"nums\":[-5,-2,7,8,-3,-2]}" },
+  { "label": "Long mixed", "inputJson": "{\"nums\":[3,-2,5,-1,2,-4,3,1,-5,4]}" }
 ]

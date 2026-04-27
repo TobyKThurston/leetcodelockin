@@ -4,5 +4,8 @@
   { "label": "Already sorted desc",     "inputJson": "{\"people\":[9,8,7,6,5],\"limit\":10}" },
   { "label": "Limit exactly heaviest",  "inputJson": "{\"people\":[3,5,3,4],\"limit\":5}" },
   { "label": "All at limit",            "inputJson": "{\"people\":[1,1,1,1,1,1],\"limit\":1}" },
-  { "label": "Mixed with some solo",    "inputJson": "{\"people\":[3,2,2,1],\"limit\":3}" }
+  { "label": "Mixed with some solo",    "inputJson": "{\"people\":[3,2,2,1],\"limit\":3}" },
+  { "label": "Two pair perfectly",      "inputJson": "{\"people\":[2,2],\"limit\":4}" },
+  { "label": "Heavy lone passenger",    "inputJson": "{\"people\":[5,1,1,1,1],\"limit\":5}" },
+  { "label": "All same weight pair",    "inputJson": "{\"people\":[2,2,2,2],\"limit\":4}" }
 ]

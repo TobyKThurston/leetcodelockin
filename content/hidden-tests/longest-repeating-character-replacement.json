@@ -4,5 +4,9 @@
   { "label": "Alternating two",      "inputJson": "{\"s\":\"ABABABAB\",\"k\":2}" },
   { "label": "Dense late cluster",   "inputJson": "{\"s\":\"AABBBBCD\",\"k\":1}" },
   { "label": "All distinct no swaps","inputJson": "{\"s\":\"ABCDEFG\",\"k\":0}" },
-  { "label": "Mostly same with gap", "inputJson": "{\"s\":\"AAAABAAAA\",\"k\":0}" }
+  { "label": "Mostly same with gap", "inputJson": "{\"s\":\"AAAABAAAA\",\"k\":0}" },
+  { "label": "All same letter",      "inputJson": "{\"s\":\"AAAAAA\",\"k\":3}" },
+  { "label": "Two letters k one",    "inputJson": "{\"s\":\"ABAB\",\"k\":1}" },
+  { "label": "Long with single odd", "inputJson": "{\"s\":\"AAAAAAAAAAB\",\"k\":1}" },
+  { "label": "k just below cover",   "inputJson": "{\"s\":\"XYZXYZ\",\"k\":3}" }
 ]

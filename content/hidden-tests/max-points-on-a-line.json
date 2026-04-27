@@ -4,5 +4,11 @@
   { "label": "Horizontal line", "inputJson": "{\"points\":[[-10000,4],[-1,4],[0,4],[50,4],[10000,4]]}" },
   { "label": "Negative slope with origin", "inputJson": "{\"points\":[[-4,4],[-2,2],[0,0],[2,-2],[4,-4],[1,3]]}" },
   { "label": "Mixed slopes with dupe slope", "inputJson": "{\"points\":[[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]}" },
-  { "label": "Four collinear plus two off", "inputJson": "{\"points\":[[0,0],[1,2],[2,4],[3,6],[4,7],[5,9]]}" }
+  { "label": "Four collinear plus two off", "inputJson": "{\"points\":[[0,0],[1,2],[2,4],[3,6],[4,7],[5,9]]}" },
+  { "label": "Single point", "inputJson": "{\"points\":[[3,7]]}" },
+  { "label": "Three points two collinear", "inputJson": "{\"points\":[[0,0],[1,1],[2,3]]}" },
+  { "label": "Large coords near bounds", "inputJson": "{\"points\":[[-10000,-10000],[0,0],[10000,10000],[5000,5000],[-5000,-5000]]}" },
+  { "label": "Star pattern", "inputJson": "{\"points\":[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]]}" },
+  { "label": "Slope reduction needed", "inputJson": "{\"points\":[[0,0],[2,4],[3,6],[4,8],[6,12]]}" },
+  { "label": "Two pairs different slopes", "inputJson": "{\"points\":[[0,0],[1,2],[2,4],[3,3],[4,4]]}" }
 ]

@@ -4,5 +4,10 @@
   { "label": "Exact end hit", "inputJson": "{\"nums\":[2,1,1,1,1]}" },
   { "label": "Decreasing then boost", "inputJson": "{\"nums\":[3,2,1,0,4,0,0]}" },
   { "label": "All ones long", "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1,1,1]}" },
-  { "label": "Zigzag optimal choice", "inputJson": "{\"nums\":[2,3,0,1,4]}" }
+  { "label": "Zigzag optimal choice", "inputJson": "{\"nums\":[2,3,0,1,4]}" },
+  { "label": "Single element", "inputJson": "{\"nums\":[5]}" },
+  { "label": "Two elements direct", "inputJson": "{\"nums\":[5,0]}" },
+  { "label": "Long ones in twos", "inputJson": "{\"nums\":[2,2,2,2,2,2]}" },
+  { "label": "Big start covers all", "inputJson": "{\"nums\":[100,1,1,1,1,1,1,1]}" },
+  { "label": "Misleading first", "inputJson": "{\"nums\":[1,2,1,1,1]}" }
 ]

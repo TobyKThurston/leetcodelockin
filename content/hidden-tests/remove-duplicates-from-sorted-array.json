@@ -4,5 +4,8 @@
   { "label": "Negatives with dupes",    "inputJson": "{\"nums\":[-100,-100,-50,-50,0,0,50,50,100]}" },
   { "label": "Long run at end",         "inputJson": "{\"nums\":[1,2,3,4,5,5,5,5,5]}" },
   { "label": "Long run at start",       "inputJson": "{\"nums\":[0,0,0,0,0,1,2,3]}" },
-  { "label": "Boundary values",         "inputJson": "{\"nums\":[-100,-100,100,100]}" }
+  { "label": "Boundary values",         "inputJson": "{\"nums\":[-100,-100,100,100]}" },
+  { "label": "Two same",                "inputJson": "{\"nums\":[3,3]}" },
+  { "label": "Already unique long",     "inputJson": "{\"nums\":[-3,-2,-1,0,1,2,3]}" },
+  { "label": "Mixed dupes",             "inputJson": "{\"nums\":[1,1,2,2,3,3,4,4,5,5]}" }
 ]

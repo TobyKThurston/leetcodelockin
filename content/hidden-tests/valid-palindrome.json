@@ -4,5 +4,9 @@
   { "label": "Mixed case alnum",        "inputJson": "{\"s\":\"RaceCar\"}" },
   { "label": "Digits only palindrome",  "inputJson": "{\"s\":\"12 3:2 1\"}" },
   { "label": "Alpha vs digit mismatch", "inputJson": "{\"s\":\"0P\"}" },
-  { "label": "Letters then digits",     "inputJson": "{\"s\":\"ab1ba\"}" }
+  { "label": "Letters then digits",     "inputJson": "{\"s\":\"ab1ba\"}" },
+  { "label": "All spaces",              "inputJson": "{\"s\":\"     \"}" },
+  { "label": "Two same chars",          "inputJson": "{\"s\":\"aa\"}" },
+  { "label": "Two different chars",     "inputJson": "{\"s\":\"ab\"}" },
+  { "label": "Classic LC example",      "inputJson": "{\"s\":\"A man, a plan, a canal: Panama\"}" }
 ]

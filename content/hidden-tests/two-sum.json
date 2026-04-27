@@ -4,5 +4,9 @@
   { "label": "Negatives sum to zero","inputJson": "{\"nums\":[-3,4,3,90],\"target\":0}" },
   { "label": "Duplicate values",     "inputJson": "{\"nums\":[3,3],\"target\":6}" },
   { "label": "Large negative target","inputJson": "{\"nums\":[-1000000000,500,-500,1000000000],\"target\":0}" },
-  { "label": "Mixed signs",          "inputJson": "{\"nums\":[-10,-40,20,30],\"target\":-20}" }
+  { "label": "Mixed signs",          "inputJson": "{\"nums\":[-10,-40,20,30],\"target\":-20}" },
+  { "label": "Min size two",         "inputJson": "{\"nums\":[1,4],\"target\":5}" },
+  { "label": "Pair with zero",       "inputJson": "{\"nums\":[0,8,1,5],\"target\":8}" },
+  { "label": "Far apart pair",       "inputJson": "{\"nums\":[3,7,1,9,2,6,8,4,5,10],\"target\":13}" },
+  { "label": "Two negatives",        "inputJson": "{\"nums\":[-7,-2,1,5],\"target\":-9}" }
 ]

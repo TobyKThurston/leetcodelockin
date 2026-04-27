@@ -4,5 +4,10 @@
   { "label": "Minimum size hit",        "inputJson": "{\"nums\":[-1,0,1]}" },
   { "label": "Many zeros",              "inputJson": "{\"nums\":[0,0,0,0,0,0]}" },
   { "label": "Many duplicates",         "inputJson": "{\"nums\":[-2,-2,-2,0,0,2,2,2,4]}" },
-  { "label": "Symmetric around zero",   "inputJson": "{\"nums\":[-4,-2,-1,0,1,2,4]}" }
+  { "label": "Symmetric around zero",   "inputJson": "{\"nums\":[-4,-2,-1,0,1,2,4]}" },
+  { "label": "All negative",            "inputJson": "{\"nums\":[-5,-4,-3,-2,-1]}" },
+  { "label": "Three same negatives",    "inputJson": "{\"nums\":[-3,-3,-3,6,6]}" },
+  { "label": "Single triple solution",  "inputJson": "{\"nums\":[3,0,-2,-1,1,2]}" },
+  { "label": "Boundary magnitudes",     "inputJson": "{\"nums\":[-100000,50000,50000,0]}" },
+  { "label": "Many positive negatives", "inputJson": "{\"nums\":[-1,-1,-1,2,2,2]}" }
 ]

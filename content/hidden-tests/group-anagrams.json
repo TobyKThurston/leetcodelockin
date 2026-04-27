@@ -4,5 +4,9 @@
   { "label": "Mixed with empty",     "inputJson": "{\"strs\":[\"\",\"a\",\"\",\"b\",\"ab\",\"ba\"]}" },
   { "label": "Same letter repeats",  "inputJson": "{\"strs\":[\"aa\",\"aaa\",\"a\",\"aa\",\"aaaa\"]}" },
   { "label": "Identical duplicates", "inputJson": "{\"strs\":[\"foo\",\"foo\",\"foo\"]}" },
-  { "label": "Varied lengths",       "inputJson": "{\"strs\":[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]}" }
+  { "label": "Varied lengths",       "inputJson": "{\"strs\":[\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]}" },
+  { "label": "Single string",        "inputJson": "{\"strs\":[\"hello\"]}" },
+  { "label": "Just empties",         "inputJson": "{\"strs\":[\"\",\"\",\"\"]}" },
+  { "label": "Long anagram pair",    "inputJson": "{\"strs\":[\"abcdefghij\",\"jihgfedcba\",\"abcdefghii\"]}" },
+  { "label": "Almost anagrams",      "inputJson": "{\"strs\":[\"abc\",\"abd\",\"bca\",\"dab\",\"cba\",\"bda\"]}" }
 ]

@@ -4,5 +4,9 @@
   { "label": "Impossible target", "inputJson": "{\"candidates\":[2,4,6],\"target\":3}" },
   { "label": "Distinct values", "inputJson": "{\"candidates\":[1,2,3,4],\"target\":5}" },
   { "label": "Heavy dups", "inputJson": "{\"candidates\":[3,3,3,3,3],\"target\":9}" },
-  { "label": "Two answers with dup", "inputJson": "{\"candidates\":[10,1,2,7,6,1,5],\"target\":8}" }
+  { "label": "Two answers with dup", "inputJson": "{\"candidates\":[10,1,2,7,6,1,5],\"target\":8}" },
+  { "label": "All distinct big target", "inputJson": "{\"candidates\":[2,3,5,7],\"target\":10}" },
+  { "label": "Pair of dups", "inputJson": "{\"candidates\":[2,2],\"target\":4}" },
+  { "label": "Small target many dups", "inputJson": "{\"candidates\":[1,1,2,2,3],\"target\":4}" },
+  { "label": "Large value impossible", "inputJson": "{\"candidates\":[50,50,50],\"target\":30}" }
 ]

@@ -4,5 +4,9 @@
   { "label": "All negative",              "inputJson": "{\"numbers\":[-10,-8,-5,-3],\"target\":-13}" },
   { "label": "Negative target",           "inputJson": "{\"numbers\":[-4,-2,1,3,5],\"target\":-1}" },
   { "label": "Large values",              "inputJson": "{\"numbers\":[-1000,-500,0,500,1000],\"target\":0}" },
-  { "label": "Duplicates not the answer", "inputJson": "{\"numbers\":[1,1,1,2,5],\"target\":7}" }
+  { "label": "Duplicates not the answer", "inputJson": "{\"numbers\":[1,1,1,2,5],\"target\":7}" },
+  { "label": "Two element pair",          "inputJson": "{\"numbers\":[2,7],\"target\":9}" },
+  { "label": "Pair at start",             "inputJson": "{\"numbers\":[1,2,3,4,5,6],\"target\":3}" },
+  { "label": "Pair adjacent middle",      "inputJson": "{\"numbers\":[1,3,5,7,9,11],\"target\":12}" },
+  { "label": "Negative plus positive",    "inputJson": "{\"numbers\":[-3,1,4,8],\"target\":1}" }
 ]

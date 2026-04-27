@@ -4,5 +4,10 @@
   { "label": "Window resets mid way", "inputJson": "{\"s\":\"pwwkew\"}" },
   { "label": "Mixed case distinct",   "inputJson": "{\"s\":\"aAbBcC\"}" },
   { "label": "Printable punctuation", "inputJson": "{\"s\":\"a b!a b!\"}" },
-  { "label": "Long with late repeat", "inputJson": "{\"s\":\"abcdefghijklmnoa\"}" }
+  { "label": "Long with late repeat", "inputJson": "{\"s\":\"abcdefghijklmnoa\"}" },
+  { "label": "Empty string",          "inputJson": "{\"s\":\"\"}" },
+  { "label": "All identical",         "inputJson": "{\"s\":\"qqqqqqqq\"}" },
+  { "label": "Repeating block",       "inputJson": "{\"s\":\"abcabcabc\"}" },
+  { "label": "Tab and digit mix",     "inputJson": "{\"s\":\"a1b2c3a1\"}" },
+  { "label": "Long unique run",       "inputJson": "{\"s\":\"abcdefghijklmnopqrstuvwxyz\"}" }
 ]

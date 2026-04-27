@@ -4,5 +4,10 @@
   { "label": "Full overlap one part", "inputJson": "{\"s\":\"abcabcabc\"}" },
   { "label": "Long tail single letter", "inputJson": "{\"s\":\"abacdddddd\"}" },
   { "label": "Alternating letters", "inputJson": "{\"s\":\"abababab\"}" },
-  { "label": "Chained overlaps", "inputJson": "{\"s\":\"eaabbcdceefgghh\"}" }
+  { "label": "Chained overlaps", "inputJson": "{\"s\":\"eaabbcdceefgghh\"}" },
+  { "label": "Two chars repeating", "inputJson": "{\"s\":\"aabb\"}" },
+  { "label": "Letter spans whole string", "inputJson": "{\"s\":\"abcdea\"}" },
+  { "label": "All distinct long", "inputJson": "{\"s\":\"abcdefg\"}" },
+  { "label": "Forces single big partition", "inputJson": "{\"s\":\"abcabz\"}" },
+  { "label": "Pair runs", "inputJson": "{\"s\":\"aabbccddeeff\"}" }
 ]

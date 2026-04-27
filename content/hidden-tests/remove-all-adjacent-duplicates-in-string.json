@@ -4,5 +4,8 @@
   { "label": "Full palindrome cancels", "inputJson": "{\"s\":\"abbaabba\"}" },
   { "label": "Long same-char run odd", "inputJson": "{\"s\":\"aaaaaaa\"}" },
   { "label": "Long same-char run even", "inputJson": "{\"s\":\"aaaaaaaa\"}" },
-  { "label": "Mixed tail survives", "inputJson": "{\"s\":\"deeedbbcccbdaa\"}" }
+  { "label": "Mixed tail survives", "inputJson": "{\"s\":\"deeedbbcccbdaa\"}" },
+  { "label": "Single character", "inputJson": "{\"s\":\"q\"}" },
+  { "label": "Two same chars", "inputJson": "{\"s\":\"zz\"}" },
+  { "label": "Two different chars", "inputJson": "{\"s\":\"ab\"}" }
 ]

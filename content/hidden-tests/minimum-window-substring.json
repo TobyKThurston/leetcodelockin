@@ -4,5 +4,11 @@
   { "label": "t equals s",            "inputJson": "{\"s\":\"abc\",\"t\":\"abc\"}" },
   { "label": "Case sensitive miss",   "inputJson": "{\"s\":\"abc\",\"t\":\"A\"}" },
   { "label": "No match at all",       "inputJson": "{\"s\":\"xyzxyz\",\"t\":\"abc\"}" },
-  { "label": "Window at very end",    "inputJson": "{\"s\":\"zzzzzabc\",\"t\":\"abc\"}" }
+  { "label": "Window at very end",    "inputJson": "{\"s\":\"zzzzzabc\",\"t\":\"abc\"}" },
+  { "label": "Window at very start",  "inputJson": "{\"s\":\"abczzzzz\",\"t\":\"abc\"}" },
+  { "label": "t longer than s",       "inputJson": "{\"s\":\"a\",\"t\":\"aa\"}" },
+  { "label": "Single char match",     "inputJson": "{\"s\":\"a\",\"t\":\"a\"}" },
+  { "label": "All same char in t",    "inputJson": "{\"s\":\"baaaab\",\"t\":\"aaa\"}" },
+  { "label": "Mixed case sensitive",  "inputJson": "{\"s\":\"AaBbCc\",\"t\":\"ABC\"}" },
+  { "label": "Long s short t",        "inputJson": "{\"s\":\"thisisateststring\",\"t\":\"tist\"}" }
 ]

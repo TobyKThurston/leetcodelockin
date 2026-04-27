@@ -4,5 +4,10 @@
   { "label": "All same value",       "inputJson": "{\"nums\":[9,9,9,9,9,9],\"k\":1}" },
   { "label": "Zeros most frequent",  "inputJson": "{\"nums\":[0,0,0,1,1,2,3,3,3,3],\"k\":2}" },
   { "label": "Boundary values",      "inputJson": "{\"nums\":[10000,-10000,10000,-10000,10000,5],\"k\":2}" },
-  { "label": "Long tail",            "inputJson": "{\"nums\":[1,1,1,1,2,2,2,3,3,4],\"k\":3}" }
+  { "label": "Long tail",            "inputJson": "{\"nums\":[1,1,1,1,2,2,2,3,3,4],\"k\":3}" },
+  { "label": "Single element",       "inputJson": "{\"nums\":[42],\"k\":1}" },
+  { "label": "K equals one of two",  "inputJson": "{\"nums\":[1,1,1,2,2],\"k\":1}" },
+  { "label": "Mixed counts pick three", "inputJson": "{\"nums\":[5,5,5,5,4,4,4,3,3,2,1],\"k\":3}" },
+  { "label": "Negative dominant",    "inputJson": "{\"nums\":[-100,-100,-100,-100,5,5,5,7,7,9],\"k\":2}" },
+  { "label": "All distinct k=1",     "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8],\"k\":1}" }
 ]

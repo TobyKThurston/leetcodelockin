@@ -4,5 +4,10 @@
   { "label": "Amount smaller than coins", "inputJson": "{\"amount\":1,\"coins\":[2,3,4]}" },
   { "label": "All ones", "inputJson": "{\"amount\":4,\"coins\":[1]}" },
   { "label": "Two coins classic", "inputJson": "{\"amount\":10,\"coins\":[2,5]}" },
-  { "label": "Larger denom set", "inputJson": "{\"amount\":12,\"coins\":[1,2,5]}" }
+  { "label": "Larger denom set", "inputJson": "{\"amount\":12,\"coins\":[1,2,5]}" },
+  { "label": "Amount zero with one coin", "inputJson": "{\"amount\":0,\"coins\":[7]}" },
+  { "label": "Single coin much larger", "inputJson": "{\"amount\":3,\"coins\":[5]}" },
+  { "label": "Combos to bigger amount", "inputJson": "{\"amount\":25,\"coins\":[1,5,10]}" },
+  { "label": "Two equal denoms", "inputJson": "{\"amount\":6,\"coins\":[2,3]}" },
+  { "label": "Many coins same value", "inputJson": "{\"amount\":7,\"coins\":[1,3,5,7]}" }
 ]

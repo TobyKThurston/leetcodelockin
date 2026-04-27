@@ -4,5 +4,10 @@
   { "label": "Just barely reaches", "inputJson": "{\"nums\":[2,0,0]}" },
   { "label": "Falls one short", "inputJson": "{\"nums\":[1,0,1,0]}" },
   { "label": "Large jump over zeros", "inputJson": "{\"nums\":[4,0,0,0,1]}" },
-  { "label": "Trailing zero ok", "inputJson": "{\"nums\":[2,3,0,0,0]}" }
+  { "label": "Trailing zero ok", "inputJson": "{\"nums\":[2,3,0,0,0]}" },
+  { "label": "All zeros impossible long", "inputJson": "{\"nums\":[0,0,0,0]}" },
+  { "label": "Reach exactly enough", "inputJson": "{\"nums\":[1,1,1,1,1]}" },
+  { "label": "Stuck early", "inputJson": "{\"nums\":[1,0,0,0,0]}" },
+  { "label": "Single element zero", "inputJson": "{\"nums\":[0]}" },
+  { "label": "Many ones reach end", "inputJson": "{\"nums\":[2,5,0,0,0,0,0,1]}" }
 ]

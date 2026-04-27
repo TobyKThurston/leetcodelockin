@@ -3,5 +3,7 @@
   { "label": "n = 3", "inputJson": "{\"n\":3}" },
   { "label": "n = 20", "inputJson": "{\"n\":20}" },
   { "label": "n = 45 (upper bound)", "inputJson": "{\"n\":45}" },
-  { "label": "n = 7 (odd mid)", "inputJson": "{\"n\":7}" }
+  { "label": "n = 7 (odd mid)", "inputJson": "{\"n\":7}" },
+  { "label": "n = 4 (even small)", "inputJson": "{\"n\":4}" },
+  { "label": "n = 30 (large mid)", "inputJson": "{\"n\":30}" }
 ]

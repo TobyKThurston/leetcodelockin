@@ -3,5 +3,10 @@
   { "label": "Decreasing then min stays", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"getMin\",\"pop\",\"getMin\"],\"vals\":[[5],[4],[3],[2],[],[],[],[],[]]}" },
   { "label": "Negatives and zero", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"getMin\",\"push\",\"getMin\",\"top\"],\"vals\":[[0],[-1],[-1],[],[-5],[],[]]}" },
   { "label": "Push pop push cycle", "inputJson": "{\"ops\":[\"push\",\"push\",\"pop\",\"push\",\"getMin\",\"top\"],\"vals\":[[10],[1],[],[7],[],[]]}" },
-  { "label": "All equal values", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"getMin\",\"top\",\"pop\",\"getMin\",\"top\"],\"vals\":[[3],[3],[3],[],[],[],[],[]]}" }
+  { "label": "All equal values", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"getMin\",\"top\",\"pop\",\"getMin\",\"top\"],\"vals\":[[3],[3],[3],[],[],[],[],[]]}" },
+  { "label": "Min then larger", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"getMin\",\"top\"],\"vals\":[[1],[5],[10],[],[]]}" },
+  { "label": "Pop reveals old min", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"pop\",\"getMin\"],\"vals\":[[5],[3],[1],[],[]]}" },
+  { "label": "Single push only", "inputJson": "{\"ops\":[\"push\",\"top\",\"getMin\"],\"vals\":[[100],[],[]]}" },
+  { "label": "Increasing pushes min steady", "inputJson": "{\"ops\":[\"push\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"getMin\",\"pop\",\"getMin\"],\"vals\":[[1],[2],[3],[4],[],[],[],[],[]]}" },
+  { "label": "Mix interleaved getMin", "inputJson": "{\"ops\":[\"push\",\"getMin\",\"push\",\"getMin\",\"push\",\"getMin\",\"pop\",\"getMin\"],\"vals\":[[5],[],[2],[],[7],[],[],[]]}" }
 ]

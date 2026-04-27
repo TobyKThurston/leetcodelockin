@@ -4,5 +4,10 @@
   { "label": "All children exactly matched", "inputJson": "{\"g\":[1,2,3],\"s\":[3,2,1]}" },
   { "label": "All cookies too small", "inputJson": "{\"g\":[10,11,12],\"s\":[1,2,3]}" },
   { "label": "Large values", "inputJson": "{\"g\":[2147483647,1],\"s\":[2147483647]}" },
-  { "label": "Duplicates unordered", "inputJson": "{\"g\":[2,2,2,2],\"s\":[1,2,1,2]}" }
+  { "label": "Duplicates unordered", "inputJson": "{\"g\":[2,2,2,2],\"s\":[1,2,1,2]}" },
+  { "label": "Equal counts perfect", "inputJson": "{\"g\":[1,1,1],\"s\":[1,1,1]}" },
+  { "label": "Reverse sorted both", "inputJson": "{\"g\":[5,4,3,2,1],\"s\":[10,8,6,4,2]}" },
+  { "label": "Some satisfied", "inputJson": "{\"g\":[1,2,5,6],\"s\":[3,3,4]}" },
+  { "label": "Single child single cookie", "inputJson": "{\"g\":[7],\"s\":[7]}" },
+  { "label": "Single child cookie too small", "inputJson": "{\"g\":[7],\"s\":[6]}" }
 ]

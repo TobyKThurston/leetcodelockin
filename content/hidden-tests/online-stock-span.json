@@ -3,5 +3,10 @@
   { "label": "All equal prices", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\"],\"vals\":[[50],[50],[50],[50]]}" },
   { "label": "Spike then collapse", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[1],[2],[3],[1],[100]]}" },
   { "label": "Boundary max price", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\"],\"vals\":[[100000],[1],[100000]]}" },
-  { "label": "Zigzag rising", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[10],[5],[20],[15],[30],[25]]}" }
+  { "label": "Zigzag rising", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[10],[5],[20],[15],[30],[25]]}" },
+  { "label": "Single call", "inputJson": "{\"ops\":[\"next\"],\"vals\":[[1]]}" },
+  { "label": "Strict ascending", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[10],[20],[30],[40],[50]]}" },
+  { "label": "Pair equal then drop", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\"],\"vals\":[[50],[50],[10]]}" },
+  { "label": "V shape valley", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\",\"next\",\"next\"],\"vals\":[[100],[50],[10],[50],[100]]}" },
+  { "label": "Min boundary price", "inputJson": "{\"ops\":[\"next\",\"next\",\"next\"],\"vals\":[[1],[1],[1]]}" }
 ]

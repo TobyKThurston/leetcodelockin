@@ -4,5 +4,8 @@
   { "label": "Repeated letters",     "inputJson": "{\"s\":\"aabbcc\",\"t\":\"bcacba\"}" },
   { "label": "Same letters diff counts", "inputJson": "{\"s\":\"aabb\",\"t\":\"abbb\"}" },
   { "label": "Long anagram",         "inputJson": "{\"s\":\"listen\",\"t\":\"silent\"}" },
-  { "label": "Nearly equal",         "inputJson": "{\"s\":\"abcde\",\"t\":\"abced\"}" }
+  { "label": "Nearly equal",         "inputJson": "{\"s\":\"abcde\",\"t\":\"abced\"}" },
+  { "label": "Anagram of itself",    "inputJson": "{\"s\":\"abc\",\"t\":\"abc\"}" },
+  { "label": "All one letter same",  "inputJson": "{\"s\":\"zzzzz\",\"t\":\"zzzzz\"}" },
+  { "label": "All one letter diff",  "inputJson": "{\"s\":\"aaaa\",\"t\":\"bbbb\"}" }
 ]

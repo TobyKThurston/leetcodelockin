@@ -4,5 +4,9 @@
   { "label": "Reverse sorted",       "inputJson": "{\"nums\":[10,9,8,7,6,5,4,3,2,1]}" },
   { "label": "With negatives",       "inputJson": "{\"nums\":[-3,-2,-1,0,1,5,6]}" },
   { "label": "Large gaps",           "inputJson": "{\"nums\":[1000000000,-1000000000,0]}" },
-  { "label": "Scattered dups",       "inputJson": "{\"nums\":[1,2,2,3,4,4,5,8,9]}" }
+  { "label": "Scattered dups",       "inputJson": "{\"nums\":[1,2,2,3,4,4,5,8,9]}" },
+  { "label": "Single element",       "inputJson": "{\"nums\":[7]}" },
+  { "label": "All negatives run",    "inputJson": "{\"nums\":[-5,-4,-3,-2,-1]}" },
+  { "label": "Equal length runs",    "inputJson": "{\"nums\":[1,2,3,10,11,12]}" },
+  { "label": "Long with break",      "inputJson": "{\"nums\":[1,2,3,4,5,7,8,9,10,11,12]}" }
 ]

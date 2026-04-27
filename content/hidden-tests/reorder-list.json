@@ -4,5 +4,9 @@
   { "label": "Six even", "inputJson": "{\"values\":[1,2,3,4,5,6]}" },
   { "label": "Seven odd", "inputJson": "{\"values\":[1,2,3,4,5,6,7]}" },
   { "label": "All duplicates", "inputJson": "{\"values\":[5,5,5,5,5]}" },
-  { "label": "Descending long", "inputJson": "{\"values\":[10,9,8,7,6,5,4,3,2,1]}" }
+  { "label": "Descending long", "inputJson": "{\"values\":[10,9,8,7,6,5,4,3,2,1]}" },
+  { "label": "Single node", "inputJson": "{\"values\":[42]}" },
+  { "label": "Eight even", "inputJson": "{\"values\":[1,2,3,4,5,6,7,8]}" },
+  { "label": "Nine odd", "inputJson": "{\"values\":[10,20,30,40,50,60,70,80,90]}" },
+  { "label": "Mixed values", "inputJson": "{\"values\":[100,0,200,50,150,25]}" }
 ]

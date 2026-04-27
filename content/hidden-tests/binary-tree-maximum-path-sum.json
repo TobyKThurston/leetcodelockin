@@ -4,5 +4,9 @@
   { "label": "Path not through root", "inputJson": "{\"root\":[-10,9,20,null,null,15,7]}" },
   { "label": "Single positive node", "inputJson": "{\"root\":[1000]}" },
   { "label": "Left skew positive chain", "inputJson": "{\"root\":[1,2,null,3,null,4,null,5]}" },
-  { "label": "Two negatives path through root", "inputJson": "{\"root\":[-1,-2,-3]}" }
+  { "label": "Two negatives path through root", "inputJson": "{\"root\":[-1,-2,-3]}" },
+  { "label": "Single negative node", "inputJson": "{\"root\":[-1000]}" },
+  { "label": "Perfect tree all positive", "inputJson": "{\"root\":[1,2,3,4,5,6,7]}" },
+  { "label": "Deep alternating", "inputJson": "{\"root\":[5,-1,4,8,-3,null,null,1,7]}" },
+  { "label": "Right skew large values", "inputJson": "{\"root\":[1000,null,1000,null,1000,null,1000]}" }
 ]

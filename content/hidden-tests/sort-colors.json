@@ -4,5 +4,9 @@
   { "label": "Reverse sorted",      "inputJson": "{\"nums\":[2,2,1,1,0,0]}" },
   { "label": "Already sorted",      "inputJson": "{\"nums\":[0,0,1,1,2,2]}" },
   { "label": "No ones",             "inputJson": "{\"nums\":[2,0,2,0,2,0]}" },
-  { "label": "Ones at edges",       "inputJson": "{\"nums\":[1,2,0,2,1,0,0,1]}" }
+  { "label": "Ones at edges",       "inputJson": "{\"nums\":[1,2,0,2,1,0,0,1]}" },
+  { "label": "Single one",          "inputJson": "{\"nums\":[1]}" },
+  { "label": "All zeros",           "inputJson": "{\"nums\":[0,0,0,0]}" },
+  { "label": "All twos",            "inputJson": "{\"nums\":[2,2,2,2]}" },
+  { "label": "No zeros",            "inputJson": "{\"nums\":[2,1,1,2,1,2]}" }
 ]

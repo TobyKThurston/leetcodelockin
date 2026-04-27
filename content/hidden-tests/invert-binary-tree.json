@@ -4,5 +4,8 @@
   { "label": "Asymmetric mixed", "inputJson": "{\"root\":[5,3,8,1,null,null,9]}" },
   { "label": "Negative values", "inputJson": "{\"root\":[-1,-2,-3,-4,-5]}" },
   { "label": "Perfect balanced depth 3", "inputJson": "{\"root\":[1,2,3,4,5,6,7]}" },
-  { "label": "All same value", "inputJson": "{\"root\":[7,7,7,7,null,null,7]}" }
+  { "label": "All same value", "inputJson": "{\"root\":[7,7,7,7,null,null,7]}" },
+  { "label": "Two-node left only", "inputJson": "{\"root\":[1,2]}" },
+  { "label": "Already symmetric", "inputJson": "{\"root\":[1,2,2,3,4,4,3]}" },
+  { "label": "Left skew becomes right", "inputJson": "{\"root\":[1,2,null,3,null,4]}" }
 ]

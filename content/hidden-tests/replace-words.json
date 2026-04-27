@@ -4,5 +4,8 @@
   { "label": "Root equals word", "inputJson": "{\"dictionary\":[\"cat\"],\"sentence\":\"cat cats category\"}" },
   { "label": "Single-char roots", "inputJson": "{\"dictionary\":[\"a\"],\"sentence\":\"apple alligator ant banana\"}" },
   { "label": "Single-word sentence", "inputJson": "{\"dictionary\":[\"run\"],\"sentence\":\"running\"}" },
-  { "label": "Empty dictionary", "inputJson": "{\"dictionary\":[],\"sentence\":\"nothing should change here\"}" }
+  { "label": "Empty dictionary", "inputJson": "{\"dictionary\":[],\"sentence\":\"nothing should change here\"}" },
+  { "label": "Multiple roots compete", "inputJson": "{\"dictionary\":[\"a\",\"aa\",\"aaa\",\"aaaa\"],\"sentence\":\"aaaaa aaab aab ab a\"}" },
+  { "label": "Long sentence varied", "inputJson": "{\"dictionary\":[\"the\",\"a\",\"an\"],\"sentence\":\"the apple and an orange\"}" },
+  { "label": "Root matches whole word", "inputJson": "{\"dictionary\":[\"hello\"],\"sentence\":\"hello world\"}" }
 ]

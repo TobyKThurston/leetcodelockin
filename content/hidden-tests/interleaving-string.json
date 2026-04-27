@@ -4,5 +4,11 @@
   { "label": "One empty invalid", "inputJson": "{\"s1\":\"\",\"s2\":\"abc\",\"s3\":\"acb\"}" },
   { "label": "Duplicates tricky", "inputJson": "{\"s1\":\"aabcc\",\"s2\":\"dbbca\",\"s3\":\"aadbbcbcac\"}" },
   { "label": "Duplicates fail", "inputJson": "{\"s1\":\"aabcc\",\"s2\":\"dbbca\",\"s3\":\"aadbbbaccc\"}" },
-  { "label": "Same char repeated", "inputJson": "{\"s1\":\"aaa\",\"s2\":\"aaa\",\"s3\":\"aaaaaa\"}" }
+  { "label": "Same char repeated", "inputJson": "{\"s1\":\"aaa\",\"s2\":\"aaa\",\"s3\":\"aaaaaa\"}" },
+  { "label": "S3 wrong length", "inputJson": "{\"s1\":\"abc\",\"s2\":\"de\",\"s3\":\"abcdef\"}" },
+  { "label": "Both single chars", "inputJson": "{\"s1\":\"a\",\"s2\":\"b\",\"s3\":\"ba\"}" },
+  { "label": "Pure prefix concat", "inputJson": "{\"s1\":\"abc\",\"s2\":\"def\",\"s3\":\"abcdef\"}" },
+  { "label": "Pure suffix concat", "inputJson": "{\"s1\":\"abc\",\"s2\":\"def\",\"s3\":\"defabc\"}" },
+  { "label": "Mixed alternation valid", "inputJson": "{\"s1\":\"abc\",\"s2\":\"def\",\"s3\":\"adbecf\"}" },
+  { "label": "Mixed alternation invalid", "inputJson": "{\"s1\":\"abc\",\"s2\":\"def\",\"s3\":\"abdecf\"}" }
 ]

@@ -4,5 +4,8 @@
   { "label": "Full word is prefix", "inputJson": "{\"strs\":[\"interspecies\",\"interstellar\",\"interstate\"]}" },
   { "label": "Single-char mismatch first", "inputJson": "{\"strs\":[\"a\",\"b\",\"c\"]}" },
   { "label": "Prefix equals shortest", "inputJson": "{\"strs\":[\"abc\",\"abcdef\",\"abcxyz\"]}" },
-  { "label": "All single chars same", "inputJson": "{\"strs\":[\"z\",\"z\",\"z\",\"z\"]}" }
+  { "label": "All single chars same", "inputJson": "{\"strs\":[\"z\",\"z\",\"z\",\"z\"]}" },
+  { "label": "Two words share long prefix", "inputJson": "{\"strs\":[\"abcdefghij\",\"abcdefghik\"]}" },
+  { "label": "All empty strings", "inputJson": "{\"strs\":[\"\",\"\",\"\"]}" },
+  { "label": "Diverge at second char", "inputJson": "{\"strs\":[\"ab\",\"ac\",\"ad\"]}" }
 ]

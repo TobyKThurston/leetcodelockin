@@ -4,5 +4,7 @@
   { "label": "Single-char words", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"search\",\"search\",\"startsWith\"],\"vals\":[[\"a\"],[\"b\"],[\"a\"],[\"c\"],[\"a\"]]}" },
   { "label": "Duplicate insert", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"search\",\"startsWith\"],\"vals\":[[\"dog\"],[\"dog\"],[\"dog\"],[\"do\"]]}" },
   { "label": "Disjoint branches", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"startsWith\",\"startsWith\",\"search\"],\"vals\":[[\"cat\"],[\"dog\"],[\"ca\"],[\"do\"],[\"ca\"]]}" },
-  { "label": "Long word search short prefix", "inputJson": "{\"ops\":[\"insert\",\"startsWith\",\"search\",\"search\"],\"vals\":[[\"abcdefghij\"],[\"abcde\"],[\"abcde\"],[\"abcdefghij\"]]}" }
+  { "label": "Long word search short prefix", "inputJson": "{\"ops\":[\"insert\",\"startsWith\",\"search\",\"search\"],\"vals\":[[\"abcdefghij\"],[\"abcde\"],[\"abcde\"],[\"abcdefghij\"]]}" },
+  { "label": "Search before any insert", "inputJson": "{\"ops\":[\"search\",\"startsWith\",\"insert\",\"search\"],\"vals\":[[\"abc\"],[\"a\"],[\"abc\"],[\"abc\"]]}" },
+  { "label": "Many sibling branches", "inputJson": "{\"ops\":[\"insert\",\"insert\",\"insert\",\"insert\",\"startsWith\",\"search\",\"search\"],\"vals\":[[\"ab\"],[\"ac\"],[\"ad\"],[\"ae\"],[\"a\"],[\"af\"],[\"ad\"]]}" }
 ]

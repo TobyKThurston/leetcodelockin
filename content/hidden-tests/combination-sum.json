@@ -4,5 +4,9 @@
   { "label": "Target less than min", "inputJson": "{\"candidates\":[5,6,7],\"target\":3}" },
   { "label": "Unsorted candidates", "inputJson": "{\"candidates\":[8,2,4],\"target\":8}" },
   { "label": "Target 1", "inputJson": "{\"candidates\":[1,2,3],\"target\":1}" },
-  { "label": "Small mix", "inputJson": "{\"candidates\":[2,3,6,7],\"target\":7}" }
+  { "label": "Small mix", "inputJson": "{\"candidates\":[2,3,6,7],\"target\":7}" },
+  { "label": "Large target with tiny candidate", "inputJson": "{\"candidates\":[1],\"target\":7}" },
+  { "label": "Two coprime candidates", "inputJson": "{\"candidates\":[3,5],\"target\":8}" },
+  { "label": "Many candidates one solution", "inputJson": "{\"candidates\":[7,11,13],\"target\":7}" },
+  { "label": "Mix needs reuse", "inputJson": "{\"candidates\":[2,4,6],\"target\":10}" }
 ]

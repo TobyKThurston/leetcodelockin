@@ -4,5 +4,9 @@
   { "label": "All same digits", "inputJson": "{\"num\":\"5555555\",\"k\":3}" },
   { "label": "Strictly descending", "inputJson": "{\"num\":\"987654321\",\"k\":4}" },
   { "label": "Strictly ascending drop tail", "inputJson": "{\"num\":\"123456\",\"k\":2}" },
-  { "label": "Classic example mid", "inputJson": "{\"num\":\"1432219\",\"k\":3}" }
+  { "label": "Classic example mid", "inputJson": "{\"num\":\"1432219\",\"k\":3}" },
+  { "label": "Zero leading after drop", "inputJson": "{\"num\":\"10\",\"k\":1}" },
+  { "label": "Single digit remove", "inputJson": "{\"num\":\"5\",\"k\":1}" },
+  { "label": "Big drop majority", "inputJson": "{\"num\":\"7654321\",\"k\":6}" },
+  { "label": "Mixed zeros mid", "inputJson": "{\"num\":\"10200304\",\"k\":3}" }
 ]

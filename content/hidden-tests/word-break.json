@@ -4,5 +4,8 @@
   { "label": "Dict unused", "inputJson": "{\"s\":\"abc\",\"wordDict\":[\"xyz\",\"def\"]}" },
   { "label": "Exact single word", "inputJson": "{\"s\":\"leetcode\",\"wordDict\":[\"leet\",\"code\"]}" },
   { "label": "Overlapping options", "inputJson": "{\"s\":\"bbbbbbb\",\"wordDict\":[\"b\",\"bb\",\"bbb\"]}" },
-  { "label": "Single missing letter", "inputJson": "{\"s\":\"a\",\"wordDict\":[\"b\"]}" }
+  { "label": "Single missing letter", "inputJson": "{\"s\":\"a\",\"wordDict\":[\"b\"]}" },
+  { "label": "Dict word longer than s", "inputJson": "{\"s\":\"ab\",\"wordDict\":[\"abcd\"]}" },
+  { "label": "Word repeats allowed", "inputJson": "{\"s\":\"appleapple\",\"wordDict\":[\"apple\"]}" },
+  { "label": "Greedy trap mid", "inputJson": "{\"s\":\"goalspecial\",\"wordDict\":[\"go\",\"goal\",\"goals\",\"special\"]}" }
 ]

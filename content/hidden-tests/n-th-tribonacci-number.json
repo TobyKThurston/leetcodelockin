@@ -3,5 +3,7 @@
   { "label": "n = 3", "inputJson": "{\"n\":3}" },
   { "label": "n = 10", "inputJson": "{\"n\":10}" },
   { "label": "n = 20", "inputJson": "{\"n\":20}" },
-  { "label": "n = 37 (upper bound)", "inputJson": "{\"n\":37}" }
+  { "label": "n = 37 (upper bound)", "inputJson": "{\"n\":37}" },
+  { "label": "n = 5", "inputJson": "{\"n\":5}" },
+  { "label": "n = 30", "inputJson": "{\"n\":30}" }
 ]

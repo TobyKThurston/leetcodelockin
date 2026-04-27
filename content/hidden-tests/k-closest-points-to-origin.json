@@ -4,5 +4,9 @@
   { "label": "All on axes", "inputJson": "{\"points\":[[10,0],[0,10],[-10,0],[0,-10],[1,0]],\"k\":1}" },
   { "label": "Negative extremes", "inputJson": "{\"points\":[[-10000,-10000],[10000,10000],[1,1],[-1,-1]],\"k\":2}" },
   { "label": "Large k", "inputJson": "{\"points\":[[1,3],[-2,2],[2,-2],[5,8],[0,1],[-3,-4]],\"k\":4}" },
-  { "label": "All equidistant", "inputJson": "{\"points\":[[3,4],[-3,4],[3,-4],[-3,-4]],\"k\":2}" }
+  { "label": "All equidistant", "inputJson": "{\"points\":[[3,4],[-3,4],[3,-4],[-3,-4]],\"k\":2}" },
+  { "label": "k=1 single closest", "inputJson": "{\"points\":[[1,2],[3,4],[0,1]],\"k\":1}" },
+  { "label": "Duplicate points", "inputJson": "{\"points\":[[1,1],[1,1],[2,2],[3,3]],\"k\":2}" },
+  { "label": "Cluster near origin", "inputJson": "{\"points\":[[1,0],[0,1],[2,0],[0,2],[3,0]],\"k\":3}" },
+  { "label": "Wide spread", "inputJson": "{\"points\":[[-100,-100],[100,100],[50,50],[-50,-50],[1,1]],\"k\":2}" }
 ]

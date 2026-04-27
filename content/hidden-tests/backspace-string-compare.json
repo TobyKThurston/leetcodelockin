@@ -4,5 +4,8 @@
   { "label": "Hash over empty then same", "inputJson": "{\"s\":\"#a#b\",\"t\":\"b\"}" },
   { "label": "Long equal after strip", "inputJson": "{\"s\":\"nzp#o#g\",\"t\":\"b#nzp#o#g\"}" },
   { "label": "Differ at last char", "inputJson": "{\"s\":\"abc#d\",\"t\":\"abc#e\"}" },
-  { "label": "One empties other not", "inputJson": "{\"s\":\"xyz###\",\"t\":\"a\"}" }
+  { "label": "One empties other not", "inputJson": "{\"s\":\"xyz###\",\"t\":\"a\"}" },
+  { "label": "Identical strings", "inputJson": "{\"s\":\"abcdef\",\"t\":\"abcdef\"}" },
+  { "label": "Single char both", "inputJson": "{\"s\":\"a\",\"t\":\"a\"}" },
+  { "label": "Hash sandwich match", "inputJson": "{\"s\":\"a#bc#d\",\"t\":\"bd\"}" }
 ]

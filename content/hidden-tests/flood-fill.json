@@ -4,5 +4,7 @@
   { "label": "Thin 1xN row", "inputJson": "{\"image\":[[2,2,2,3,2]],\"sr\":0,\"sc\":0,\"color\":9}" },
   { "label": "Thin Nx1 column", "inputJson": "{\"image\":[[4],[4],[5],[4]],\"sr\":3,\"sc\":0,\"color\":1}" },
   { "label": "Disconnected region of same color", "inputJson": "{\"image\":[[1,0,1],[0,0,0],[1,0,1]],\"sr\":0,\"sc\":0,\"color\":2}" },
-  { "label": "Large uniform block", "inputJson": "{\"image\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"sr\":2,\"sc\":2,\"color\":8}" }
+  { "label": "Large uniform block", "inputJson": "{\"image\":[[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]],\"sr\":2,\"sc\":2,\"color\":8}" },
+  { "label": "Border touches outer edge", "inputJson": "{\"image\":[[3,3,0],[3,0,0],[0,0,3]],\"sr\":0,\"sc\":0,\"color\":7}" },
+  { "label": "Single pixel different from neighbors", "inputJson": "{\"image\":[[1,2,1],[2,3,2],[1,2,1]],\"sr\":1,\"sc\":1,\"color\":9}" }
 ]

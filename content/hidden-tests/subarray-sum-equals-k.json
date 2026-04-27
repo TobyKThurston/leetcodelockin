@@ -4,5 +4,10 @@
   { "label": "All zeros k zero",     "inputJson": "{\"nums\":[0,0,0,0],\"k\":0}" },
   { "label": "Prefix sum collisions","inputJson": "{\"nums\":[1,-1,1,-1,1,-1],\"k\":0}" },
   { "label": "Large k no hits",      "inputJson": "{\"nums\":[1,2,3,4,5],\"k\":100}" },
-  { "label": "Negative k",           "inputJson": "{\"nums\":[-2,-1,-3,4,-1],\"k\":-6}" }
+  { "label": "Negative k",           "inputJson": "{\"nums\":[-2,-1,-3,4,-1],\"k\":-6}" },
+  { "label": "Whole array sums",     "inputJson": "{\"nums\":[1,2,3],\"k\":6}" },
+  { "label": "Many ones k=2",        "inputJson": "{\"nums\":[1,1,1,1,1,1],\"k\":2}" },
+  { "label": "Single zero k=0",      "inputJson": "{\"nums\":[0],\"k\":0}" },
+  { "label": "Mixed signs cancel",   "inputJson": "{\"nums\":[3,-3,3,-3,3],\"k\":3}" },
+  { "label": "All negatives",        "inputJson": "{\"nums\":[-1,-2,-3,-4],\"k\":-3}" }
 ]

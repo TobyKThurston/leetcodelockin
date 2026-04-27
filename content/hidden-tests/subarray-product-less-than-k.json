@@ -4,5 +4,9 @@
   { "label": "Single element below",  "inputJson": "{\"nums\":[10],\"k\":100}" },
   { "label": "Single element above",  "inputJson": "{\"nums\":[10],\"k\":5}" },
   { "label": "Large values some pass","inputJson": "{\"nums\":[1000,1,1,1000],\"k\":1001}" },
-  { "label": "Ones and large k",      "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1],\"k\":1000000}" }
+  { "label": "Ones and large k",      "inputJson": "{\"nums\":[1,1,1,1,1,1,1,1],\"k\":1000000}" },
+  { "label": "All twos modest k",     "inputJson": "{\"nums\":[2,2,2,2,2],\"k\":17}" },
+  { "label": "Large mixed",           "inputJson": "{\"nums\":[10,5,2,6],\"k\":100}" },
+  { "label": "Single element equal",  "inputJson": "{\"nums\":[5],\"k\":5}" },
+  { "label": "All large values",      "inputJson": "{\"nums\":[1000,1000,1000],\"k\":50}" }
 ]

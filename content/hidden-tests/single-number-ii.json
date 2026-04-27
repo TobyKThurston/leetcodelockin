@@ -4,5 +4,9 @@
   { "label": "All triples negative plus one", "inputJson": "{\"nums\":[-2,-2,-2,-1,-1,-1,5]}" },
   { "label": "Max int singleton", "inputJson": "{\"nums\":[1,1,1,2147483647]}" },
   { "label": "Most negative singleton", "inputJson": "{\"nums\":[1,1,1,-2147483648]}" },
-  { "label": "Singleton among larger list", "inputJson": "{\"nums\":[10,20,30,10,20,30,10,20,30,42]}" }
+  { "label": "Singleton among larger list", "inputJson": "{\"nums\":[10,20,30,10,20,30,10,20,30,42]}" },
+  { "label": "Singleton zero among triples", "inputJson": "{\"nums\":[5,5,5,0]}" },
+  { "label": "All same triple plus negative", "inputJson": "{\"nums\":[-7,-7,-7,99,99,99,-1]}" },
+  { "label": "Singleton at start", "inputJson": "{\"nums\":[42,1,1,1,2,2,2]}" },
+  { "label": "Mixed triples and a small single", "inputJson": "{\"nums\":[-100,-100,-100,200,200,200,7]}" }
 ]

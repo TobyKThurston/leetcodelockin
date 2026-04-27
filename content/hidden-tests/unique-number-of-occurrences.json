@@ -4,5 +4,7 @@
   { "label": "Negatives distinct",     "inputJson": "{\"arr\":[-3,-3,-3,-2,-2,-1]}" },
   { "label": "All same counts false",  "inputJson": "{\"arr\":[1,1,2,2,3,3]}" },
   { "label": "Boundary values",        "inputJson": "{\"arr\":[-1000,-1000,1000,1000,1000]}" },
-  { "label": "Four distinct counts",   "inputJson": "{\"arr\":[4,4,4,4,3,3,3,2,2,1]}" }
+  { "label": "Four distinct counts",   "inputJson": "{\"arr\":[4,4,4,4,3,3,3,2,2,1]}" },
+  { "label": "All identical",          "inputJson": "{\"arr\":[7,7,7,7,7]}" },
+  { "label": "Two pairs tied",         "inputJson": "{\"arr\":[1,1,2,2]}" }
 ]

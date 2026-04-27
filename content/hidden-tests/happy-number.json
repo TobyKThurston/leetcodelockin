@@ -4,5 +4,8 @@
   { "label": "Ten one-step to one", "inputJson": "{\"n\":10}" },
   { "label": "Max int32 boundary", "inputJson": "{\"n\":2147483647}" },
   { "label": "Classic unhappy 20", "inputJson": "{\"n\":20}" },
-  { "label": "Power of ten", "inputJson": "{\"n\":1000000000}" }
+  { "label": "Power of ten", "inputJson": "{\"n\":1000000000}" },
+  { "label": "One stays", "inputJson": "{\"n\":1}" },
+  { "label": "Two cycles", "inputJson": "{\"n\":2}" },
+  { "label": "Happy 19", "inputJson": "{\"n\":19}" }
 ]

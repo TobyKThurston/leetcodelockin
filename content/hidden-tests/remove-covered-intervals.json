@@ -4,5 +4,10 @@
   { "label": "Chain of covers", "inputJson": "{\"intervals\":[[1,10],[2,9],[3,8],[4,7]]}" },
   { "label": "Same start different ends", "inputJson": "{\"intervals\":[[1,4],[1,6],[1,8],[1,2]]}" },
   { "label": "None covered all distinct", "inputJson": "{\"intervals\":[[1,3],[2,5],[4,7],[6,9]]}" },
-  { "label": "Mixed covers and overlaps", "inputJson": "{\"intervals\":[[0,10],[5,12],[6,8],[11,15],[14,20]]}" }
+  { "label": "Mixed covers and overlaps", "inputJson": "{\"intervals\":[[0,10],[5,12],[6,8],[11,15],[14,20]]}" },
+  { "label": "Two disjoint", "inputJson": "{\"intervals\":[[1,3],[5,9]]}" },
+  { "label": "Two with first covers second", "inputJson": "{\"intervals\":[[1,10],[2,5]]}" },
+  { "label": "Same end different starts", "inputJson": "{\"intervals\":[[1,10],[3,10],[5,10],[7,10]]}" },
+  { "label": "Touching endpoints not covered", "inputJson": "{\"intervals\":[[1,3],[3,5],[5,7]]}" },
+  { "label": "Reverse sorted with covers", "inputJson": "{\"intervals\":[[3,8],[5,7],[1,10]]}" }
 ]

@@ -4,5 +4,10 @@
   { "label": "Two employees touching", "inputJson": "{\"schedule\":[[[1,3]],[[3,5]]]}" },
   { "label": "Identical schedules", "inputJson": "{\"schedule\":[[[1,2],[5,6]],[[1,2],[5,6]],[[1,2],[5,6]]]}" },
   { "label": "One employee covers others", "inputJson": "{\"schedule\":[[[1,100]],[[10,20],[40,50],[70,80]]]}" },
-  { "label": "Many small gaps", "inputJson": "{\"schedule\":[[[1,2],[4,5],[7,8],[10,11]]]}" }
+  { "label": "Many small gaps", "inputJson": "{\"schedule\":[[[1,2],[4,5],[7,8],[10,11]]]}" },
+  { "label": "Single employee no gap", "inputJson": "{\"schedule\":[[[1,5]]]}" },
+  { "label": "Two employees no overlap", "inputJson": "{\"schedule\":[[[1,3]],[[5,7]]]}" },
+  { "label": "Three with one big gap", "inputJson": "{\"schedule\":[[[1,3]],[[2,4]],[[10,12]]]}" },
+  { "label": "Large schedule lots of gaps", "inputJson": "{\"schedule\":[[[1,3],[5,7]],[[2,4],[10,12]],[[8,9]]]}" },
+  { "label": "Touching but no gap", "inputJson": "{\"schedule\":[[[1,5],[5,10]]]}" }
 ]

@@ -4,5 +4,8 @@
   { "label": "All zeros", "inputJson": "{\"nums\":[0,0,0,0,0]}" },
   { "label": "Alternating big small", "inputJson": "{\"nums\":[400,1,400,1,400,1,400]}" },
   { "label": "All equal", "inputJson": "{\"nums\":[5,5,5,5,5,5]}" },
-  { "label": "Tricky middle skip", "inputJson": "{\"nums\":[2,1,1,2]}" }
+  { "label": "Tricky middle skip", "inputJson": "{\"nums\":[2,1,1,2]}" },
+  { "label": "Single zero", "inputJson": "{\"nums\":[0]}" },
+  { "label": "Three increasing", "inputJson": "{\"nums\":[1,2,3]}" },
+  { "label": "Long ascending", "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8,9,10]}" }
 ]

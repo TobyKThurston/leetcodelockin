@@ -4,5 +4,9 @@
   { "label": "Target below all", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":-1}" },
   { "label": "Target above all", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":100}" },
   { "label": "Target at bounds first", "inputJson": "{\"nums\":[2,2,3,4,5,6],\"target\":2}" },
-  { "label": "Target at bounds last", "inputJson": "{\"nums\":[1,2,3,4,5,5,5],\"target\":5}" }
+  { "label": "Target at bounds last", "inputJson": "{\"nums\":[1,2,3,4,5,5,5],\"target\":5}" },
+  { "label": "Singleton miss", "inputJson": "{\"nums\":[3],\"target\":5}" },
+  { "label": "Singleton hit", "inputJson": "{\"nums\":[5],\"target\":5}" },
+  { "label": "Target gap miss", "inputJson": "{\"nums\":[1,2,4,5],\"target\":3}" },
+  { "label": "Target with negatives", "inputJson": "{\"nums\":[-5,-3,-3,-3,0,2,4],\"target\":-3}" }
 ]

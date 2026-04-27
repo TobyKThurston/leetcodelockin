@@ -4,5 +4,8 @@
   { "label": "Multiple-of-nine boundary", "inputJson": "{\"num\":9999}" },
   { "label": "Max int32", "inputJson": "{\"num\":2147483647}" },
   { "label": "All nines five digits", "inputJson": "{\"num\":99999}" },
-  { "label": "Ten", "inputJson": "{\"num\":10}" }
+  { "label": "Ten", "inputJson": "{\"num\":10}" },
+  { "label": "Single digit five", "inputJson": "{\"num\":5}" },
+  { "label": "Nine itself", "inputJson": "{\"num\":9}" },
+  { "label": "Powers of ten", "inputJson": "{\"num\":100000}" }
 ]

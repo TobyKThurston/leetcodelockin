@@ -4,5 +4,8 @@
   { "label": "Ascending", "inputJson": "{\"cost\":[1,2,3,4,5,6,7,8,9,10]}" },
   { "label": "Descending", "inputJson": "{\"cost\":[10,9,8,7,6,5,4,3,2,1]}" },
   { "label": "Pair with zero", "inputJson": "{\"cost\":[999,0]}" },
-  { "label": "Max value pair", "inputJson": "{\"cost\":[999,999]}" }
+  { "label": "Max value pair", "inputJson": "{\"cost\":[999,999]}" },
+  { "label": "Three small", "inputJson": "{\"cost\":[0,1,2]}" },
+  { "label": "Skip first two", "inputJson": "{\"cost\":[1,1,0,0,0]}" },
+  { "label": "Alternating big small long", "inputJson": "{\"cost\":[100,1,100,1,100,1,100]}" }
 ]

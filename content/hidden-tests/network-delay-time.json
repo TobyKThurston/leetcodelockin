@@ -4,5 +4,9 @@
   { "label": "Unreachable leaf",               "inputJson": "{\"times\":[[1,2,1],[1,3,2]],\"n\":4,\"k\":1}" },
   { "label": "Chain from middle",              "inputJson": "{\"times\":[[1,2,4],[2,3,1],[3,4,2],[4,5,3]],\"n\":5,\"k\":1}" },
   { "label": "Cycle but reachable",            "inputJson": "{\"times\":[[1,2,3],[2,3,2],[3,1,5]],\"n\":3,\"k\":1}" },
-  { "label": "Start is sink only",             "inputJson": "{\"times\":[[1,3,2],[2,3,1]],\"n\":3,\"k\":3}" }
+  { "label": "Start is sink only",             "inputJson": "{\"times\":[[1,3,2],[2,3,1]],\"n\":3,\"k\":3}" },
+  { "label": "Single node only",               "inputJson": "{\"times\":[],\"n\":1,\"k\":1}" },
+  { "label": "Star from k",                    "inputJson": "{\"times\":[[1,2,5],[1,3,5],[1,4,5],[1,5,5]],\"n\":5,\"k\":1}" },
+  { "label": "Two paths same total cost",      "inputJson": "{\"times\":[[1,2,2],[2,4,3],[1,3,3],[3,4,2]],\"n\":4,\"k\":1}" },
+  { "label": "Heavy weights chain",             "inputJson": "{\"times\":[[1,2,100],[2,3,100],[3,4,100]],\"n\":4,\"k\":1}" }
 ]

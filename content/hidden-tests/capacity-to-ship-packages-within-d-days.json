@@ -4,5 +4,9 @@
   { "label": "One day all sum", "inputJson": "{\"weights\":[10,20,30,40,50],\"days\":1}" },
   { "label": "Max weight forces capacity", "inputJson": "{\"weights\":[1,2,3,1,1,500],\"days\":3}" },
   { "label": "Ten days classic", "inputJson": "{\"weights\":[1,2,3,4,5,6,7,8,9,10],\"days\":5}" },
-  { "label": "Single package", "inputJson": "{\"weights\":[7],\"days\":1}" }
+  { "label": "Single package", "inputJson": "{\"weights\":[7],\"days\":1}" },
+  { "label": "Two packages two days", "inputJson": "{\"weights\":[3,8],\"days\":2}" },
+  { "label": "Tight five-day classic", "inputJson": "{\"weights\":[1,2,3,4,5,6,7,8,9,10],\"days\":2}" },
+  { "label": "Large flat weights", "inputJson": "{\"weights\":[500,500,500,500,500],\"days\":2}" },
+  { "label": "Days equal length two", "inputJson": "{\"weights\":[3,2,2,4,1,4],\"days\":6}" }
 ]

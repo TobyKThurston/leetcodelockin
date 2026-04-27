@@ -4,5 +4,9 @@
   { "label": "All consonants",        "inputJson": "{\"s\":\"bcdfghjklmnpqrstvwxyz\",\"k\":5}" },
   { "label": "All vowels short",      "inputJson": "{\"s\":\"aaeeiioouu\",\"k\":3}" },
   { "label": "Vowels clustered late", "inputJson": "{\"s\":\"bcdfghjklaeiou\",\"k\":5}" },
-  { "label": "Single char string",    "inputJson": "{\"s\":\"a\",\"k\":1}" }
+  { "label": "Single char string",    "inputJson": "{\"s\":\"a\",\"k\":1}" },
+  { "label": "Vowels clustered early","inputJson": "{\"s\":\"aeioubcdfgh\",\"k\":4}" },
+  { "label": "Single consonant",      "inputJson": "{\"s\":\"x\",\"k\":1}" },
+  { "label": "Alternating vowel cons","inputJson": "{\"s\":\"abababab\",\"k\":4}" },
+  { "label": "k equals 1 no vowel",   "inputJson": "{\"s\":\"bcdfg\",\"k\":1}" }
 ]

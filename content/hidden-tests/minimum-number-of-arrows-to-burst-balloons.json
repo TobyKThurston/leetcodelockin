@@ -4,5 +4,10 @@
   { "label": "Disjoint intervals", "inputJson": "{\"points\":[[1,2],[3,4],[5,6],[7,8]]}" },
   { "label": "Large spread values", "inputJson": "{\"points\":[[-2147483648,2147483647]]}" },
   { "label": "Two clusters", "inputJson": "{\"points\":[[1,5],[2,4],[10,14],[11,13]]}" },
-  { "label": "Shuffled equal ends", "inputJson": "{\"points\":[[5,10],[1,10],[3,10],[7,10]]}" }
+  { "label": "Shuffled equal ends", "inputJson": "{\"points\":[[5,10],[1,10],[3,10],[7,10]]}" },
+  { "label": "Two identical balloons", "inputJson": "{\"points\":[[3,7],[3,7]]}" },
+  { "label": "Strictly nested", "inputJson": "{\"points\":[[1,100],[10,80],[20,60],[30,40]]}" },
+  { "label": "All disjoint", "inputJson": "{\"points\":[[1,2],[10,11],[100,101]]}" },
+  { "label": "Adjacent share endpoint", "inputJson": "{\"points\":[[1,3],[3,5],[5,7]]}" },
+  { "label": "Mostly overlap with one outlier", "inputJson": "{\"points\":[[1,5],[2,4],[3,6],[100,200]]}" }
 ]

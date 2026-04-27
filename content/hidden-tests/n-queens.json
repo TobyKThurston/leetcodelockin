@@ -3,5 +3,7 @@
   { "label": "n = 6", "inputJson": "{\"n\":6}" },
   { "label": "n = 3 empty", "inputJson": "{\"n\":3}" },
   { "label": "n = 2 empty", "inputJson": "{\"n\":2}" },
-  { "label": "n = 1 trivial", "inputJson": "{\"n\":1}" }
+  { "label": "n = 1 trivial", "inputJson": "{\"n\":1}" },
+  { "label": "n = 7", "inputJson": "{\"n\":7}" },
+  { "label": "n = 8 classic", "inputJson": "{\"n\":8}" }
 ]

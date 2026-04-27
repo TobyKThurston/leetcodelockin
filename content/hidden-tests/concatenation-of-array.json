@@ -4,5 +4,7 @@
   { "label": "Ascending",            "inputJson": "{\"nums\":[1,2,3,4,5,6]}" },
   { "label": "Descending",           "inputJson": "{\"nums\":[10,9,8,7]}" },
   { "label": "Boundary values",      "inputJson": "{\"nums\":[1,1000,1,1000]}" },
-  { "label": "Single max",           "inputJson": "{\"nums\":[1000]}" }
+  { "label": "Single max",           "inputJson": "{\"nums\":[1000]}" },
+  { "label": "Single min",           "inputJson": "{\"nums\":[1]}" },
+  { "label": "Pair of ones",         "inputJson": "{\"nums\":[1,1]}" }
 ]

@@ -4,5 +4,11 @@
   { "label": "Single row ones", "inputJson": "{\"matrix\":[[\"1\",\"1\",\"1\",\"1\"]]}" },
   { "label": "Single column ones", "inputJson": "{\"matrix\":[[\"1\"],[\"1\"],[\"1\"]]}" },
   { "label": "Classic example", "inputJson": "{\"matrix\":[[\"1\",\"0\",\"1\",\"0\",\"0\"],[\"1\",\"0\",\"1\",\"1\",\"1\"],[\"1\",\"1\",\"1\",\"1\",\"1\"],[\"1\",\"0\",\"0\",\"1\",\"0\"]]}" },
-  { "label": "Zero blocks corner", "inputJson": "{\"matrix\":[[\"1\",\"1\",\"1\"],[\"1\",\"1\",\"0\"],[\"1\",\"1\",\"1\"]]}" }
+  { "label": "Zero blocks corner", "inputJson": "{\"matrix\":[[\"1\",\"1\",\"1\"],[\"1\",\"1\",\"0\"],[\"1\",\"1\",\"1\"]]}" },
+  { "label": "Single zero", "inputJson": "{\"matrix\":[[\"0\"]]}" },
+  { "label": "All zeros 3x3", "inputJson": "{\"matrix\":[[\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\"]]}" },
+  { "label": "Single column zeros", "inputJson": "{\"matrix\":[[\"0\"],[\"0\"],[\"0\"]]}" },
+  { "label": "Diagonal ones only", "inputJson": "{\"matrix\":[[\"1\",\"0\",\"0\"],[\"0\",\"1\",\"0\"],[\"0\",\"0\",\"1\"]]}" },
+  { "label": "Bottom right square", "inputJson": "{\"matrix\":[[\"0\",\"0\",\"0\"],[\"0\",\"1\",\"1\"],[\"0\",\"1\",\"1\"]]}" },
+  { "label": "Border ones interior zero", "inputJson": "{\"matrix\":[[\"1\",\"1\",\"1\"],[\"1\",\"0\",\"1\"],[\"1\",\"1\",\"1\"]]}" }
 ]

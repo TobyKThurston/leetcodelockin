@@ -3,5 +3,9 @@
   { "label": "Negatives", "inputJson": "{\"nums\":[-1,0,1]}" },
   { "label": "Descending order", "inputJson": "{\"nums\":[3,2,1]}" },
   { "label": "Two negatives", "inputJson": "{\"nums\":[-2,-1]}" },
-  { "label": "Single zero", "inputJson": "{\"nums\":[0]}" }
+  { "label": "Single zero", "inputJson": "{\"nums\":[0]}" },
+  { "label": "Five distinct max bound", "inputJson": "{\"nums\":[1,2,3,4,5]}" },
+  { "label": "Two equal magnitude opposite signs", "inputJson": "{\"nums\":[5,-5]}" },
+  { "label": "Mixed sign three", "inputJson": "{\"nums\":[-3,2,-1]}" },
+  { "label": "Two extremes plus zero", "inputJson": "{\"nums\":[-10,0,10]}" }
 ]

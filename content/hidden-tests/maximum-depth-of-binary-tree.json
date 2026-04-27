@@ -4,5 +4,7 @@
   { "label": "Asymmetric deep left", "inputJson": "{\"root\":[1,2,3,4,null,null,null,5,null,6]}" },
   { "label": "Negative values", "inputJson": "{\"root\":[-10,-20,-30,-40,-50]}" },
   { "label": "Single right child chain", "inputJson": "{\"root\":[100,null,50,null,25,null,12,null,6]}" },
-  { "label": "Two-node left only", "inputJson": "{\"root\":[0,1]}" }
+  { "label": "Two-node left only", "inputJson": "{\"root\":[0,1]}" },
+  { "label": "Two-node right only", "inputJson": "{\"root\":[0,null,1]}" },
+  { "label": "Three-level lopsided", "inputJson": "{\"root\":[1,2,3,null,null,4,5]}" }
 ]

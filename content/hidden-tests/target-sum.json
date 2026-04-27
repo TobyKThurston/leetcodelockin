@@ -4,5 +4,11 @@
   { "label": "Negative target", "inputJson": "{\"nums\":[1,1,1,1,1],\"target\":-3}" },
   { "label": "Target exceeds sum", "inputJson": "{\"nums\":[1,2,3],\"target\":100}" },
   { "label": "Single impossible", "inputJson": "{\"nums\":[5],\"target\":3}" },
-  { "label": "Mixed values", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":3}" }
+  { "label": "Mixed values", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":3}" },
+  { "label": "Single match positive", "inputJson": "{\"nums\":[5],\"target\":5}" },
+  { "label": "Single match negative", "inputJson": "{\"nums\":[5],\"target\":-5}" },
+  { "label": "Sum equals target", "inputJson": "{\"nums\":[1,2,3,4,5],\"target\":15}" },
+  { "label": "Zero target two zeros", "inputJson": "{\"nums\":[0,0],\"target\":0}" },
+  { "label": "Tens to target", "inputJson": "{\"nums\":[10,10,10,10],\"target\":20}" },
+  { "label": "Wrong parity", "inputJson": "{\"nums\":[2,4,6],\"target\":1}" }
 ]

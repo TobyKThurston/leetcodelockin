@@ -3,5 +3,7 @@
   { "label": "All same character",   "inputJson": "{\"s\":[\"a\",\"a\",\"a\",\"a\"]}" },
   { "label": "Digits and symbols",   "inputJson": "{\"s\":[\"1\",\"2\",\"!\",\"@\",\"3\"]}" },
   { "label": "Even length",          "inputJson": "{\"s\":[\"A\",\"B\",\"C\",\"D\"]}" },
-  { "label": "Whitespace included",  "inputJson": "{\"s\":[\"h\",\" \",\"i\",\" \",\"!\"]}" }
+  { "label": "Whitespace included",  "inputJson": "{\"s\":[\"h\",\" \",\"i\",\" \",\"!\"]}" },
+  { "label": "Two characters",       "inputJson": "{\"s\":[\"o\",\"k\"]}" },
+  { "label": "Long uniform odd",     "inputJson": "{\"s\":[\"a\",\"b\",\"c\",\"d\",\"e\",\"f\",\"g\"]}" }
 ]

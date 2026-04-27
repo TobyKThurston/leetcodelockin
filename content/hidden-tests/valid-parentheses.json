@@ -4,5 +4,8 @@
   { "label": "Mismatched closers only", "inputJson": "{\"s\":\"}])\"}" },
   { "label": "Alternating balanced pairs", "inputJson": "{\"s\":\"()[]{}()[]{}\"}" },
   { "label": "Correct kinds wrong order", "inputJson": "{\"s\":\"([)]\"}" },
-  { "label": "Long run of same type", "inputJson": "{\"s\":\"(((((())))))\"}" }
+  { "label": "Long run of same type", "inputJson": "{\"s\":\"(((((())))))\"}" },
+  { "label": "Single closer", "inputJson": "{\"s\":\")\"}" },
+  { "label": "Pair single", "inputJson": "{\"s\":\"()\"}" },
+  { "label": "All openers no closers", "inputJson": "{\"s\":\"([{\"}" }
 ]

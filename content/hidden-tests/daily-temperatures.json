@@ -4,5 +4,9 @@
   { "label": "Plateau with spike at end", "inputJson": "{\"temperatures\":[50,50,50,50,51]}" },
   { "label": "Min-max boundary values", "inputJson": "{\"temperatures\":[-50,150,-50,150]}" },
   { "label": "Zigzag pattern", "inputJson": "{\"temperatures\":[70,60,70,60,70,60]}" },
-  { "label": "Duplicates not strictly warmer", "inputJson": "{\"temperatures\":[73,73,73,74,73,74]}" }
+  { "label": "Duplicates not strictly warmer", "inputJson": "{\"temperatures\":[73,73,73,74,73,74]}" },
+  { "label": "Single day", "inputJson": "{\"temperatures\":[42]}" },
+  { "label": "Two day rise", "inputJson": "{\"temperatures\":[10,20]}" },
+  { "label": "Strictly ascending", "inputJson": "{\"temperatures\":[1,2,3,4,5,6,7]}" },
+  { "label": "All same temperature", "inputJson": "{\"temperatures\":[80,80,80,80,80]}" }
 ]

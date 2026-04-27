@@ -4,5 +4,8 @@
   { "label": "Same values wrong structure", "inputJson": "{\"root\":[1,2,3,4,5,6,7],\"subRoot\":[2,4]}" },
   { "label": "Single-node subroot matches leaf", "inputJson": "{\"root\":[1,2,3,4,5,6,7],\"subRoot\":[5]}" },
   { "label": "Single-node subroot not present", "inputJson": "{\"root\":[1,2,3,4,5,6,7],\"subRoot\":[42]}" },
-  { "label": "Duplicate values with one true match", "inputJson": "{\"root\":[1,1,1,1,1,null,1,null,null,2],\"subRoot\":[1,null,1]}" }
+  { "label": "Duplicate values with one true match", "inputJson": "{\"root\":[1,1,1,1,1,null,1,null,null,2],\"subRoot\":[1,null,1]}" },
+  { "label": "Subroot is full tree", "inputJson": "{\"root\":[3,4,5,1,2],\"subRoot\":[3,4,5,1,2]}" },
+  { "label": "Negative values subtree match", "inputJson": "{\"root\":[-1,-2,-3,-4,-5],\"subRoot\":[-2,-4,-5]}" },
+  { "label": "Subtree match on right", "inputJson": "{\"root\":[1,2,3,null,null,4,5],\"subRoot\":[3,4,5]}" }
 ]

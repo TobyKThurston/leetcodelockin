@@ -4,5 +4,8 @@
   { "label": "Low byte full", "inputJson": "{\"n\":255}" },
   { "label": "Alternating 0x55555555", "inputJson": "{\"n\":1431655765}" },
   { "label": "Alternating 0xAAAAAAAA", "inputJson": "{\"n\":2863311530}" },
-  { "label": "Palindromic bits", "inputJson": "{\"n\":2147483649}" }
+  { "label": "Palindromic bits", "inputJson": "{\"n\":2147483649}" },
+  { "label": "Single bit position 0", "inputJson": "{\"n\":1}" },
+  { "label": "Two adjacent bits", "inputJson": "{\"n\":3}" },
+  { "label": "Half-shifted set bit", "inputJson": "{\"n\":65536}" }
 ]

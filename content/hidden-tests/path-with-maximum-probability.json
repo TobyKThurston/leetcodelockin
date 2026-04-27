@@ -4,5 +4,9 @@
   { "label": "Indirect better than direct",     "inputJson": "{\"n\":3,\"edges\":[[0,1],[1,2],[0,2]],\"succProb\":[1.0,0.5,0.25],\"start\":0,\"end\":2}" },
   { "label": "Certainty chain",                 "inputJson": "{\"n\":4,\"edges\":[[0,1],[1,2],[2,3]],\"succProb\":[1.0,1.0,1.0],\"start\":0,\"end\":3}" },
   { "label": "Disconnected components",         "inputJson": "{\"n\":5,\"edges\":[[0,1],[2,3]],\"succProb\":[0.5,0.5],\"start\":0,\"end\":3}" },
-  { "label": "Start equals end",                "inputJson": "{\"n\":3,\"edges\":[[0,1]],\"succProb\":[0.5],\"start\":2,\"end\":2}" }
+  { "label": "Start equals end",                "inputJson": "{\"n\":3,\"edges\":[[0,1]],\"succProb\":[0.5],\"start\":2,\"end\":2}" },
+  { "label": "Two edges low probability",       "inputJson": "{\"n\":2,\"edges\":[[0,1]],\"succProb\":[0.1],\"start\":0,\"end\":1}" },
+  { "label": "Star graph with hub",             "inputJson": "{\"n\":5,\"edges\":[[0,1],[0,2],[0,3],[0,4]],\"succProb\":[0.5,0.6,0.7,0.8],\"start\":4,\"end\":3}" },
+  { "label": "All zero probability",            "inputJson": "{\"n\":3,\"edges\":[[0,1],[1,2]],\"succProb\":[0.0,0.0],\"start\":0,\"end\":2}" },
+  { "label": "Long chain certain",              "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[2,3],[3,4]],\"succProb\":[1.0,1.0,1.0,1.0],\"start\":0,\"end\":4}" }
 ]

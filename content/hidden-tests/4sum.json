@@ -4,5 +4,10 @@
   { "label": "Multiple quadruplets",      "inputJson": "{\"nums\":[1,0,-1,0,-2,2],\"target\":0}" },
   { "label": "Large values sum",          "inputJson": "{\"nums\":[1000000000,1000000000,1000000000,1000000000],\"target\":4000000000}" },
   { "label": "Large values impossible",   "inputJson": "{\"nums\":[-1000000000,-1000000000,1000000000,1000000000],\"target\":1}" },
-  { "label": "Zero target with negs",     "inputJson": "{\"nums\":[-5,-3,-1,0,1,3,5],\"target\":0}" }
+  { "label": "Zero target with negs",     "inputJson": "{\"nums\":[-5,-3,-1,0,1,3,5],\"target\":0}" },
+  { "label": "Min size four",             "inputJson": "{\"nums\":[1,2,3,4],\"target\":10}" },
+  { "label": "All zeros target zero",     "inputJson": "{\"nums\":[0,0,0,0,0,0],\"target\":0}" },
+  { "label": "Negative target hit",       "inputJson": "{\"nums\":[-4,-3,-2,-1,0,1],\"target\":-10}" },
+  { "label": "All negatives no hit",      "inputJson": "{\"nums\":[-5,-4,-3,-2,-1],\"target\":1}" },
+  { "label": "Symmetric around zero",     "inputJson": "{\"nums\":[-3,-2,-1,0,1,2,3],\"target\":0}" }
 ]

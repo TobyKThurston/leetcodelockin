@@ -4,5 +4,9 @@
   { "label": "All same word", "inputJson": "{\"words\":[\"hello\",\"hello\",\"hello\"],\"k\":1}" },
   { "label": "Many ties at same count", "inputJson": "{\"words\":[\"the\",\"day\",\"is\",\"sunny\",\"the\",\"the\",\"the\",\"sunny\",\"is\",\"is\"],\"k\":4}" },
   { "label": "k equals distinct count", "inputJson": "{\"words\":[\"a\",\"aa\",\"aaa\"],\"k\":3}" },
-  { "label": "Longer words with ties", "inputJson": "{\"words\":[\"abc\",\"abd\",\"abc\",\"abd\",\"abe\"],\"k\":2}" }
+  { "label": "Longer words with ties", "inputJson": "{\"words\":[\"abc\",\"abd\",\"abc\",\"abd\",\"abe\"],\"k\":2}" },
+  { "label": "k=1 from many ties", "inputJson": "{\"words\":[\"b\",\"a\",\"c\",\"d\"],\"k\":1}" },
+  { "label": "Frequency-only no ties", "inputJson": "{\"words\":[\"x\",\"x\",\"x\",\"y\",\"y\",\"z\"],\"k\":2}" },
+  { "label": "Long word repeating", "inputJson": "{\"words\":[\"abcdefghij\",\"abcdefghij\",\"abc\"],\"k\":1}" },
+  { "label": "Two letter words mixed", "inputJson": "{\"words\":[\"aa\",\"ab\",\"aa\",\"ab\",\"ba\"],\"k\":2}" }
 ]

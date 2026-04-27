@@ -4,5 +4,8 @@
   { "label": "Extreme bounds",     "inputJson": "{\"nums\":[10000,-10000,10000,-10000,10000],\"k\":3}" },
   { "label": "All identical",      "inputJson": "{\"nums\":[4,4,4,4,4,4],\"k\":3}" },
   { "label": "Best at tail",       "inputJson": "{\"nums\":[-5,-4,-3,-2,-1,10,10,10],\"k\":3}" },
-  { "label": "Whole array negative","inputJson": "{\"nums\":[-1,-2,-3,-4,-5,-6],\"k\":6}" }
+  { "label": "Whole array negative","inputJson": "{\"nums\":[-1,-2,-3,-4,-5,-6],\"k\":6}" },
+  { "label": "Best at head",       "inputJson": "{\"nums\":[100,99,98,1,2,3],\"k\":2}" },
+  { "label": "k equals length",    "inputJson": "{\"nums\":[1,2,3,4,5],\"k\":5}" },
+  { "label": "All zeros",          "inputJson": "{\"nums\":[0,0,0,0],\"k\":2}" }
 ]

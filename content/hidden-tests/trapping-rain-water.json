@@ -4,5 +4,10 @@
   { "label": "Two bars",               "inputJson": "{\"height\":[5,5]}" },
   { "label": "Valley",                 "inputJson": "{\"height\":[5,0,0,0,5]}" },
   { "label": "All zeros",              "inputJson": "{\"height\":[0,0,0,0,0]}" },
-  { "label": "Classic LC example",     "inputJson": "{\"height\":[0,1,0,2,1,0,1,3,2,1,2,1]}" }
+  { "label": "Classic LC example",     "inputJson": "{\"height\":[0,1,0,2,1,0,1,3,2,1,2,1]}" },
+  { "label": "Single bar",             "inputJson": "{\"height\":[3]}" },
+  { "label": "Two zero bars",          "inputJson": "{\"height\":[0,0]}" },
+  { "label": "All same height",        "inputJson": "{\"height\":[3,3,3,3,3]}" },
+  { "label": "Mountain",               "inputJson": "{\"height\":[1,2,3,4,3,2,1]}" },
+  { "label": "Multiple pools",         "inputJson": "{\"height\":[3,1,3,1,3,1,3]}" }
 ]

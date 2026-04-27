@@ -4,5 +4,9 @@
   { "label": "Long then switch",     "inputJson": "{\"fruits\":[1,1,1,1,1,2,2,2,2,3]}" },
   { "label": "All distinct",         "inputJson": "{\"fruits\":[0,1,2,3,4,5]}" },
   { "label": "Window at end",        "inputJson": "{\"fruits\":[3,3,3,1,2,1,1,2,3,3,4]}" },
-  { "label": "Single tree",          "inputJson": "{\"fruits\":[0]}" }
+  { "label": "Single tree",          "inputJson": "{\"fruits\":[0]}" },
+  { "label": "All same type",        "inputJson": "{\"fruits\":[5,5,5,5,5,5]}" },
+  { "label": "Two trees two types",  "inputJson": "{\"fruits\":[0,1]}" },
+  { "label": "Best window in middle","inputJson": "{\"fruits\":[1,2,3,2,2,2,1,4,5]}" },
+  { "label": "Three types alt",      "inputJson": "{\"fruits\":[0,1,2,0,1,2,0,1,2]}" }
 ]

@@ -4,5 +4,10 @@
   { "label": "Three fives then twenty", "inputJson": "{\"bills\":[5,5,5,20]}" },
   { "label": "Ten before any five", "inputJson": "{\"bills\":[5,10,5,20,5,10]}" },
   { "label": "Prefer ten-plus-five for twenty", "inputJson": "{\"bills\":[5,5,5,5,10,20,5,10,5,20]}" },
-  { "label": "Two twenties in a row impossible", "inputJson": "{\"bills\":[5,5,5,10,5,20,20,20]}" }
+  { "label": "Two twenties in a row impossible", "inputJson": "{\"bills\":[5,5,5,10,5,20,20,20]}" },
+  { "label": "Single twenty impossible", "inputJson": "{\"bills\":[20]}" },
+  { "label": "All fives", "inputJson": "{\"bills\":[5,5,5,5,5,5]}" },
+  { "label": "Five then ten then ten fail", "inputJson": "{\"bills\":[5,10,10]}" },
+  { "label": "Many fives feed all", "inputJson": "{\"bills\":[5,5,5,5,5,5,5,5,20,20,20]}" },
+  { "label": "Alternating five ten valid", "inputJson": "{\"bills\":[5,5,10,5,10,5,10]}" }
 ]

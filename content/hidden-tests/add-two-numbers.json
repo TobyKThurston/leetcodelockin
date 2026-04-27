@@ -4,5 +4,9 @@
   { "label": "Nines plus nines", "inputJson": "{\"l1\":[9,9,9],\"l2\":[9,9,9]}" },
   { "label": "One zero plus number", "inputJson": "{\"l1\":[0],\"l2\":[5,6,7]}" },
   { "label": "Length disparity with carry", "inputJson": "{\"l1\":[5],\"l2\":[5,9,9,9]}" },
-  { "label": "Single digits produce carry", "inputJson": "{\"l1\":[7],\"l2\":[8]}" }
+  { "label": "Single digits produce carry", "inputJson": "{\"l1\":[7],\"l2\":[8]}" },
+  { "label": "Both single zeros", "inputJson": "{\"l1\":[0],\"l2\":[0]}" },
+  { "label": "Single plus single no carry", "inputJson": "{\"l1\":[3],\"l2\":[4]}" },
+  { "label": "Long matching with internal carry", "inputJson": "{\"l1\":[5,5,5,5,5],\"l2\":[5,5,5,5,5]}" },
+  { "label": "Asymmetric long mixed", "inputJson": "{\"l1\":[1,8],\"l2\":[0,0,1,9]}" }
 ]

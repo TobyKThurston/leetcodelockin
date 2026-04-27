@@ -4,5 +4,7 @@
   { "label": "Strictly descending", "inputJson": "{\"stones\":[10,9,8,7,6,5,4,3,2,1]}" },
   { "label": "One big, many small", "inputJson": "{\"stones\":[1000,1,1,1,1,1]}" },
   { "label": "Reduces to one", "inputJson": "{\"stones\":[3,7,2]}" },
-  { "label": "Pair of ones", "inputJson": "{\"stones\":[1,1]}" }
+  { "label": "Pair of ones", "inputJson": "{\"stones\":[1,1]}" },
+  { "label": "Large at max bound", "inputJson": "{\"stones\":[1000,1000,500,500,1]}" },
+  { "label": "Two big stones equal", "inputJson": "{\"stones\":[1000,1000]}" }
 ]

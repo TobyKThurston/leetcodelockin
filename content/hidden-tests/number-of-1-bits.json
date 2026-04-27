@@ -4,5 +4,7 @@
   { "label": "One", "inputJson": "{\"n\":1}" },
   { "label": "Alternating 0101", "inputJson": "{\"n\":1431655765}" },
   { "label": "Alternating 1010", "inputJson": "{\"n\":1431655764}" },
-  { "label": "Two set bits far apart", "inputJson": "{\"n\":1073741825}" }
+  { "label": "Two set bits far apart", "inputJson": "{\"n\":1073741825}" },
+  { "label": "Zero", "inputJson": "{\"n\":0}" },
+  { "label": "Low byte full", "inputJson": "{\"n\":255}" }
 ]

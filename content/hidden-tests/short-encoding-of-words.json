@@ -4,5 +4,8 @@
   { "label": "No shared suffixes", "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
   { "label": "Full overlap chain", "inputJson": "{\"words\":[\"a\",\"ba\",\"cba\",\"dcba\"]}" },
   { "label": "Single 7-char word", "inputJson": "{\"words\":[\"abcdefg\"]}" },
-  { "label": "Shared prefix not suffix", "inputJson": "{\"words\":[\"abc\",\"abd\",\"abe\"]}" }
+  { "label": "Shared prefix not suffix", "inputJson": "{\"words\":[\"abc\",\"abd\",\"abe\"]}" },
+  { "label": "Single one-char word", "inputJson": "{\"words\":[\"a\"]}" },
+  { "label": "Multiple suffix chains", "inputJson": "{\"words\":[\"time\",\"me\",\"bell\",\"ell\"]}" },
+  { "label": "Long words mixed", "inputJson": "{\"words\":[\"abcdefg\",\"defg\",\"xyzdefg\",\"abc\"]}" }
 ]

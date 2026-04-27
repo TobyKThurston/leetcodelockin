@@ -4,5 +4,8 @@
   { "label": "Sorted unique",        "inputJson": "{\"nums\":[-10,-5,0,5,10]}" },
   { "label": "Large negatives",      "inputJson": "{\"nums\":[-1000000000,1000000000,-1000000000]}" },
   { "label": "Zero duplicate",       "inputJson": "{\"nums\":[0,1,-1,2,0]}" },
-  { "label": "Two distinct",         "inputJson": "{\"nums\":[1,2]}" }
+  { "label": "Two distinct",         "inputJson": "{\"nums\":[1,2]}" },
+  { "label": "Two same",             "inputJson": "{\"nums\":[3,3]}" },
+  { "label": "Boundary positive dup","inputJson": "{\"nums\":[1000000000,1000000000]}" },
+  { "label": "Long unique sequence", "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8,9,10]}" }
 ]

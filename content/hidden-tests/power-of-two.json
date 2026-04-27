@@ -4,5 +4,8 @@
   { "label": "Largest power in range", "inputJson": "{\"n\":1073741824}" },
   { "label": "Max int minus one (all ones)", "inputJson": "{\"n\":2147483647}" },
   { "label": "Power-of-two plus one", "inputJson": "{\"n\":1025}" },
-  { "label": "Power of two (mid)", "inputJson": "{\"n\":1024}" }
+  { "label": "Power of two (mid)", "inputJson": "{\"n\":1024}" },
+  { "label": "Negative one", "inputJson": "{\"n\":-1}" },
+  { "label": "Two", "inputJson": "{\"n\":2}" },
+  { "label": "Six (not power)", "inputJson": "{\"n\":6}" }
 ]

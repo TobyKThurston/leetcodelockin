@@ -4,5 +4,9 @@
   { "label": "Equal length match",    "inputJson": "{\"s\":\"bca\",\"p\":\"abc\"}" },
   { "label": "Equal length no match", "inputJson": "{\"s\":\"abcd\",\"p\":\"efgh\"}" },
   { "label": "Repeated letters in p", "inputJson": "{\"s\":\"aaaaaa\",\"p\":\"aa\"}" },
-  { "label": "Match at last index",   "inputJson": "{\"s\":\"zzzzabc\",\"p\":\"cab\"}" }
+  { "label": "Match at last index",   "inputJson": "{\"s\":\"zzzzabc\",\"p\":\"cab\"}" },
+  { "label": "Single char p many",    "inputJson": "{\"s\":\"baaaab\",\"p\":\"a\"}" },
+  { "label": "Match at index zero",   "inputJson": "{\"s\":\"abcdefg\",\"p\":\"cba\"}" },
+  { "label": "Repeated p in s",       "inputJson": "{\"s\":\"abab\",\"p\":\"ab\"}" },
+  { "label": "Same string",           "inputJson": "{\"s\":\"abcd\",\"p\":\"abcd\"}" }
 ]

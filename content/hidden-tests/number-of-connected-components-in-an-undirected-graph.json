@@ -4,5 +4,9 @@
   { "label": "Single chain across all",     "inputJson": "{\"n\":6,\"edges\":[[0,1],[1,2],[2,3],[3,4],[4,5]]}" },
   { "label": "Three pairs",                 "inputJson": "{\"n\":6,\"edges\":[[0,1],[2,3],[4,5]]}" },
   { "label": "Duplicate edges",             "inputJson": "{\"n\":4,\"edges\":[[0,1],[0,1],[2,3]]}" },
-  { "label": "Cycle plus isolated",         "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[2,0]]}" }
+  { "label": "Cycle plus isolated",         "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[2,0]]}" },
+  { "label": "Star graph",                  "inputJson": "{\"n\":5,\"edges\":[[0,1],[0,2],[0,3],[0,4]]}" },
+  { "label": "Two big components",          "inputJson": "{\"n\":8,\"edges\":[[0,1],[1,2],[2,3],[4,5],[5,6],[6,7]]}" },
+  { "label": "Triangle plus pair",          "inputJson": "{\"n\":5,\"edges\":[[0,1],[1,2],[0,2],[3,4]]}" },
+  { "label": "Tree with extra isolated",    "inputJson": "{\"n\":7,\"edges\":[[0,1],[0,2],[1,3],[1,4]]}" }
 ]

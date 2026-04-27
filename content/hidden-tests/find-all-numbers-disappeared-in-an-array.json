@@ -4,5 +4,9 @@
   { "label": "All present reversed",   "inputJson": "{\"nums\":[5,4,3,2,1]}" },
   { "label": "All duplicates of max",  "inputJson": "{\"nums\":[4,4,4,4]}" },
   { "label": "Alternating missing",    "inputJson": "{\"nums\":[1,3,1,3,5,5]}" },
-  { "label": "Two missing mid",        "inputJson": "{\"nums\":[2,2,3,7,7,6,5,1]}" }
+  { "label": "Two missing mid",        "inputJson": "{\"nums\":[2,2,3,7,7,6,5,1]}" },
+  { "label": "All ones",               "inputJson": "{\"nums\":[1,1,1,1,1,1]}" },
+  { "label": "Half missing",           "inputJson": "{\"nums\":[1,2,3,4,1,2,3,4]}" },
+  { "label": "Only first missing",     "inputJson": "{\"nums\":[2,3,4,5,2]}" },
+  { "label": "Only last missing",      "inputJson": "{\"nums\":[1,2,3,4,1]}" }
 ]

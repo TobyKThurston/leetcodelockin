@@ -4,5 +4,10 @@
   { "label": "Fully nested", "inputJson": "{\"intervals\":[[0,30],[5,25],[10,20],[12,18]]}" },
   { "label": "Two disjoint clusters", "inputJson": "{\"intervals\":[[0,10],[1,9],[20,30],[21,29],[22,28]]}" },
   { "label": "Unsorted peak in middle", "inputJson": "{\"intervals\":[[15,20],[0,30],[5,10]]}" },
-  { "label": "Large gap then overlap", "inputJson": "{\"intervals\":[[0,1],[1000000,1000000],[999999,1000000],[999998,999999]]}" }
+  { "label": "Large gap then overlap", "inputJson": "{\"intervals\":[[0,1],[1000000,1000000],[999999,1000000],[999998,999999]]}" },
+  { "label": "Two non-overlapping", "inputJson": "{\"intervals\":[[7,10],[2,4]]}" },
+  { "label": "Three same start", "inputJson": "{\"intervals\":[[5,8],[5,7],[5,9]]}" },
+  { "label": "Many staggered overlaps", "inputJson": "{\"intervals\":[[1,5],[2,6],[3,7],[4,8],[5,9]]}" },
+  { "label": "Touch endpoint no extra", "inputJson": "{\"intervals\":[[1,5],[5,10],[10,15]]}" },
+  { "label": "Single meeting", "inputJson": "{\"intervals\":[[100,200]]}" }
 ]

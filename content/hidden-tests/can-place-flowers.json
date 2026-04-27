@@ -4,5 +4,10 @@
   { "label": "Single occupied zero ask", "inputJson": "{\"flowerbed\":[1],\"n\":0}" },
   { "label": "Leading zeros only", "inputJson": "{\"flowerbed\":[0,0,1,0,0],\"n\":2}" },
   { "label": "Two-zero gap too tight", "inputJson": "{\"flowerbed\":[1,0,0,1],\"n\":1}" },
-  { "label": "Long empty bed", "inputJson": "{\"flowerbed\":[0,0,0,0,0,0,0],\"n\":4}" }
+  { "label": "Long empty bed", "inputJson": "{\"flowerbed\":[0,0,0,0,0,0,0],\"n\":4}" },
+  { "label": "Two zeros end can plant", "inputJson": "{\"flowerbed\":[1,0,0],\"n\":1}" },
+  { "label": "Zero ask empty", "inputJson": "{\"flowerbed\":[0,0,0,0,0],\"n\":0}" },
+  { "label": "Tight three with one plant", "inputJson": "{\"flowerbed\":[0,0,1,0,0,0,1],\"n\":2}" },
+  { "label": "Single occupied want one", "inputJson": "{\"flowerbed\":[1],\"n\":1}" },
+  { "label": "All occupied zero ask", "inputJson": "{\"flowerbed\":[1,1,1],\"n\":0}" }
 ]

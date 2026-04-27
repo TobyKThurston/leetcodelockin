@@ -4,5 +4,10 @@
   { "label": "Prefix violation invalid",         "inputJson": "{\"words\":[\"abcd\",\"abc\"]}" },
   { "label": "Cycle between two letters",        "inputJson": "{\"words\":[\"ba\",\"ab\"]}" },
   { "label": "Linear chain of four letters",     "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
-  { "label": "Chain forcing all letters",        "inputJson": "{\"words\":[\"ab\",\"bc\",\"cd\"]}" }
+  { "label": "Chain forcing all letters",        "inputJson": "{\"words\":[\"ab\",\"bc\",\"cd\"]}" },
+  { "label": "Five letter chain",                "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\",\"e\"]}" },
+  { "label": "Three-letter cycle invalid",       "inputJson": "{\"words\":[\"ab\",\"bc\",\"ca\"]}" },
+  { "label": "Same single letter repeated",      "inputJson": "{\"words\":[\"a\",\"a\",\"a\"]}" },
+  { "label": "Long prefix violation",            "inputJson": "{\"words\":[\"hello\",\"hell\"]}" },
+  { "label": "Two letters single chain",         "inputJson": "{\"words\":[\"x\",\"y\"]}" }
 ]

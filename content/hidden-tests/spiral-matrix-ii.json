@@ -3,5 +3,10 @@
   { "label": "n = 5", "inputJson": "{\"n\":5}" },
   { "label": "n = 6", "inputJson": "{\"n\":6}" },
   { "label": "n = 10", "inputJson": "{\"n\":10}" },
-  { "label": "n = 20 max", "inputJson": "{\"n\":20}" }
+  { "label": "n = 20 max", "inputJson": "{\"n\":20}" },
+  { "label": "n = 7 odd", "inputJson": "{\"n\":7}" },
+  { "label": "n = 8 even", "inputJson": "{\"n\":8}" },
+  { "label": "n = 12", "inputJson": "{\"n\":12}" },
+  { "label": "n = 15", "inputJson": "{\"n\":15}" },
+  { "label": "n = 19", "inputJson": "{\"n\":19}" }
 ]

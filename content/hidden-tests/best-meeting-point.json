@@ -4,5 +4,10 @@
   { "label": "Four corners", "inputJson": "{\"grid\":[[1,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,1]]}" },
   { "label": "Even count friends", "inputJson": "{\"grid\":[[1,0,1,0,1,0,1]]}" },
   { "label": "Dense cluster", "inputJson": "{\"grid\":[[1,1,1],[1,1,1],[1,1,1]]}" },
-  { "label": "Diagonal spread", "inputJson": "{\"grid\":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}" }
+  { "label": "Diagonal spread", "inputJson": "{\"grid\":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]}" },
+  { "label": "Two adjacent vertical", "inputJson": "{\"grid\":[[1],[1]]}" },
+  { "label": "Single friend top-left", "inputJson": "{\"grid\":[[1,0,0],[0,0,0]]}" },
+  { "label": "Five friends row", "inputJson": "{\"grid\":[[1,1,1,1,1]]}" },
+  { "label": "Sparse 6x6 grid", "inputJson": "{\"grid\":[[1,0,0,0,0,1],[0,0,0,0,0,0],[0,0,1,0,0,0],[0,0,0,1,0,0],[0,0,0,0,0,0],[1,0,0,0,0,1]]}" },
+  { "label": "Three friends column", "inputJson": "{\"grid\":[[0,1,0],[0,1,0],[0,1,0]]}" }
 ]

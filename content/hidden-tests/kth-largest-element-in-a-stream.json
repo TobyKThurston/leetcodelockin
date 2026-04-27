@@ -4,5 +4,7 @@
   { "label": "Duplicates at boundary", "inputJson": "{\"k\":2,\"nums\":[7,7,7],\"ops\":[\"add\",\"add\",\"add\",\"add\"],\"vals\":[[7],[7],[6],[8]]}" },
   { "label": "Seed shorter than k", "inputJson": "{\"k\":5,\"nums\":[1,2],\"ops\":[\"add\",\"add\",\"add\",\"add\"],\"vals\":[[3],[4],[5],[6]]}" },
   { "label": "Descending adds", "inputJson": "{\"k\":3,\"nums\":[],\"ops\":[\"add\",\"add\",\"add\",\"add\",\"add\"],\"vals\":[[10],[9],[8],[7],[6]]}" },
-  { "label": "Extremes", "inputJson": "{\"k\":2,\"nums\":[-10000,10000],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[-10000],[10000],[0]]}" }
+  { "label": "Extremes", "inputJson": "{\"k\":2,\"nums\":[-10000,10000],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[-10000],[10000],[0]]}" },
+  { "label": "All identical seed and adds", "inputJson": "{\"k\":3,\"nums\":[5,5,5,5],\"ops\":[\"add\",\"add\",\"add\"],\"vals\":[[5],[5],[5]]}" },
+  { "label": "k=1 ascending only", "inputJson": "{\"k\":1,\"nums\":[1],\"ops\":[\"add\",\"add\",\"add\",\"add\"],\"vals\":[[2],[3],[4],[5]]}" }
 ]

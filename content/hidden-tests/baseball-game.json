@@ -4,5 +4,8 @@
   { "label": "Chain of doubles", "inputJson": "{\"operations\":[\"1\",\"D\",\"D\",\"D\"]}" },
   { "label": "Plus cancel interleaved", "inputJson": "{\"operations\":[\"5\",\"-2\",\"4\",\"C\",\"D\",\"9\",\"+\",\"+\"]}" },
   { "label": "All canceled down to one", "inputJson": "{\"operations\":[\"7\",\"8\",\"C\",\"9\",\"C\"]}" },
-  { "label": "Zeros and negatives mix", "inputJson": "{\"operations\":[\"0\",\"0\",\"+\",\"D\",\"-3\",\"+\"]}" }
+  { "label": "Zeros and negatives mix", "inputJson": "{\"operations\":[\"0\",\"0\",\"+\",\"D\",\"-3\",\"+\"]}" },
+  { "label": "Two pushes one cancel", "inputJson": "{\"operations\":[\"6\",\"3\",\"C\"]}" },
+  { "label": "Long alternating ops", "inputJson": "{\"operations\":[\"1\",\"2\",\"+\",\"D\",\"+\",\"C\",\"D\",\"+\"]}" },
+  { "label": "Doubles after plus", "inputJson": "{\"operations\":[\"4\",\"5\",\"+\",\"D\"]}" }
 ]

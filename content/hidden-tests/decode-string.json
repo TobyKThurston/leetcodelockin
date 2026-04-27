@@ -4,5 +4,9 @@
   { "label": "Sibling groups concat", "inputJson": "{\"s\":\"2[ab]3[cd]\"}" },
   { "label": "Zero-letter count not allowed use one", "inputJson": "{\"s\":\"1[abc]\"}" },
   { "label": "Letters before nested", "inputJson": "{\"s\":\"abc2[d]ef\"}" },
-  { "label": "Adjacent nested with outer", "inputJson": "{\"s\":\"3[a]2[bc]\"}" }
+  { "label": "Adjacent nested with outer", "inputJson": "{\"s\":\"3[a]2[bc]\"}" },
+  { "label": "Plain text only", "inputJson": "{\"s\":\"hello\"}" },
+  { "label": "Letters after nested", "inputJson": "{\"s\":\"2[ab]xyz\"}" },
+  { "label": "Two digit nesting", "inputJson": "{\"s\":\"10[a]\"}" },
+  { "label": "Nested same letter", "inputJson": "{\"s\":\"2[2[a]]\"}" }
 ]

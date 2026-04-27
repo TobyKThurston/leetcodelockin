@@ -4,5 +4,9 @@
   { "label": "k too small for detour",           "inputJson": "{\"n\":4,\"flights\":[[0,1,1],[1,2,1],[2,3,1]],\"src\":0,\"dst\":3,\"k\":1}" },
   { "label": "Cycle avoided",                    "inputJson": "{\"n\":4,\"flights\":[[0,1,5],[1,0,5],[1,2,5],[2,3,5]],\"src\":0,\"dst\":3,\"k\":3}" },
   { "label": "Direct flight cheapest",           "inputJson": "{\"n\":3,\"flights\":[[0,1,1],[1,2,1],[0,2,2]],\"src\":0,\"dst\":2,\"k\":0}" },
-  { "label": "Disconnected destination",         "inputJson": "{\"n\":4,\"flights\":[[0,1,10],[1,2,10]],\"src\":0,\"dst\":3,\"k\":3}" }
+  { "label": "Disconnected destination",         "inputJson": "{\"n\":4,\"flights\":[[0,1,10],[1,2,10]],\"src\":0,\"dst\":3,\"k\":3}" },
+  { "label": "No flights",                       "inputJson": "{\"n\":3,\"flights\":[],\"src\":0,\"dst\":2,\"k\":2}" },
+  { "label": "Long chain k allows full",         "inputJson": "{\"n\":5,\"flights\":[[0,1,1],[1,2,1],[2,3,1],[3,4,1]],\"src\":0,\"dst\":4,\"k\":3}" },
+  { "label": "Multiple paths different stops",   "inputJson": "{\"n\":5,\"flights\":[[0,1,5],[1,4,5],[0,2,3],[2,3,3],[3,4,3]],\"src\":0,\"dst\":4,\"k\":2}" },
+  { "label": "Single edge to dst",                "inputJson": "{\"n\":2,\"flights\":[[0,1,42]],\"src\":0,\"dst\":1,\"k\":0}" }
 ]

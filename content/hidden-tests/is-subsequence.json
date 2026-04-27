@@ -4,5 +4,9 @@
   { "label": "Longer than t", "inputJson": "{\"s\":\"abcd\",\"t\":\"abc\"}" },
   { "label": "Single match", "inputJson": "{\"s\":\"b\",\"t\":\"abcde\"}" },
   { "label": "Repeated chars in t", "inputJson": "{\"s\":\"aaa\",\"t\":\"ababab\"}" },
-  { "label": "Duplicates need order", "inputJson": "{\"s\":\"abb\",\"t\":\"acbcb\"}" }
+  { "label": "Duplicates need order", "inputJson": "{\"s\":\"abb\",\"t\":\"acbcb\"}" },
+  { "label": "Empty t with empty s", "inputJson": "{\"s\":\"\",\"t\":\"abcdef\"}" },
+  { "label": "Single mismatch", "inputJson": "{\"s\":\"z\",\"t\":\"abcdef\"}" },
+  { "label": "Subsequence at end", "inputJson": "{\"s\":\"def\",\"t\":\"abcdef\"}" },
+  { "label": "Reverse order fails", "inputJson": "{\"s\":\"cba\",\"t\":\"abcdef\"}" }
 ]

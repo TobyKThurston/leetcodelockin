@@ -4,5 +4,9 @@
   { "label": "Isolated fresh behind wall", "inputJson": "{\"grid\":[[2,1,0,1]]}" },
   { "label": "Long horizontal line", "inputJson": "{\"grid\":[[2,1,1,1,1,1]]}" },
   { "label": "Empty cells only", "inputJson": "{\"grid\":[[0,0,0],[0,0,0]]}" },
-  { "label": "Two rotten sources converging", "inputJson": "{\"grid\":[[2,1,1,1,2]]}" }
+  { "label": "Two rotten sources converging", "inputJson": "{\"grid\":[[2,1,1,1,2]]}" },
+  { "label": "Single rotten alone", "inputJson": "{\"grid\":[[2]]}" },
+  { "label": "Single fresh alone", "inputJson": "{\"grid\":[[0,0],[0,1]]}" },
+  { "label": "Spiral fresh around rotten", "inputJson": "{\"grid\":[[1,1,1],[1,2,1],[1,1,1]]}" },
+  { "label": "Mix with full grid", "inputJson": "{\"grid\":[[2,1,1],[1,1,0],[0,1,1]]}" }
 ]

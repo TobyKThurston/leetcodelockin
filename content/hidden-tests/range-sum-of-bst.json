@@ -4,5 +4,7 @@
   { "label": "Range entirely below tree", "inputJson": "{\"root\":[50,30,70,20,40,60,80],\"low\":1,\"high\":10}" },
   { "label": "Range entirely above tree", "inputJson": "{\"root\":[50,30,70,20,40,60,80],\"low\":100,\"high\":200}" },
   { "label": "Single-value range hit", "inputJson": "{\"root\":[10,5,15,3,7,13,18],\"low\":7,\"high\":7}" },
-  { "label": "Left-skewed BST middle range", "inputJson": "{\"root\":[20,15,null,10,null,5,null,1],\"low\":5,\"high\":15}" }
+  { "label": "Left-skewed BST middle range", "inputJson": "{\"root\":[20,15,null,10,null,5,null,1],\"low\":5,\"high\":15}" },
+  { "label": "Single-node in range", "inputJson": "{\"root\":[42],\"low\":40,\"high\":50}" },
+  { "label": "Skip lower half", "inputJson": "{\"root\":[8,4,12,2,6,10,14],\"low\":9,\"high\":13}" }
 ]

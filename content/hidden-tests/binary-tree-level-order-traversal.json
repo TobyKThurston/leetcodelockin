@@ -4,5 +4,9 @@
   { "label": "Perfect depth 4", "inputJson": "{\"root\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}" },
   { "label": "Asymmetric with gaps", "inputJson": "{\"root\":[1,2,3,4,null,null,5,6,null,null,7]}" },
   { "label": "Negative values", "inputJson": "{\"root\":[-1,-2,-3,-4,-5,-6,-7]}" },
-  { "label": "Two nodes right only", "inputJson": "{\"root\":[1,null,2]}" }
+  { "label": "Two nodes right only", "inputJson": "{\"root\":[1,null,2]}" },
+  { "label": "Single node", "inputJson": "{\"root\":[42]}" },
+  { "label": "All same value depth 3", "inputJson": "{\"root\":[7,7,7,7,7,7,7]}" },
+  { "label": "Two-node left only", "inputJson": "{\"root\":[1,2]}" },
+  { "label": "Mixed with deep right", "inputJson": "{\"root\":[1,2,3,null,4,null,5,null,null,null,6]}" }
 ]

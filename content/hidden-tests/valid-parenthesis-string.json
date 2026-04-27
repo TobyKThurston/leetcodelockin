@@ -4,5 +4,10 @@
   { "label": "Stars cannot rescue", "inputJson": "{\"s\":\"(((*\"}" },
   { "label": "Right-leaning stars", "inputJson": "{\"s\":\"(((***)))\"}" },
   { "label": "Closing before opening", "inputJson": "{\"s\":\"*)(*\"}" },
-  { "label": "Nested balanced", "inputJson": "{\"s\":\"((*)(*))\"}" }
+  { "label": "Nested balanced", "inputJson": "{\"s\":\"((*)(*))\"}" },
+  { "label": "Single open", "inputJson": "{\"s\":\"(\"}" },
+  { "label": "Star alone", "inputJson": "{\"s\":\"*\"}" },
+  { "label": "Balanced pairs", "inputJson": "{\"s\":\"()()()\"}" },
+  { "label": "Stars all close roles", "inputJson": "{\"s\":\"(((***\"}" },
+  { "label": "Star opens first", "inputJson": "{\"s\":\"*())\"}" }
 ]

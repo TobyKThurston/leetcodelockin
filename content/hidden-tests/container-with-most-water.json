@@ -4,5 +4,9 @@
   { "label": "All zeros",               "inputJson": "{\"height\":[0,0,0,0]}" },
   { "label": "One tall in middle",      "inputJson": "{\"height\":[1,1,10000,1,1]}" },
   { "label": "Zero endpoints",          "inputJson": "{\"height\":[0,5,5,5,0]}" },
-  { "label": "Classic LC example",      "inputJson": "{\"height\":[1,8,6,2,5,4,8,3,7]}" }
+  { "label": "Classic LC example",      "inputJson": "{\"height\":[1,8,6,2,5,4,8,3,7]}" },
+  { "label": "Two bars equal",          "inputJson": "{\"height\":[10,10]}" },
+  { "label": "Two bars unequal",        "inputJson": "{\"height\":[1,10000]}" },
+  { "label": "All equal",               "inputJson": "{\"height\":[5,5,5,5,5,5]}" },
+  { "label": "Symmetric peak",          "inputJson": "{\"height\":[1,4,7,4,1]}" }
 ]

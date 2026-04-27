@@ -4,5 +4,9 @@
   { "label": "Duplicate keys same room", "inputJson": "{\"rooms\":[[1,1,2],[2],[]]}" },
   { "label": "Linear chain of five", "inputJson": "{\"rooms\":[[1],[2],[3],[4],[]]}" },
   { "label": "All keys in room zero", "inputJson": "{\"rooms\":[[1,2,3,4],[],[],[],[]]}" },
-  { "label": "Unreachable last room", "inputJson": "{\"rooms\":[[1],[2],[0],[]]}" }
+  { "label": "Unreachable last room", "inputJson": "{\"rooms\":[[1],[2],[0],[]]}" },
+  { "label": "Single room only", "inputJson": "{\"rooms\":[[]]}" },
+  { "label": "Two-cycle but disconnected from zero", "inputJson": "{\"rooms\":[[],[2],[1]]}" },
+  { "label": "Forking from room zero", "inputJson": "{\"rooms\":[[1,2],[3],[3],[]]}" },
+  { "label": "Reverse chain unreachable", "inputJson": "{\"rooms\":[[],[],[],[],[3]]}" }
 ]

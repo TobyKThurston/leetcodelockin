@@ -4,5 +4,7 @@
   { "label": "Full grid is island", "inputJson": "{\"grid\":[[1,1],[1,1]]}" },
   { "label": "L-shaped island", "inputJson": "{\"grid\":[[1,0,0],[1,0,0],[1,1,1]]}" },
   { "label": "Single cell in larger grid", "inputJson": "{\"grid\":[[0,0,0],[0,1,0],[0,0,0]]}" },
-  { "label": "Snake pattern", "inputJson": "{\"grid\":[[1,1,1],[0,0,1],[1,1,1],[1,0,0]]}" }
+  { "label": "Snake pattern", "inputJson": "{\"grid\":[[1,1,1],[0,0,1],[1,1,1],[1,0,0]]}" },
+  { "label": "T shape", "inputJson": "{\"grid\":[[1,1,1],[0,1,0],[0,1,0]]}" },
+  { "label": "Long row plus tail", "inputJson": "{\"grid\":[[1,1,1,1,1],[0,0,0,0,1]]}" }
 ]

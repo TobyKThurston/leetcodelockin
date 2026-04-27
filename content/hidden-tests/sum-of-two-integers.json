@@ -4,5 +4,9 @@
   { "label": "At boundary lower", "inputJson": "{\"a\":-1000,\"b\":-1}" },
   { "label": "At boundary upper", "inputJson": "{\"a\":1000,\"b\":1000}" },
   { "label": "Mixed sign cancel", "inputJson": "{\"a\":-7,\"b\":7}" },
-  { "label": "One zero one negative", "inputJson": "{\"a\":0,\"b\":-1000}" }
+  { "label": "One zero one negative", "inputJson": "{\"a\":0,\"b\":-1000}" },
+  { "label": "Both extremes", "inputJson": "{\"a\":-1000,\"b\":1000}" },
+  { "label": "Zero plus zero", "inputJson": "{\"a\":0,\"b\":0}" },
+  { "label": "Small carries cascading", "inputJson": "{\"a\":511,\"b\":1}" },
+  { "label": "Negative cascade carry", "inputJson": "{\"a\":-512,\"b\":-1}" }
 ]

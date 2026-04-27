@@ -4,5 +4,10 @@
   { "label": "Square 4x4", "inputJson": "{\"m\":4,\"n\":4}" },
   { "label": "Rectangular 5x3", "inputJson": "{\"m\":5,\"n\":3}" },
   { "label": "Two by ten", "inputJson": "{\"m\":2,\"n\":10}" },
-  { "label": "7x8 rectangle", "inputJson": "{\"m\":7,\"n\":8}" }
+  { "label": "7x8 rectangle", "inputJson": "{\"m\":7,\"n\":8}" },
+  { "label": "Two by two", "inputJson": "{\"m\":2,\"n\":2}" },
+  { "label": "10 x 10 large square", "inputJson": "{\"m\":10,\"n\":10}" },
+  { "label": "Tall narrow", "inputJson": "{\"m\":15,\"n\":2}" },
+  { "label": "Edge max one side", "inputJson": "{\"m\":1,\"n\":100}" },
+  { "label": "Square 3x3", "inputJson": "{\"m\":3,\"n\":3}" }
 ]

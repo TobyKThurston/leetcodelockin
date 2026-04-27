@@ -3,5 +3,9 @@
   { "label": "Triangle cycle", "inputJson": "{\"adjList\":[[2,3],[1,3],[1,2]]}" },
   { "label": "Linear chain five", "inputJson": "{\"adjList\":[[2],[1,3],[2,4],[3,5],[4]]}" },
   { "label": "Star graph", "inputJson": "{\"adjList\":[[2,3,4,5],[1],[1],[1],[1]]}" },
-  { "label": "Complete K4", "inputJson": "{\"adjList\":[[2,3,4],[1,3,4],[1,2,4],[1,2,3]]}" }
+  { "label": "Complete K4", "inputJson": "{\"adjList\":[[2,3,4],[1,3,4],[1,2,4],[1,2,3]]}" },
+  { "label": "Two nodes single edge", "inputJson": "{\"adjList\":[[2],[1]]}" },
+  { "label": "Six node ring", "inputJson": "{\"adjList\":[[2,6],[1,3],[2,4],[3,5],[4,6],[1,5]]}" },
+  { "label": "Complete K5", "inputJson": "{\"adjList\":[[2,3,4,5],[1,3,4,5],[1,2,4,5],[1,2,3,5],[1,2,3,4]]}" },
+  { "label": "Branching tree-like", "inputJson": "{\"adjList\":[[2,3],[1],[1,4,5],[3],[3]]}" }
 ]

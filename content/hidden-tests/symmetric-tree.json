@@ -4,5 +4,8 @@
   { "label": "Structure symmetric values not", "inputJson": "{\"root\":[1,2,2,3,4,4,5]}" },
   { "label": "Right-only child", "inputJson": "{\"root\":[1,null,2]}" },
   { "label": "Left-only child", "inputJson": "{\"root\":[1,2]}" },
-  { "label": "Negative values symmetric", "inputJson": "{\"root\":[-1,-2,-2,-3,-4,-4,-3]}" }
+  { "label": "Negative values symmetric", "inputJson": "{\"root\":[-1,-2,-2,-3,-4,-4,-3]}" },
+  { "label": "Single node", "inputJson": "{\"root\":[5]}" },
+  { "label": "All same value symmetric", "inputJson": "{\"root\":[1,1,1,1,1,1,1]}" },
+  { "label": "Subtle asymmetry deep", "inputJson": "{\"root\":[1,2,2,3,4,4,3,5,null,null,null,null,null,5,null]}" }
 ]

@@ -4,5 +4,9 @@
   { "label": "Negatives only", "inputJson": "{\"nums\":[-1,-5,-2,-10,-3],\"k\":2}" },
   { "label": "Duplicates around k", "inputJson": "{\"nums\":[5,5,5,3,3,3,1],\"k\":4}" },
   { "label": "Already sorted ascending", "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8,9,10],\"k\":3}" },
-  { "label": "Mix of extremes", "inputJson": "{\"nums\":[-10000,10000,0,-10000,10000],\"k\":3}" }
+  { "label": "Mix of extremes", "inputJson": "{\"nums\":[-10000,10000,0,-10000,10000],\"k\":3}" },
+  { "label": "Reverse sorted", "inputJson": "{\"nums\":[10,9,8,7,6,5,4,3,2,1],\"k\":7}" },
+  { "label": "All identical", "inputJson": "{\"nums\":[4,4,4,4,4,4],\"k\":3}" },
+  { "label": "Single element", "inputJson": "{\"nums\":[42],\"k\":1}" },
+  { "label": "k equals 2 with two distinct", "inputJson": "{\"nums\":[1,2],\"k\":2}" }
 ]

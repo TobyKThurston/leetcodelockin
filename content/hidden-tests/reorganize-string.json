@@ -4,5 +4,8 @@
   { "label": "Borderline majority", "inputJson": "{\"s\":\"aaabc\"}" },
   { "label": "Two chars equal counts", "inputJson": "{\"s\":\"abab\"}" },
   { "label": "Many distinct chars", "inputJson": "{\"s\":\"abcdef\"}" },
-  { "label": "Majority exactly half-plus-one", "inputJson": "{\"s\":\"aaabb\"}" }
+  { "label": "Majority exactly half-plus-one", "inputJson": "{\"s\":\"aaabb\"}" },
+  { "label": "Two char single each", "inputJson": "{\"s\":\"ab\"}" },
+  { "label": "Two chars borderline odd", "inputJson": "{\"s\":\"aaabbb\"}" },
+  { "label": "Impossible two char", "inputJson": "{\"s\":\"aaa\"}" }
 ]

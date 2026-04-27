@@ -4,5 +4,11 @@
   { "label": "Long transitive chain ok",       "inputJson": "{\"equations\":[\"a==b\",\"b==c\",\"c==d\",\"d==e\",\"a==e\"]}" },
   { "label": "Chain then opposite negation",   "inputJson": "{\"equations\":[\"a==b\",\"b==c\",\"c==d\",\"a!=d\"]}" },
   { "label": "Many independent inequalities",  "inputJson": "{\"equations\":[\"a!=b\",\"b!=c\",\"c!=d\",\"d!=e\"]}" },
-  { "label": "Inequality then equality order", "inputJson": "{\"equations\":[\"a!=b\",\"b==c\",\"c==a\"]}" }
+  { "label": "Inequality then equality order", "inputJson": "{\"equations\":[\"a!=b\",\"b==c\",\"c==a\"]}" },
+  { "label": "Single equality",                "inputJson": "{\"equations\":[\"a==b\"]}" },
+  { "label": "Single inequality",              "inputJson": "{\"equations\":[\"a!=b\"]}" },
+  { "label": "Same pair both directions",      "inputJson": "{\"equations\":[\"a==b\",\"b==a\"]}" },
+  { "label": "Two independent groups",         "inputJson": "{\"equations\":[\"a==b\",\"c==d\",\"e==f\",\"a!=c\"]}" },
+  { "label": "Many ineqs no equalities",       "inputJson": "{\"equations\":[\"a!=b\",\"a!=c\",\"a!=d\",\"a!=e\"]}" },
+  { "label": "Big star of equalities",         "inputJson": "{\"equations\":[\"a==b\",\"a==c\",\"a==d\",\"a==e\",\"b==e\"]}" }
 ]

@@ -4,5 +4,8 @@
   { "label": "Single non-matching",      "inputJson": "{\"nums\":[5],\"val\":1}" },
   { "label": "Val at both ends",         "inputJson": "{\"nums\":[2,1,3,5,2],\"val\":2}" },
   { "label": "Consecutive matches",      "inputJson": "{\"nums\":[7,7,7,1,2,7,7],\"val\":7}" },
-  { "label": "Val is zero",              "inputJson": "{\"nums\":[0,1,0,2,0,3],\"val\":0}" }
+  { "label": "Val is zero",              "inputJson": "{\"nums\":[0,1,0,2,0,3],\"val\":0}" },
+  { "label": "All identical removed",    "inputJson": "{\"nums\":[8,8,8,8,8],\"val\":8}" },
+  { "label": "All identical kept",       "inputJson": "{\"nums\":[8,8,8,8,8],\"val\":3}" },
+  { "label": "Boundary value max",       "inputJson": "{\"nums\":[50,50,1,2,50],\"val\":50}" }
 ]

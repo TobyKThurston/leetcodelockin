@@ -4,5 +4,8 @@
   { "label": "Middle nines no carry out", "inputJson": "{\"digits\":[1,9,9]}" },
   { "label": "Leading one all zeros", "inputJson": "{\"digits\":[1,0,0,0]}" },
   { "label": "Long no carry", "inputJson": "{\"digits\":[4,3,2,1]}" },
-  { "label": "Long cascade", "inputJson": "{\"digits\":[1,2,9,9,9]}" }
+  { "label": "Long cascade", "inputJson": "{\"digits\":[1,2,9,9,9]}" },
+  { "label": "Single zero", "inputJson": "{\"digits\":[0]}" },
+  { "label": "Single eight", "inputJson": "{\"digits\":[8]}" },
+  { "label": "Hundred-length non-cascade", "inputJson": "{\"digits\":[1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,5]}" }
 ]

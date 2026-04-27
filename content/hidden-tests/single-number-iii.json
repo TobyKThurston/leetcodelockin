@@ -4,5 +4,9 @@
   { "label": "Both negative", "inputJson": "{\"nums\":[-2,-2,-3,-5,1,1]}" },
   { "label": "Max int boundary", "inputJson": "{\"nums\":[2147483647,-2147483648,1,1,2,2]}" },
   { "label": "Singletons differ by one bit", "inputJson": "{\"nums\":[1,2,1,2,8,9]}" },
-  { "label": "Many duplicates plus two", "inputJson": "{\"nums\":[10,20,30,10,20,30,100,200]}" }
+  { "label": "Many duplicates plus two", "inputJson": "{\"nums\":[10,20,30,10,20,30,100,200]}" },
+  { "label": "Singletons with zero", "inputJson": "{\"nums\":[0,1]}" },
+  { "label": "Negative and positive singleton", "inputJson": "{\"nums\":[-7,5,1,1,2,2]}" },
+  { "label": "Adjacent values", "inputJson": "{\"nums\":[3,3,4,5]}" },
+  { "label": "Larger spread", "inputJson": "{\"nums\":[1,1,2,2,3,3,4,4,5,5,6,6,7,8]}" }
 ]

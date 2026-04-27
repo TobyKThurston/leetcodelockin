@@ -4,5 +4,10 @@
   { "label": "Substring contained", "inputJson": "{\"text1\":\"abcdef\",\"text2\":\"cde\"}" },
   { "label": "Reversed strings", "inputJson": "{\"text1\":\"abcde\",\"text2\":\"edcba\"}" },
   { "label": "Repeated characters", "inputJson": "{\"text1\":\"aaaa\",\"text2\":\"aa\"}" },
-  { "label": "Interleaved letters", "inputJson": "{\"text1\":\"abcbdab\",\"text2\":\"bdcaba\"}" }
+  { "label": "Interleaved letters", "inputJson": "{\"text1\":\"abcbdab\",\"text2\":\"bdcaba\"}" },
+  { "label": "One contained in other", "inputJson": "{\"text1\":\"prefix\",\"text2\":\"prefixmore\"}" },
+  { "label": "Sparse common", "inputJson": "{\"text1\":\"axbxcxd\",\"text2\":\"abcd\"}" },
+  { "label": "Repeated single char", "inputJson": "{\"text1\":\"aaaaa\",\"text2\":\"bbbbb\"}" },
+  { "label": "Long no common", "inputJson": "{\"text1\":\"aaaaaa\",\"text2\":\"bbbbbb\"}" },
+  { "label": "Mixed prefix suffix", "inputJson": "{\"text1\":\"abacbdab\",\"text2\":\"bdcaba\"}" }
 ]

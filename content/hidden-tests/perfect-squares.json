@@ -4,5 +4,8 @@
   { "label": "Perfect square 100", "inputJson": "{\"n\":100}" },
   { "label": "n = 48", "inputJson": "{\"n\":48}" },
   { "label": "n = 23", "inputJson": "{\"n\":23}" },
-  { "label": "n = 9999", "inputJson": "{\"n\":9999}" }
+  { "label": "n = 9999", "inputJson": "{\"n\":9999}" },
+  { "label": "n = 5 (1+4)", "inputJson": "{\"n\":5}" },
+  { "label": "n = 28 (Lagrange 4)", "inputJson": "{\"n\":28}" },
+  { "label": "n = 25 (perfect)", "inputJson": "{\"n\":25}" }
 ]

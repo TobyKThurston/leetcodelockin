@@ -4,5 +4,9 @@
   { "label": "Identical endpoints large", "inputJson": "{\"left\":2147483647,\"right\":2147483647}" },
   { "label": "Narrow upper range", "inputJson": "{\"left\":2147483640,\"right\":2147483647}" },
   { "label": "Long common prefix", "inputJson": "{\"left\":1000000000,\"right\":1000000003}" },
-  { "label": "Single element zero", "inputJson": "{\"left\":0,\"right\":0}" }
+  { "label": "Single element zero", "inputJson": "{\"left\":0,\"right\":0}" },
+  { "label": "Adjacent values", "inputJson": "{\"left\":12,\"right\":13}" },
+  { "label": "Range with no shared upper bits", "inputJson": "{\"left\":1,\"right\":2147483647}" },
+  { "label": "Both equal small", "inputJson": "{\"left\":42,\"right\":42}" },
+  { "label": "Two adjacent powers", "inputJson": "{\"left\":1023,\"right\":1024}" }
 ]

@@ -3,5 +3,7 @@
   { "label": "Four rows", "inputJson": "{\"numRows\":4}" },
   { "label": "Seven rows", "inputJson": "{\"numRows\":7}" },
   { "label": "Ten rows", "inputJson": "{\"numRows\":10}" },
-  { "label": "Upper bound 30", "inputJson": "{\"numRows\":30}" }
+  { "label": "Upper bound 30", "inputJson": "{\"numRows\":30}" },
+  { "label": "Six rows", "inputJson": "{\"numRows\":6}" },
+  { "label": "Twenty rows", "inputJson": "{\"numRows\":20}" }
 ]

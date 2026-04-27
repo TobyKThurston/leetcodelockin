@@ -4,5 +4,11 @@
   { "label": "Single char same", "inputJson": "{\"word1\":\"a\",\"word2\":\"a\"}" },
   { "label": "Single char replace", "inputJson": "{\"word1\":\"a\",\"word2\":\"b\"}" },
   { "label": "Classic intention", "inputJson": "{\"word1\":\"intention\",\"word2\":\"execution\"}" },
-  { "label": "Complete disjoint", "inputJson": "{\"word1\":\"abcd\",\"word2\":\"wxyz\"}" }
+  { "label": "Complete disjoint", "inputJson": "{\"word1\":\"abcd\",\"word2\":\"wxyz\"}" },
+  { "label": "Empty left only", "inputJson": "{\"word1\":\"\",\"word2\":\"hello\"}" },
+  { "label": "One char insert", "inputJson": "{\"word1\":\"abc\",\"word2\":\"abcd\"}" },
+  { "label": "One char delete", "inputJson": "{\"word1\":\"abcd\",\"word2\":\"abc\"}" },
+  { "label": "Reversed strings", "inputJson": "{\"word1\":\"abcde\",\"word2\":\"edcba\"}" },
+  { "label": "Repeated letters", "inputJson": "{\"word1\":\"aaaa\",\"word2\":\"aaab\"}" },
+  { "label": "Classic distance algorithm", "inputJson": "{\"word1\":\"distance\",\"word2\":\"editing\"}" }
 ]

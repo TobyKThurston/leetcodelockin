@@ -4,5 +4,8 @@
   { "label": "Middle stretch matches", "inputJson": "{\"values\":[1,2,2,2,3],\"val\":2}" },
   { "label": "Single no match", "inputJson": "{\"values\":[7],\"val\":3}" },
   { "label": "Negative target", "inputJson": "{\"values\":[-50,0,-50,50,-50],\"val\":-50}" },
-  { "label": "Alternating match", "inputJson": "{\"values\":[1,2,1,2,1,2],\"val\":1}" }
+  { "label": "Alternating match", "inputJson": "{\"values\":[1,2,1,2,1,2],\"val\":1}" },
+  { "label": "Single match removed", "inputJson": "{\"values\":[7],\"val\":7}" },
+  { "label": "Head sequence matches", "inputJson": "{\"values\":[3,3,3,1,2],\"val\":3}" },
+  { "label": "Zero target zeros only", "inputJson": "{\"values\":[0,0,0],\"val\":0}" }
 ]

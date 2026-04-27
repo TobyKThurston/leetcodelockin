@@ -4,5 +4,9 @@
   { "label": "Odd palindrome", "inputJson": "{\"s\":\"aab\"}" },
   { "label": "Mixed palindrome", "inputJson": "{\"s\":\"efe\"}" },
   { "label": "Two char same", "inputJson": "{\"s\":\"zz\"}" },
-  { "label": "Longer palindrome", "inputJson": "{\"s\":\"racecar\"}" }
+  { "label": "Longer palindrome", "inputJson": "{\"s\":\"racecar\"}" },
+  { "label": "Two palindromic halves", "inputJson": "{\"s\":\"abba\"}" },
+  { "label": "Repeating pattern", "inputJson": "{\"s\":\"ababa\"}" },
+  { "label": "All same five chars", "inputJson": "{\"s\":\"aaaaa\"}" },
+  { "label": "Mixed alternating", "inputJson": "{\"s\":\"abccba\"}" }
 ]

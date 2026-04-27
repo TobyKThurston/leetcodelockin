@@ -4,5 +4,8 @@
   { "label": "n = 8 (power of two boundary)", "inputJson": "{\"n\":8}" },
   { "label": "n = 15 (nibble full)", "inputJson": "{\"n\":15}" },
   { "label": "n = 16 (next power)", "inputJson": "{\"n\":16}" },
-  { "label": "n = 31", "inputJson": "{\"n\":31}" }
+  { "label": "n = 31", "inputJson": "{\"n\":31}" },
+  { "label": "n = 100 medium", "inputJson": "{\"n\":100}" },
+  { "label": "n = 1023 sub-power", "inputJson": "{\"n\":1023}" },
+  { "label": "n = 100000 max bound", "inputJson": "{\"n\":100000}" }
 ]

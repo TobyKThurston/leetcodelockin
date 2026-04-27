@@ -4,5 +4,8 @@
   { "label": "Partial fall off mid-type", "inputJson": "{\"products\":[\"abc\",\"abd\"],\"searchWord\":\"abx\"}" },
   { "label": "Single-char search", "inputJson": "{\"products\":[\"alpha\",\"apple\",\"ant\",\"arc\",\"bat\"],\"searchWord\":\"a\"}" },
   { "label": "Duplicate products", "inputJson": "{\"products\":[\"cat\",\"cat\",\"car\",\"care\",\"cart\"],\"searchWord\":\"ca\"}" },
-  { "label": "Long search word full match", "inputJson": "{\"products\":[\"havana\"],\"searchWord\":\"tatiana\"}" }
+  { "label": "Long search word full match", "inputJson": "{\"products\":[\"havana\"],\"searchWord\":\"tatiana\"}" },
+  { "label": "Many products one prefix", "inputJson": "{\"products\":[\"app\",\"apple\",\"apply\",\"apt\",\"apricot\",\"absolute\"],\"searchWord\":\"ap\"}" },
+  { "label": "Search exceeds product length", "inputJson": "{\"products\":[\"ab\"],\"searchWord\":\"abcd\"}" },
+  { "label": "Two products tied lex", "inputJson": "{\"products\":[\"banana\",\"band\",\"ban\"],\"searchWord\":\"ban\"}" }
 ]

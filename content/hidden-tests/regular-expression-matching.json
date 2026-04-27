@@ -4,5 +4,12 @@
   { "label": "Only star zero match", "inputJson": "{\"s\":\"aab\",\"p\":\"c*a*b\"}" },
   { "label": "Dot star literal", "inputJson": "{\"s\":\"aab\",\"p\":\"a.b\"}" },
   { "label": "Star consumes trailing", "inputJson": "{\"s\":\"aaa\",\"p\":\"ab*a*c*a\"}" },
-  { "label": "Unmatched extra", "inputJson": "{\"s\":\"abc\",\"p\":\"a.c.\"}" }
+  { "label": "Unmatched extra", "inputJson": "{\"s\":\"abc\",\"p\":\"a.c.\"}" },
+  { "label": "Single literal match", "inputJson": "{\"s\":\"a\",\"p\":\"a\"}" },
+  { "label": "Dot star matches all", "inputJson": "{\"s\":\"abcdef\",\"p\":\".*\"}" },
+  { "label": "Star repeats letter", "inputJson": "{\"s\":\"aaaa\",\"p\":\"a*\"}" },
+  { "label": "Mixed star with literal", "inputJson": "{\"s\":\"aab\",\"p\":\"a*b\"}" },
+  { "label": "Star with no match needed", "inputJson": "{\"s\":\"b\",\"p\":\"a*b\"}" },
+  { "label": "Pattern shorter literal", "inputJson": "{\"s\":\"abcd\",\"p\":\"d*\"}" },
+  { "label": "Multiple stars", "inputJson": "{\"s\":\"aaabbb\",\"p\":\"a*b*\"}" }
 ]

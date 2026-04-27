@@ -4,5 +4,8 @@
   { "label": "Tie-break smaller wins", "inputJson": "{\"words\":[\"a\",\"b\",\"ab\",\"ba\"]}" },
   { "label": "Single one-char word", "inputJson": "{\"words\":[\"x\"]}" },
   { "label": "All single chars", "inputJson": "{\"words\":[\"a\",\"b\",\"c\",\"d\"]}" },
-  { "label": "Two parallel chains", "inputJson": "{\"words\":[\"a\",\"ap\",\"app\",\"appl\",\"apple\",\"b\",\"ba\",\"ban\"]}" }
+  { "label": "Two parallel chains", "inputJson": "{\"words\":[\"a\",\"ap\",\"app\",\"appl\",\"apple\",\"b\",\"ba\",\"ban\"]}" },
+  { "label": "Unsorted with chain", "inputJson": "{\"words\":[\"world\",\"wo\",\"w\",\"wor\",\"worl\"]}" },
+  { "label": "Chain of length five", "inputJson": "{\"words\":[\"a\",\"aa\",\"aaa\",\"aaaa\",\"aaaaa\"]}" },
+  { "label": "No buildable word", "inputJson": "{\"words\":[\"abcd\",\"efgh\"]}" }
 ]

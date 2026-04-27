@@ -4,5 +4,8 @@
   { "label": "Large first and last", "inputJson": "{\"nums\":[1000,1,1,1000]}" },
   { "label": "Five houses", "inputJson": "{\"nums\":[2,7,9,3,1]}" },
   { "label": "All equal six", "inputJson": "{\"nums\":[5,5,5,5,5,5]}" },
-  { "label": "Two equal", "inputJson": "{\"nums\":[4,4]}" }
+  { "label": "Two equal", "inputJson": "{\"nums\":[4,4]}" },
+  { "label": "Three houses pick mid", "inputJson": "{\"nums\":[1,5,1]}" },
+  { "label": "Three equal", "inputJson": "{\"nums\":[3,3,3]}" },
+  { "label": "Eight ascending", "inputJson": "{\"nums\":[1,2,3,4,5,6,7,8]}" }
 ]

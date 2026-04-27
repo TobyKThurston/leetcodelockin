@@ -4,5 +4,10 @@
   { "label": "Repeats in s", "inputJson": "{\"s\":\"aaaa\",\"t\":\"aa\"}" },
   { "label": "T empty string", "inputJson": "{\"s\":\"abc\",\"t\":\"\"}" },
   { "label": "Bag classic", "inputJson": "{\"s\":\"babgbag\",\"t\":\"bag\"}" },
-  { "label": "No match", "inputJson": "{\"s\":\"xyz\",\"t\":\"abc\"}" }
+  { "label": "No match", "inputJson": "{\"s\":\"xyz\",\"t\":\"abc\"}" },
+  { "label": "T longer than s", "inputJson": "{\"s\":\"ab\",\"t\":\"abc\"}" },
+  { "label": "Repeats in both", "inputJson": "{\"s\":\"aaaa\",\"t\":\"a\"}" },
+  { "label": "Same string single char", "inputJson": "{\"s\":\"a\",\"t\":\"a\"}" },
+  { "label": "Many overlap subsequences", "inputJson": "{\"s\":\"rabbbbit\",\"t\":\"rabbit\"}" },
+  { "label": "T is full s", "inputJson": "{\"s\":\"abcabc\",\"t\":\"abcabc\"}" }
 ]
