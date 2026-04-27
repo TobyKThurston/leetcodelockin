@@ -834,9 +834,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#eef3ff',
+      'editor.background':                  '#d3deef',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#e6edff',
+      'editor.lineHighlightBackground':     '#c2d1e8',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',
