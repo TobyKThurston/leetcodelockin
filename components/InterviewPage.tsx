@@ -7,6 +7,7 @@ import { Plus, ArrowRight, Trophy, Clock, RotateCcw, Loader2, AlertCircle, Mic, 
 import AppNav from '@/components/AppNav';
 import AppShell from '@/components/shell/AppShell';
 import PageHeader from '@/components/shell/PageHeader';
+import MainSurface from '@/components/shell/MainSurface';
 import LockedScreen from '@/components/interview/LockedScreen';
 import SetupScreen from '@/components/interview/SetupScreen';
 import HistoryScreen from '@/components/interview/HistoryScreen';
@@ -722,32 +723,32 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
       rail={<InterviewRightRail sessions={history} currentSession={reviewSession} />}
     >
       {phase === 'review' && reviewSession ? (
-        <div className="flex flex-col">
+        <MainSurface className="flex flex-col px-6 py-6 sm:px-8 sm:py-8">
           <ReviewScreen
             session={reviewSession}
             onBack={goBack}
             onNewInterview={guardedGoToSetup}
           />
-        </div>
+        </MainSurface>
       ) : phase === 'voice-review' && reviewSession ? (
-        <div className="flex flex-col">
+        <MainSurface className="flex flex-col px-6 py-6 sm:px-8 sm:py-8">
           <VoiceDebriefView session={reviewSession} onBack={goBack} />
-        </div>
+        </MainSurface>
       ) : (
         <>
           {/* Desktop: middle is always the "new interview" setup; history
               lives in the left sidebar. */}
-          <div className="hidden md:flex md:flex-col">
+          <MainSurface className="hidden md:flex md:flex-col px-6 py-6 sm:px-8 sm:py-8">
             <SetupScreen onStart={handleStart} loading={loading} voiceQuota={voiceQuota} />
             {error && (
               <p className="text-center text-[13px] text-red-400 pb-6" style={SG}>
                 {error}
               </p>
             )}
-          </div>
+          </MainSurface>
           {/* Mobile has no sidebar — show history above setup so the user
               can still view past sessions. */}
-          <div className="md:hidden flex flex-col">
+          <MainSurface className="md:hidden flex flex-col px-5 py-5">
             {history.length > 0 ? (
               <HistoryScreen
                 sessions={history}
@@ -765,7 +766,7 @@ export default function InterviewPage({ initialHistory, isPro, voiceQuota }: Pro
                 {error}
               </p>
             )}
-          </div>
+          </MainSurface>
         </>
       )}
     </AppShell>

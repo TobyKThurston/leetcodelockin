@@ -8,6 +8,7 @@ import AppShell from '@/components/shell/AppShell';
 import ShellSidebar from '@/components/shell/ShellSidebar';
 import ShellRail from '@/components/shell/ShellRail';
 import PageHeader from '@/components/shell/PageHeader';
+import MainSurface from '@/components/shell/MainSurface';
 import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
 import { C, SG } from '@/lib/ui-tokens';
 import { Button } from '@/components/ui/button';
@@ -113,10 +114,25 @@ function CodeBlock({
 
 // ─── Card front/back renderers (SR mode) ────────────────────────────────────
 
+// Rendered on the front of every card so students have concrete context
+// before recalling — title alone doesn't jog the memory.
+function ProblemRecap({ recap }: { recap: string | undefined }) {
+  if (!recap) return null;
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2.5">
+      <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">
+        The problem
+      </span>
+      <p className="text-[13.5px] text-slate-700 leading-relaxed mt-1">{recap}</p>
+    </div>
+  );
+}
+
 function KeyLinesFront({ card }: { card: ReviewCard }) {
   const content = card.content as KeyLinesContent;
   return (
     <div className="space-y-3">
+      <ProblemRecap recap={content.problem_recap} />
       <p className="text-[14px] text-slate-600">
         Fill in the blanked-out lines from your solution:
       </p>
@@ -125,6 +141,25 @@ function KeyLinesFront({ card }: { card: ReviewCard }) {
         blankIndices={content.blank_indices}
         revealed={false}
       />
+      {content.line_hints?.some(h => h) && (
+        <div>
+          <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Hints</span>
+          <ul className="mt-1.5 space-y-1">
+            {content.blank_indices.map((lineIdx, i) => {
+              const hint = content.line_hints?.[i];
+              if (!hint) return null;
+              return (
+                <li key={lineIdx} className="flex gap-2 text-[12.5px] text-slate-600 leading-relaxed">
+                  <span className="text-slate-400 tabular-nums shrink-0" style={{ fontFamily: MONO }}>
+                    L{lineIdx + 1}
+                  </span>
+                  <span>{hint}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -145,13 +180,15 @@ function KeyLinesBack({ card }: { card: ReviewCard }) {
 }
 
 function ApproachFront({ card }: { card: ReviewCard }) {
+  const content = card.content as ApproachContent;
   return (
     <div className="space-y-3">
+      <ProblemRecap recap={content.problem_recap} />
       <p className="text-[14px] text-slate-600">
-        What pattern and approach did you use to solve this problem?
+        What pattern and approach did you use here?
       </p>
       <p className="text-[13px] text-slate-500 italic">
-        Think about the algorithmic pattern, key data structures, and your step-by-step approach before revealing.
+        Think about the key insight, the steps, and any edge case to watch out for — then reveal.
       </p>
     </div>
   );
@@ -165,10 +202,33 @@ function ApproachBack({ card }: { card: ReviewCard }) {
         <span className="text-[10px] font-bold text-emerald-400 tracking-wider uppercase">Pattern</span>
         <p className="text-[15px] text-slate-900 font-semibold mt-1" style={SG}>{content.pattern}</p>
       </div>
-      <div>
-        <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Approach</span>
-        <p className="text-[14px] text-slate-700 leading-relaxed mt-1">{content.explanation}</p>
-      </div>
+      {content.key_insight && (
+        <div>
+          <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Key insight</span>
+          <p className="text-[14px] text-slate-700 leading-relaxed mt-1">{content.key_insight}</p>
+        </div>
+      )}
+      {content.steps && content.steps.length > 0 && (
+        <div>
+          <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Steps</span>
+          <ol className="mt-1.5 space-y-1.5">
+            {content.steps.map((step, i) => (
+              <li key={i} className="flex gap-2.5 text-[13.5px] text-slate-700 leading-relaxed">
+                <span className="shrink-0 w-5 h-5 rounded-full bg-slate-200 text-slate-600 text-[11px] font-semibold flex items-center justify-center tabular-nums mt-0.5">
+                  {i + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {content.gotcha && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/[0.06] px-3 py-2.5">
+          <span className="text-[10px] font-bold text-amber-500 tracking-wider uppercase">Watch out</span>
+          <p className="text-[13.5px] text-slate-700 leading-relaxed mt-1">{content.gotcha}</p>
+        </div>
+      )}
       <div>
         <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Your Code</span>
         <CodeBlock code={card.codeSnapshot} revealed={true} />
@@ -178,8 +238,10 @@ function ApproachBack({ card }: { card: ReviewCard }) {
 }
 
 function ComplexityFront({ card }: { card: ReviewCard }) {
+  const content = card.content as ComplexityContent;
   return (
     <div className="space-y-3">
+      <ProblemRecap recap={content.problem_recap} />
       <p className="text-[14px] text-slate-600">
         What is the time and space complexity of your solution?
       </p>
@@ -190,19 +252,29 @@ function ComplexityFront({ card }: { card: ReviewCard }) {
 
 function ComplexityBack({ card }: { card: ReviewCard }) {
   const content = card.content as ComplexityContent;
+  // Back-compat: older cards may have had a single `reasoning` field.
+  const legacyReasoning = (content as unknown as { reasoning?: string }).reasoning;
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Time</span>
           <p className="text-[20px] text-slate-900 font-bold mt-1" style={{ fontFamily: MONO }}>{content.time}</p>
+          {content.time_reasoning && (
+            <p className="text-[12.5px] text-slate-600 leading-relaxed mt-1.5">{content.time_reasoning}</p>
+          )}
         </div>
         <div className="rounded-lg p-3 bg-amber-500/10 border border-amber-500/20">
           <span className="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Space</span>
           <p className="text-[20px] text-slate-900 font-bold mt-1" style={{ fontFamily: MONO }}>{content.space}</p>
+          {content.space_reasoning && (
+            <p className="text-[12.5px] text-slate-600 leading-relaxed mt-1.5">{content.space_reasoning}</p>
+          )}
         </div>
       </div>
-      <p className="text-[14px] text-slate-600 leading-relaxed">{content.reasoning}</p>
+      {!content.time_reasoning && !content.space_reasoning && legacyReasoning && (
+        <p className="text-[14px] text-slate-600 leading-relaxed">{legacyReasoning}</p>
+      )}
     </div>
   );
 }
@@ -1347,7 +1419,7 @@ export default function ReviewPageClient({
               : 'No cards due right now.'
           }
         />
-        <div>
+        <MainSurface className="px-6 py-6 sm:px-8 sm:py-8">
               {card && meta ? (
                 <>
                   {/* Progress bar */}
@@ -1471,7 +1543,7 @@ export default function ReviewPageClient({
                   </div>
                 </>
               ) : null}
-        </div>
+        </MainSurface>
       </AppShell>
     );
   }
@@ -1530,6 +1602,7 @@ export default function ReviewPageClient({
             subtitle={`${BATCH_SIZE} questions per round. Answer them all to unlock the next round.`}
           />
 
+          <MainSurface className="px-6 py-6 sm:px-8 sm:py-8">
           {/* Progress bar */}
           <div className="flex items-center gap-3 mb-8">
             <span className="text-[12px] text-slate-500 font-medium tabular-nums">
@@ -1629,15 +1702,15 @@ export default function ReviewPageClient({
               {/* Next button -- only after answering */}
               {isCurrentAnswered && quickIdx < currentBatch.length - 1 && (
                 <div
-                  className="flex items-center justify-center px-6 py-4 border-t"
+                  className="flex items-center justify-center px-4 sm:px-6 py-4 border-t"
                   style={{ borderColor: C.border }}
                 >
                   <Button
                     onClick={handleQuickNext}
-                    className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-8 py-2.5"
+                    className="w-full sm:w-auto h-12 sm:h-10 bg-blue-600 hover:bg-blue-500 text-white text-[15px] sm:text-[14px] font-semibold px-8 shadow-lg shadow-blue-600/20"
                   >
                     Next Question
-                    <ArrowRight size={15} className="ml-2" />
+                    <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </div>
               )}
@@ -1657,11 +1730,11 @@ export default function ReviewPageClient({
                       <> Session total: {cumulativeCorrect + Array.from(quickResults.values()).filter(r => r === 'correct').length} / {cumulativeTotal + quickReviewedSet.size} correct.</>
                     )}
                   </p>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                     {hasMoreBatches && isPro && (
                       <Button
                         onClick={handleNextBatch}
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
+                        className="w-full sm:w-auto h-12 sm:h-10 bg-blue-600 hover:bg-blue-500 text-white text-[15px] sm:text-[14px] font-semibold px-6 shadow-lg shadow-blue-600/20"
                       >
                         Next {Math.min(BATCH_SIZE, shuffledAllCards.length - batchStart - BATCH_SIZE)} questions
                         <ArrowRight size={15} className="ml-2" />
@@ -1670,7 +1743,7 @@ export default function ReviewPageClient({
                     {hasMoreBatches && !isPro && (
                       <Button
                         onClick={() => setShowUpgradeModal(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[14px] font-semibold px-6"
+                        className="w-full sm:w-auto h-12 sm:h-10 bg-blue-600 hover:bg-blue-500 text-white text-[15px] sm:text-[14px] font-semibold px-6 shadow-lg shadow-blue-600/20"
                       >
                         <Lock size={13} className="mr-2" />
                         Unlock more with Pro
@@ -1688,7 +1761,7 @@ export default function ReviewPageClient({
                         autoOpenedUpgradeRef.current = false;
                       }}
                       variant="outline"
-                      className="border-slate-200 text-slate-700 hover:bg-slate-100 text-[13px]"
+                      className="w-full sm:w-auto border-slate-200 text-slate-700 hover:bg-slate-100 text-[13px]"
                     >
                       <RotateCcw size={13} className="mr-2" />
                       Start Over
@@ -1708,6 +1781,7 @@ export default function ReviewPageClient({
               )}
             </div>
           ) : null}
+          </MainSurface>
     </AppShell>
     <ProUpgradeModal open={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </>

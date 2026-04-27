@@ -23,6 +23,7 @@ import AppShell from '@/components/shell/AppShell';
 import ShellSidebar from '@/components/shell/ShellSidebar';
 import ShellRail from '@/components/shell/ShellRail';
 import PageHeader from '@/components/shell/PageHeader';
+import MainSurface from '@/components/shell/MainSurface';
 import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
 import { C, SG, MONO_FONT } from '@/lib/ui-tokens';
 
@@ -1698,11 +1699,12 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
         'group relative text-left rounded-lg overflow-hidden p-4 flex flex-col',
         'border transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
-        locked && 'cursor-default opacity-[0.28] bg-[var(--ll-bg-subtle)] border-slate-100 saturate-[0.3]',
+        locked && 'cursor-default opacity-[0.28] bg-[var(--ll-bg-subtle)] border-slate-100 saturate-[0.3] dark:border-white/10',
         !locked && 'cursor-pointer',
         active && [
           'bg-white border-[var(--ll-accent)]',
           'hover:bg-[var(--ll-bg-tinted)]',
+          'dark:bg-[var(--ll-bg-elevated)] dark:hover:bg-[var(--ll-bg-hover)]',
         ],
         complete && [
           'bg-[var(--ll-success-soft)] border-[var(--ll-success)]',
@@ -1719,26 +1721,26 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
         <span
           className={cn(
             'font-mono text-[13px] font-extrabold tabular-nums tracking-[0.14em]',
-            locked && 'text-slate-500',
-            active && 'text-blue-600',
-            complete && 'text-emerald-700',
-            !locked && !active && !complete && 'text-slate-500',
+            locked && 'text-slate-500 dark:text-slate-400',
+            active && 'text-blue-600 dark:text-blue-300',
+            complete && 'text-emerald-700 dark:text-emerald-300',
+            !locked && !active && !complete && 'text-slate-500 dark:text-slate-400',
           )}
         >
           {n}
         </span>
-        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-700" />}
-        {locked && <Lock size={11} className="text-slate-500" />}
+        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-700 dark:text-emerald-300" />}
+        {locked && <Lock size={11} className="text-slate-500 dark:text-slate-400" />}
       </div>
 
       {/* Title */}
       <p
         className={cn(
           'text-[15px] font-semibold leading-snug mb-1 tracking-[-0.01em]',
-          locked && 'text-slate-500',
-          active && 'text-slate-900',
-          complete && 'text-emerald-900',
-          !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900',
+          locked && 'text-slate-500 dark:text-slate-400',
+          active && 'text-slate-900 dark:text-slate-50',
+          complete && 'text-emerald-900 dark:text-emerald-100',
+          !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900 dark:text-slate-100 dark:group-hover:text-white',
         )}
         style={SG}
       >
@@ -1749,10 +1751,10 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
       <p
         className={cn(
           'text-[12.5px] leading-relaxed line-clamp-2',
-          locked && 'text-slate-500',
-          active && 'text-slate-600',
-          complete && 'text-emerald-800/80',
-          !locked && !active && !complete && 'text-slate-600',
+          locked && 'text-slate-500 dark:text-slate-400',
+          active && 'text-slate-600 dark:text-slate-300',
+          complete && 'text-emerald-800/80 dark:text-emerald-200/85',
+          !locked && !active && !complete && 'text-slate-600 dark:text-slate-300',
         )}
       >
         {block.subtitle}
@@ -1764,17 +1766,17 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
           className={cn(
             'mt-auto pt-3 flex items-center gap-4 text-[11.5px] font-medium tabular-nums',
             'border-t',
-            active && 'border-blue-200',
-            complete && 'border-emerald-500/40',
-            !active && !complete && 'border-slate-200',
+            active && 'border-blue-200 dark:border-blue-400/30',
+            complete && 'border-emerald-500/40 dark:border-emerald-400/30',
+            !active && !complete && 'border-slate-200 dark:border-white/10',
           )}
         >
           <span
             className={cn(
               'flex items-center gap-1.5',
-              active && 'text-blue-700',
-              complete && 'text-emerald-800',
-              !active && !complete && 'text-slate-600',
+              active && 'text-blue-700 dark:text-blue-300',
+              complete && 'text-emerald-800 dark:text-emerald-200',
+              !active && !complete && 'text-slate-600 dark:text-slate-300',
             )}
           >
             <BookOpen size={12} strokeWidth={2.25} />
@@ -1783,9 +1785,9 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
           <span
             className={cn(
               'flex items-center gap-1.5',
-              active && 'text-blue-700',
-              complete && 'text-emerald-800',
-              !active && !complete && 'text-slate-600',
+              active && 'text-blue-700 dark:text-blue-300',
+              complete && 'text-emerald-800 dark:text-emerald-200',
+              !active && !complete && 'text-slate-600 dark:text-slate-300',
             )}
           >
             <Target size={12} strokeWidth={2.25} />
@@ -1955,14 +1957,7 @@ function PathView({
       />
 
       {/* Zigzag roadmap — wrapped in a white "main path" surface */}
-      <div
-        className="rounded-2xl border py-10"
-        style={{
-          background: 'var(--ll-bg-card)',
-          borderColor: 'var(--ll-border)',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
-        }}
-      >
+      <MainSurface className="py-10">
         <div className="flex justify-center">
           <div className="relative" style={{ width: CONTAINER_W, height: totalHeight }}>
           <svg style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }} width={CONTAINER_W} height={totalHeight}>
@@ -2006,7 +2001,7 @@ function PathView({
           })}
           </div>
         </div>
-      </div>
+      </MainSurface>
 
       {/* Terminal badge */}
       <div className="flex justify-center mt-6">
