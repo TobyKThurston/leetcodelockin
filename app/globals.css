@@ -127,50 +127,48 @@ html, body {
 /* in app/layout.tsx).                                                       */
 
 .theme-light {
-  /* Surfaces — near-white canvas, distinctly tinted chrome, white cards.   */
-  /* The whole point: each layer must visibly separate from its neighbour.  */
+  /* Surfaces — clear layer separation: light canvas, tinted chrome, white  */
+  /* cards. The white "main path" container is the dominant anchor.        */
   /*                                                                        */
-  /*  canvas  (near-white, faintly tinted — matches homescreen body)        */
-  /*    └ panel   (clearly bluer chrome — sidebar/rail pops)                */
-  /*        └ card  (regular card — pure white, the interactive surface)    */
-  /*            └ elevated  (hero/active surface — also white)              */
+  /*  canvas  (#F6F8FC — page bg)                                           */
+  /*    └ panel  (#F1F5FB — sidebar / rail)                                 */
+  /*        └ card  (#FFFFFF — interactive surface, the anchor)             */
   /*                                                                        */
-  /*  Rule: cards are white; canvas is near-white; chrome is real blue.     */
-  --ll-bg:           #f1f6fd;   /* app canvas — near-white, faint blue tint */
-  --ll-bg-panel:     #cfdef5;   /* sidebar / rail — clearly visible blue chrome */
-  --ll-bg-card:      #ffffff;   /* content surface — pure white for contrast */
+  --ll-bg:           #f6f8fc;   /* page canvas */
+  --ll-bg-panel:     #f1f5fb;   /* sidebar / rail panels */
+  --ll-bg-card:      #ffffff;   /* content surface */
   --ll-bg-elevated:  #ffffff;   /* hero / active surface */
-  --ll-bg-subtle:    #e3ecf8;   /* sunken strip / inputs / chrome bars */
-  --ll-bg-hover:     #eaf1fb;   /* hover on card/button */
-  --ll-bg-tinted:    #d8e5f6;   /* selected card highlight */
-  --ll-bg-code:      #ffffff;   /* coding panel workspace — white editor */
+  --ll-bg-subtle:    #f1f5fb;   /* sunken strip / inputs */
+  --ll-bg-hover:     #f8faff;   /* hover on card/button */
+  --ll-bg-tinted:    #e8f0ff;   /* selected card highlight (blue-soft) */
+  --ll-bg-code:      #ffffff;   /* coding panel workspace */
 
   /* Ink */
   --ll-ink:          #0f172a;   /* body text */
-  --ll-ink-strong:   #020617;   /* headings */
+  --ll-ink-strong:   #0f172a;   /* headings */
   --ll-ink-muted:    #475569;   /* secondary text */
   --ll-ink-subtle:   #64748b;   /* meta, helper text */
   --ll-ink-faint:    #94a3b8;   /* eyebrow / placeholder */
   --ll-ink-dim:      #cbd5e1;   /* disabled / decorative */
 
-  /* Accent (blue) */
-  --ll-accent:       #3b82f6;
-  --ll-accent-hover: #2563eb;
-  --ll-accent-soft:  #eff6ff;   /* bg tint */
-  --ll-accent-ink:   #1d4ed8;   /* text on soft tint */
-  --ll-accent-ring:  rgba(59,130,246,0.22);
+  /* Accent (blue) — stronger anchor */
+  --ll-accent:       #2563eb;
+  --ll-accent-hover: #1d4ed8;
+  --ll-accent-soft:  #e8f0ff;
+  --ll-accent-ink:   #1d4ed8;
+  --ll-accent-ring:  rgba(37,99,235,0.22);
 
-  /* Borders — blue-tinted, strong enough to define cards on a near-white bg */
-  --ll-border:         #bccee9;
-  --ll-border-strong:  #8ba9d3;
-  --ll-border-subtle:  #dde7f5;
+  /* Borders — lighter, less noisy on white */
+  --ll-border:         #e6ecf5;
+  --ll-border-strong:  #cbd5e8;
+  --ll-border-subtle:  #eef2f9;
 
-  /* Semantic — success (emerald) */
-  --ll-success:        #059669;
-  --ll-success-hover:  #047857;
-  --ll-success-soft:   #ecfdf5;
-  --ll-success-border: #a7f3d0;
-  --ll-success-ink:    #065f46;
+  /* Semantic — success (emerald) — stronger green */
+  --ll-success:        #10b981;
+  --ll-success-hover:  #059669;
+  --ll-success-soft:   #e7f8f1;
+  --ll-success-border: #10b981;
+  --ll-success-ink:    #047857;
 
   /* Semantic — warning (amber) */
   --ll-warning:        #d97706;
@@ -185,14 +183,14 @@ html, body {
   --ll-danger-border:  #fecaca;
   --ll-danger-ink:     #991b1b;
 
-  /* Shadow — slightly stronger so white cards lift off the near-white canvas */
-  --ll-shadow-sm:  0 1px 2px rgba(15,23,42,0.06);
-  --ll-shadow-md:  0 4px 14px rgba(15,23,42,0.08), 0 1px 3px rgba(15,23,42,0.05);
-  --ll-shadow-lg:  0 18px 40px -12px rgba(15,23,42,0.14), 0 2px 6px rgba(15,23,42,0.06);
+  /* Shadow — soft lift so white surfaces float against the canvas */
+  --ll-shadow-sm:  0 1px 2px rgba(15,23,42,0.04);
+  --ll-shadow-md:  0 4px 14px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
+  --ll-shadow-lg:  0 10px 30px rgba(0,0,0,0.04), 0 2px 6px rgba(15,23,42,0.04);
 
-  /* Translucent surfaces — clearly tinted nav/glass, not a fog */
-  --ll-nav-bg:   rgba(207,222,245,0.92);
-  --ll-glass-bg: rgba(217,229,247,0.85);
+  /* Translucent surfaces — light & airy panel tint */
+  --ll-nav-bg:   rgba(241,245,251,0.92);
+  --ll-glass-bg: rgba(246,248,252,0.85);
 }
 
 /* Dark theme — same blue-tinted palette as before, but applied with the
@@ -309,12 +307,11 @@ html, body {
   background-color: var(--ll-bg);
 }
 
-/* App shell wash — cool blue gradient, stronger now that canvas is near-white */
+/* App shell wash — quiet blue tint; main white surface is the anchor */
 .ll-app-mesh {
   background:
-    radial-gradient(ellipse 55% 38% at 92% -8%, rgba(59,130,246,0.18), transparent 72%),
-    radial-gradient(ellipse 45% 32% at 4% 16%, rgba(56,189,248,0.13), transparent 72%),
-    radial-gradient(ellipse 65% 45% at 50% 108%, rgba(59,130,246,0.09), transparent 72%),
+    radial-gradient(ellipse 55% 38% at 92% -8%, rgba(37,99,235,0.06), transparent 72%),
+    radial-gradient(ellipse 45% 32% at 4% 16%, rgba(56,189,248,0.05), transparent 72%),
     var(--ll-bg);
 }
 
@@ -438,7 +435,8 @@ html, body {
 .theme-dark .bg-blue-500\/\[0\.08\]  { background-color: rgba(59,130,246,0.18); }
 .theme-dark .bg-blue-500\/\[0\.10\]  { background-color: rgba(59,130,246,0.22); }
 .theme-dark .bg-blue-500\/\[0\.15\]  { background-color: rgba(59,130,246,0.30); }
-.theme-dark .bg-emerald-500\/\[0\.05\] { background-color: rgba(16,185,129,0.12); }
+.theme-dark .bg-emerald-500\/\[0\.14\] { background-color: rgba(16,185,129,0.18); }
+.theme-dark .bg-emerald-500\/\[0\.18\] { background-color: rgba(16,185,129,0.24); }
 .theme-dark .bg-amber-500\/\[0\.08\]  { background-color: rgba(251,191,36,0.14); }
 .theme-dark .bg-amber-500\/\[0\.13\]  { background-color: rgba(251,191,36,0.20); }
 

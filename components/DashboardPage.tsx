@@ -1203,8 +1203,8 @@ function SidebarPathCard({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50',
         locked && 'cursor-default opacity-45 bg-[var(--ll-bg-subtle)] border-slate-200/60',
         !locked && 'cursor-pointer',
-        isViewing && 'bg-[var(--ll-bg-tinted)] border-blue-400/60 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(59,130,246,0.25)]',
-        !isViewing && complete && 'bg-[var(--ll-bg-card)] border-emerald-500/30 hover:border-emerald-500/50',
+        isViewing && 'bg-[var(--ll-bg-tinted)] border-[var(--ll-accent)] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(37,99,235,0.25)]',
+        !isViewing && complete && 'bg-[var(--ll-bg-card)] border-[var(--ll-success)]/40 hover:border-[var(--ll-success)]/70',
         !isViewing && !complete && !locked && 'bg-[var(--ll-bg-card)] border-[var(--ll-border)] hover:bg-[var(--ll-bg-hover)] hover:border-[var(--ll-border-strong)]',
       )}
     >
@@ -1431,8 +1431,8 @@ function RightRail({
               className={cn(
                 'rounded-lg px-3 py-2.5 border',
                 pathStatus === 'complete'
-                  ? 'bg-slate-50 border-emerald-500/25'
-                  : 'bg-blue-500/[0.08] border-blue-400/50',
+                  ? 'bg-[var(--ll-success-soft)] border-[var(--ll-success)]'
+                  : 'bg-[var(--ll-bg-tinted)] border-[var(--ll-accent)]',
               )}
             >
               <div className="flex items-center justify-between mb-1.5">
@@ -1656,11 +1656,11 @@ function connPath(i: number): string {
 }
 
 function connStroke(from: BlockStatus, to: BlockStatus): string {
-  if (from === 'complete' && to === 'complete') return 'rgba(16,185,129,0.55)';
-  if (from === 'complete' && to === 'active')   return '#3B82F6';
-  if (from === 'complete')                      return 'rgba(16,185,129,0.45)';
-  if (from === 'active')                        return '#3B82F6';
-  return '#BFD3FF';
+  if (from === 'complete' && to === 'complete') return 'rgba(16,185,129,0.8)';
+  if (from === 'complete' && to === 'active')   return '#10B981';
+  if (from === 'complete')                      return 'rgba(16,185,129,0.7)';
+  if (from === 'active')                        return '#2563EB';
+  return '#CBD5E8';
 }
 
 function connDash(from: BlockStatus): string {
@@ -1686,10 +1686,13 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
       style={{
         width: CARD_W,
         height: CARD_H,
-        ...(active ? {
-          transform: 'scale(1.04)',
-          boxShadow: '0 8px 20px rgba(59,130,246,0.15)',
-        } : {}),
+        ...(active
+          ? {
+              transform: 'scale(1.04)',
+              boxShadow: '0 6px 20px rgba(37,99,235,0.15)',
+              borderWidth: 2,
+            }
+          : {}),
       }}
       className={cn(
         'group relative text-left rounded-lg overflow-hidden p-4 flex flex-col',
@@ -1698,12 +1701,12 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
         locked && 'cursor-default opacity-[0.28] bg-[var(--ll-bg-subtle)] border-slate-100 saturate-[0.3]',
         !locked && 'cursor-pointer',
         active && [
-          'bg-[var(--ll-bg-elevated)] border-blue-500',
-          'hover:bg-[var(--ll-bg-tinted)] hover:border-blue-500',
+          'bg-white border-[var(--ll-accent)]',
+          'hover:bg-[var(--ll-bg-tinted)]',
         ],
         complete && [
-          'bg-emerald-500/[0.05] border-emerald-400/35',
-          'hover:border-emerald-400/50',
+          'bg-[var(--ll-success-soft)] border-[var(--ll-success)]',
+          'hover:brightness-[0.98]',
         ],
         !locked && !active && !complete && [
           'bg-[var(--ll-bg-elevated)] border-[var(--ll-border)]',
@@ -1718,13 +1721,13 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
             'font-mono text-[13px] font-extrabold tabular-nums tracking-[0.14em]',
             locked && 'text-slate-500',
             active && 'text-blue-600',
-            complete && 'text-emerald-600',
+            complete && 'text-emerald-700',
             !locked && !active && !complete && 'text-slate-500',
           )}
         >
           {n}
         </span>
-        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-600" />}
+        {complete && <CheckCircle2 size={15} strokeWidth={2.5} className="text-emerald-700" />}
         {locked && <Lock size={11} className="text-slate-500" />}
       </div>
 
@@ -1734,7 +1737,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
           'text-[15px] font-semibold leading-snug mb-1 tracking-[-0.01em]',
           locked && 'text-slate-500',
           active && 'text-slate-900',
-          complete && 'text-slate-800',
+          complete && 'text-emerald-900',
           !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900',
         )}
         style={SG}
@@ -1748,7 +1751,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
           'text-[12.5px] leading-relaxed line-clamp-2',
           locked && 'text-slate-500',
           active && 'text-slate-600',
-          complete && 'text-slate-500',
+          complete && 'text-emerald-800/80',
           !locked && !active && !complete && 'text-slate-600',
         )}
       >
@@ -1762,7 +1765,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
             'mt-auto pt-3 flex items-center gap-4 text-[11.5px] font-medium tabular-nums',
             'border-t',
             active && 'border-blue-200',
-            complete && 'border-emerald-200',
+            complete && 'border-emerald-500/40',
             !active && !complete && 'border-slate-200',
           )}
         >
@@ -1770,7 +1773,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
             className={cn(
               'flex items-center gap-1.5',
               active && 'text-blue-700',
-              complete && 'text-slate-600',
+              complete && 'text-emerald-800',
               !active && !complete && 'text-slate-600',
             )}
           >
@@ -1781,7 +1784,7 @@ function BlockCard({ block, onOpen }: { block: BlockWithStatus & { type: 'lesson
             className={cn(
               'flex items-center gap-1.5',
               active && 'text-blue-700',
-              complete && 'text-slate-600',
+              complete && 'text-emerald-800',
               !active && !complete && 'text-slate-600',
             )}
           >
@@ -1830,8 +1833,8 @@ function PracticeCard({ step, blockStatus, onOpen }: {
           'ring-1 ring-amber-400/20',
         ],
         complete && [
-          'bg-emerald-500/[0.05] border-emerald-400/35',
-          'hover:border-emerald-400/50',
+          'bg-[var(--ll-success-soft)] border-[var(--ll-success)]',
+          'hover:brightness-[0.98]',
         ],
         !locked && !active && !complete && [
           'bg-[var(--ll-bg-elevated)] border-amber-400/[0.15]',
@@ -1847,7 +1850,7 @@ function PracticeCard({ step, blockStatus, onOpen }: {
           className={cn(
             locked && 'text-slate-500',
             active && 'text-amber-600',
-            complete && 'text-emerald-600',
+            complete && 'text-emerald-700',
             !locked && !active && !complete && 'text-amber-600',
           )}
         />
@@ -1856,14 +1859,14 @@ function PracticeCard({ step, blockStatus, onOpen }: {
             'text-[13.5px] font-semibold leading-snug truncate',
             locked && 'text-slate-500',
             active && 'text-slate-900',
-            complete && 'text-slate-800',
+            complete && 'text-emerald-900',
             !locked && !active && !complete && 'text-slate-900 group-hover:text-slate-900',
           )}
           style={SG}
         >
           {step.title}
         </p>
-        {complete && <CheckCircle2 size={12} strokeWidth={2.5} className="text-emerald-600 shrink-0 ml-auto" />}
+        {complete && <CheckCircle2 size={12} strokeWidth={2.5} className="text-emerald-700 shrink-0 ml-auto" />}
         {locked && <Lock size={10} className="text-slate-500 shrink-0 ml-auto" />}
       </div>
       {/* Difficulty pill + group label */}
@@ -1951,20 +1954,28 @@ function PathView({
         }
       />
 
-      {/* Zigzag roadmap */}
-      <div className="flex justify-center">
-        <div className="relative" style={{ width: CONTAINER_W, height: totalHeight }}>
+      {/* Zigzag roadmap — wrapped in a white "main path" surface */}
+      <div
+        className="rounded-2xl border py-10"
+        style={{
+          background: 'var(--ll-bg-card)',
+          borderColor: 'var(--ll-border)',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
+        }}
+      >
+        <div className="flex justify-center">
+          <div className="relative" style={{ width: CONTAINER_W, height: totalHeight }}>
           <svg style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }} width={CONTAINER_W} height={totalHeight}>
             {blocks.slice(0, -1).map((block, i) => (
               <path
                 key={block.id}
                 d={varConnPath(i)}
                 stroke={connStroke(block.blockStatus, blocks[i + 1].blockStatus)}
-                strokeWidth={3}
+                strokeWidth={2.5}
                 strokeDasharray={connDash(block.blockStatus)}
                 strokeLinecap="round"
                 fill="none"
-                style={{ filter: block.blockStatus === 'complete' ? 'drop-shadow(0 0 3px rgba(16,185,129,0.2))' : undefined }}
+                style={{ filter: block.blockStatus === 'complete' ? 'drop-shadow(0 0 3px rgba(16,185,129,0.25))' : undefined }}
               />
             ))}
           </svg>
@@ -1993,6 +2004,7 @@ function PathView({
               </div>
             );
           })}
+          </div>
         </div>
       </div>
 
@@ -3684,13 +3696,19 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
             'bottom-6 right-6 h-14 px-8 w-auto',
             'lg:bottom-4 lg:right-4 lg:h-16 lg:w-[272px] lg:px-6',
             'rounded-xl text-[15px] lg:text-[16px] font-semibold text-white tracking-[-0.005em]',
-            isPractice(nextBlock)
-              ? 'bg-amber-500 hover:bg-amber-400 border border-amber-400/60 shadow-[0_10px_30px_-10px_rgba(251,191,36,0.7),0_0_0_1px_rgba(251,191,36,0.35)]'
-              : 'bg-blue-600 hover:bg-blue-500 border border-blue-500/60 shadow-[0_14px_38px_-10px_rgba(37,99,235,0.75),0_4px_14px_-4px_rgba(37,99,235,0.4),0_0_0_1px_rgba(96,165,250,0.35)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950',
-            'transition-colors',
+            'transition-all hover:-translate-y-0.5',
+            isPractice(nextBlock) ? 'border border-amber-400/60' : 'border border-blue-500/40',
           )}
-          style={SG}
+          style={{
+            ...SG,
+            background: isPractice(nextBlock)
+              ? 'linear-gradient(135deg, #F59E0B, #D97706)'
+              : 'linear-gradient(135deg, #2563EB, #1D4ED8)',
+            boxShadow: isPractice(nextBlock)
+              ? '0 10px 25px rgba(251,191,36,0.45)'
+              : '0 10px 25px rgba(37,99,235,0.35)',
+          }}
         >
           {isPractice(nextBlock) ? 'Solve problem' : 'Next lesson'}
           <ArrowRight size={16} strokeWidth={2.5} />
