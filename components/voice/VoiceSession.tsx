@@ -15,6 +15,7 @@ import type { BeforeMount } from '@monaco-editor/react';
 import type { ProblemContent } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import AppNav from '@/components/AppNav';
+import MainSurface from '@/components/shell/MainSurface';
 import ThemeToggle from '@/components/ThemeToggle';
 import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
 import { getVoiceQuota } from '@/app/interview/actions';
@@ -1632,10 +1633,10 @@ function IntroPhase({
         : 'rgba(148,163,184,0.6)';
 
   return (
-    <div className="interview-surfaces min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--ll-bg)' }}>
       <AppNav activeTab="Interview" />
       <div className="flex-1 flex items-center justify-center p-8" style={{ paddingTop: 48 }}>
-        <div className="max-w-md w-full space-y-6">
+        <MainSurface className="max-w-md w-full p-8 space-y-6">
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-slate-500 font-semibold" style={SG}>
               Voice Mock Interview
@@ -1759,7 +1760,7 @@ function IntroPhase({
                 ? 'You\u2019ll hear a short intro, then your problem will appear.'
                 : 'Enable your mic to continue.'}
           </p>
-        </div>
+        </MainSurface>
       </div>
     </div>
   );
