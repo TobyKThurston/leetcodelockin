@@ -67,9 +67,9 @@ const MONO: React.CSSProperties = { fontFamily: 'var(--font-geist-mono), ui-mono
 
 // Matches /solve (ProblemPage) so difficulty badges read identically.
 const DIFF_STYLE: Record<string, React.CSSProperties> = {
-  Easy:   { color: 'var(--ll-success-ink)', border: '1px solid rgba(52,211,153,0.2)',  background: 'rgba(16,185,129,0.07)' },
-  Medium: { color: 'var(--ll-warning-ink)', border: '1px solid rgba(251,191,36,0.2)',  background: 'rgba(245,158,11,0.07)' },
-  Hard:   { color: 'var(--ll-danger-ink)',  border: '1px solid rgba(248,113,113,0.2)', background: 'rgba(239,68,68,0.07)' },
+  Easy:   { color: 'var(--ll-success-ink)', border: '1px solid rgba(16,185,129,0.45)', background: 'rgba(16,185,129,0.18)', fontWeight: 600 },
+  Medium: { color: 'var(--ll-warning-ink)', border: '1px solid rgba(245,158,11,0.45)', background: 'rgba(245,158,11,0.18)', fontWeight: 600 },
+  Hard:   { color: 'var(--ll-danger-ink)',  border: '1px solid rgba(239,68,68,0.45)',  background: 'rgba(239,68,68,0.18)',  fontWeight: 600 },
 };
 
 // ─── Monaco theme ───────────────────────────────────────────────────────────
@@ -88,9 +88,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#e6eef9',
+      'editor.background':                  '#d4e0f2',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#d6e0ee',
+      'editor.lineHighlightBackground':     '#bccee9',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',
@@ -262,7 +262,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
   const monacoTheme = appTheme === 'dark' ? 'lc-dark' : 'lc-light';
   // Match the editor frame to Monaco's literal hex so there's no flicker when
   // the editor remounts on theme change.
-  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#e6eef9';
+  const editorFrameBg = appTheme === 'dark' ? '#0f1729' : '#d4e0f2';
   const deadlineMs = startedAt + INTERVIEW_DURATION_MS;
 
   const [showExitConfirm, setShowExitConfirm] = useState(false);

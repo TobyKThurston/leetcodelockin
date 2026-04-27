@@ -134,11 +134,12 @@ const STATUS_STYLE: Record<RunStatus, { label: string; color: string; bg: string
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-// Matched to dashboard's emerald completion / amber medium / red hard palette
+// Matched to dashboard's emerald completion / amber medium / red hard palette.
+// Backgrounds are bumped up so the label reads against the bluer light surface.
 const DIFF_STYLE: Record<string, React.CSSProperties> = {
-  Easy:   { color: 'var(--ll-success-ink)',  border: '1px solid rgba(52,211,153,0.2)',   background: 'rgba(16,185,129,0.07)'  },
-  Medium: { color: 'var(--ll-warning-ink)',  border: '1px solid rgba(251,191,36,0.2)',   background: 'rgba(245,158,11,0.07)'  },
-  Hard:   { color: 'var(--ll-danger-ink)', border: '1px solid rgba(248,113,113,0.2)',  background: 'rgba(239,68,68,0.07)'   },
+  Easy:   { color: 'var(--ll-success-ink)', border: '1px solid rgba(16,185,129,0.45)',  background: 'rgba(16,185,129,0.18)', fontWeight: 600 },
+  Medium: { color: 'var(--ll-warning-ink)', border: '1px solid rgba(245,158,11,0.45)',  background: 'rgba(245,158,11,0.18)', fontWeight: 600 },
+  Hard:   { color: 'var(--ll-danger-ink)',  border: '1px solid rgba(239,68,68,0.45)',   background: 'rgba(239,68,68,0.18)',  fontWeight: 600 },
 };
 
 const DIFF_LABEL_COLOR: Record<string, string> = {
@@ -834,9 +835,9 @@ const defineTheme: BeforeMount = (monaco) => {
       { token: 'function', foreground: '8250df' },
     ],
     colors: {
-      'editor.background':                  '#d3deef',
+      'editor.background':                  '#bccee9',
       'editor.foreground':                  '#0f172a',
-      'editor.lineHighlightBackground':     '#c2d1e8',
+      'editor.lineHighlightBackground':     '#a6bedf',
       'editor.lineHighlightBorder':         '#00000000',
       'editor.selectionBackground':         '#3b82f640',
       'editor.inactiveSelectionBackground': '#94a3b81a',

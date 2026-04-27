@@ -135,14 +135,14 @@ html, body {
   /*            └ elevated  (hero/active surface — also white)              */
   /*                                                                        */
   /*  Rule: blue = environment, white = interactive objects                 */
-  --ll-bg:           #e3ebf8;   /* app canvas — clear light blue */
-  --ll-bg-panel:     #d3deef;   /* sidebar / rail panels — bluer chrome */
-  --ll-bg-card:      #f1f5fc;   /* regular card surface — soft tinted blue */
-  --ll-bg-elevated:  #f1f5fc;   /* hero / active surface */
-  --ll-bg-subtle:    #c2d1e8;   /* sunken strip / inputs / chrome bars */
-  --ll-bg-hover:     #dbe5f4;   /* hover on card/button */
-  --ll-bg-tinted:    #cedcef;   /* selected card highlight */
-  --ll-bg-code:      #d3deef;   /* coding panel workspace */
+  --ll-bg:           #d3e1f3;   /* app canvas — clearly light blue */
+  --ll-bg-panel:     #bccee9;   /* sidebar / rail panels — bluer chrome */
+  --ll-bg-card:      #e6eef9;   /* regular card surface — light blue */
+  --ll-bg-elevated:  #e6eef9;   /* hero / active surface */
+  --ll-bg-subtle:    #a6bedf;   /* sunken strip / inputs / chrome bars */
+  --ll-bg-hover:     #cddcf0;   /* hover on card/button */
+  --ll-bg-tinted:    #b9cce8;   /* selected card highlight */
+  --ll-bg-code:      #bccee9;   /* coding panel workspace */
 
   /* Ink */
   --ll-ink:          #0f172a;   /* body text */
@@ -190,8 +190,8 @@ html, body {
   --ll-shadow-lg:  0 18px 40px -12px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.04);
 
   /* Translucent surfaces — subtle nav tint, not a dark fog */
-  --ll-nav-bg:   rgba(211,222,239,0.94);
-  --ll-glass-bg: rgba(218,229,244,0.85);
+  --ll-nav-bg:   rgba(188,206,233,0.95);
+  --ll-glass-bg: rgba(205,220,240,0.88);
 }
 
 /* Dark theme — same blue-tinted palette as before, but applied with the
@@ -275,21 +275,21 @@ html, body {
    (silent active interview, voice session, debriefs, the /interview page). */
 .theme-light .interview-surfaces,
 .theme-light.interview-surfaces {
-  --ll-bg:           #d2deef;
-  --ll-bg-panel:     #bccce5;
-  --ll-bg-card:      #e6eef9;
-  --ll-bg-elevated:  #e6eef9;
-  --ll-bg-subtle:    #aac0dd;
-  --ll-bg-hover:     #d6e3f4;
-  --ll-bg-tinted:    #c3d3eb;
-  --ll-bg-code:      #bccce5;
+  --ll-bg:           #becfea;
+  --ll-bg-panel:     #a3bbdd;
+  --ll-bg-card:      #d4e0f2;
+  --ll-bg-elevated:  #d4e0f2;
+  --ll-bg-subtle:    #8dabd2;
+  --ll-bg-hover:     #c0d3ec;
+  --ll-bg-tinted:    #a8c0de;
+  --ll-bg-code:      #a3bbdd;
 
-  --ll-border:         #97aac9;
-  --ll-border-strong:  #7d93b8;
-  --ll-border-subtle:  #b6c5dd;
+  --ll-border:         #7891b8;
+  --ll-border-strong:  #607ca7;
+  --ll-border-subtle:  #9bb1d1;
 
-  --ll-nav-bg:   rgba(188,204,229,0.95);
-  --ll-glass-bg: rgba(188,204,229,0.85);
+  --ll-nav-bg:   rgba(163,187,221,0.95);
+  --ll-glass-bg: rgba(163,187,221,0.88);
 }
 
 /* Soft Stripe-style radial mesh for app canvases — same family as landing
