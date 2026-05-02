@@ -124,55 +124,152 @@ function TwoPointersViz() {
 }
 
 function HashMapViz() {
-  // Each row becomes visible when scroll progress crosses its threshold.
-  const entries: { k: string; v: string; t: number }[] = [
-    { k: "'apple'",  v: '3', t: 0.05 },
-    { k: "'banana'", v: '1', t: 0.25 },
-    { k: "'cherry'", v: '5', t: 0.45 },
-    { k: "'date'",   v: '2', t: 0.65 },
+  // Keys on the left hash to specific bucket indices on the right.
+  // Animation order per entry: key fades in → connector draws → bucket pops.
+  type Entry = { k: string; v: string; idx: number; t: number };
+  const entries: Entry[] = [
+    { k: "'apple'",  v: '3', idx: 3, t: 0.05 },
+    { k: "'banana'", v: '1', idx: 1, t: 0.22 },
+    { k: "'cherry'", v: '5', idx: 5, t: 0.40 },
+    { k: "'date'",   v: '2', idx: 2, t: 0.58 },
   ];
+
+  const BUCKETS = 6;
+  const ROW_H = 32;
+  const ROW_GAP = 8;
+  const KEY_W = 96;
+  const SVG_W = 72;
+  const COL_GAP = 16;
+  const BUCKET_W = 132;
+
+  const keysH = entries.length * ROW_H + (entries.length - 1) * ROW_GAP;
+  const bucketsH = BUCKETS * ROW_H + (BUCKETS - 1) * ROW_GAP;
+  const containerH = Math.max(keysH, bucketsH);
+  const keysOffset = (containerH - keysH) / 2;
+
+  const keyCenterY = (i: number) => keysOffset + i * (ROW_H + ROW_GAP) + ROW_H / 2;
+  const bucketCenterY = (i: number) => i * (ROW_H + ROW_GAP) + ROW_H / 2;
+
+  const totalW = KEY_W + COL_GAP + SVG_W + COL_GAP + BUCKET_W;
+
+  const reveal = (start: number, ramp = 10) =>
+    `clamp(0, calc((var(--progress, 0) - ${start}) * ${ramp}), 1)`;
+
   return (
     <div className="inline-block animate-viz-enter">
-      <div className="flex flex-col gap-2">
-        {entries.map((e) => (
-          <div
-            key={e.k}
-            className="flex items-center gap-2 font-mono text-sm"
-            style={
-              {
-                '--row-threshold': String(e.t),
-                opacity:
-                  'clamp(0, calc((var(--progress, 0) - var(--row-threshold, 0)) * 7), 1)',
-                willChange: 'opacity',
-              } as CSSProperties
-            }
-          >
-            <div
-              className="px-3 py-1.5 rounded-md text-right"
-              style={{
-                color: 'var(--ll-ink)',
-                background: 'var(--ll-bg-elevated)',
-                border: '1px solid var(--ll-border)',
-                width: '104px',
-              }}
-            >
-              {e.k}
-            </div>
-            <span style={{ color: 'var(--ll-accent)' }}>→</span>
-            <div
-              className="px-3 py-1.5 rounded-md text-center"
-              style={{
-                color: 'var(--ll-accent)',
-                background: 'rgba(59,130,246,0.10)',
-                border: '1px solid rgba(59,130,246,0.40)',
-                width: '44px',
-              }}
-            >
-              {e.v}
-            </div>
+      <div className="relative" style={{ width: totalW, height: containerH }}>
+        {/* Keys column */}
+        <div
+          className="absolute left-0"
+          style={{ top: keysOffset, width: KEY_W }}
+        >
+          <div className="flex flex-col" style={{ gap: ROW_GAP }}>
+            {entries.map((e) => (
+              <div
+                key={e.k}
+                className="font-mono text-sm rounded-md flex items-center justify-end pr-3"
+                style={
+                  {
+                    height: ROW_H,
+                    color: 'var(--ll-ink)',
+                    background: 'var(--ll-bg-elevated)',
+                    border: '1px solid var(--ll-border)',
+                    '--reveal': reveal(e.t, 14),
+                    opacity: 'var(--reveal)',
+                    transform: 'translateX(calc((1 - var(--reveal)) * -8px))',
+                    willChange: 'opacity, transform',
+                  } as CSSProperties
+                }
+              >
+                {e.k}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* Connectors */}
+        <svg
+          className="absolute pointer-events-none"
+          style={{ left: KEY_W + COL_GAP, top: 0, width: SVG_W, height: containerH, overflow: 'visible' }}
+          viewBox={`0 0 ${SVG_W} ${containerH}`}
+        >
+          {entries.map((e, i) => {
+            const y1 = keyCenterY(i);
+            const y2 = bucketCenterY(e.idx);
+            const cx = SVG_W * 0.55;
+            const d = `M 0 ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${SVG_W} ${y2}`;
+            return (
+              <path
+                key={e.k}
+                d={d}
+                fill="none"
+                stroke="var(--ll-accent)"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                pathLength={1}
+                style={
+                  {
+                    strokeDasharray: 1,
+                    strokeDashoffset: `calc(1 - ${reveal(e.t + 0.04, 10)})`,
+                    opacity: 0.55,
+                  } as CSSProperties
+                }
+              />
+            );
+          })}
+        </svg>
+
+        {/* Buckets column */}
+        <div
+          className="absolute"
+          style={{ left: KEY_W + COL_GAP + SVG_W + COL_GAP, top: 0, width: BUCKET_W }}
+        >
+          <div className="flex flex-col" style={{ gap: ROW_GAP }}>
+            {Array.from({ length: BUCKETS }).map((_, i) => {
+              const entry = entries.find((e) => e.idx === i);
+              return (
+                <div key={i} className="flex items-center gap-2" style={{ height: ROW_H }}>
+                  <span
+                    className="font-mono text-[11px] tabular-nums"
+                    style={{ color: 'var(--ll-ink-subtle)', width: 22 }}
+                  >
+                    [{i}]
+                  </span>
+                  <div
+                    className="flex-1 rounded-md flex items-center justify-center font-mono text-[13px]"
+                    style={
+                      entry
+                        ? ({
+                            height: ROW_H,
+                            color: 'var(--ll-accent)',
+                            background: 'rgba(59,130,246,0.10)',
+                            border: '1px solid rgba(59,130,246,0.40)',
+                            '--reveal': reveal(entry.t + 0.10, 14),
+                            opacity: 'calc(0.35 + 0.65 * var(--reveal))',
+                            transform: 'scale(calc(0.92 + 0.08 * var(--reveal)))',
+                            willChange: 'opacity, transform',
+                          } as CSSProperties)
+                        : {
+                            height: ROW_H,
+                            border: '1px dashed var(--ll-border)',
+                            background: 'transparent',
+                            opacity: 0.5,
+                          }
+                    }
+                  >
+                    {entry && (
+                      <span>
+                        {entry.k}: {entry.v}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
+
       <p className="mt-4 text-[10px] uppercase tracking-[0.18em] font-mono" style={{ color: 'var(--ll-ink-subtle)' }}>
         Hash map
       </p>

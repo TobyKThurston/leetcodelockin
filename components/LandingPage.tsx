@@ -5,6 +5,7 @@ import NavBar from './NavBar';
 import ProductDemo from './ProductDemo';
 import UsageShowcase from './UsageShowcase';
 import HowItWorks from './HowItWorks';
+import Comparison from './Comparison';
 import Pricing from './Pricing';
 import FinalCTA from './FinalCTA';
 import FAQ from './FAQ';
@@ -119,8 +120,9 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <ProductDemo />
-        <UsageShowcase />
         <HowItWorks />
+        <UsageShowcase />
+        <Comparison />
         <Pricing />
         <FinalCTA />
         <FAQ />

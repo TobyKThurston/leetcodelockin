@@ -28,16 +28,17 @@ const C = {
   number: '#fb923c',
   comment: '#475569',
   punctuation: '#94a3b8',
+  operator: '#e2e8f0',
 };
 
 function HighlightedLine({ text }: { text: string }) {
-  // Tokenize: comments, strings, numbers, identifiers, punctuation, whitespace, other
-  const pattern = /(#[^\n]*)|('(?:[^'\\]|\\.)*'?|"(?:[^"\\]|\\.)*"?)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b)|(\s+)|([(){}\[\],:.])|(\S)/g;
+  // Tokenize: comments, strings, numbers, identifiers, whitespace, punctuation, operators, other
+  const pattern = /(#[^\n]*)|('(?:[^'\\]|\\.)*'?|"(?:[^"\\]|\\.)*"?)|(\b\d+(?:\.\d+)?\b)|(\b[a-zA-Z_][a-zA-Z0-9_]*\b)|(\s+)|([(){}\[\],:.])|([=+\-*/%<>!&|^~]+)|(\S)/g;
   const parts: React.ReactNode[] = [];
   let match: RegExpExecArray | null;
   let key = 0;
   while ((match = pattern.exec(text)) !== null) {
-    const [, comment, string, number, ident, ws, punct, other] = match;
+    const [, comment, string, number, ident, ws, punct, operator, other] = match;
     if (comment) {
       parts.push(<span key={key++} style={{ color: C.comment }}>{comment}</span>);
     } else if (string) {
@@ -59,8 +60,10 @@ function HighlightedLine({ text }: { text: string }) {
       parts.push(<span key={key++}>{ws}</span>);
     } else if (punct) {
       parts.push(<span key={key++} style={{ color: C.punctuation }}>{punct}</span>);
+    } else if (operator) {
+      parts.push(<span key={key++} style={{ color: C.operator }}>{operator}</span>);
     } else if (other) {
-      parts.push(<span key={key++}>{other}</span>);
+      parts.push(<span key={key++} style={{ color: C.text }}>{other}</span>);
     }
   }
   return <>{parts}</>;
