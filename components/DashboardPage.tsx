@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import { ChevronLeft, BookOpen, Target, CheckCircle2, Lock, ArrowRight, Zap, Flame, Snowflake, AlertTriangle, Trophy, Crown, Shield, Swords, Sparkles, Brain, Star, Medal } from 'lucide-react';
@@ -24,6 +24,7 @@ import ShellSidebar from '@/components/shell/ShellSidebar';
 import ShellRail from '@/components/shell/ShellRail';
 import PageHeader from '@/components/shell/PageHeader';
 import MainSurface from '@/components/shell/MainSurface';
+import SignUpGate from '@/components/SignUpGate';
 import { RailHeader, MetricRow, Metric, RAIL_BOX } from '@/components/shell/RailPrimitives';
 import { C, SG, MONO_FONT } from '@/lib/ui-tokens';
 
@@ -3542,7 +3543,6 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
   heatmapData: HeatmapDay[];
   weaknessSpotlight: WeaknessSpotlight | null;
 }) {
-  const pathname = usePathname();
   const router   = useRouter();
   const [viewingPathId,   setViewingPathId]   = useState(() => {
     if (typeof window !== 'undefined') {
@@ -3735,55 +3735,12 @@ export default function DashboardPage({ initialCompleted, streakData, heatmapDat
         </button>
       )}
 
-      {/* Guest gate overlay */}
-      <AnimatePresence>
-        {showGuestGate && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/40 backdrop-blur-sm"
-            onClick={() => setShowGuestGate(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm mx-4 rounded-xl border p-6 text-center"
-              style={{ background: C.cardBg, borderColor: C.borderMid }}
-            >
-              <Lock size={28} className="mx-auto text-blue-400 mb-3" />
-              <h3
-                className="text-[16px] font-semibold text-slate-900 mb-1.5"
-                style={SG}
-              >
-                Sign in to save progress
-              </h3>
-              <p className="text-[13px] text-slate-600 mb-5" style={SG}>
-                Create a free account to track completed lessons and unlock your full learning path.
-              </p>
-              <div className="flex flex-col gap-2.5">
-                <Link
-                  href={`/sign-in?next=${encodeURIComponent(pathname)}`}
-                  className="inline-flex items-center justify-center h-10 rounded-lg bg-blue-600 text-slate-900 text-[13px] font-semibold hover:bg-blue-500 transition-colors"
-                  style={SG}
-                >
-                  Sign in
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setShowGuestGate(false)}
-                  className="text-[12.5px] text-slate-500 hover:text-slate-700 transition-colors"
-                  style={SG}
-                >
-                  Keep browsing
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <SignUpGate
+        open={showGuestGate}
+        onClose={() => setShowGuestGate(false)}
+        title="Sign up to save progress"
+        description="Create a free account to track completed lessons, build a streak, and unlock your full learning path."
+      />
     </AppShell>
   );
 }

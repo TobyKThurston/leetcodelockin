@@ -386,6 +386,23 @@ export default async function SignInPage({
         >
           Sign in to save progress and unlock your dashboard.
         </p>
+
+        {/* Guest entry — let curious visitors browse without committing. */}
+        <div
+          className="mt-3 text-center"
+          style={{ ...SANS }}
+        >
+          <Link
+            href={`${nextUrl}${nextUrl.includes('?') ? '&' : '?'}guest=1`}
+            className="text-[12.5px] hover:underline"
+            style={{ color: 'var(--ll-ink-muted)' }}
+          >
+            Continue as guest →
+          </Link>
+          <p className="mt-1 text-[10.5px]" style={{ color: 'var(--ll-ink-subtle)' }}>
+            You can sign up later when you want to save progress.
+          </p>
+        </div>
       </div>
     </div>
   );

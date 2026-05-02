@@ -6,6 +6,8 @@ import { Clock, Zap, Mic, MicOff, ArrowRight } from 'lucide-react';
 import type { InterviewDifficulty } from '@/lib/interview';
 import type { VoiceQuotaResult } from '@/lib/voice-quota';
 import VoiceQuotaBadge from '@/components/voice/VoiceQuotaBadge';
+import SignUpGate from '@/components/SignUpGate';
+import { useIsGuest } from '@/lib/use-is-guest';
 
 const SG: React.CSSProperties = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
@@ -47,9 +49,17 @@ export default function SetupScreen({ onStart, loading, voiceQuota }: SetupScree
   const [format, setFormat] = useState<Format>('silent');
   const [selected, setSelected] = useState<InterviewDifficulty>('easy-medium');
   const [duration, setDuration] = useState<Duration>(30);
+  const [showGate, setShowGate] = useState(false);
+  const { ref: isGuestRef } = useIsGuest();
   const voiceCapped = format === 'voice' && !voiceQuota.allowed;
 
   const handleStart = async () => {
+    // Mock interviews are gated for guests — they hit auth-required server
+    // actions and a paid voice quota, so prompt sign-up before kicking off.
+    if (isGuestRef.current) {
+      setShowGate(true);
+      return;
+    }
     if (format === 'voice') {
       // Request mic permission in the click handler so the browser shows the
       // prompt on a fresh user gesture. The destination page re-opens the
@@ -272,6 +282,15 @@ export default function SetupScreen({ onStart, loading, voiceQuota }: SetupScree
           </button>
         </div>
       </div>
+
+      <SignUpGate
+        open={showGate}
+        onClose={() => setShowGate(false)}
+        title="Sign up to start a mock interview"
+        description="Mock interviews track your runs, save AI feedback, and count toward your voice quota. Create a free account to begin."
+        primaryLabel="Create account & start"
+        next="/interview"
+      />
     </div>
   );
 }

@@ -139,6 +139,20 @@ export default function HeroSection() {
             View Roadmap
           </Link>
         </div>
+
+        {/* Guest entry — lets curious visitors skip sign-up. */}
+        <div
+          className="mt-3 animate-fade-up"
+          style={{ animationDelay: '700ms' }}
+        >
+          <Link
+            href="/dashboard?guest=1"
+            className="text-[12.5px] hover:underline"
+            style={{ ...SANS, color: 'var(--ll-ink-muted)' }}
+          >
+            or try it free without signing up →
+          </Link>
+        </div>
       </div>
     </section>
   );

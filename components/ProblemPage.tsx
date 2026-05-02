@@ -18,6 +18,8 @@ import type { ProblemContent, ProblemTest } from '@/lib/problem-types';
 import { runTests, ensureWorker } from '@/lib/pyodide-runner';
 import UpgradePrompt from '@/components/UpgradePrompt';
 import ThemeToggle from '@/components/ThemeToggle';
+import SignUpGate from '@/components/SignUpGate';
+import { useIsGuest } from '@/lib/use-is-guest';
 
 // Observe the body's `theme-dark` / `theme-light` class so components that
 // can't rely on CSS vars (e.g. Monaco, whose colors must be literal hex)
@@ -1906,6 +1908,8 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [acceptedToast, setAcceptedToast] = useState<AcceptedToastState | null>(null);
   const [submitting, setSubmitting]   = useState(false);
   const [solved, setSolved]       = useState(false);
+  const [showGate, setShowGate]   = useState(false);
+  const { ref: isGuestRef } = useIsGuest();
 
   // Fetch whether this problem has already been solved so the editor shows
   // a persistent "Solved" badge across reloads, not just the run-time verdict.
@@ -2194,7 +2198,13 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
             onLangChange={handleLangChange}
             onReset={handleReset}
             onRun={() => execTests(false)}
-            onSubmit={() => execTests(true)}
+            onSubmit={() => {
+              if (isGuestRef.current) {
+                setShowGate(true);
+                return;
+              }
+              execTests(true);
+            }}
             onToggleFullscreen={() =>
               setFullscreen(fs => (fs === 'editor' ? null : 'editor'))
             }
@@ -2231,6 +2241,14 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
           onExpire={() => setAcceptedToast(null)}
         />
       )}
+
+      <SignUpGate
+        open={showGate}
+        onClose={() => setShowGate(false)}
+        title="Sign up to submit"
+        description="Submissions run hidden test cases and save your solution to your dashboard. Create a free account to keep going."
+        primaryLabel="Create account & submit"
+      />
     </div>
   );
 }
