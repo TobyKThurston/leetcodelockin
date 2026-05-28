@@ -50,13 +50,13 @@ export const metadata: Metadata = {
     'spaced repetition coding',
     'DSA practice',
   ],
-  authors: [{ name: siteName }],
-  creator: siteName,
+  authors: [{ name: 'Toby Thurston', url: `${siteUrl}/about` }],
+  creator: 'Toby Thurston',
   publisher: siteName,
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
-    url: siteUrl,
+    url: `${siteUrl}/`,
     siteName,
     title: siteTitle,
     description: siteDescription,
@@ -90,7 +90,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0b1220',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fafbfc' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b1220' },
+  ],
   width: 'device-width',
   initialScale: 1,
 };

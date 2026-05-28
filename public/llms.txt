@@ -1,0 +1,39 @@
+# LeetLockin
+
+> LeetLockin is a pattern-first coding interview preparation platform for software engineers. It teaches LeetCode-style problems through a structured curriculum, an AI Socratic tutor that gives progressive hints rather than answers, spaced repetition review, and AI-powered voice mock interviews.
+
+## Product
+
+- Homepage: https://leetlockin.com/
+- Pricing: https://leetlockin.com/pricing
+- Privacy: https://leetlockin.com/privacy
+- Terms: https://leetlockin.com/terms
+- Security: https://leetlockin.com/security
+
+## What LeetLockin Is
+
+LeetLockin is a structured curriculum, not a problem bank. It teaches the transferable patterns behind coding interview questions — Two Pointers, Sliding Window, Prefix Sum, Binary Search, Hashing, Stacks, BFS, DFS and Backtracking, Trees, Heaps, and Dynamic Programming — before presenting problems. The platform includes 200+ Python problems organized into 4 learning paths and 37 curriculum blocks, an AI tutor that gives progressive Socratic hints rather than solutions, spaced repetition flashcards generated from solved problems, and AI-powered voice mock interviews with a post-session debrief.
+
+## Curriculum Paths
+
+1. Python Foundations — variables, control flow, functions, lists, dictionaries, sets, comprehensions.
+2. Core Data Structures — arrays, hash maps, stacks, queues, linked lists, trees, graphs.
+3. Pattern Library — Two Pointers, Sliding Window, Prefix Sum, Binary Search, Hashing, Stack patterns, BFS, DFS and Backtracking, Tree patterns, Heap patterns, Dynamic Programming.
+4. Interview Ready — timed problem solving, communication, clean code, mock interviews.
+
+## Pricing
+
+- Free plan ($0): full curriculum, all 200+ problems, in-browser Python execution, progress tracking, and 5 AI tutor messages per week. No credit card required.
+- Pro plan: monthly or yearly billing in USD via Stripe. Includes unlimited AI tutoring, voice mock interviews, spaced-repetition flashcards, and streak freezes. Cancel anytime.
+
+## Target Audience
+
+Software engineers preparing for technical coding interviews at top technology companies, including FAANG-style interview loops. Also suitable for Python beginners — Path 1 covers Python fundamentals before any algorithms.
+
+## Differentiator
+
+Unlike a problem bank, LeetLockin is a curriculum: problems are grouped by pattern and unlocked progressively. The AI tutor gives a broad nudge first, then a technique pointer, then concrete mechanics — it does not hand the user the answer. Hints are designed to close knowledge gaps without short-circuiting learning.
+
+## Operator
+
+Built and operated by Toby Thurston, an independent developer. Contact: support@leetlockin.com.

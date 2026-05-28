@@ -7,6 +7,10 @@ import { getWeaknessSpotlight } from '@/lib/weaknesses';
 import { getSupabaseUser } from '@/lib/supabase';
 import { hasCompletedOnboarding } from '@/lib/onboarding';
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function Page() {
   // Guest users bypass onboarding entirely.
   const cookieStore = await cookies();

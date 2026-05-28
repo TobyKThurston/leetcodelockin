@@ -34,7 +34,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-1.5">
-              <Image src="/logo.png" alt="" width={20} height={20} className="rounded-[4px]" />
+              <Image src="/logo.png" alt="LeetLockin" width={20} height={20} className="rounded-[4px]" />
               <span
                 className="text-base font-bold tracking-tight"
                 style={{ color: 'var(--ll-ink)', fontFamily: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif', letterSpacing: '-0.02em' }}
@@ -46,11 +46,11 @@ export function Footer() {
               Interview prep for engineers who take it seriously. Pattern-first. Hint-guided. Built to compound.
             </p>
             <a
-              href="mailto:tobykthurston@gmail.com"
+              href="mailto:support@leetlockin.com"
               className="block text-[12px] transition-colors hover:text-[var(--ll-ink)]"
               style={{ color: 'var(--ll-ink-muted)' }}
             >
-              tobykthurston@gmail.com
+              support@leetlockin.com
             </a>
           </div>
 
@@ -66,9 +66,8 @@ export function Footer() {
           <div className="space-y-4">
             <p className="text-[10px] font-semibold tracking-[0.18em] uppercase" style={{ color: 'var(--ll-ink-subtle)' }}>Company</p>
             <nav className="flex flex-col gap-3">
-              <a href="mailto:tobykthurston@gmail.com" className="text-[13px] transition-colors hover:text-[var(--ll-ink)]" style={{ color: 'var(--ll-ink-muted)' }}>Contact</a>
-              <a href="mailto:press@leetlockin.com" className="text-[13px] transition-colors hover:text-[var(--ll-ink)]" style={{ color: 'var(--ll-ink-muted)' }}>Press</a>
-              <a href="mailto:careers@leetlockin.com" className="text-[13px] transition-colors hover:text-[var(--ll-ink)]" style={{ color: 'var(--ll-ink-muted)' }}>Careers</a>
+              <Link href="/about" className="text-[13px] transition-colors hover:text-[var(--ll-ink)]" style={{ color: 'var(--ll-ink-muted)' }}>About</Link>
+              <a href="mailto:support@leetlockin.com" className="text-[13px] transition-colors hover:text-[var(--ll-ink)]" style={{ color: 'var(--ll-ink-muted)' }}>Contact</a>
             </nav>
           </div>
 

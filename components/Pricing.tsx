@@ -5,6 +5,7 @@ import posthog from 'posthog-js';
 import { Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   MONTHLY_PRICE_LABEL,
   YEARLY_PER_MONTH_LABEL,
@@ -150,63 +151,34 @@ export default function Pricing() {
 
 function CycleToggle({ value, onChange }: { value: Cycle; onChange: (v: Cycle) => void }) {
   return (
-    <div
-      role="radiogroup"
+    <Tabs
+      value={value}
+      onValueChange={(v) => onChange(v as Cycle)}
       aria-label="Billing cycle"
-      className="relative inline-flex items-center p-1 rounded-full"
-      style={{ background: 'var(--ll-bg-subtle)', border: '1px solid var(--ll-border)' }}
     >
-      <motion.div
-        className="absolute top-1 bottom-1 rounded-full"
-        style={{
-          background: 'var(--ll-bg-elevated)',
-          boxShadow: '0 1px 2px rgba(15,23,42,0.06), 0 4px 12px -6px rgba(15,23,42,0.10)',
-          border: '1px solid var(--ll-border)',
-        }}
-        animate={{
-          left: value === 'monthly' ? 4 : '50%',
-          right: value === 'yearly' ? 4 : '50%',
-        }}
-        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-      />
-      <ToggleButton selected={value === 'monthly'} onClick={() => onChange('monthly')}>
-        Monthly
-      </ToggleButton>
-      <ToggleButton selected={value === 'yearly'} onClick={() => onChange('yearly')}>
-        Yearly
-        <span
-          className="ml-1.5 text-[10px] font-semibold"
-          style={{ color: value === 'yearly' ? 'var(--ll-accent)' : 'var(--ll-ink-subtle)' }}
+      <TabsList
+        className="h-11 rounded-full p-1 gap-1 bg-[var(--ll-bg-subtle)] border border-[var(--ll-border)]"
+      >
+        <TabsTrigger
+          value="monthly"
+          className="h-9 px-5 rounded-full text-[13px] font-medium text-[var(--ll-ink-muted)] border-transparent data-active:bg-[var(--ll-bg-elevated)] data-active:text-[var(--ll-ink)] data-active:shadow-sm hover:text-[var(--ll-ink)]"
         >
-          −{YEARLY_SAVINGS_PCT_LABEL}
-        </span>
-      </ToggleButton>
-    </div>
-  );
-}
-
-function ToggleButton({
-  selected,
-  onClick,
-  children,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={selected}
-      onClick={onClick}
-      className="relative z-10 px-5 h-9 text-[13px] font-medium rounded-full transition-colors duration-200"
-      style={{
-        color: selected ? 'var(--ll-ink)' : 'var(--ll-ink-muted)',
-      }}
-    >
-      {children}
-    </button>
+          Monthly
+        </TabsTrigger>
+        <TabsTrigger
+          value="yearly"
+          className="h-9 px-5 rounded-full text-[13px] font-medium text-[var(--ll-ink-muted)] border-transparent data-active:bg-[var(--ll-bg-elevated)] data-active:text-[var(--ll-ink)] data-active:shadow-sm hover:text-[var(--ll-ink)]"
+        >
+          Yearly
+          <span
+            className="ml-1 text-[10px] font-semibold"
+            style={{ color: value === 'yearly' ? 'var(--ll-accent)' : 'var(--ll-ink-subtle)' }}
+          >
+            −{YEARLY_SAVINGS_PCT_LABEL}
+          </span>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }
 

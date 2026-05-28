@@ -94,7 +94,7 @@ export default function PrivacyPage() {
         <section className="mt-10">
           <h2 className="text-lg font-semibold mb-3" style={{ color: 'var(--ll-ink)' }}>5. Cookies and Local Storage</h2>
           <p className="text-[14px] leading-relaxed" style={{ color: 'var(--ll-ink-muted)' }}>
-            We use cookies for authentication and session management. We also use browser local storage to save your curriculum progress and preferences. You can clear local storage through your browser settings, though this will reset your locally-stored progress.
+            We use cookies for authentication and session management. Curriculum progress and account preferences are stored server-side in our Supabase database, tied to your account. We may use limited browser local storage for non-essential UI state (such as theme or last-viewed tab); clearing it will not affect your saved progress.
           </p>
         </section>
 

@@ -14,6 +14,10 @@ import ProfileForm from './ProfileForm';
 import SettingsNav from './SettingsNav';
 import SubscriptionCard from '@/components/SubscriptionCard';
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 const SG = { fontFamily: 'var(--font-space-grotesk), sans-serif' };
 
 export default async function SettingsPage() {

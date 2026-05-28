@@ -94,6 +94,15 @@ export default function HeroSection() {
           Stop memorizing solutions. Learn how to think through every problem, pattern by pattern.
         </p>
 
+        {/* Founder note — TODO: rewrite in your own voice */}
+        <p
+          className="mt-3 max-w-xl mx-auto text-[13.5px] leading-relaxed text-balance animate-fade-up"
+          style={{ ...SANS, color: 'var(--ll-ink-subtle)', animationDelay: '500ms' }}
+        >
+          I built LeetLockin after watching strong engineers freeze in interviews — not because they
+          could not code, but because nobody had taught them the small set of patterns underneath.
+        </p>
+
         {/* CTAs */}
         <div
           className="mt-7 flex flex-wrap items-center justify-center gap-3 animate-fade-up"

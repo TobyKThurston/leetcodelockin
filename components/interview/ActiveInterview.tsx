@@ -421,7 +421,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
 
   return (
     <div className="flex flex-col" style={{ height: '100vh', background: BG_BASE, overflow: 'hidden' }}>
-      {/* Timer bar */}
+      {/* Timer bar — matches AppNav height/spacing */}
       <div
         className="flex items-center justify-between px-5 shrink-0"
         style={{ height: 48, background: BG_PANEL, borderBottom: `1px solid ${BORDER}` }}
@@ -432,9 +432,9 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
             onClick={() => setShowExitConfirm(true)}
             className="flex items-center justify-center w-8 h-8 rounded-lg transition-all hover:brightness-125"
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: `1px solid ${BORDER_MED}`,
-              color: '#8ea0b7',
+              background: 'rgba(96,165,250,0.06)',
+              border: '1px solid rgba(96,165,250,0.18)',
+              color: '#cbd5e1',
             }}
             title="Return home"
             aria-label="Return home"
@@ -450,15 +450,15 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 onClick={() => switchProblem(i as 0 | 1)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all"
                 style={{
-                  background: active ? 'rgba(59,130,246,0.08)' : 'transparent',
-                  border: active ? '1px solid rgba(59,130,246,0.2)' : '1px solid transparent',
-                  color: active ? '#c9d1d9' : '#3f4f63',
+                  background: active ? 'rgba(59,130,246,0.12)' : 'transparent',
+                  border: active ? '1px solid rgba(96,165,250,0.3)' : '1px solid transparent',
+                  color: active ? '#ffffff' : '#94a3b8',
                   ...SG,
                 }}
               >
                 <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style={{
-                  background: active ? 'rgba(59,130,246,0.15)' : 'rgba(255,255,255,0.04)',
-                  color: active ? '#93c5fd' : '#3f4f63',
+                  background: active ? 'rgba(96,165,250,0.25)' : 'rgba(96,165,250,0.08)',
+                  color: active ? '#bfdbfe' : '#94a3b8',
                 }}>
                   {i + 1}
                 </span>
@@ -480,17 +480,18 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
         {/* Submit button */}
         <button
           onClick={handleSubmit}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 active:brightness-95"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition-all hover:brightness-110 active:brightness-95"
           style={{
-            background: 'linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%)',
+            background: 'linear-gradient(180deg, #3b82f6 0%, #2563eb 100%)',
             border: '1px solid rgba(147,197,253,0.55)',
+            color: '#ffffff',
             boxShadow:
               '0 1px 0 rgba(255,255,255,0.25) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 10px 24px -10px rgba(59,130,246,0.7), 0 0 0 1px rgba(96,165,250,0.35)',
             ...SG,
           }}
         >
-          <Send size={12} />
-          Submit Interview
+          <Send size={12} color="#ffffff" />
+          <span style={{ color: '#ffffff' }}>Submit Interview</span>
         </button>
       </div>
 
@@ -642,7 +643,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 <button
                   onClick={() => setPanelOpen(o => !o)}
                   className="flex items-center gap-2 text-[12px] font-medium transition-colors"
-                  style={{ color: panelOpen ? '#a8b3c7' : '#3f4f63', ...SG }}
+                  style={{ color: panelOpen ? '#cbd5e1' : '#94a3b8', ...SG }}
                 >
                   <ChevronUp size={12} className={panelOpen ? '' : 'rotate-180'} style={{ transition: 'transform 0.18s' }} />
                   Test Cases
@@ -683,16 +684,16 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                           }}
                         >
                           <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: dot }} />
-                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#c9d1d9' : '#3a4a5c' }}>{t.label}</span>
+                          <span className="text-[12px] font-medium" style={{ ...SG, color: isActive ? '#c9d1d9' : '#94a3b8' }}>{t.label}</span>
                           {t.custom && (
-                            <button className="ml-0.5 p-0.5 rounded hover:bg-white/10" style={{ color: '#3a4a5c' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
+                            <button className="ml-0.5 p-0.5 rounded hover:bg-white/10" style={{ color: '#94a3b8' }} onClick={e => { e.stopPropagation(); deleteCase(t.id); }}>
                               <X size={9} />
                             </button>
                           )}
                         </div>
                       );
                     })}
-                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-white/[0.04] ml-1" style={{ color: '#3a4a5c' }}>
+                    <button onClick={addCustomCase} className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded hover:bg-white/[0.04] ml-1" style={{ color: '#94a3b8' }}>
                       <Plus size={11} />
                     </button>
                   </div>
@@ -701,7 +702,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                   {activeTest && (
                     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5" style={{ scrollbarWidth: 'thin', scrollbarColor: `${BORDER} transparent` }}>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Input</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#94a3b8' }}>Input</p>
                         <textarea
                           value={activeTest.inputJson}
                           onChange={e => updateTestInput(activeTest.id, e.target.value)}
@@ -712,14 +713,14 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                         />
                       </div>
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Expected</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#94a3b8' }}>Expected</p>
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[12px]" style={{ background: 'rgba(255,255,255,0.03)', color: 'rgba(96,165,250,0.7)', ...MONO }}>
                           {activeTest.expectedJson || '—'}
                         </span>
                       </div>
                       {activeResult && (
                         <div>
-                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#3a4a5c' }}>Output</p>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-1" style={{ color: '#94a3b8' }}>Output</p>
                           {activeResult.error ? (
                             <pre className="text-[11px] leading-relaxed rounded-md px-2.5 py-2 whitespace-pre-wrap" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)', color: 'rgba(248,113,113,0.9)', ...MONO }}>
                               {activeResult.error}
@@ -751,7 +752,7 @@ export default function ActiveInterview({ problems, startedAt, onSubmit }: Activ
                 onClick={execTests}
                 disabled={running}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ color: running ? '#3f4f63' : '#a8b3c7', border: `1px solid ${BORDER_MED}`, background: 'rgba(255,255,255,0.03)' }}
+                style={{ color: running ? '#94a3b8' : '#cbd5e1', border: '1px solid rgba(96,165,250,0.18)', background: 'rgba(96,165,250,0.06)' }}
               >
                 <Play size={11} />
                 {running ? 'Running…' : 'Run Tests'}

@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation';
 import ProblemPage from '@/components/ProblemPage';
 import { getProblemBySlug } from '@/lib/problems-server';
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 interface SolveSlugPageProps {
   params: Promise<{ slug: string }>;
 }

@@ -3,6 +3,10 @@ import { getSupabaseUser } from '@/lib/supabase';
 import { hasCompletedOnboarding } from '@/lib/onboarding';
 import OnboardingFlow from '@/components/OnboardingFlow';
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default async function OnboardingPage() {
   const user = await getSupabaseUser();
   if (!user) redirect('/sign-in?next=/onboarding');
