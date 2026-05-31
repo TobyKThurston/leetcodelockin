@@ -128,7 +128,29 @@ export default function ProductDemo() {
   const hintProgress = `${Math.min(hintsVisible, 3)} / 3`;
 
   return (
-    <section className="relative flex flex-col items-center px-6 sm:px-10 pt-2 sm:pt-4 pb-0">
+    <section className="relative overflow-hidden flex flex-col items-center px-6 sm:px-10 pt-2 sm:pt-4 pb-0">
+      <video
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover pointer-events-none motion-reduce:hidden"
+        style={{ transform: 'scale(1.16)' }}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      >
+        <source src="/videos/hero-background.mp4" type="video/mp4" />
+      </video>
+
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(246,248,252,0.72) 0%, rgba(246,248,252,0.42) 36%, rgba(246,248,252,0.78) 100%), radial-gradient(ellipse 70% 52% at 50% 22%, rgba(59,130,246,0.22), transparent 72%), radial-gradient(ellipse 52% 44% at 78% 58%, rgba(56,189,248,0.18), transparent 70%)',
+        }}
+      />
+
       {/* Soft halo behind the mockup so it lifts off the page */}
       <div
         aria-hidden

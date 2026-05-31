@@ -10,13 +10,26 @@ const SANS: React.CSSProperties = {
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden px-6 sm:px-10 pt-28 sm:pt-32 pb-6">
-      {/* Soft hero gradient mesh */}
+      <video
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover pointer-events-none motion-reduce:hidden"
+        style={{ transform: 'scale(1.16)' }}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      >
+        <source src="/videos/hero-background.mp4" type="video/mp4" />
+      </video>
+
+      {/* Keep the background motion present without competing with the headline. */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(59,130,246,0.14) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 30%, rgba(56,189,248,0.10) 0%, transparent 70%)',
+            'linear-gradient(180deg, rgba(246,248,252,0.58) 0%, rgba(246,248,252,0.38) 42%, rgba(246,248,252,0.80) 100%), radial-gradient(ellipse 62% 48% at 50% 34%, rgba(59,130,246,0.24), transparent 72%), radial-gradient(ellipse 44% 38% at 80% 24%, rgba(56,189,248,0.18), transparent 70%)',
         }}
       />
 
@@ -31,7 +44,7 @@ export default function HeroSection() {
             width: '70%',
             height: '52%',
             background:
-              'radial-gradient(ellipse 50% 55% at 50% 50%, rgba(59,130,246,0.30), rgba(56,189,248,0.18) 40%, transparent 75%)',
+              'radial-gradient(ellipse 50% 55% at 50% 50%, rgba(59,130,246,0.42), rgba(56,189,248,0.26) 40%, transparent 75%)',
             filter: 'blur(48px)',
             animation: 'hero-glow-pulse 6s ease-in-out infinite',
           }}

@@ -2,10 +2,18 @@
 
 import { useEffect } from 'react';
 import posthog from 'posthog-js';
-import { createSupabaseBrowser } from '@/lib/supabase-browser';
+import {
+  createSupabaseBrowser,
+  hasSupabaseBrowserEnv,
+  isLocalBrowserHost,
+} from '@/lib/supabase-browser';
 
 export default function PostHogUserIdentifier() {
   useEffect(() => {
+    if (!hasSupabaseBrowserEnv() && isLocalBrowserHost()) {
+      return;
+    }
+
     const supabase = createSupabaseBrowser();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
