@@ -61,8 +61,30 @@ export default function UsageShowcase() {
         className="h-16"
         style={{ background: 'linear-gradient(to bottom, var(--ll-bg), #eef4ff)' }}
       />
-      <section className="px-6 sm:px-10 py-20 md:py-28" style={{ background: '#eef4ff' }}>
-        <div className="max-w-6xl mx-auto">
+      <section className="relative overflow-hidden px-6 sm:px-10 py-20 md:py-28" style={{ background: '#eef4ff' }}>
+        <video
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover pointer-events-none motion-reduce:hidden"
+          style={{ transform: 'scale(1.16)' }}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        >
+          <source src="/videos/hero-background.mp4" type="video/mp4" />
+        </video>
+
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(238,244,255,0.78) 0%, rgba(238,244,255,0.50) 42%, rgba(238,244,255,0.84) 100%), radial-gradient(ellipse 62% 48% at 50% 30%, rgba(59,130,246,0.18), transparent 72%), radial-gradient(ellipse 44% 38% at 80% 24%, rgba(56,189,248,0.14), transparent 70%)',
+          }}
+        />
+
+        <div className="relative max-w-6xl mx-auto">
           {/* Mobile: vertical stack */}
           <div className="md:hidden flex flex-col gap-14">
             {SCENES.map((scene) => (
